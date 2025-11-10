@@ -22,12 +22,12 @@ const awsRegion = process.env.NG_APP_AWS_REGION || 'us-east-1';
 
 const environmentFileContent = `
  export const environment = {
-   production: {isProduction},
+   production: ${isProduction},
     apiGateway: {
-      id: "{apiGatewayId}",
-      region: "{awsRegion}",
+      id: "${apiGatewayId}",
+      region: "${awsRegion}",
       get baseUrl() {
-        return "https://{apiGatewayId}.execute-api.{awsRegion}.amazonaws.com";
+        return "https://${apiGatewayId}.execute-api.${awsRegion}.amazonaws.com";
       },
       stage: 'dev',
       endpoints: {
