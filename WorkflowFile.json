@@ -1,0 +1,36 @@
+{
+  "environment": {
+    "appDir": ".",
+    "releasePath": "dist"
+  },
+  "s3": {
+    "dev": {
+      "name": "cumplimientodigital-dev-front",
+      "acl": "public-read"
+    },
+    "stage": {
+      "name": "cumplimientodigital-stage-front",
+      "acl": "public-read"
+    },
+    "prod": {
+      "name": "cumplimientodigital-prod-front",
+      "acl": "public-read"
+    }
+  },
+  "configuration": {
+    "develop": "dev",
+    "stage": "stage",
+    "master": "prod"
+  },
+  "repositoryUrl": {
+    "dev": {
+      "repository_url": "bolivar-npm-core-web-kit-components-lib-prod-virtual"
+    },
+    "stage": {
+      "repository_url": "bolivar-npm-core-web-kit-components-lib-prod-virtual"
+    },
+    "prod": {
+      "repository_url": "bolivar-npm-core-web-kit-components-lib-prod-virtual"
+    }
+  }
+}

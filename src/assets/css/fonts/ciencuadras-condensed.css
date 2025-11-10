@@ -1,0 +1,99 @@
+/* Regular */
+@font-face {
+    font-family: 'Ciencuadras Condensed';
+    src: url('/assets/fonts/Ciencuadras-Condensed/WOFF2/Ciencuadras-Condensed-Regular.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras-Condensed/WOFF/Ciencuadras-Condensed-Regular.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras-Condensed/TTF/Ciencuadras-Condensed-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Italic */
+@font-face {
+    font-family: 'Ciencuadras Condensed';
+    src: url('/assets/fonts/Ciencuadras-Condensed/WOFF2/Ciencuadras-Condensed-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras-Condensed/WOFF/Ciencuadras-Condensed-Italic.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras-Condensed/TTF/Ciencuadras-Condensed-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+/* Bold */
+@font-face {
+    font-family: 'Ciencuadras Condensed';
+    src: url('/assets/fonts/Ciencuadras-Condensed/WOFF2/Ciencuadras-Condensed-Bold.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras-Condensed/WOFF/Ciencuadras-Condensed-Bold.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras-Condensed/TTF/Ciencuadras-Condensed-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Bold Italic */
+@font-face {
+    font-family: 'Ciencuadras Condensed';
+    src: url('/assets/fonts/Ciencuadras-Condensed/WOFF2/Ciencuadras-Condensed-Bold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras-Condensed/WOFF/Ciencuadras-Condensed-Bold-Italic.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras-Condensed/TTF/Ciencuadras-Condensed-Bold-Italic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+/* ExtraBold */
+@font-face {
+    font-family: 'Ciencuadras Condensed';
+    src: url('/assets/fonts/Ciencuadras-Condensed/WOFF2/Ciencuadras-Condensed-ExtraBold.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras-Condensed/WOFF/Ciencuadras-Condensed-ExtraBold.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras-Condensed/TTF/Ciencuadras-Condensed-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+/* ExtraBold Italic */
+@font-face {
+    font-family: 'Ciencuadras Condensed';
+    src: url('/assets/fonts/Ciencuadras-Condensed/WOFF2/Ciencuadras-Condensed-ExtraBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras-Condensed/WOFF/Ciencuadras-Condensed-ExtraBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras-Condensed/TTF/Ciencuadras-Condensed-ExtraBold-Italic.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+}
+
+/* Light */
+@font-face {
+    font-family: 'Ciencuadras Condensed';
+    src: url('/assets/fonts/Ciencuadras-Condensed/WOFF2/Ciencuadras-Condensed-Light.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras-Condensed/WOFF/Ciencuadras-Condensed-Light.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras-Condensed/TTF/Ciencuadras-Condensed-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Light Italic */
+@font-face {
+    font-family: 'Ciencuadras Condensed';
+    src: url('/assets/fonts/Ciencuadras-Condensed/WOFF2/Ciencuadras-Condensed-Light-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras-Condensed/WOFF/Ciencuadras-Condensed-Light-Italic.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras-Condensed/TTF/Ciencuadras-Condensed-Light-Italic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+/* SemiBold */
+@font-face {
+    font-family: 'Ciencuadras Condensed';
+    src: url('/assets/fonts/Ciencuadras-Condensed/WOFF2/Ciencuadras-Condensed-SemiBold.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras-Condensed/WOFF/Ciencuadras-Condensed-SemiBold.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras-Condensed/TTF/Ciencuadras-Condensed-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* SemiBold Italic */
+@font-face {
+    font-family: 'Ciencuadras Condensed';
+    src: url('/assets/fonts/Ciencuadras-Condensed/WOFF2/Ciencuadras-Condensed-SemiBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras-Condensed/WOFF/Ciencuadras-Condensed-SemiBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras-Condensed/TTF/Ciencuadras-Condensed-SemiBold-Italic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}

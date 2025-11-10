@@ -1,0 +1,28 @@
+@import './assets/css/fonts/fonts.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: var(--c-lib-tb-font-family);
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  background-color: var(--c-lib-tb-grayscaleL400);
+}
+
+.lib-tb-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 1.3333333333em;
+  width: 1.3333333333em;
+}
+.p-float-label .p-placeholder,
+.p-float-label input::placeholder,
+.p-float-label .p-inputtext::placeholder {
+  opacity: 1 !important;
+}
