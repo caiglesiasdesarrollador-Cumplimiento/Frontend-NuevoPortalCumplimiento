@@ -1,0 +1,263 @@
+---
+alwaysApply: true
+---
+
+# No modificar estilos de tech-block-lib
+
+**NUNCA** sobrescribas o modifiques los estilos nativos de los componentes tech-block-lib. El sistema de diseño ya está definido.
+
+## ❌ **Prohibido:**
+
+### **No usar ::ng-deep para modificar componentes:**
+```scss
+// ❌ MAL: Modificar estilos internos de tech-block-lib
+::ng-deep lib-tb-button {
+  .p-button {
+    background-color: red !important;
+  }
+}
+
+// ❌ MAL: Sobrescribir clases de PrimeNG/tech-block-lib
+::ng-deep .p-button-primary {
+  background-color: #custom-color;
+}
+
+// ❌ MAL: Forzar estilos con !important
+.my-button {
+  background-color: blue !important;
+}
+```
+
+### **No aplicar clases CSS arbitrarias a componentes tech-block-lib:**
+```html
+<!-- ❌ MAL: Aplicar clases arbitrarias sin usar variables CSS de tema -->
+<lib-tb-button [custom]="btnSubmit" class="form-button form-button--primary"></lib-tb-button>
+<lib-tb-input [custom]="inputConfig" class="my-custom-input-style"></lib-tb-input>
+
+<!-- ✅ BIEN: Usar clases con variables CSS de tema (solo si el usuario lo solicita) -->
+<lib-tb-button [custom]="btnCustomShape" class="button-larger-form"></lib-tb-button>
+<lib-tb-input [custom]="inputCustom" class="input-compact-size"></lib-tb-input>
+```
+
+### **No modificar propiedades de diseño predefinidas:**
+```typescript
+// ❌ MAL: Intentar cambiar colores/estilos del sistema de diseño
+btnSubmit: ILibTbButton = {
+  label: 'Enviar',
+  style: { backgroundColor: 'red' }, // ❌ No hagas esto
+  className: 'custom-button-style',  // ❌ No hagas esto
+}
+```
+
+## ✅ **Permitido:**
+
+### **Usar las propiedades nativas del componente:**
+```typescript
+// ✅ BIEN: Usar propiedades definidas en la interfaz
+btnSubmit: ILibTbButton = {
+  label: 'Enviar',
+  icon: 'fal fa-paper-plane',
+  styleBtn: 'fill',       // ✅ Usar styleBtn predefinido
+  typeBtn: 'primary',     // ✅ Usar typeBtn predefinido
+  disabled: false,        // ✅ Usar propiedades de estado
+  libTbClick: () => this.submit()
+}
+```
+
+### **Usar variables CSS de tema (solo para forma, NO colores):**
+```scss
+// ✅ BIEN: Modificar forma usando variables CSS de theme
+.custom-button-shape {
+  /* Variables permitidas para FORMA Y DIMENSIONES del componente */
+  --c-lib-tb-btn-border-radius: 0.25rem;    // ✅ Cambiar forma
+  --c-lib-tb-btn-min-width: 120px;          // ✅ Cambiar tamaño
+  --c-lib-tb-btn-height: 40px;              // ✅ Cambiar altura
+  --c-lib-tb-btn-border-width: 2px;         // ✅ Cambiar grosor borde
+  
+  /* ❌ PROHIBIDO: Variables de COLOR Y TIPOGRAFÍA (preservar sistema de diseño) */
+  /* --c-lib-tb-btn-bg: red; */              // ❌ NO cambiar colores
+  /* --c-lib-tb-btn-color: blue; */          // ❌ NO cambiar colores
+  /* --c-lib-tb-btn-border-color: green; */  // ❌ NO cambiar colores
+  /* --c-lib-tb-btn-font-size: 14px; */      // ❌ NO cambiar tipografía
+  /* --c-lib-tb-btn-font-family: Arial; */   // ❌ NO cambiar tipografía
+}
+```
+
+```typescript
+// ✅ BIEN: Aplicar clase con variables CSS de tema
+btnCustomShape: ILibTbButton = {
+  label: 'Botón Personalizado',
+  styleBtn: 'fill',
+  typeBtn: 'primary',
+  class: 'custom-button-shape',  // ✅ Usar clase con variables CSS
+  libTbClick: () => this.action()
+}
+```
+
+### **Aplicar estilos al contenedor padre:**
+```scss
+// ✅ BIEN: Estilar el contenedor, no el componente
+.form {
+  &__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    
+    // ✅ Estilar spacing entre componentes
+    margin-top: 2rem;
+    padding: 1rem;
+  }
+}
+```
+
+```html
+<!-- ✅ BIEN: Componente limpio dentro de contenedor estilizado -->
+<div class="form__actions">
+  <lib-tb-button [custom]="btnSubmit"></lib-tb-button>
+  <lib-tb-button [custom]="btnCancel"></lib-tb-button>
+</div>
+```
+
+### **Consultar documentación de tech-block-lib:**
+```typescript
+// ✅ BIEN: Revisar archivos de documentación:
+// - knowledge_base/tech_block_lib/atoms/button/button-interface.md (propiedades)
+// - knowledge_base/tech_block_lib/atoms/button/button-theme.md (variables CSS)
+// - knowledge_base/tech_block_lib/atoms/button/button-definition.md (uso)
+```
+
+## 🔍 **Cómo aplicar estilos correctamente:**
+
+### **1. Layout y posicionamiento (permitido):**
+```scss
+.form {
+  &__button-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+}
+```
+
+### **2. Espaciado entre componentes (permitido):**
+```scss
+.login {
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; // ✅ Espaciado entre botones
+  }
+}
+```
+
+### **3. Responsive design del contenedor (permitido):**
+```scss
+.form {
+  @media (max-width: 768px) {
+    &__actions {
+      flex-direction: column;
+      
+      // ✅ Los componentes tech-block-lib se adaptan automáticamente
+    }
+  }
+}
+```
+
+### **4. Personalización con variables CSS de tema (permitido condicionalmente):**
+
+#### **✅ Variables permitidas (FORMA Y DIMENSIONES del componente):**
+```scss
+.custom-input-size {
+  /* Solo dimensiones y forma */
+  --c-lib-tb-inputtext-height: 48px;
+  --c-lib-tb-inputtext-border-radius-input: 8px;
+  --c-lib-tb-inputtext-border-width-input: 2px;
+}
+```
+
+#### **❌ Variables prohibidas (COLORES Y TIPOGRAFÍA del sistema de diseño):**
+```scss
+.invalid-overrides {
+  /* ❌ NO modificar colores - preservar sistema de diseño */
+  /* --c-lib-tb-inputtext-bg-input: white; */
+  /* --c-lib-tb-inputtext-color-input: black; */
+  /* --c-lib-tb-inputtext-border-color-input: blue; */
+  /* --c-lib-tb-inputtext-bg-input-focus: lightblue; */
+  
+  /* ❌ NO modificar tipografía - preservar sistema de diseño */
+  /* --c-lib-tb-inputtext-font-size: 16px; */
+  /* --c-lib-tb-inputtext-font-family: 'Arial, sans-serif'; */
+  /* --c-lib-tb-inputtext-font-size-label: 14px; */
+}
+```
+
+#### **🎯 Casos de uso válidos para variables CSS:**
+- **Cambiar tamaños** cuando el diseño lo requiera específicamente (height, min-width)
+- **Ajustar espaciados** internos del componente si es necesario (padding interno)
+- **Cambiar formas** (border-radius, border-width) por requerimientos UX específicos
+
+#### **❌ NO modificar:**
+- **Tipografía** (font-size, font-family, font-weight) → Preservar sistema tipográfico
+- **Colores** (backgrounds, text colors, border colors) → Preservar identidad visual
+
+## ⚠️ **Consecuencias de no seguir esta regla:**
+
+❌ **Pérdida de consistencia** visual del sistema de diseño  
+❌ **Problemas de mantenimiento** cuando tech-block-lib se actualice  
+❌ **Conflictos de estilos** entre diferentes componentes  
+❌ **Rotura de funcionalidades** internas de los componentes  
+❌ **Degradación de accesibilidad** predefinida en tech-block-lib
+
+## 📚 **Proceso para personalizar componentes:**
+
+### **Paso 1: Consultar documentación**
+1. **Interface**: `knowledge_base/tech_block_lib/[categoria]/[componente]/[componente]-interface.md`
+2. **Theme**: `knowledge_base/tech_block_lib/[categoria]/[componente]/[componente]-theme.md`
+3. **Definition**: `knowledge_base/tech_block_lib/[categoria]/[componente]/[componente]-definition.md`
+
+### **Paso 2: Evaluar necesidad de personalización**
+```typescript
+// ✅ PRIMERO: Usar propiedades nativas
+btnStandard: ILibTbButton = {
+  styleBtn: 'fill',
+  typeBtn: 'primary',
+  // ... otras propiedades nativas
+}
+
+// ✅ SOLO SI ES NECESARIO: Variables CSS de forma
+btnCustomShape: ILibTbButton = {
+  styleBtn: 'fill',
+  typeBtn: 'primary',
+  class: 'custom-button-form',  // Solo para forma, NO colores
+}
+```
+
+### **Paso 3: Clasificar variables CSS**
+```scss
+.custom-component {
+  /* ✅ PERMITIDO: Variables de forma y dimensiones únicamente */
+  --c-lib-tb-[component]-border-radius: value;
+  --c-lib-tb-[component]-height: value;
+  --c-lib-tb-[component]-border-width: value;
+  --c-lib-tb-[component]-min-width: value;
+  
+  /* ❌ PROHIBIDO: Variables de colores y tipografía */
+  /* --c-lib-tb-[component]-bg: value; */
+  /* --c-lib-tb-[component]-color: value; */
+  /* --c-lib-tb-[component]-border-color: value; */
+  /* --c-lib-tb-[component]-font-size: value; */
+  /* --c-lib-tb-[component]-font-family: value; */
+}
+```
+
+## 🎯 **Resumen:**
+
+1. **NUNCA** uses `::ng-deep` para modificar componentes tech-block-lib
+2. **NUNCA** modifiques variables CSS de colores o tipografía (preservar sistema de diseño)
+3. **SIEMPRE** usa las propiedades nativas definidas en las interfaces
+4. **SIEMPRE** consulta archivos `*-theme.md` antes de usar variables CSS
+5. **ESTILA SOLO** los contenedores padre para layout y espaciado
+6. **USA VARIABLES CSS** solo para forma/dimensiones y solo si el usuario lo solicita
+
+**Recuerda**: tech-block-lib ya tiene su sistema de diseño completo. Personaliza solo la forma y dimensiones cuando sea estrictamente necesario, nunca los colores ni la tipografía.

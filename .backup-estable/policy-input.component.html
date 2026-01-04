@@ -1,0 +1,3049 @@
+<!-- ✅ Container principal del policy-input - Mobile responsive -->
+<div class="min-h-screen bg-grayscaleL400">
+  <div class="max-w-7xl mx-auto px-2 py-4 sm:px-4 sm:py-8 lg:px-8">
+    <!-- ✅ Breadcrumb navigation - Igual a versión 15 (se oculta cuando se muestra tabla/detalle) -->
+    <nav *ngIf="!showCotizacionesTable && !showCotizacionDetalle" class="breadcrumb mb-4 sm:mb-6">
+      <ol class="breadcrumb__list">
+        <li class="breadcrumb__item">
+          <a routerLink="/portal" class="breadcrumb__link">
+            <i class="fa-solid fa-house"></i>
+            <span>Portal</span>
+          </a>
+        </li>
+        <li class="breadcrumb__separator">&gt;</li>
+        <li class="breadcrumb__item">
+          <a routerLink="/cotizar-emitir" class="breadcrumb__link">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Cotizar o Emitir</span>
+          </a>
+        </li>
+        <li class="breadcrumb__separator">&gt;</li>
+        <li class="breadcrumb__item breadcrumb__item--active">
+          <i class="fa-solid fa-file-lines"></i>
+          <span>{{ selectedAction === 'cotizar' ? 'Cotizar' : 'Emitir' }} Cumplimiento</span>
+        </li>
+      </ol>
+    </nav>
+
+    
+    <div *ngIf="showCotizacionesTable" class="mb-6">
+      <!-- Breadcrumb específico -->
+      <nav class="breadcrumb mb-4">
+        <ol class="breadcrumb__list">
+          <li class="breadcrumb__item">
+            <a routerLink="/portal" class="breadcrumb__link">
+              <i class="fa-solid fa-house"></i>
+              <span>Portal</span>
+            </a>
+          </li>
+          <li class="breadcrumb__separator">&gt;</li>
+          <li class="breadcrumb__item breadcrumb__item--active">
+            <i class="fa-solid fa-sync"></i>
+            <span>Emitir póliza desde una cotización existente</span>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Header con título y botón -->
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-grayscaleBlack">Emite cotización existente</h2>
+          <p class="text-grayscaleD200 mt-1">Elige una cotización de la tabla para convertirla en póliza activa.</p>
+        </div>
+        <button 
+          class="flex items-center gap-2 px-4 py-2 border-2 rounded-full font-semibold transition-all hover:bg-grayscaleL400"
+          style="border-color: #038450; color: #038450;"
+          (click)="crearNuevaPolizaDesdeTabla()">
+          <i class="fa-solid fa-plus"></i>
+          Crear una póliza nueva
+        </button>
+      </div>
+
+      <!-- Tabla de cotizaciones - SEGUROS BOLÍVAR UI -->
+      <div class="bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200">
+        <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--bordered w-full">
+          <thead class="bg-grayscaleL300">
+            <tr>
+              <th class="text-center" style="width: 50px;"></th>
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 90px;" (click)="ordenarCotizaciones('tipo')">
+                Tipo <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('tipo')"></i>
+              </th>
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 120px;" (click)="ordenarCotizaciones('numero')">
+                Número <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('numero')"></i>
+              </th>
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" (click)="ordenarCotizaciones('tomador')">
+                Tomador <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('tomador')"></i>
+              </th>
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" (click)="ordenarCotizaciones('producto')">
+                Producto <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('producto')"></i>
+              </th>
+              <th class="text-right cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 130px;" (click)="ordenarCotizaciones('valorAsegurado')">
+                Valor Asegurado <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('valorAsegurado')"></i>
+              </th>
+              <th class="text-center cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 90px;" (click)="ordenarCotizaciones('estado')">
+                Estado <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('estado')"></i>
+              </th>
+              <th class="text-center" style="width: 110px;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cot of cotizacionesExistentes" 
+                [class.selected]="cotizacionSeleccionada?.id === cot.id"
+                class="cursor-pointer">
+              <td class="text-center">
+                <label class="sb-ui-radio">
+                  <input type="radio" 
+                         name="cotizacion" 
+                         [checked]="cotizacionSeleccionada?.id === cot.id"
+                         (change)="seleccionarCotizacion(cot)">
+                  <span class="sb-ui-radio__checkmark"></span>
+                </label>
+              </td>
+              <td>
+                <span class="flex items-center gap-1">
+                  <i class="fa-solid fa-file-lines text-primaryBase text-xs"></i>
+                  {{ cot.tipo }}
+        </span>
+              </td>
+              <td class="font-medium text-sm">{{ cot.numero }}</td>
+              <td>
+                <div class="text-sm truncate" style="max-width: 160px;">{{ cot.tomador.nombre }}</div>
+                <div class="text-xs text-grayscaleD100">{{ cot.tomador.documento }}</div>
+              </td>
+              <td class="text-primaryBase text-sm">{{ cot.producto }}</td>
+              <td class="text-right font-semibold text-sm">{{ formatCurrency(cot.valorAsegurado) }}</td>
+              <td class="text-center">
+                <span [class]="cot.estado === 'Cotizada' ? 'status-badge status-badge--active' : 'status-badge status-badge--pending'">
+                  {{ cot.estado }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button class="action-btn-circle" (click)="verDetalleCotizacion(cot); $event.stopPropagation()" title="Ver detalle">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <button class="action-btn-circle" (click)="modificarCotizacion(cot); $event.stopPropagation()" title="Modificar">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Paginador SEGUROS BOLÍVAR UI - Botones circulares amarillos -->
+        <div class="sb-ui-pagination">
+          <button class="sb-ui-pagination__btn sb-ui-pagination__btn--nav">
+            <i class="fa-solid fa-angles-left text-xs"></i>
+          </button>
+          <button class="sb-ui-pagination__btn sb-ui-pagination__btn--nav">
+            <i class="fa-solid fa-chevron-left text-xs"></i>
+          </button>
+          <button class="sb-ui-pagination__btn sb-ui-pagination__btn--active">1</button>
+          <button class="sb-ui-pagination__btn">2</button>
+          <button class="sb-ui-pagination__btn">3</button>
+          <button class="sb-ui-pagination__btn sb-ui-pagination__btn--nav">
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+          </button>
+          <button class="sb-ui-pagination__btn sb-ui-pagination__btn--nav">
+            <i class="fa-solid fa-angles-right text-xs"></i>
+          </button>
+          <select class="ml-4 px-3 py-1 border border-grayscaleL200 rounded-lg text-sm">
+            <option>10</option>
+            <option>20</option>
+            <option>50</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Botón Emitir póliza -->
+      <div class="mt-6 flex justify-center">
+        <button 
+          class="px-8 py-3 rounded-full font-semibold text-base transition-all"
+          style="background-color: #FFE16F; color: #038450;"
+          [disabled]="!cotizacionSeleccionada"
+          [class.opacity-50]="!cotizacionSeleccionada"
+          (click)="emitirPolizaDesdeTabla()">
+          Emitir póliza
+        </button>
+      </div>
+    </div>
+
+    <!-- ✅ VISTA: Detalle de Cotización -->
+    <div *ngIf="showCotizacionDetalle && cotizacionSeleccionada" class="mb-6">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb mb-4">
+        <ol class="breadcrumb__list">
+          <li class="breadcrumb__item">
+            <a routerLink="/portal" class="breadcrumb__link">
+              <i class="fa-solid fa-house"></i>
+              <span>Portal</span>
+            </a>
+          </li>
+          <li class="breadcrumb__separator">&gt;</li>
+          <li class="breadcrumb__item">
+            <a (click)="volverACotizaciones()" class="breadcrumb__link cursor-pointer">
+              <i class="fa-solid fa-file-lines"></i>
+              <span>Retomar Cotización</span>
+            </a>
+          </li>
+          <li class="breadcrumb__separator">&gt;</li>
+          <li class="breadcrumb__item breadcrumb__item--active">
+            <i class="fa-solid fa-eye"></i>
+            <span>Detalles {{ cotizacionSeleccionada.numero }}</span>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- ✅ DETALLE COTIZACIÓN - MISMO ESTILO QUE PASO 3 -->
+      <div class="step3-bolivar">
+        
+        <!-- CUPO DISPONIBLE - ARRIBA -->
+        <div class="s3-card s3-card--wide">
+          <div class="s3-card__header">
+            <div class="icon-ring-bicolor"><i class="fa-solid fa-wallet"></i></div>
+            <h3>Cupo Disponible del Cliente</h3>
+            <span class="s3-card__value-big">{{ formatCurrency(cotizacionSeleccionada.cupoDisponible) }}</span>
+          </div>
+        </div>
+
+        <!-- FILA: Cotización + Valor Asegurado -->
+        <div class="s3-row">
+          <div class="s3-card">
+            <div class="s3-card__header">
+              <div class="icon-ring-bicolor"><i class="fa-solid fa-file-invoice"></i></div>
+              <h3>{{ cotizacionSeleccionada.numero }}</h3>
+            </div>
+            <div class="s3-card__body">
+              <div class="s3-item"><span class="lbl">Estado:</span><span class="val green">{{ cotizacionSeleccionada.estado }}</span></div>
+              <div class="s3-item"><span class="lbl">Fecha:</span><span class="val">{{ cotizacionSeleccionada.fechaCreacion }}</span></div>
+              <div class="s3-item"><span class="lbl">Producto:</span><span class="val">{{ cotizacionSeleccionada.producto }}</span></div>
+            </div>
+          </div>
+          <div class="s3-card">
+            <div class="s3-card__header">
+              <div class="icon-ring-bicolor"><i class="fa-solid fa-dollar-sign"></i></div>
+              <h3>Valor Asegurado</h3>
+            </div>
+            <div class="s3-card__body s3-card__body--center">
+              <span class="s3-big-number">{{ formatCurrency(cotizacionSeleccionada.valorAsegurado) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FILA: Tomador + Asegurado -->
+        <div class="s3-row">
+          <div class="s3-card">
+            <div class="s3-card__header">
+              <div class="icon-ring-bicolor"><i class="fa-solid fa-user-tie"></i></div>
+              <h3>Tomador</h3>
+            </div>
+            <div class="s3-card__body">
+              <div class="s3-item"><span class="lbl">{{ cotizacionSeleccionada.datosGenerales.tipoDocTomador }}:</span><span class="val mono">{{ cotizacionSeleccionada.datosGenerales.numDocTomador }}</span></div>
+              <div class="s3-item"><span class="val bold">{{ cotizacionSeleccionada.datosGenerales.nombreTomador }}</span></div>
+            </div>
+          </div>
+          <div class="s3-card">
+            <div class="s3-card__header">
+              <div class="icon-ring-bicolor"><i class="fa-solid fa-building-shield"></i></div>
+              <h3>Asegurado</h3>
+            </div>
+            <div class="s3-card__body">
+              <div class="s3-item"><span class="lbl">{{ cotizacionSeleccionada.datosGenerales.tipoDocAsegurado }}:</span><span class="val mono">{{ cotizacionSeleccionada.datosGenerales.numDocAsegurado }}</span></div>
+              <div class="s3-item"><span class="val bold">{{ cotizacionSeleccionada.datosGenerales.nombreAsegurado }}</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ubicación del Riesgo -->
+        <div class="s3-card s3-card--wide">
+          <div class="s3-card__header">
+            <div class="icon-ring-bicolor"><i class="fa-solid fa-map-marker-alt"></i></div>
+            <h3>Ubicación del Riesgo</h3>
+          </div>
+          <div class="s3-card__body s3-card__body--inline">
+            <div class="s3-item"><span class="lbl">Departamento:</span><span class="val">{{ cotizacionSeleccionada.ubicacionRiesgo.departamento }}</span></div>
+            <div class="s3-item"><span class="lbl">Municipio:</span><span class="val">{{ cotizacionSeleccionada.ubicacionRiesgo.municipio }}</span></div>
+            <div class="s3-item"><span class="lbl">Dirección:</span><span class="val">{{ cotizacionSeleccionada.ubicacionRiesgo.direccion }}</span></div>
+          </div>
+        </div>
+
+        <!-- Detalles Contrato -->
+        <div class="s3-card s3-card--wide">
+          <div class="s3-card__header">
+            <div class="icon-ring-bicolor"><i class="fa-solid fa-file-contract"></i></div>
+            <h3>Detalles del Contrato</h3>
+          </div>
+          <div class="s3-card__body s3-card__body--inline">
+            <div class="s3-item"><span class="lbl">Valor Contrato:</span><span class="val green">{{ cotizacionSeleccionada.detallesContrato.valorContrato }}</span></div>
+            <div class="s3-item"><span class="lbl">Fecha Inicio:</span><span class="val">{{ cotizacionSeleccionada.detallesContrato.fechaInicio }}</span></div>
+            <div class="s3-item"><span class="lbl">Fecha Fin:</span><span class="val">{{ cotizacionSeleccionada.detallesContrato.fechaFin }}</span></div>
+            <div class="s3-item"><span class="lbl">Duración:</span><span class="val">{{ cotizacionSeleccionada.detallesContrato.duracion }}</span></div>
+            <div class="s3-item"><span class="lbl">Moneda:</span><span class="val">{{ cotizacionSeleccionada.datosGenerales.moneda }}</span></div>
+          </div>
+        </div>
+
+        <!-- Coberturas Cumplimiento -->
+        <div *ngIf="cotizacionSeleccionada.coberturasCumplimiento.length > 0" class="s3-card s3-card--wide">
+          <div class="s3-card__header">
+            <div class="icon-ring-bicolor"><i class="fa-solid fa-shield-check"></i></div>
+            <h3>Coberturas Cumplimiento</h3>
+            <span class="s3-badge">{{ cotizacionSeleccionada.coberturasCumplimiento.length }}</span>
+          </div>
+          <div class="s3-card__body s3-card__body--table">
+            <table class="s3-table s3-table--coberturas">
+              <thead>
+                <tr>
+                  <th style="width: 40%; text-align: left;">COBERTURA</th>
+                  <th style="width: 15%; text-align: center;">%</th>
+                  <th style="width: 25%; text-align: right;">VALOR ASEG.</th>
+                  <th style="width: 20%; text-align: center;">ESTADO</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cob of cotizacionSeleccionada.coberturasCumplimiento">
+                  <td style="text-align: left;"><strong>{{ cob.cobertura }}</strong></td>
+                  <td style="text-align: center;">{{ cob.porcentaje }}</td>
+                  <td style="text-align: right;">{{ formatCurrency(cob.valorAsegurado) }}</td>
+                  <td style="text-align: center;" class="green">{{ cob.estado }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Responsabilidad Civil -->
+        <div *ngIf="cotizacionSeleccionada.responsabilidadCivil.length > 0" class="s3-card s3-card--wide">
+          <div class="s3-card__header">
+            <div class="icon-ring-bicolor"><i class="fa-solid fa-user-shield"></i></div>
+            <h3>Responsabilidad Civil</h3>
+            <span class="s3-badge">{{ cotizacionSeleccionada.responsabilidadCivil.length }}</span>
+          </div>
+          <div class="s3-card__body s3-card__body--table">
+            <table class="s3-table">
+              <thead>
+                <tr>
+                  <th style="text-align: left;">COBERTURA</th>
+                  <th style="text-align: center;">%</th>
+                  <th style="text-align: right;">VALOR ASEG.</th>
+                  <th style="text-align: center;">ESTADO</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let rc of cotizacionSeleccionada.responsabilidadCivil">
+                  <td><strong>{{ rc.cobertura }}</strong></td>
+                  <td class="center">{{ rc.porcentaje }}</td>
+                  <td class="right">{{ formatCurrency(rc.valorAsegurado) }}</td>
+                  <td class="center green">{{ rc.estado }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Prima Total -->
+        <div class="s3-card s3-card--wide s3-card--confirm">
+          <div class="s3-card__header">
+            <div class="icon-ring-bicolor"><i class="fa-solid fa-calculator"></i></div>
+            <h3>Resumen de Costos</h3>
+            <div class="s3-prima-total">
+              <span>PRIMA TOTAL</span>
+              <strong>{{ formatCurrency(cotizacionSeleccionada.resumenCostos.primaTotal) }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón Volver -->
+        <div class="flex justify-center mt-6">
+          <button class="btn-anterior" (click)="volverACotizaciones()">
+            <i class="fa-solid fa-arrow-left"></i>
+            Volver a Cotizaciones
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- ✅ Opciones Cotizar y Emitir - Posición superior como en imagen -->
+    <div *ngIf="!showCotizacionesTable && !showCotizacionDetalle" class="policy-input__action-selection mb-6 sm:mb-8">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <!-- ✅ Título de la sección -->
+        <h2 class="text-2xl font-semibold text-grayscaleBlack text-center mb-6 sm:mb-8">
+          ¿Qué necesitas hacer hoy?
+        </h2>
+
+        <!-- Opciones horizontales como en la imagen -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          <!-- ✅ Opción Cotizar -->
+          <div
+            class="text-center p-6 sm:p-8 cursor-pointer transition-all duration-200 hover:bg-grayscaleL400/50"
+            [ngClass]="{
+              'border-b-4 border-successBase': selectedAction === 'cotizar'
+            }"
+            (click)="selectAction('cotizar')"
+          >
+            <h2
+              class="text-2xl font-bold mb-3"
+              [ngClass]="{
+                  'text-successBase': selectedAction === 'cotizar',
+                  'text-grayscaleBlack': selectedAction !== 'cotizar'
+                }"
+            >
+              Cotizar
+            </h2>
+            <p class="text-base text-grayscaleD200 leading-relaxed">
+              Obtén una cotización personalizada para evaluar costos y coberturas antes de emitir.
+            </p>
+          </div>
+
+          <!-- ✅ Opción Emitir -->
+          <div
+            class="text-center p-6 sm:p-8 cursor-pointer transition-all duration-200 hover:bg-grayscaleL400/50"
+            [ngClass]="{
+              'border-b-4 border-successBase': selectedAction === 'emitir'
+            }"
+            (click)="selectAction('emitir')"
+          >
+            <h2
+              class="text-2xl font-bold mb-3"
+              [ngClass]="{
+                  'text-successBase': selectedAction === 'emitir',
+                  'text-grayscaleBlack': selectedAction !== 'emitir'
+                }"
+            >
+              Emitir
+            </h2>
+            <p class="text-base text-grayscaleD200 leading-relaxed">
+              Convierte tu cotización existente en póliza activa o crea una nueva desde cero.
+            </p>
+          </div>
+        </div>
+
+        <!-- ✅ Opciones para Emitir (solo se muestran cuando Emitir está seleccionado y no se ha elegido crear póliza nueva y no se muestra la tabla) -->
+        <div
+          *ngIf="selectedAction === 'emitir' && selectedEmitirOption !== 'poliza-nueva' && !showCotizacionesTable && !showCotizacionDetalle"
+          class="mt-8 sm:mt-12"
+        >
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+            <!-- ✅ Opción 1: Usar cotización existente -->
+            <div
+              class="bg-grayscaleWhite p-6 sm:p-8 rounded-lg shadow-sm border border-grayscaleL200 hover:shadow-md transition-shadow cursor-pointer"
+              (click)="onElegirCotizacion()"
+            >
+              <!-- Header con ícono -->
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-grayscaleBlack">Usar cotización existente</h3>
+                <div class="w-12 h-12 bg-primaryL100 rounded-lg flex items-center justify-center">
+                  <i class="fa-solid fa-file-search text-primaryBase text-xl"></i>
+                </div>
+              </div>
+
+              <!-- Descripción -->
+              <p class="text-base text-grayscaleD200 mb-6">Con esta opción puedes:</p>
+
+              <!-- Lista de beneficios -->
+              <ul class="space-y-2 mb-6">
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Convertir la <strong>cotización en póliza</strong>.</span
+                  >
+                </li>
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Usar <strong>datos ya validados</strong> y listos.</span
+                  >
+                </li>
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Elegir entre <strong>[#] cotizaciones</strong> disponibles.</span
+                  >
+                </li>
+              </ul>
+
+              <!-- Botón Elegir cotización - Estilo amarillo -->
+              <button 
+                class="w-full py-3 px-6 rounded-full font-semibold text-base flex items-center justify-center transition-all duration-200 hover:opacity-90"
+                style="background-color: #FFE16F; color: #038450;"
+                (click)="onElegirCotizacion()">
+                <i class="fa-solid fa-search mr-2"></i>
+                Elegir cotización
+              </button>
+            </div>
+
+            <!-- ✅ Opción 2: Crear una póliza nueva -->
+            <div
+              class="bg-grayscaleWhite p-6 sm:p-8 rounded-lg shadow-sm border border-grayscaleL200 hover:shadow-md transition-shadow cursor-pointer"
+              (click)="selectEmitirOption('poliza-nueva')"
+            >
+              <!-- Header con ícono -->
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-grayscaleBlack">Crear una póliza nueva</h3>
+                <div class="w-12 h-12 bg-successL100 rounded-lg flex items-center justify-center">
+                  <i class="fa-solid fa-file-plus text-successBase text-xl"></i>
+                </div>
+              </div>
+
+              <!-- Descripción -->
+              <p class="text-base text-grayscaleD200 mb-6">Con esta opción puedes:</p>
+
+              <!-- Lista de beneficios -->
+              <ul class="space-y-2 mb-6">
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Realizar proceso completo <strong>desde cero</strong>.</span
+                  >
+                </li>
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Atender clientes <strong>sin cotización</strong> previa.</span
+                  >
+                </li>
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Seguir un <strong>proceso guiado</strong> paso a paso.</span
+                  >
+                </li>
+              </ul>
+
+              <!-- Botón Crear nueva emisión - Estilo amarillo -->
+              <button 
+                class="w-full py-3 px-6 rounded-full font-semibold text-base flex items-center justify-center transition-all duration-200 hover:opacity-90"
+                style="background-color: #FFE16F; color: #038450;"
+                (click)="onCrearNuevaEmision(); $event.stopPropagation();">
+                <i class="fa-solid fa-plus mr-2"></i>
+                Crear nueva emisión
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Línea separadora -->
+        <div class="border-t border-grayscaleL200 mt-6 sm:mt-8"></div>
+      </div>
+    </div>
+
+    <!-- ✅ Formulario principal (se muestra cuando no hay selección, se selecciona Cotizar, o se selecciona Emitir > Crear póliza nueva) -->
+    <div *ngIf="!selectedAction || selectedAction === 'cotizar' || (selectedAction === 'emitir' && selectedEmitirOption === 'poliza-nueva')">
+      <!-- ✅ Elementos de imagen 2 - ANTES del título "Paso 1: Producto y Contrato para Emisión" - Solo visible cuando se selecciona Emitir -->
+      <div *ngIf="selectedAction === 'emitir'" class="mb-6 sm:mb-8">
+        <!-- ✅ Layout horizontal: mensaje a la izquierda, botón a la derecha -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+          <!-- ✅ Lado izquierdo: Título y descripción -->
+          <div class="text-center lg:text-left">
+            <h2 class="lib-tb-h5-bold text-grayscaleBlack mb-3">Emite una póliza nueva</h2>
+            <p class="lib-tb-body-medium text-grayscaleD200 max-w-xl">
+              Crea una póliza completamente nueva cuando no tienes cotización previa.
+            </p>
+          </div>
+
+          <!-- ✅ Lado derecho: Botón alineado horizontalmente -->
+          <div class="flex justify-center lg:justify-end lg:flex-shrink-0">
+            <button 
+              class="py-3 px-6 rounded-full font-semibold text-base flex items-center justify-center transition-all duration-200 hover:opacity-90 border-2"
+              style="background-color: transparent; color: #038450; border-color: #038450;"
+              (click)="onUsarCotizacionExistente()">
+              <i class="fa-solid fa-file-search mr-2"></i>
+              Usar cotización existente
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Header dinámico según la acción - CENTRADO como versión 15 -->
+      <div *ngIf="selectedAction" class="policy-input__header text-center mb-4 sm:mb-6 md:mb-8 w-full">
+        <h1 class="text-xl sm:text-2xl font-bold text-grayscaleBlack mb-2 px-2">
+          {{ getCurrentStepTitle() }}
+        </h1>
+        <p class="text-sm sm:text-base text-grayscaleD200 max-w-3xl mx-auto px-4">
+          {{ getCurrentStepDescription() }}
+        </p>
+      </div>
+
+      <!-- ✅ Mensaje de validación simple cuando no se ha seleccionado una opción -->
+      <div *ngIf="!selectedAction" class="mt-4">
+        <div class="validation-message">
+          <div class="validation-message__icon">
+            <i class="fa-solid fa-info-circle"></i>
+          </div>
+          <div class="validation-message__content">
+            <p class="validation-message__title">Selecciona una opción para continuar</p>
+            <p class="validation-message__description">
+              Selecciona una de las opciones disponibles para continuar con las actividades de
+              cotización y emisión.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Stepper de navegación - IGUAL A VERSIÓN 15 -->
+      <div *ngIf="isFormEnabled" class="policy-input__stepper mb-6 sm:mb-8 w-full">
+        <div class="stepper-v15">
+            <!-- Paso 1 -->
+          <div class="stepper-v15__step stepper-v15__step--has-line" 
+               [class.stepper-v15__step--active]="currentStep === 0" 
+               [class.stepper-v15__step--completed]="currentStep > 0"
+               (click)="goToStep(0)">
+            <div class="stepper-v15__circle">1</div>
+            <div class="stepper-v15__label">Producto y<br>Contrato</div>
+            </div>
+            <!-- Paso 2 -->
+          <div class="stepper-v15__step stepper-v15__step--has-line" 
+               [class.stepper-v15__step--active]="currentStep === 1" 
+               [class.stepper-v15__step--completed]="currentStep > 1"
+               (click)="goToStep(1)">
+            <div class="stepper-v15__circle">2</div>
+            <div class="stepper-v15__label">Formulario</div>
+            </div>
+          <!-- Paso 3 (sin línea después) -->
+          <div class="stepper-v15__step" 
+               [class.stepper-v15__step--active]="currentStep === 2" 
+               [class.stepper-v15__step--completed]="currentStep > 2"
+               (click)="goToStep(2)">
+            <div class="stepper-v15__circle">3</div>
+            <div class="stepper-v15__label">Confirmación</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ OBLIGATORIO: Contenido de pasos con renderizado condicional - ANCHO COMPLETO -->
+      <div *ngIf="isFormEnabled" class="policy-input__content max-w-6xl mx-auto lg:max-w-7xl">
+        <!-- ✅ Paso 1: Información Básica -->
+        <div *ngIf="currentStep === 0"
+          class="policy-input__step policy-input__step--info bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200"
+        >
+          <!-- ✅ FILA 1: Tipo de producto + Clave del Intermediario -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+            <div class="form-group">
+              <label class="sb-ui-label">Tipo de producto</label>
+              <div class="custom-dropdown" [class.open]="isDropdownOpen('tipoProducto')">
+                <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoProducto', $event)">
+                  <span>{{ tipoProducto === 'grandes-beneficiarios' ? 'Grandes Beneficiarios' : tipoProducto === 'particulares' ? 'Particulares' : tipoProducto === 'estatales' ? 'Estatales' : 'Seleccione un producto' }}</span>
+                </button>
+                <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoProducto')">
+                  <div class="custom-dropdown__option disabled">Seleccione un producto</div>
+                  <div class="custom-dropdown__option" [class.selected]="tipoProducto === 'grandes-beneficiarios'" (click)="tipoProducto = 'grandes-beneficiarios'; toggleDropdown('tipoProducto'); onTipoProductoChange('grandes-beneficiarios')">Grandes Beneficiarios</div>
+                  <div class="custom-dropdown__option" [class.selected]="tipoProducto === 'particulares'" (click)="tipoProducto = 'particulares'; toggleDropdown('tipoProducto'); onTipoProductoChange('particulares')">Particulares</div>
+                  <div class="custom-dropdown__option" [class.selected]="tipoProducto === 'estatales'" (click)="tipoProducto = 'estatales'; toggleDropdown('tipoProducto'); onTipoProductoChange('estatales')">Estatales</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="sb-ui-label">Clave del Intermediario</label>
+              <div class="custom-dropdown" [class.open]="isDropdownOpen('claveIntermediario')" [class.error]="!claveIntermediario">
+                <button type="button" class="custom-dropdown__trigger" [class.error]="!claveIntermediario" (click)="toggleDropdown('claveIntermediario', $event)">
+                  <span>{{ claveIntermediario ? (claveIntermediario + ' - ' + nombreIntermediario) : 'Seleccione una clave' }}</span>
+                </button>
+                <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('claveIntermediario')">
+                  <div class="custom-dropdown__option disabled">Seleccione una clave</div>
+                  <div *ngFor="let clave of clavesIntermediario" class="custom-dropdown__option" [class.selected]="claveIntermediario === clave.codigo" (click)="claveIntermediario = clave.codigo; toggleDropdown('claveIntermediario'); onClaveIntermediarioChange(clave.codigo)">{{ clave.codigo }} - {{ clave.nombre }}</div>
+                </div>
+              </div>
+              <span *ngIf="!claveIntermediario" class="field-error">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                La clave del intermediario es obligatoria
+              </span>
+              <div *ngIf="nombreIntermediario && claveIntermediario" class="nombre-resultado">
+                <i class="fa-solid fa-check-circle text-successBase mr-1"></i>
+                <strong>Intermediario:</strong> {{ nombreIntermediario }}
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ CAMPOS ADICIONALES: Solo visibles cuando se selecciona Grandes Beneficiarios -->
+          <div *ngIf="tipoProducto === 'grandes-beneficiarios'" class="campos-adicionales">
+            
+            <!-- FILA 2: Tipo Documento Asegurado + Número Documento Asegurado -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Tipo de Documento del Asegurado</label>
+                <div class="custom-dropdown" [class.open]="isDropdownOpen('tipoDocAseguradoGB')" [class.error]="!tipoDocumentoAsegurado">
+                  <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoDocAseguradoGB', $event)">
+                    <span>{{ tipoDocumentoAsegurado === 'NIT' ? 'NIT' : tipoDocumentoAsegurado === 'CC' ? 'Cédula de Ciudadanía' : tipoDocumentoAsegurado === 'CE' ? 'Cédula de Extranjería' : tipoDocumentoAsegurado === 'PA' ? 'Pasaporte' : tipoDocumentoAsegurado === 'TI' ? 'Tarjeta de Identidad' : 'Seleccione el tipo de documento' }}</span>
+                  </button>
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocAseguradoGB')">
+                    <div class="custom-dropdown__option disabled">Seleccione el tipo de documento</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'NIT'" (click)="tipoDocumentoAsegurado = 'NIT'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">NIT</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CC'" (click)="tipoDocumentoAsegurado = 'CC'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Cédula de Ciudadanía</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CE'" (click)="tipoDocumentoAsegurado = 'CE'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Cédula de Extranjería</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'PA'" (click)="tipoDocumentoAsegurado = 'PA'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Pasaporte</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'TI'" (click)="tipoDocumentoAsegurado = 'TI'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Tarjeta de Identidad</div>
+                  </div>
+                </div>
+                <span *ngIf="!tipoDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El tipo de documento del asegurado es obligatorio
+                </span>
+                <small *ngIf="tipoDocumentoAsegurado && documentValidationRules[tipoDocumentoAsegurado]" class="text-grayscaleD100 text-xs mt-1 flex items-center">
+                  <i class="fa-solid fa-info-circle mr-1"></i>{{ documentValidationRules[tipoDocumentoAsegurado].formato }}
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label class="sb-ui-label">Número de Documento del Asegurado</label>
+                <input type="text" 
+                       class="sb-ui-input"
+                       [class.sb-ui-input--error]="(formSubmitted && !numeroDocumentoAsegurado) || errorDocumentoAsegurado"
+                       [placeholder]="getPlaceholderDocumento(tipoDocumentoAsegurado)"
+                       [(ngModel)]="numeroDocumentoAsegurado"
+                       (ngModelChange)="validarDocumentoAsegurado()"
+                       [maxlength]="tipoDocumentoAsegurado === 'NIT' ? 11 : (documentValidationRules[tipoDocumentoAsegurado]?.max || 20)"
+                       (keypress)="tipoDocumentoAsegurado === 'PA' ? soloAlfanumerico($event) : soloNumeros($event)" />
+                <span *ngIf="formSubmitted && !numeroDocumentoAsegurado && !errorDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ getNombreDocumento(tipoDocumentoAsegurado) }} es obligatorio
+                </span>
+                <!-- ✅ Error de validación de formato -->
+                <span *ngIf="errorDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ errorDocumentoAsegurado }}
+                </span>
+                <!-- ✅ Mostrar nombre del Asegurado (mientras escribe) -->
+                <div *ngIf="buscandoAsegurado" class="nombre-resultado buscando">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Buscando...
+                </div>
+                <div *ngIf="nombreAsegurado && !buscandoAsegurado" class="nombre-resultado">
+                  <i class="fa-solid fa-check-circle text-successBase mr-1"></i>
+                  <strong>Asegurado:</strong> {{ nombreAsegurado }}
+                </div>
+              </div>
+            </div>
+
+            <!-- FILA 3: Tipo Documento Tomador + Número Documento Tomador -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Tipo de Documento del Tomador</label>
+                <div class="custom-dropdown" [class.open]="isDropdownOpen('tipoDocTomadorGB')" [class.error]="!tipoDocumentoTomador">
+                  <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoDocTomadorGB', $event)">
+                    <span>{{ tipoDocumentoTomador === 'NIT' ? 'NIT' : tipoDocumentoTomador === 'CC' ? 'Cédula de Ciudadanía' : tipoDocumentoTomador === 'CE' ? 'Cédula de Extranjería' : tipoDocumentoTomador === 'PA' ? 'Pasaporte' : tipoDocumentoTomador === 'TI' ? 'Tarjeta de Identidad' : 'Seleccione el tipo de documento' }}</span>
+                  </button>
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocTomadorGB')">
+                    <div class="custom-dropdown__option disabled">Seleccione el tipo de documento</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'NIT'" (click)="tipoDocumentoTomador = 'NIT'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">NIT</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CC'" (click)="tipoDocumentoTomador = 'CC'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Cédula de Ciudadanía</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CE'" (click)="tipoDocumentoTomador = 'CE'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Cédula de Extranjería</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'PA'" (click)="tipoDocumentoTomador = 'PA'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Pasaporte</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'TI'" (click)="tipoDocumentoTomador = 'TI'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Tarjeta de Identidad</div>
+                  </div>
+                </div>
+                <span *ngIf="!tipoDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El tipo de documento del tomador es obligatorio
+                </span>
+                <small *ngIf="tipoDocumentoTomador && documentValidationRules[tipoDocumentoTomador]" class="text-grayscaleD100 text-xs mt-1 flex items-center">
+                  <i class="fa-solid fa-info-circle mr-1"></i>{{ documentValidationRules[tipoDocumentoTomador].formato }}
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label class="sb-ui-label">Número de Documento del Tomador</label>
+                <input type="text" 
+                       class="sb-ui-input"
+                       [class.sb-ui-input--error]="(formSubmitted && !numeroDocumentoTomador) || errorDocumentoTomador"
+                       [placeholder]="getPlaceholderDocumento(tipoDocumentoTomador)"
+                       [(ngModel)]="numeroDocumentoTomador"
+                       (ngModelChange)="validarDocumentoTomador()"
+                       [maxlength]="tipoDocumentoTomador === 'NIT' ? 11 : (documentValidationRules[tipoDocumentoTomador]?.max || 20)"
+                       (keypress)="tipoDocumentoTomador === 'PA' ? soloAlfanumerico($event) : soloNumeros($event)" />
+                <span *ngIf="formSubmitted && !numeroDocumentoTomador && !errorDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ getNombreDocumento(tipoDocumentoTomador) }} es obligatorio
+                </span>
+                <!-- ✅ Error de validación de formato -->
+                <span *ngIf="errorDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ errorDocumentoTomador }}
+                </span>
+                <!-- ✅ Mostrar nombre del Tomador (mientras escribe) -->
+                <div *ngIf="buscandoTomador" class="nombre-resultado buscando">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Buscando...
+                </div>
+                <div *ngIf="nombreTomador && !buscandoTomador" class="nombre-resultado">
+                  <i class="fa-solid fa-check-circle text-successBase mr-1"></i>
+                  <strong>Tomador:</strong> {{ nombreTomador }}
+                </div>
+              </div>
+            </div>
+
+            <!-- FILA 4: Programas parametrizados - Solo se activa cuando hay info del asegurado -->
+            <div class="grid grid-cols-1 gap-6 mb-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Programas parametrizados</label>
+                <div class="custom-dropdown" [class.open]="isDropdownOpen('programas')" [class.error]="nombreAsegurado && !programaParametrizado" [class.disabled]="!nombreAsegurado">
+                  <button type="button" class="custom-dropdown__trigger" [disabled]="!nombreAsegurado" (click)="nombreAsegurado && toggleDropdown('programas', $event)">
+                    <span>{{ programaParametrizado === 'programa-a' ? 'Programa A - Construcción' : programaParametrizado === 'programa-b' ? 'Programa B - Servicios' : programaParametrizado === 'programa-c' ? 'Programa C - Consultoría' : programaParametrizado === 'programa-d' ? 'Programa D - Tecnología' : (nombreAsegurado ? 'Seleccione un programa' : 'Complete la información del asegurado primero') }}</span>
+                  </button>
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('programas')">
+                    <div class="custom-dropdown__option disabled">Seleccione un programa</div>
+                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-a'" (click)="programaParametrizado = 'programa-a'; toggleDropdown('programas')">Programa A - Construcción</div>
+                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-b'" (click)="programaParametrizado = 'programa-b'; toggleDropdown('programas')">Programa B - Servicios</div>
+                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-c'" (click)="programaParametrizado = 'programa-c'; toggleDropdown('programas')">Programa C - Consultoría</div>
+                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-d'" (click)="programaParametrizado = 'programa-d'; toggleDropdown('programas')">Programa D - Tecnología</div>
+                  </div>
+                </div>
+                <span *ngIf="nombreAsegurado && !programaParametrizado" class="field-error">
+                  <i class="fa-solid fa-exclamation-circle"></i>
+                  El programa parametrizado es obligatorio
+                </span>
+                <small *ngIf="!nombreAsegurado" class="text-grayscaleD100 text-xs mt-1 flex items-center">
+                  <i class="fa-solid fa-info-circle mr-1"></i>Ingrese la información del asegurado para habilitar este campo
+                </small>
+              </div>
+              </div>
+            </div>
+
+          <!-- ✅ CAMPOS ADICIONALES: Solo visibles cuando se selecciona Particulares o Estatales -->
+          <div *ngIf="tipoProducto === 'particulares' || tipoProducto === 'estatales'" class="campos-adicionales-particulares">
+            <!-- FILA: Tipo Documento Tomador + Número Documento Tomador -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Tipo de Documento del Tomador</label>
+                <div class="custom-dropdown" [class.open]="isDropdownOpen('tipoDocTomadorPE')" [class.error]="formSubmitted && !tipoDocumentoTomador">
+                  <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoDocTomadorPE', $event)">
+                    <span>{{ tipoDocumentoTomador === 'NIT' ? 'NIT' : tipoDocumentoTomador === 'CC' ? 'Cédula de Ciudadanía' : tipoDocumentoTomador === 'CE' ? 'Cédula de Extranjería' : tipoDocumentoTomador === 'PA' ? 'Pasaporte' : tipoDocumentoTomador === 'TI' ? 'Tarjeta de Identidad' : 'Seleccione el tipo de documento' }}</span>
+                  </button>
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocTomadorPE')">
+                    <div class="custom-dropdown__option disabled">Seleccione el tipo de documento</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'NIT'" (click)="tipoDocumentoTomador = 'NIT'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">NIT</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CC'" (click)="tipoDocumentoTomador = 'CC'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Cédula de Ciudadanía</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CE'" (click)="tipoDocumentoTomador = 'CE'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Cédula de Extranjería</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'PA'" (click)="tipoDocumentoTomador = 'PA'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Pasaporte</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'TI'" (click)="tipoDocumentoTomador = 'TI'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Tarjeta de Identidad</div>
+                  </div>
+                </div>
+                <span *ngIf="formSubmitted && !tipoDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El tipo de documento del tomador es obligatorio
+                </span>
+                <small *ngIf="tipoDocumentoTomador && documentValidationRules[tipoDocumentoTomador]" class="text-grayscaleD100 text-xs mt-1 block">
+                  <i class="fa-solid fa-info-circle mr-1"></i>{{ documentValidationRules[tipoDocumentoTomador].formato }}
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label class="sb-ui-label">Número de Documento del Tomador</label>
+                <input type="text" 
+                       class="sb-ui-input"
+                       [class.sb-ui-input--error]="(formSubmitted && !numeroDocumentoTomador) || errorDocumentoTomador"
+                       [placeholder]="getPlaceholderDocumento(tipoDocumentoTomador)"
+                       [(ngModel)]="numeroDocumentoTomador"
+                       (ngModelChange)="validarDocumentoTomador()"
+                       [maxlength]="tipoDocumentoTomador === 'NIT' ? 11 : (documentValidationRules[tipoDocumentoTomador]?.max || 20)"
+                       (keypress)="tipoDocumentoTomador === 'PA' ? soloAlfanumerico($event) : soloNumeros($event)" />
+                <span *ngIf="formSubmitted && !numeroDocumentoTomador && !errorDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El número de documento del tomador es obligatorio
+                </span>
+                <!-- ✅ Error de validación de formato -->
+                <span *ngIf="errorDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ errorDocumentoTomador }}
+                </span>
+                <!-- ✅ Mostrar nombre del Tomador (mientras escribe) -->
+                <div *ngIf="buscandoTomador" class="nombre-resultado buscando">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Buscando...
+                </div>
+                <div *ngIf="nombreTomador && !buscandoTomador" class="nombre-resultado">
+                  <i class="fa-solid fa-check-circle text-successBase mr-1"></i>
+                  <strong>Tomador:</strong> {{ nombreTomador }}
+                </div>
+              </div>
+            </div>
+
+            <!-- FILA: Tipo Documento Asegurado + Número Documento Asegurado -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Tipo de Documento del Asegurado</label>
+                <div class="custom-dropdown" [class.open]="isDropdownOpen('tipoDocAseguradoPE')" [class.error]="formSubmitted && !tipoDocumentoAsegurado">
+                  <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoDocAseguradoPE', $event)">
+                    <span>{{ tipoDocumentoAsegurado === 'NIT' ? 'NIT' : tipoDocumentoAsegurado === 'CC' ? 'Cédula de Ciudadanía' : tipoDocumentoAsegurado === 'CE' ? 'Cédula de Extranjería' : tipoDocumentoAsegurado === 'PA' ? 'Pasaporte' : tipoDocumentoAsegurado === 'TI' ? 'Tarjeta de Identidad' : 'Seleccione el tipo de documento' }}</span>
+                  </button>
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocAseguradoPE')">
+                    <div class="custom-dropdown__option disabled">Seleccione el tipo de documento</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'NIT'" (click)="tipoDocumentoAsegurado = 'NIT'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">NIT</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CC'" (click)="tipoDocumentoAsegurado = 'CC'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Cédula de Ciudadanía</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CE'" (click)="tipoDocumentoAsegurado = 'CE'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Cédula de Extranjería</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'PA'" (click)="tipoDocumentoAsegurado = 'PA'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Pasaporte</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'TI'" (click)="tipoDocumentoAsegurado = 'TI'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Tarjeta de Identidad</div>
+                  </div>
+                </div>
+                <span *ngIf="formSubmitted && !tipoDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El tipo de documento del asegurado es obligatorio
+                </span>
+                <small *ngIf="tipoDocumentoAsegurado && documentValidationRules[tipoDocumentoAsegurado]" class="text-grayscaleD100 text-xs mt-1 block">
+                  <i class="fa-solid fa-info-circle mr-1"></i>{{ documentValidationRules[tipoDocumentoAsegurado].formato }}
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label class="sb-ui-label">Número de Documento del Asegurado</label>
+                <input type="text" 
+                       class="sb-ui-input"
+                       [class.sb-ui-input--error]="(formSubmitted && !numeroDocumentoAsegurado) || errorDocumentoAsegurado"
+                       [placeholder]="getPlaceholderDocumento(tipoDocumentoAsegurado)"
+                       [(ngModel)]="numeroDocumentoAsegurado"
+                       (ngModelChange)="validarDocumentoAsegurado()"
+                       [maxlength]="tipoDocumentoAsegurado === 'NIT' ? 11 : (documentValidationRules[tipoDocumentoAsegurado]?.max || 20)"
+                       (keypress)="tipoDocumentoAsegurado === 'PA' ? soloAlfanumerico($event) : soloNumeros($event)" />
+                <span *ngIf="formSubmitted && !numeroDocumentoAsegurado && !errorDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El número de documento del asegurado es obligatorio
+                </span>
+                <!-- ✅ Error de validación de formato -->
+                <span *ngIf="errorDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ errorDocumentoAsegurado }}
+                </span>
+                <!-- ✅ Mostrar nombre del Asegurado (mientras escribe) -->
+                <div *ngIf="buscandoAsegurado" class="nombre-resultado buscando">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Buscando...
+                </div>
+                <div *ngIf="nombreAsegurado && !buscandoAsegurado" class="nombre-resultado">
+                  <i class="fa-solid fa-check-circle text-successBase mr-1"></i>
+                  <strong>Asegurado:</strong> {{ nombreAsegurado }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ CARGA DE DOCUMENTOS SOPORTE - DISEÑO ORIGINAL CON SPINNER -->
+          <div class="policy-input__file-upload mt-4">
+            <div class="bg-grayscaleL400 p-6 rounded-lg border border-grayscaleL200">
+              <h4 class="text-base font-semibold text-grayscaleBlack mb-4">
+                <i class="fa-solid fa-cloud-arrow-up text-primaryBase mr-2"></i>
+                Carga de contrato
+              </h4>
+              
+              <!-- ✅ DROPDOWN TIPO DE DOCUMENTO -->
+              <div class="form-group mb-4">
+                <label class="sb-ui-label">Tipo de Documento</label>
+                <select class="sb-ui-select w-full" [(ngModel)]="tipoDocumentoSoporte">
+                  <option value="">-- Seleccione el tipo de documento --</option>
+                  <option value="1">PLIEGO</option>
+                  <option value="2">OFERTA MERCANTIL</option>
+                  <option value="3">CONTRATO</option>
+                </select>
+              </div>
+
+              <p class="text-sm text-grayscaleD200 mb-4 text-center">
+                Peso máximo: 30 MB. Formatos permitidos: PDF, Word, Excel.
+              </p>
+              
+              <!-- ✅ ÁREA DE CARGA ORIGINAL - Solo visible cuando hay tipo seleccionado y no está subiendo -->
+              <div class="file-upload-area" 
+                   [class.disabled]="!tipoDocumentoSoporte"
+                   (click)="tipoDocumentoSoporte && triggerFileInput()" 
+                   *ngIf="!isUploading && !selectedFileName">
+                <input type="file" 
+                       #fileInput 
+                       hidden 
+                       [disabled]="!tipoDocumentoSoporte"
+                       accept=".pdf,.doc,.docx,.xls,.xlsx"
+                       (change)="onFileSelected($event)" />
+                <div class="file-upload-area__content">
+                  <i class="fa-solid fa-cloud-arrow-up file-upload-area__icon"></i>
+                  <p class="file-upload-area__text">{{ tipoDocumentoSoporte ? 'Seleccionar archivo' : 'Primero selecciona el tipo de documento' }}</p>
+                  <p class="file-upload-area__hint" *ngIf="tipoDocumentoSoporte">
+                    Arrastra o haz clic para seleccionar
+                  </p>
+                </div>
+              </div>
+
+              <!-- ✅ SPINNER Y BARRA DE PROGRESO - Estilo Seguros Bolívar UI -->
+              <div *ngIf="isUploading" class="file-uploading-container">
+                <div class="file-uploading-header">
+                  <h3 class="file-uploading-title">
+                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
+                    Subiendo Archivo...
+                  </h3>
+                  <p class="file-uploading-subtitle">Por favor espera mientras se carga tu archivo</p>
+                </div>
+                
+                <div class="file-uploading-card">
+                  <div class="file-uploading-info">
+                    <div class="file-uploading-spinner">
+                      <i class="fa-solid fa-spinner fa-spin"></i>
+                    </div>
+                    <div class="file-uploading-details">
+                      <p class="file-uploading-name">{{ selectedFile?.name || 'documento.pdf' }}</p>
+                      <p class="file-uploading-progress-text">Subiendo... {{ uploadProgress }}%</p>
+                    </div>
+                    <button class="file-uploading-cancel" (click)="cancelUpload()">
+                      <i class="fa-solid fa-times"></i>
+                    </button>
+                  </div>
+                  <div class="file-uploading-progress-bar">
+                    <div class="file-uploading-progress-fill" [style.width.%]="uploadProgress"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ✅ CARD DE ARCHIVO SUBIDO EXITOSAMENTE -->
+              <div *ngIf="selectedFileName && !isUploading" class="file-uploaded-container">
+                <div class="file-uploaded-card">
+                  <div class="file-uploaded-info">
+                    <div class="file-uploaded-icon">
+                      <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <div class="file-uploaded-details">
+                      <p class="file-uploaded-name">{{ selectedFileName }}</p>
+                      <p class="file-uploaded-status">
+                        <i class="fa-solid fa-check-circle mr-1"></i>
+                        Archivo cargado correctamente
+                      </p>
+                    </div>
+                    <button class="file-uploaded-remove" (click)="removeFile(); $event.stopPropagation()">
+                      <i class="fa-solid fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botón Agregar -->
+              <div class="mt-4 text-center">
+                <button class="btn-agregar" 
+                        [disabled]="!tipoDocumentoSoporte || !selectedFileName"
+                        (click)="agregarDocumentoALista()">
+                  Agregar Documento
+                </button>
+              </div>
+
+              <!-- ✅ TABLA DE DOCUMENTOS CARGADOS - Estilo Coberturas -->
+              <div *ngIf="documentosSoporte.length > 0" class="table-container mt-6">
+                <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--compact coberturas-editable w-full">
+                  <thead>
+                    <tr>
+                      <th style="min-width: 200px;">Tipo de Documento</th>
+                      <th style="min-width: 250px;">Nombre Archivo</th>
+                      <th class="text-center" style="width: 120px;">Fecha</th>
+                      <th class="text-center" style="width: 80px;">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let doc of documentosSoporte; let i = index">
+                      <td class="font-medium">
+                        <i class="fa-solid fa-file-lines text-primaryBase mr-2"></i>
+                        {{ getTipoDocumentoLabel(doc.tipo) }}
+                      </td>
+                      <td>{{ doc.nombreArchivo }}</td>
+                      <td class="text-center">{{ doc.fecha }}</td>
+                      <td class="text-center">
+                        <button class="btn-eliminar-tabla" (click)="eliminarDocumentoSoporte(i)" title="Eliminar">
+                          <i class="fa-solid fa-trash-alt"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr class="total-row">
+                      <td colspan="4" class="text-right font-semibold" style="background-color: #dcfce7; color: #038450;">
+                        <i class="fa-solid fa-folder-open mr-2"></i>
+                        Total: {{ documentosSoporte.length }} documento(s) cargado(s)
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ Información básica del contrato -->
+          <div class="policy-input__contract-info mt-6">
+            <div class="bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200">
+              <h4 class="text-base font-semibold text-grayscaleBlack mb-2">
+                <i class="fa-solid fa-info-circle text-primaryBase mr-2"></i>
+                Información básica del contrato
+              </h4>
+              <p class="text-sm text-grayscaleD200 leading-relaxed">
+                Elige el producto que necesitas y sube el contrato (PDF o Word). Extraemos los datos
+                automáticamente para agilizar tu gestión.
+              </p>
+            </div>
+          </div>
+
+          <!-- Botón Siguiente - AMARILLO con texto verde como versión 15 -->
+          <div class="policy-input__actions mt-6 sm:mt-8">
+            <div class="flex justify-end">
+              <button class="btn-siguiente"
+                      (click)="nextStep()">
+                Siguiente
+                <i class="fa-solid fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Paso 2: Formulario Completo con Scroll Vertical -->
+        <div *ngIf="currentStep === 1" class="policy-input__step">
+
+          <!-- Cupo Disponible del Cliente - Estilo Corporativo Bolívar -->
+          <div class="cupo-disponible-card mb-6">
+            <div class="cupo-disponible-card__icon">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div class="cupo-disponible-card__content">
+              <span class="cupo-disponible-card__label">Cupo Disponible del Cliente:</span>
+              <span class="cupo-disponible-card__value">$100.000.000</span>
+            </div>
+            <div class="cupo-disponible-card__badge">
+              <i class="fa-solid fa-check-circle"></i>
+              <span>Activo</span>
+            </div>
+              </div>
+
+              <!-- ========== SECCIÓN 1: Datos Generales ========== -->
+              <div class="section-wrapper" id="seccion-datos-generales">
+                <div class="section-block">
+                  <div class="section-block__header">
+                    <div class="icon-ring-bicolor">
+                      <i class="fa-solid fa-file-alt"></i>
+                    </div>
+                    <h3 class="section-block__title">Datos Generales Póliza</h3>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- ✅ Tipo de producto AL PRINCIPIO (DROPDOWN) -->
+                    <div class="form-group">
+                      <label class="sb-ui-label">Tipo de producto</label>
+                      <div class="custom-dropdown" [class.open]="isDropdownOpen('tipoProductoP2')">
+                        <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoProductoP2', $event)">
+                          <span>Particulares</span>
+                        </button>
+                        <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoProductoP2')">
+                          <div class="custom-dropdown__option disabled">Seleccione el tipo de producto</div>
+                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoProductoP2')">Grandes Beneficiarios</div>
+                          <div class="custom-dropdown__option selected" (click)="toggleDropdown('tipoProductoP2')">Particulares</div>
+                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoProductoP2')">Estatales</div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Fila 1: Tipo Documento Tomador + Número Documento Tomador -->
+                    <div class="form-group">
+                      <label class="sb-ui-label">Tipo de Documento Tomador</label>
+                      <div class="custom-dropdown" [class.open]="isDropdownOpen('tipoDocTomP2')">
+                        <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoDocTomP2', $event)">
+                          <span>NIT</span>
+                        </button>
+                        <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocTomP2')">
+                          <div class="custom-dropdown__option selected" (click)="toggleDropdown('tipoDocTomP2')">NIT</div>
+                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocTomP2')">Cédula de Ciudadanía</div>
+                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocTomP2')">Cédula de Extranjería</div>
+                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocTomP2')">Pasaporte</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                <label class="sb-ui-label">Número del Documento tomador</label>
+                      <input type="text" class="sb-ui-input" value="900.123.456-7" />
+              </div>
+                    <!-- Fila 2: Nombre Tomador + Dirección Tomador -->
+              <div class="form-group">
+                <label class="sb-ui-label">Nombre del Tomador</label>
+                      <input type="text" class="sb-ui-input" value="Empresa Tomadora Simulada S.A.S." />
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Dirección del Tomador</label>
+                <input type="text" class="sb-ui-input" value="Calle 123 #45-67, Oficina 301" />
+              </div>
+                    <!-- Fila 3: Ciudad Tomador + Teléfono Tomador -->
+              <div class="form-group">
+                <label class="sb-ui-label">Ciudad del Tomador</label>
+                      <input type="text" class="sb-ui-input" value="Bogotá" />
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Teléfono del Tomador</label>
+                      <input type="text" class="sb-ui-input" value="+57 1 2345678" />
+              </div>
+                    <!-- Fila 4: E-mail Tomador + Tipo Documento Asegurado -->
+              <div class="form-group">
+                <label class="sb-ui-label">E-mail del Tomador</label>
+                      <input type="email" class="sb-ui-input" value="contacto@empresatomadora.com" />
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Tipo de Documento Asegurado</label>
+                <div class="custom-dropdown" [class.open]="isDropdownOpen('tipoDocAsegP2')">
+                  <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoDocAsegP2', $event)">
+                    <span>NIT</span>
+                  </button>
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocAsegP2')">
+                    <div class="custom-dropdown__option selected" (click)="toggleDropdown('tipoDocAsegP2')">NIT</div>
+                    <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocAsegP2')">Cédula de Ciudadanía</div>
+                    <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocAsegP2')">Cédula de Extranjería</div>
+                    <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocAsegP2')">Pasaporte</div>
+                  </div>
+                </div>
+              </div>
+                    <!-- Fila 5: Número Documento Asegurado + Nombre Asegurado -->
+              <div class="form-group">
+                <label class="sb-ui-label">Número del Documento Asegurado</label>
+                      <input type="text" class="sb-ui-input" value="800.987.654-3" />
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Nombre Asegurado</label>
+                      <input type="text" class="sb-ui-input" value="Asegurado Principal de Ejemplo Ltda." />
+              </div>
+                    <!-- Fila 6: Dirección Asegurado + Ciudad Asegurado -->
+              <div class="form-group">
+                <label class="sb-ui-label">Dirección del Asegurado</label>
+                <input type="text" class="sb-ui-input" placeholder="Ingrese la dirección del asegurado" />
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Ciudad del Asegurado</label>
+                <input type="text" class="sb-ui-input" placeholder="Ingrese la ciudad del asegurado" />
+              </div>
+                    <!-- Fila 7: Teléfono Asegurado + E-mail Asegurado -->
+              <div class="form-group">
+                <label class="sb-ui-label">Teléfono del Asegurado</label>
+                <input type="text" class="sb-ui-input" placeholder="Ingrese el teléfono del asegurado" />
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">E-mail del Asegurado</label>
+                      <input type="email" class="sb-ui-input" placeholder="Ingrese el e-mail del asegurado" />
+              </div>
+              </div>
+                    </div>
+                  </div>
+
+              <!-- ========== SECCIÓN 2: Agentes ========== -->
+              <div class="section-wrapper" id="seccion-agentes">
+                <div class="section-block">
+                  <div class="section-block__header">
+                    <div class="icon-ring-bicolor">
+                      <i class="fa-solid fa-user-tie"></i>
+              </div>
+                    <h3 class="section-block__title">Agentes</h3>
+                  </div>
+
+                  <!-- Datos del Agente Líder -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Líder Clave</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese la líder clave" [(ngModel)]="liderClave" />
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Nombres</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese los nombres del agente" [(ngModel)]="liderNombre" />
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Participación</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese el porcentaje de participación" [(ngModel)]="liderParticipacion" />
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Porc. Comisión Pactada</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese el porcentaje de comisión" [(ngModel)]="liderComisionPactada" />
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Forma Actuación</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese la forma de actuación" [(ngModel)]="liderFormaActuacion" />
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Convenio</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese el convenio" [(ngModel)]="liderConvenio" />
+                    </div>
+                  </div>
+                  
+                  <!-- Botón Adicionar Agente -->
+                  <button class="btn-adicionar-agente mb-4" (click)="abrirModalAgente()">
+                    <i class="fa-solid fa-plus"></i>
+                    Adicionar Agente
+                  </button>
+                  
+                  <!-- Tabla de Agentes Adicionales -->
+                  <div *ngIf="agentesAdicionales.length > 0" class="table-agentes mt-4">
+                    <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--bordered w-full">
+                      <thead class="bg-primaryBase">
+                        <tr>
+                          <th class="text-white font-semibold px-3 py-2 cursor-pointer hover:bg-green-700 transition-colors" (click)="ordenarAgentes('clave')">
+                            Clave <i class="fa-solid ml-1" [ngClass]="getSortIcon('clave')"></i>
+                          </th>
+                          <th class="text-white font-semibold px-3 py-2 cursor-pointer hover:bg-green-700 transition-colors" (click)="ordenarAgentes('formaActuacion')">
+                            Forma Actuación <i class="fa-solid ml-1" [ngClass]="getSortIcon('formaActuacion')"></i>
+                          </th>
+                          <th class="text-white font-semibold px-3 py-2 text-center cursor-pointer hover:bg-green-700 transition-colors" (click)="ordenarAgentes('convenio')">
+                            Convenio <i class="fa-solid ml-1" [ngClass]="getSortIcon('convenio')"></i>
+                          </th>
+                          <th class="text-white font-semibold px-3 py-2 cursor-pointer hover:bg-green-700 transition-colors" (click)="ordenarAgentes('nombre')">
+                            Nombre <i class="fa-solid ml-1" [ngClass]="getSortIcon('nombre')"></i>
+                          </th>
+                          <th class="text-white font-semibold px-3 py-2 text-center cursor-pointer hover:bg-green-700 transition-colors" (click)="ordenarAgentes('participacion')">
+                            %Participación <i class="fa-solid ml-1" [ngClass]="getSortIcon('participacion')"></i>
+                          </th>
+                          <th class="text-white font-semibold px-3 py-2 text-center">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let agente of agentesAdicionales; let i = index">
+                          <td class="px-3 py-2">{{ agente.clave }}</td>
+                          <td class="px-3 py-2">{{ agente.formaActuacion }}</td>
+                          <td class="px-3 py-2 text-center">{{ agente.convenio }}</td>
+                          <td class="px-3 py-2 font-medium">{{ agente.nombre }}</td>
+                          <td class="px-3 py-2 text-center font-semibold">%{{ agente.participacion }}.00</td>
+                          <td class="px-3 py-2 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                              <button class="action-btn-circle action-btn-circle--edit" (click)="editarAgente(i)" title="Editar">
+                                <i class="fa-solid fa-pencil"></i>
+                              </button>
+                              <button class="action-btn-circle action-btn-circle--delete" (click)="eliminarAgente(i)" title="Eliminar">
+                                <i class="fa-solid fa-xmark"></i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+                  </div>
+
+              <!-- ========== SECCIÓN 3: Ubicación del Riesgo + Contragarantía ========== -->
+              <div class="section-wrapper" id="seccion-ubicacion">
+                <div class="section-block">
+                  <div class="section-block__header">
+                    <div class="icon-ring-bicolor">
+                      <i class="fa-solid fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="section-block__title">Ubicación del Riesgo</h3>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Departamento</label>
+                <div class="custom-dropdown" [class.open]="isDropdownOpen('departamento')">
+                  <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('departamento', $event)">
+                    <span>Cundinamarca</span>
+                  </button>
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('departamento')">
+                    <div class="custom-dropdown__option selected" (click)="toggleDropdown('departamento')">Cundinamarca</div>
+                    <div class="custom-dropdown__option" (click)="toggleDropdown('departamento')">Antioquia</div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Ciudad</label>
+                <div class="custom-dropdown" [class.open]="isDropdownOpen('ciudad')">
+                  <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('ciudad', $event)">
+                    <span>Bogotá</span>
+                  </button>
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('ciudad')">
+                    <div class="custom-dropdown__option selected" (click)="toggleDropdown('ciudad')">Bogotá</div>
+                    <div class="custom-dropdown__option" (click)="toggleDropdown('ciudad')">Medellín</div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group md:col-span-2">
+                <label class="sb-ui-label">Dirección del Riesgo</label>
+                      <input type="text" class="sb-ui-input" placeholder="Dirección completa" />
+                    </div>
+                  </div>
+
+                  <!-- Contragarantía (dentro de Ubicación del Riesgo) -->
+                  <div class="mt-6">
+                    <div class="section-block__header">
+                      <div class="icon-ring-bicolor">
+                        <i class="fa-solid fa-file-circle-plus"></i>
+                      </div>
+                      <h3 class="section-block__title">Contragarantía</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div class="form-group">
+                        <label class="sb-ui-label">Tipo Contragarantía</label>
+                        <div class="custom-dropdown" [class.open]="isDropdownOpen('tipoContragarantia')">
+                          <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoContragarantia', $event)">
+                            <span>{{ tipoContragarantia === '10' ? '10 - CERRADA' : tipoContragarantia === '20' ? '20 - ABIERTA' : 'Seleccione' }}</span>
+                          </button>
+                          <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoContragarantia')">
+                            <div class="custom-dropdown__option disabled">Seleccione</div>
+                            <div class="custom-dropdown__option" [class.selected]="tipoContragarantia === '10'" (click)="tipoContragarantia = '10'; toggleDropdown('tipoContragarantia')">10 - CERRADA</div>
+                            <div class="custom-dropdown__option" [class.selected]="tipoContragarantia === '20'" (click)="tipoContragarantia = '20'; toggleDropdown('tipoContragarantia')">20 - ABIERTA</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="sb-ui-label">Número Contragarantía</label>
+                        <input type="text" class="sb-ui-input" [(ngModel)]="numeroContragarantia" />
+              </div>
+                      </div>
+                    </div>
+
+                  <!-- Coaseguro (dentro de Ubicación del Riesgo) -->
+                  <div class="mt-6">
+                    <div class="section-block__header">
+                      <div class="icon-ring-bicolor">
+                        <i class="fa-solid fa-handshake"></i>
+                      </div>
+                      <h3 class="section-block__title">Coaseguro</h3>
+                    </div>
+                    
+                    <!-- Tipo Coaseguro - Radio Buttons -->
+                    <div class="form-group mb-4">
+                      <label class="sb-ui-label"><span class="text-red-500">*</span> Tipo Coaseguro</label>
+                      <div class="flex flex-wrap gap-6 mt-2">
+                        <label class="radio-option">
+                          <input type="radio" name="tipoCoaseguro" value="sin-coaseguro" [(ngModel)]="tipoCoaseguro" (ngModelChange)="onTipoCoaseguroChange()">
+                          <span class="radio-option__checkmark"></span>
+                          <span class="radio-option__label">Sin Coaseguro</span>
+                        </label>
+                        <label class="radio-option">
+                          <input type="radio" name="tipoCoaseguro" value="cedido" [(ngModel)]="tipoCoaseguro" (ngModelChange)="onTipoCoaseguroChange()">
+                          <span class="radio-option__checkmark"></span>
+                          <span class="radio-option__label">Cedido</span>
+                        </label>
+                        <label class="radio-option">
+                          <input type="radio" name="tipoCoaseguro" value="aceptado" [(ngModel)]="tipoCoaseguro" (ngModelChange)="onTipoCoaseguroChange()">
+                          <span class="radio-option__checkmark"></span>
+                          <span class="radio-option__label">Aceptado</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Coaseguro Cedido -->
+                    <div *ngIf="tipoCoaseguro === 'cedido'" class="coaseguro-subsection mt-4">
+                      <div class="coaseguro-subsection__header">
+                        <span>Coaseguro Cedido</span>
+                      </div>
+                      <div class="coaseguro-subsection__body">
+                        <button class="btn-adicionar-agente mb-4" (click)="abrirModalCoaseguroCedido()">
+                          <i class="fa-solid fa-plus"></i>
+                          Adicionar Coaseguro Cedido
+                        </button>
+                        
+                        <!-- Tabla de Coaseguros Cedidos -->
+                        <div *ngIf="coasegurosCedidos.length > 0" class="coaseguros-table-wrapper mt-4">
+                          <div class="coaseguros-table-scroll">
+                            <table class="coaseguros-table-full">
+                              <thead>
+                                <tr>
+                                  <th (click)="sortCoasegurosCedidos('coaseguradora')">
+                                    Coaseguradora <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('coaseguradora')"></i>
+                                  </th>
+                                  <th class="text-center" (click)="sortCoasegurosCedidos('participacion')">
+                                    %Part. <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('participacion')"></i>
+                                  </th>
+                                  <th class="text-center" (click)="sortCoasegurosCedidos('numeroPol')">
+                                    N° Póliza <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('numeroPol')"></i>
+                                  </th>
+                                  <th class="text-center" (click)="sortCoasegurosCedidos('certificado')">
+                                    Certificado <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('certificado')"></i>
+                                  </th>
+                                  <th class="text-center">Acciones</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let coaseguro of coasegurosCedidosPaginados; let i = index">
+                                  <td>{{ coaseguro.coaseguradora }}</td>
+                                  <td class="text-center">
+                                    <span *ngIf="coaseguro.participacion">%{{ coaseguro.participacion | number:'1.2-2' }}</span>
+                                  </td>
+                                  <td class="text-center">{{ coaseguro.numeroPol }}</td>
+                                  <td class="text-center">{{ coaseguro.certificado }}</td>
+                                  <td class="text-center">
+                                    <div class="action-btns" *ngIf="!coaseguro.esDefecto">
+                                      <button class="btn-edit" (click)="editarCoaseguroCedido(coaseguro.indexOriginal)" title="Editar">
+                                        <i class="fa-solid fa-pencil"></i>
+                                      </button>
+                                      <button class="btn-delete" (click)="eliminarCoaseguroCedido(coaseguro.indexOriginal)" title="Eliminar">
+                                        <i class="fa-solid fa-xmark"></i>
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Coaseguro Aceptado -->
+                    <div *ngIf="tipoCoaseguro === 'aceptado'" class="coaseguro-subsection mt-4">
+                      <div class="coaseguro-subsection__header">
+                        <span>Coaseguro Aceptado</span>
+                      </div>
+                      <div class="coaseguro-subsection__body">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div class="form-group">
+                            <label class="sb-ui-label"><span class="text-red-500">*</span> Coaseguradora</label>
+                            <div class="custom-dropdown" [class.open]="isDropdownOpen('coaseguroAceptado')">
+                              <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('coaseguroAceptado', $event)">
+                                <span>{{ coaseguroAceptadoCoaseguradora || 'Seleccione una opción' }}</span>
+                              </button>
+                              <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('coaseguroAceptado')">
+                                <div class="custom-dropdown__option disabled">Seleccione una opción</div>
+                                <div class="custom-dropdown__option" *ngFor="let c of listaCoaseguradoras" [class.selected]="coaseguroAceptadoCoaseguradora === c.nombre" (click)="coaseguroAceptadoCoaseguradora = c.nombre; toggleDropdown('coaseguroAceptado')">{{ c.nombre }}</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="sb-ui-label"><span class="text-red-500">*</span> Número Póliza</label>
+                            <input type="text" class="sb-ui-input" placeholder="Ingrese número de póliza" [(ngModel)]="coaseguroAceptadoNumeroPol" />
+                          </div>
+                          <div class="form-group">
+                            <label class="sb-ui-label">Certificado Modifica</label>
+                            <input type="text" class="sb-ui-input" placeholder="Ingrese certificado" [(ngModel)]="coaseguroAceptadoCertificado" />
+                          </div>
+                          <div class="form-group">
+                            <label class="sb-ui-label">Participación Bolívar</label>
+                            <div class="input-with-suffix">
+                              <input type="number" class="sb-ui-input" [(ngModel)]="coaseguroAceptadoParticipacion" />
+                              <span class="input-suffix">%</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ========== SECCIÓN 5: Detalles del Contrato ========== -->
+              <div class="section-wrapper" id="seccion-detalles">
+                <div class="section-block">
+                  <div class="section-block__header">
+                    <div class="icon-ring-bicolor">
+                      <i class="fa-solid fa-file-contract"></i>
+                    </div>
+                    <h3 class="section-block__title">Detalles del Contrato</h3>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="form-group">
+                      <label class="sb-ui-label">Tipo de contrato</label>
+                      <div class="custom-dropdown" [class.open]="isDropdownOpen('tipoContrato')">
+                        <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoContrato', $event)">
+                          <span>Contrato de Obra</span>
+                        </button>
+                        <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoContrato')">
+                          <div class="custom-dropdown__option disabled">Seleccione</div>
+                          <div class="custom-dropdown__option selected" (click)="toggleDropdown('tipoContrato')">Contrato de Obra</div>
+                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoContrato')">Contrato de Suministro</div>
+                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoContrato')">Prestación de Servicios</div>
+                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoContrato')">Consultoría</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Número de contrato</label>
+                      <input type="text" class="sb-ui-input bg-grayscaleL400" value="CONTRATO-SIM-789" readonly />
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Moneda</label>
+                      <div class="custom-dropdown" [class.open]="isDropdownOpen('moneda')">
+                        <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('moneda', $event)">
+                          <span>COP</span>
+                        </button>
+                        <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('moneda')">
+                          <div class="custom-dropdown__option selected" (click)="toggleDropdown('moneda')">COP</div>
+                          <div class="custom-dropdown__option" (click)="toggleDropdown('moneda')">USD</div>
+                        </div>
+                      </div>
+                    </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Valor del Contrato</label>
+                <div class="flex items-center gap-2">
+                  <input type="text" class="sb-ui-input flex-1" 
+                         [ngModel]="formatearNumero(valorContrato)" 
+                         (blur)="actualizarValorContrato($event)" />
+                  <button type="button" class="btn-minus" (click)="decrementarValorContrato()">−</button>
+                  <button type="button" class="btn-plus" (click)="incrementarValorContrato()">+</button>
+                </div>
+              </div>
+              <div class="form-group">
+                      <app-sb-calendar
+                        label="Fecha Inicio del Contrato"
+                        placeholder="Seleccione fecha de inicio"
+                        icon="fa-solid fa-calendar-alt"
+                        [(ngModel)]="fechaInicioContrato"
+                        (dateChange)="onFechaChange('inicio', $event)">
+                      </app-sb-calendar>
+                    </div>
+                    <div class="form-group">
+                      <app-sb-calendar
+                        label="Fecha Fin del Contrato"
+                        placeholder="Seleccione fecha de fin"
+                        icon="fa-solid fa-calendar-check"
+                        [(ngModel)]="fechaFinContrato"
+                        (dateChange)="onFechaChange('fin', $event)">
+                      </app-sb-calendar>
+                            </div>
+              <div class="form-group">
+                <label class="sb-ui-label">Duración del Contrato</label>
+                <input type="text" class="sb-ui-input bg-grayscaleL400" value="12 meses" readonly />
+                            </div>
+                    <div class="form-group md:col-span-3">
+                <label class="sb-ui-label">Objeto del contrato</label>
+                      <textarea class="sb-ui-input h-24 resize-none" [(ngModel)]="objetoContratoValue">Prestación de servicios de consultoría en cumplimiento normativo y asesoría legal para la implementación de políticas de cumplimiento empresarial, incluyendo la elaboración de manuales de procedimientos.</textarea>
+                    </div>
+                            </div>
+                            </div>
+          </div>
+
+              <!-- ========== SECCIÓN 7: Coberturas ========== -->
+              <div class="section-wrapper" id="seccion-coberturas">
+                <div class="mb-4">
+                  <h3 class="section-title-3d">
+                    <i class="fa-solid fa-shield-check text-primaryBase"></i>
+              Coberturas Cumplimiento
+            </h3>
+                  <div class="coberturas-header">
+                    <span class="coberturas-count">{{ coberturasCumplimiento.length }} elementos encontrados</span>
+                    <div class="coberturas-actions">
+                      <button class="btn-limpiar" (click)="limpiarSeleccionCoberturas()">
+                        <i class="fa-solid fa-times"></i> Limpiar
+                      </button>
+                      <button class="btn-actualizar" (click)="actualizarCoberturas()">
+                        <i class="fa-solid fa-sync-alt"></i> Actualizar
+                      </button>
+                      <button class="btn-liquidacion" (click)="liquidarPrima()">
+                        <i class="fa-solid fa-calculator"></i> Liquidación Prima
+                      </button>
+                      <button class="btn-agregar" (click)="guardarCoberturas()">
+                        <i class="fa-solid fa-save"></i> Guardar
+                      </button>
+              </div>
+            </div>
+                  <div class="table-container table-full-width">
+                    <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--compact coberturas-editable w-full">
+                <thead>
+                        <tr>
+                          <th class="text-center" style="width: 40px;">
+                            <input type="checkbox" class="sb-ui-checkbox" (change)="toggleTodasCoberturas($event)" />
+                          </th>
+                          <th style="min-width: 250px;">Coberturas</th>
+                          <th class="text-center" style="width: 100px;">% Aseg.</th>
+                          <th class="text-right" style="width: 160px;">Valor Aseg.</th>
+                          <th class="text-center" style="width: 100px;">Tasa</th>
+                          <th class="text-center" style="width: 110px;">F. Inicio</th>
+                          <th class="text-center" style="width: 110px;">T. Adic.</th>
+                          <th class="text-center" style="width: 110px;">F. Fin</th>
+                          <th class="text-center" style="width: 110px;">F. Venc.</th>
+                          <th class="text-right" style="width: 140px;">Prima</th>
+                        </tr>
+                </thead>
+                <tbody>
+                        <tr *ngFor="let cob of coberturasCumplimiento" [class.selected]="cob.seleccionada">
+                          <td class="text-center">
+                            <input type="checkbox" class="sb-ui-checkbox" [checked]="cob.seleccionada" (change)="toggleCobertura(cob)" />
+                          </td>
+                          <td class="font-medium cobertura-nombre">{{ cob.nombre }}</td>
+                          <td class="text-center">
+                            <input type="number" class="input-tabla-editable text-center" 
+                                   [(ngModel)]="cob.porcentaje" 
+                                   (input)="onCampoCoberturaCambio(cob)"
+                                   (blur)="onCampoCoberturaCambio(cob)" />
+                            <span class="input-suffix">%</span>
+                          </td>
+                          <td class="text-right">
+                            <input type="number" class="input-tabla-editable text-right valor-asegurado-input" 
+                                   [(ngModel)]="cob.valorAsegurado"
+                                   (input)="onCampoCoberturaCambio(cob)"
+                                   (blur)="onCampoCoberturaCambio(cob)" />
+                          </td>
+                          <td class="text-center">
+                            <input type="number" class="input-tabla-editable text-center" 
+                                   [(ngModel)]="cob.tasa"
+                                   (input)="onCampoCoberturaCambio(cob)"
+                                   (blur)="onCampoCoberturaCambio(cob)"
+                                   step="0.01" />
+                            <span class="input-suffix">%</span>
+                          </td>
+                          <td class="text-center calendar-cell-tabla">
+                            <app-sb-calendar
+                              [(ngModel)]="cob.fechaInicio"
+                              placeholder="Fecha"
+                              dateFormat="dd/mm/yy"
+                              icon="">
+                            </app-sb-calendar>
+                          </td>
+                          <td class="text-center">
+                            <input type="number" class="input-tabla-editable text-center tiempo-adicional-input" 
+                                   [(ngModel)]="cob.tiempoAdicional" 
+                                   (input)="onCampoCoberturaCambio(cob)"
+                                   (blur)="onCampoCoberturaCambio(cob)" />
+                          </td>
+                          <td class="text-center calendar-cell-tabla">
+                            <app-sb-calendar
+                              [(ngModel)]="cob.fechaFin"
+                              placeholder="Fecha"
+                              dateFormat="dd/mm/yy"
+                              icon="">
+                            </app-sb-calendar>
+                          </td>
+                          <td class="text-center calendar-cell-tabla">
+                            <app-sb-calendar
+                              [(ngModel)]="cob.fechaVencimiento"
+                              placeholder="Fecha"
+                              dateFormat="dd/mm/yy"
+                              icon="">
+                            </app-sb-calendar>
+                          </td>
+                          <td class="text-right prima-celda">
+                            <span class="valor-prima">{{ formatearNumero(cob.prima) }}</span>
+                          </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+                  <!-- Total Prima - Solo aparece al hacer clic en "Liquidación Prima" -->
+                  <div class="coberturas-total-section" *ngIf="mostrarTotalPrima">
+                    <div class="total-prima-box">
+                      <i class="fa-solid fa-calculator"></i>
+                      <span class="total-prima-label">Total Prima:</span>
+                      <span class="total-prima-value">{{ formatCurrency(totalPrimaLiquidada) }}</span>
+            </div>
+                    <span class="coberturas-seleccionadas-count">
+                      ({{ coberturasLiquidadas }} coberturas seleccionadas)
+                    </span>
+          </div>
+
+                  <!-- ✅ Resumen de cambios detectados -->
+                  <div class="cambios-detectados" *ngIf="mostrarCambios">
+                    <div class="cambios-header">
+                      <i class="fa-solid fa-clipboard-list"></i>
+                      <span>Cambios detectados en la reliquidación:</span>
+                    </div>
+                    <div class="cambios-lista">
+                      <!-- Coberturas NUEVAS agregadas -->
+                      <div class="cambio-item cambio-item--nueva" *ngFor="let nueva of coberturasNuevas">
+                        <div class="cambio-cobertura cambio-cobertura--nueva">
+                          <i class="fa-solid fa-plus-circle"></i>
+                          {{ nueva.nombre }}
+                          <span class="badge-nueva">NUEVA</span>
+                        </div>
+                        <ul class="cambio-detalles">
+                          <li>Prima agregada: {{ formatCurrency(nueva.prima) }}</li>
+                        </ul>
+                      </div>
+                      
+                      <!-- Coberturas REMOVIDAS -->
+                      <div class="cambio-item cambio-item--removida" *ngFor="let removida of coberturasRemovidas">
+                        <div class="cambio-cobertura cambio-cobertura--removida">
+                          <i class="fa-solid fa-minus-circle"></i>
+                          {{ removida.nombre }}
+                          <span class="badge-removida">REMOVIDA</span>
+                        </div>
+                        <ul class="cambio-detalles">
+                          <li>Prima removida: {{ formatCurrency(removida.prima) }}</li>
+                        </ul>
+                      </div>
+                      
+                      <!-- Coberturas MODIFICADAS -->
+                      <div class="cambio-item" *ngFor="let cambio of cambiosDetectados">
+                        <div class="cambio-cobertura">
+                          <i class="fa-solid fa-edit"></i>
+                          {{ cambio.nombre }}
+                          <span class="badge-modificada">MODIFICADA</span>
+                        </div>
+                        <ul class="cambio-detalles">
+                          <li *ngFor="let detalle of cambio.cambios">{{ detalle }}</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ========== SECCIÓN 8: Responsabilidad Civil ========== -->
+              <div class="section-wrapper" id="seccion-responsabilidad-civil">
+          <div class="mb-6">
+            <!-- Título con línea 3D -->
+            <h3 class="section-title-3d">
+              <input type="checkbox" [checked]="isRcSectionEnabled" (change)="onRcSectionToggle($event)" class="w-5 h-5 mr-3" />
+              <div class="icon-ring-bicolor">
+                <i class="fa-solid fa-file-contract"></i>
+              </div>
+              Habilitar Responsabilidad Civil
+            </h3>
+
+            <!-- Acordeón Detalles RC y Coberturas -->
+            <div *ngIf="isRcSectionEnabled" class="border border-grayscaleL200 rounded-lg">
+              <!-- Título con línea 3D -->
+              <h4 class="section-title-3d acordeon-header cursor-pointer" (click)="toggleRcAccordion()">
+                <div class="icon-ring-bicolor">
+                  <i class="fa-solid fa-file-alt"></i>
+                </div>
+                Detalles RC y Coberturas
+                <i class="fa-solid ml-auto" [class.fa-chevron-up]="rcAccordionOpen" [class.fa-chevron-down]="!rcAccordionOpen"></i>
+              </h4>
+
+              <div *ngIf="rcAccordionOpen" class="p-4">
+                <!-- Fechas RC -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div class="form-group">
+                          <app-sb-calendar
+                            label="Fecha Inicio RC"
+                            placeholder="Seleccione fecha de inicio"
+                            icon="fa-solid fa-calendar-alt"
+                            [(ngModel)]="fechaInicioRC"
+                            [disabled]="true"
+                            (dateChange)="onFechaChange('inicioRC', $event)">
+                          </app-sb-calendar>
+                            </div>
+                  <div class="form-group">
+                          <app-sb-calendar
+                            label="Fecha Fin RC"
+                            placeholder="Seleccione fecha de fin"
+                            icon="fa-solid fa-calendar-check"
+                            [(ngModel)]="fechaFinRC"
+                            (dateChange)="onFechaChange('finRC', $event)">
+                          </app-sb-calendar>
+                            </div>
+                            </div>
+
+                      <!-- Objeto del Contrato RC (sincronizado con Objeto del contrato) -->
+                <div class="form-group mb-6">
+                        <label class="sb-ui-label flex items-center gap-2">
+                          <i class="fa-solid fa-file-alt text-primaryBase"></i>
+                          Objeto del Contrato cumplimiento-Para RC
+                        </label>
+                        <textarea class="sb-ui-input h-32 resize-none bg-grayscaleL400" readonly>INDEMNIZAR LOS DAÑOS Y/O PERJUICIOS PATRIMONIALES Y EXTRAPATRIMONIALES QUE DERIVEN DE UN DAÑO FÍSICO Y/O MATERIAL IMPUTABLES AL TOMADOR Y/O ASEGURADO DE LA PÓLIZA, Y CAUSADOS POR LESIONES, MUERTE Y/O DAÑOS A LA PROPIEDAD DE TERCEROS Y DERIVADOS DE LA EJECUCIÓN DEL CONTRATO N° __________________ DE FECHA __________
+CUYO OBJETO ES ___________________
+
+TOMADOR/AFIANZADO:
+NIT:
+
+ASEGURADO/BENEFICIARIO:
+NIT:</textarea>
+                            </div>
+
+                <!-- Actividad económica contrato RC -->
+                <div class="form-group mb-6">
+                  <label class="sb-ui-label flex items-center gap-2">
+                    <i class="fa-solid fa-briefcase text-primaryBase"></i>
+                    Actividad económica contrato RC
+                  </label>
+                  <div class="custom-dropdown" [class.open]="isDropdownOpen('actividadEconomicaRC')">
+                    <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('actividadEconomicaRC', $event)">
+                      <span>{{ actividadEconomicaRC ? (actividadEconomicaRC + ' - ' + getActividadNombre(actividadEconomicaRC)) : 'Seleccione la actividad económica' }}</span>
+                      <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('actividadEconomicaRC')">
+                      <div class="custom-dropdown__option disabled">Seleccione la actividad económica</div>
+                      <div class="custom-dropdown__option" 
+                           *ngFor="let actividad of actividadesEconomicas" 
+                           [class.selected]="actividadEconomicaRC === actividad.codigo" 
+                           (click)="actividadEconomicaRC = actividad.codigo; toggleDropdown('actividadEconomicaRC')">
+                        {{ actividad.codigo }} - {{ actividad.nombre }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                      <!-- Coberturas RC - MISMO ESTILO QUE COBERTURAS CUMPLIMIENTO -->
+                      <h4 class="section-title-3d">
+                        <div class="icon-ring-bicolor">
+                          <i class="fa-solid fa-shield-check"></i>
+                        </div>
+                        Coberturas RC
+                      </h4>
+                      <div class="coberturas-header">
+                        <span class="coberturas-count">{{ rcCoberturas.length }} elementos encontrados</span>
+                        <div class="coberturas-actions">
+                          <button class="btn-limpiar" (click)="limpiarSeleccionRC()">
+                            <i class="fa-solid fa-times"></i> Limpiar
+                          </button>
+                          <button class="btn-actualizar" (click)="actualizarCoberturasRC()">
+                            <i class="fa-solid fa-sync-alt"></i> Actualizar
+                          </button>
+                          <button class="btn-liquidacion" (click)="liquidarPrimaRC()">
+                            <i class="fa-solid fa-calculator"></i> Liquidación Prima
+                          </button>
+                          <button class="btn-agregar" (click)="guardarCoberturasRC()">
+                            <i class="fa-solid fa-save"></i> Guardar
+                          </button>
+                        </div>
+                      </div>
+                      <div class="table-container table-full-width">
+                        <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--compact coberturas-editable w-full">
+                          <thead>
+                            <tr>
+                              <th class="text-center" style="width: 40px;">
+                                <input type="checkbox" class="sb-ui-checkbox" (change)="toggleTodasCoberturasRC($event)" />
+                              </th>
+                              <th style="min-width: 220px;">Coberturas RC</th>
+                              <th class="text-center" style="width: 100px;">% Aseg.</th>
+                              <th class="text-right" style="width: 160px;">Valor Aseg.</th>
+                              <th class="text-center" style="width: 100px;">Tasa</th>
+                              <th class="text-center" style="width: 110px;">F. Inicio</th>
+                              <th class="text-center" style="width: 110px;">T. Adic.</th>
+                              <th class="text-center" style="width: 110px;">F. Fin</th>
+                              <th class="text-center" style="width: 110px;">F. Venc.</th>
+                              <th class="text-right" style="width: 140px;">Prima</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let cob of rcCoberturas" [class.selected]="cob.seleccionada">
+                              <td class="text-center">
+                                <input type="checkbox" class="sb-ui-checkbox" [checked]="cob.seleccionada" (change)="toggleCoberturaRC(cob)" />
+                              </td>
+                              <td class="font-medium cobertura-nombre">{{ cob.nombre }}</td>
+                              <td class="text-center">
+                                <input type="number" class="input-tabla-editable text-center" 
+                                       [(ngModel)]="cob.porcentaje" 
+                                       (input)="onCampoRCCambio(cob)"
+                                       (blur)="onCampoRCCambio(cob)" />
+                                <span class="input-suffix">%</span>
+                              </td>
+                              <td class="text-right">
+                                <input type="number" class="input-tabla-editable text-right valor-asegurado-input" 
+                                       [(ngModel)]="cob.valorAsegurado"
+                                       (input)="onCampoRCCambio(cob)"
+                                       (blur)="onCampoRCCambio(cob)" />
+                              </td>
+                              <td class="text-center">
+                                <input type="number" class="input-tabla-editable text-center" 
+                                       [(ngModel)]="cob.tasa"
+                                       (input)="onCampoRCCambio(cob)"
+                                       (blur)="onCampoRCCambio(cob)"
+                                       step="0.01" />
+                                <span class="input-suffix">%</span>
+                              </td>
+                              <td class="text-center calendar-cell-tabla">
+                                <app-sb-calendar
+                                  [(ngModel)]="cob.fechaInicio"
+                                  placeholder="Fecha"
+                                  dateFormat="dd/mm/yy"
+                                  icon="">
+                                </app-sb-calendar>
+                              </td>
+                              <td class="text-center">
+                                <input type="number" class="input-tabla-editable text-center tiempo-adicional-input" 
+                                       [(ngModel)]="cob.tiempoAdicional" 
+                                       (input)="onCampoRCCambio(cob)"
+                                       (blur)="onCampoRCCambio(cob)" />
+                              </td>
+                              <td class="text-center calendar-cell-tabla">
+                                <app-sb-calendar
+                                  [(ngModel)]="cob.fechaFin"
+                                  placeholder="Fecha"
+                                  dateFormat="dd/mm/yy"
+                                  icon="">
+                                </app-sb-calendar>
+                              </td>
+                              <td class="text-center calendar-cell-tabla">
+                                <app-sb-calendar
+                                  [(ngModel)]="cob.fechaVencimiento"
+                                  placeholder="Fecha"
+                                  dateFormat="dd/mm/yy"
+                                  icon="">
+                                </app-sb-calendar>
+                              </td>
+                              <td class="text-right prima-celda">
+                                <span class="valor-prima">{{ formatearNumero(cob.prima) }}</span>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <!-- Total Prima RC - Solo aparece al hacer clic en "Liquidación Prima" -->
+                      <div class="coberturas-total-section" *ngIf="mostrarTotalPrimaRC">
+                        <div class="total-prima-box">
+                          <i class="fa-solid fa-calculator"></i>
+                          <span class="total-prima-label">Total Prima RC:</span>
+                          <span class="total-prima-value">{{ formatCurrency(totalPrimaLiquidadaRC) }}</span>
+                        </div>
+                        <span class="coberturas-seleccionadas-count">
+                          ({{ coberturasLiquidadasRC }} coberturas seleccionadas)
+                        </span>
+                      </div>
+
+                      <!-- ✅ Resumen de cambios detectados RC -->
+                      <div class="cambios-detectados" *ngIf="mostrarCambiosRC">
+                        <div class="cambios-header">
+                          <i class="fa-solid fa-clipboard-list"></i>
+                          <span>Cambios detectados en la reliquidación RC:</span>
+                        </div>
+                        <div class="cambios-lista">
+                          <!-- Coberturas RC NUEVAS agregadas -->
+                          <div class="cambio-item cambio-item--nueva" *ngFor="let nueva of coberturasNuevasRC">
+                            <div class="cambio-cobertura cambio-cobertura--nueva">
+                              <i class="fa-solid fa-plus-circle"></i>
+                              {{ nueva.nombre }}
+                              <span class="badge-nueva">NUEVA</span>
+                            </div>
+                            <ul class="cambio-detalles">
+                              <li>Prima agregada: {{ formatCurrency(nueva.prima) }}</li>
+                            </ul>
+                          </div>
+                          
+                          <!-- Coberturas RC REMOVIDAS -->
+                          <div class="cambio-item cambio-item--removida" *ngFor="let removida of coberturasRemovidasRC">
+                            <div class="cambio-cobertura cambio-cobertura--removida">
+                              <i class="fa-solid fa-minus-circle"></i>
+                              {{ removida.nombre }}
+                              <span class="badge-removida">REMOVIDA</span>
+                            </div>
+                            <ul class="cambio-detalles">
+                              <li>Prima removida: {{ formatCurrency(removida.prima) }}</li>
+                            </ul>
+                          </div>
+                          
+                          <!-- Coberturas RC MODIFICADAS -->
+                          <div class="cambio-item" *ngFor="let cambio of cambiosDetectadosRC">
+                            <div class="cambio-cobertura">
+                              <i class="fa-solid fa-edit"></i>
+                              {{ cambio.nombre }}
+                            </div>
+                            <ul class="cambio-detalles">
+                              <li *ngFor="let detalle of cambio.cambios">{{ detalle }}</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de Navegación -->
+          <div class="policy-input__actions mt-6 sm:mt-8">
+            <div class="flex justify-between">
+              <button class="btn-anterior" (click)="previousStep()">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Anterior
+              </button>
+              <button class="btn-siguiente" (click)="nextStep()">
+                Siguiente <i class="fa-solid fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FIN PASO 2 - INICIO PASO 3 -->
+
+        <!-- ✅ Paso 3: CARDS CON ICONOS BICOLOR Y LINEA GRADIENTE -->
+        <div *ngIf="currentStep === 2" class="step3-bolivar">
+          
+          <!-- CUPO DISPONIBLE - ARRIBA -->
+          <div class="s3-card s3-card--wide">
+            <div class="s3-card__header">
+              <div class="icon-ring-bicolor"><i class="fa-solid fa-wallet"></i></div>
+              <h3>Cupo Disponible del Cliente</h3>
+              <span class="s3-card__value-big">$100.000.000</span>
+            </div>
+          </div>
+
+          <!-- FILA: Cotización + Valor Contrato -->
+          <div class="s3-row">
+            <div class="s3-card">
+              <div class="s3-card__header">
+                <div class="icon-ring-bicolor"><i class="fa-solid fa-file-invoice"></i></div>
+                <h3>2025001234</h3>
+              </div>
+              <div class="s3-card__body">
+                <div class="s3-item"><span class="lbl">Estado:</span><span class="val"></span></div>
+                <div class="s3-item"><span class="lbl">Fecha:</span><span class="val">19/12/2025</span></div>
+                <div class="s3-item"><span class="lbl">Producto:</span><span class="val">Grandes Beneficiarios</span></div>
+              </div>
+            </div>
+            <div class="s3-card">
+              <div class="s3-card__header">
+                <div class="icon-ring-bicolor"><i class="fa-solid fa-dollar-sign"></i></div>
+                <h3>Valor del Contrato</h3>
+              </div>
+              <div class="s3-card__body s3-card__body--center">
+                <span class="s3-big-number">{{ formatCurrency(valorContrato) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- FILA: Tomador + Asegurado -->
+          <div class="s3-row">
+            <div class="s3-card">
+              <div class="s3-card__header">
+                <div class="icon-ring-bicolor"><i class="fa-solid fa-user-tie"></i></div>
+                <h3>Tomador</h3>
+              </div>
+              <div class="s3-card__body">
+                <div class="s3-item"><span class="lbl">NIT:</span><span class="val mono">900.123.456-7</span></div>
+                <div class="s3-item"><span class="val bold">Empresa Tomadora Simulada S.A.S.</span></div>
+              </div>
+            </div>
+            <div class="s3-card">
+              <div class="s3-card__header">
+                <div class="icon-ring-bicolor"><i class="fa-solid fa-building-shield"></i></div>
+                <h3>Asegurado</h3>
+              </div>
+              <div class="s3-card__body">
+                <div class="s3-item"><span class="lbl">NIT:</span><span class="val mono">800.987.654-3</span></div>
+                <div class="s3-item"><span class="val bold">Asegurado Principal de Ejemplo Ltda.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detalles Contrato -->
+          <div class="s3-card s3-card--wide">
+            <div class="s3-card__header">
+              <div class="icon-ring-bicolor"><i class="fa-solid fa-file-contract"></i></div>
+              <h3>Detalles del Contrato</h3>
+            </div>
+            <div class="s3-card__body s3-card__body--inline">
+              <div class="s3-item"><span class="lbl">Fecha Inicio:</span><span class="val">01/08/2024</span></div>
+              <div class="s3-item"><span class="lbl">Fecha Fin:</span><span class="val">31/07/2025</span></div>
+              <div class="s3-item"><span class="lbl">Duración:</span><span class="val">12 meses</span></div>
+              <div class="s3-item"><span class="lbl">Moneda:</span><span class="val">COP</span></div>
+              <div class="s3-item"><span class="lbl">Valor Contrato:</span><span class="val green">{{ formatCurrency(valorContrato) }}</span></div>
+            </div>
+          </div>
+
+          <!-- ✅ AGENTES - Solo si hay intermediario o agentes adicionales -->
+          <div *ngIf="claveIntermediario || agentesAdicionales.length > 0" class="s3-card s3-card--wide">
+            <div class="s3-card__header">
+              <div class="icon-ring-bicolor"><i class="fa-solid fa-user-tie"></i></div>
+              <h3>Agentes</h3>
+              <span *ngIf="agentesAdicionales.length > 0" class="s3-badge">{{ agentesAdicionales.length + 1 }}</span>
+            </div>
+            <div class="s3-card__body s3-card__body--table">
+              <table class="s3-table">
+                <thead>
+                  <tr>
+                    <th style="text-align: left;">Clave</th>
+                    <th style="text-align: left;">Nombre</th>
+                    <th style="text-align: center;">Forma Actuación</th>
+                    <th style="text-align: center;">Participación</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Agente Líder -->
+                  <tr *ngIf="claveIntermediario">
+                    <td><strong>{{ claveIntermediario }}</strong></td>
+                    <td>{{ nombreIntermediario }}</td>
+                    <td class="center">Líder</td>
+                    <td class="center">{{ 100 - getTotalParticipacionAgentes() }}%</td>
+                  </tr>
+                  <!-- Agentes Adicionales -->
+                  <tr *ngFor="let agente of agentesAdicionales">
+                    <td>{{ agente.clave }}</td>
+                    <td>{{ agente.nombre }}</td>
+                    <td class="center">{{ agente.formaActuacion }}</td>
+                    <td class="center">{{ agente.participacion }}%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ✅ COASEGURO - Solo si NO es "sin-coaseguro" -->
+          <div *ngIf="tipoCoaseguro !== 'sin-coaseguro'" class="s3-card s3-card--wide">
+            <div class="s3-card__header">
+              <div class="icon-ring-bicolor"><i class="fa-solid fa-handshake"></i></div>
+              <h3>Coaseguro {{ tipoCoaseguro === 'cedido' ? 'Cedido' : 'Aceptado' }}</h3>
+            </div>
+            <div class="s3-card__body s3-card__body--table">
+              <!-- Coaseguro Cedido -->
+              <table *ngIf="tipoCoaseguro === 'cedido'" class="s3-table">
+                <thead>
+                  <tr>
+                    <th style="text-align: left;">Coaseguradora</th>
+                    <th style="text-align: center;">Participación</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let coa of coasegurosCedidos">
+                    <td><strong>{{ coa.coaseguradora }}</strong></td>
+                    <td class="center">{{ coa.participacion }}%</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td style="text-align: right; font-weight: 600;">TOTAL:</td>
+                    <td class="center s3-total">{{ getTotalParticipacionCoaseguro() }}%</td>
+                  </tr>
+                </tfoot>
+              </table>
+              <!-- Coaseguro Aceptado -->
+              <div *ngIf="tipoCoaseguro === 'aceptado'" class="s3-card__body--inline">
+                <div class="s3-item"><span class="lbl">Coaseguradora:</span><span class="val">{{ coaseguroAceptadoCoaseguradora }}</span></div>
+                <div class="s3-item"><span class="lbl">N° Póliza:</span><span class="val">{{ coaseguroAceptadoNumeroPol }}</span></div>
+                <div class="s3-item"><span class="lbl">Certificado:</span><span class="val">{{ coaseguroAceptadoCertificado }}</span></div>
+                <div class="s3-item"><span class="lbl">Participación:</span><span class="val green">{{ coaseguroAceptadoParticipacion }}%</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coberturas Cumplimiento -->
+          <div class="s3-card s3-card--wide">
+            <div class="s3-card__header">
+              <div class="icon-ring-bicolor"><i class="fa-solid fa-shield-check"></i></div>
+              <h3>Coberturas Cumplimiento</h3>
+              <span class="s3-badge">{{ getCoberturasSeleccionadasCount() }}</span>
+            </div>
+            <div class="s3-card__body s3-card__body--table">
+              <table class="s3-table s3-table--coberturas">
+                <thead>
+                  <tr>
+                    <th style="width: 35%; text-align: left;">COBERTURA</th>
+                    <th style="width: 10%; text-align: center;">%</th>
+                    <th style="width: 18%; text-align: right;">VALOR ASEG.</th>
+                    <th style="width: 12%; text-align: center;">INICIO</th>
+                    <th style="width: 12%; text-align: center;">VENCE</th>
+                    <th style="width: 13%; text-align: right;">PRIMA</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let cob of coberturasCumplimiento">
+                    <tr *ngIf="cob.seleccionada">
+                      <td style="text-align: left;"><strong>{{ cob.nombre }}</strong></td>
+                      <td style="text-align: center;">{{ cob.porcentaje }}%</td>
+                      <td style="text-align: right;">{{ formatCurrency(cob.valorAsegurado) }}</td>
+                      <td style="text-align: center;">{{ cob.fechaInicio | date:'dd/MM/yy' }}</td>
+                      <td style="text-align: center;">{{ cob.fechaVencimiento | date:'dd/MM/yy' }}</td>
+                      <td style="text-align: right;" class="green bold">{{ formatCurrency(cob.prima) }}</td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="5" style="text-align: right; font-weight: 600;">TOTAL:</td>
+                    <td style="text-align: right;" class="s3-total">{{ formatCurrency(getTotalPrimaCumplimiento()) }}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <!-- Coberturas RC -->
+          <div class="s3-card s3-card--wide">
+            <div class="s3-card__header">
+              <div class="icon-ring-bicolor"><i class="fa-solid fa-user-shield"></i></div>
+              <h3>Coberturas RC</h3>
+              <span class="s3-badge">9</span>
+            </div>
+            <div class="s3-card__body s3-card__body--table">
+              <table class="s3-table">
+                <thead>
+                  <tr><th>Cobertura</th><th>%</th><th>Valor</th><th>Tasa</th><th>Inicio</th><th>Vence</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>PATRONAL VIGENCIA</strong></td><td class="center">100%</td><td class="right">$150.000.000</td><td class="center">1.95%</td><td class="center">01/08/24</td><td class="center">30/08/25</td></tr>
+                  <tr><td><strong>CONTRATISTA</strong></td><td class="center">100%</td><td class="right">$150.000.000</td><td class="center">2.15%</td><td class="center">01/08/24</td><td class="center">30/08/25</td></tr>
+                  <tr><td><strong>GASTOS MÉDICOS</strong></td><td class="center">100%</td><td class="right">$150.000.000</td><td class="center">1.75%</td><td class="center">01/08/24</td><td class="center">30/08/25</td></tr>
+                  <tr><td><strong>CONTAMINACIÓN</strong></td><td class="center">100%</td><td class="right">$150.000.000</td><td class="center">2.45%</td><td class="center">01/08/24</td><td class="center">30/08/25</td></tr>
+                  <tr><td><strong>CRUZADA</strong></td><td class="center">100%</td><td class="right">$150.000.000</td><td class="center">2.25%</td><td class="center">01/08/24</td><td class="center">30/08/25</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Prima Total -->
+          <div class="s3-card s3-card--wide s3-card--confirm">
+            <div class="s3-card__header">
+              <div class="icon-ring-bicolor"><i class="fa-solid fa-circle-check"></i></div>
+              <h3>¡Listo para {{ selectedAction === 'emitir' ? 'emitir' : 'cotizar' }}!</h3>
+              <div class="s3-prima-total">
+                <span>PRIMA TOTAL</span>
+                <strong>{{ formatCurrency(getTotalPrimaSeleccionadas()) }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de navegación para paso 3 -->
+          <div class="policy-input__actions mt-6 sm:mt-8">
+            <div class="flex justify-between">
+              <button class="btn-anterior"
+                      (click)="previousStep()">
+                <i class="fa-solid fa-arrow-left"></i>
+                Anterior
+              </button>
+              <div class="flex space-x-3">
+                <button class="btn-quiero-emitir"
+                        (click)="onQuieroEmitir()">
+                  <i class="fa-solid fa-file-alt"></i>
+                  Quiero Emitir
+                </button>
+                <button class="btn-generar-cotizacion"
+                        (click)="onGenerarCotizacion()">
+                  <i class="fa-solid fa-calculator"></i>
+                  Generar Cotización
+                </button>
+              </div>
+            </div>
+          </div>
+            </div>
+          </div>
+        </div>
+    <!-- ✅ Cierre del formulario principal condicional -->
+      </div>
+    </div>
+
+<!-- ✅ Toast de éxito CENTRADO para Generar Emisión/Cotización -->
+<div *ngIf="showSuccessToast" class="toast-overlay" (click)="hideSuccessToast()">
+  <div class="toast-centered" (click)="$event.stopPropagation()">
+    <!-- Icono animado de éxito -->
+    <div class="toast-centered__icon">
+      <div class="toast-centered__icon-ring">
+        <i class="fa-solid fa-check"></i>
+      </div>
+    </div>
+    <!-- Mensaje -->
+    <div class="toast-centered__message">
+      {{ successToastMessage }}
+    </div>
+    <!-- Barra de progreso -->
+    <div class="toast-centered__progress"></div>
+  </div>
+</div>
+
+<!-- ✅ Vista de Resumen de Cotización - Modal centrado con botones fijos -->
+<div *ngIf="showQuoteSummary" class="quote-summary-overlay" (click)="closeQuoteSummary()">
+  <div class="quote-summary-modal" (click)="$event.stopPropagation()">
+    <!-- Botón cerrar -->
+    <button class="quote-summary-close" (click)="closeQuoteSummary()">
+      <i class="fa-solid fa-times text-2xl"></i>
+    </button>
+    
+    <!-- Header del resumen (fijo arriba) -->
+    <div class="quote-summary-header">
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <i class="fa-solid fa-eye text-2xl text-primaryBase"></i>
+        <h2 class="text-2xl font-bold text-grayscaleBlack">Resumen de Cotización</h2>
+      </div>
+      <p class="text-grayscaleD200 mb-6 text-center">
+        Revisa todos los detalles de la cotización seleccionada.
+      </p>
+    </div>
+
+    <!-- Contenido del resumen - SCROLLABLE con estilo Paso 3 -->
+    <div class="quote-summary-body paso3-profesional">
+      
+      <!-- ✅ Fila 1: Código Cotización + Valor Asegurado (lado a lado) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+        <!-- Card: Código de Cotización -->
+        <div class="card-3d">
+          <div class="card-3d__header">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-file-invoice"></i>
+            </div>
+            <h3 class="card-3d__title">{{ quoteSummaryData?.quoteNumber }}</h3>
+          </div>
+          <div class="card-3d__body">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm text-gray-500">Estado:</span>
+              <span class="text-sm font-semibold text-primaryBase">{{ quoteSummaryData?.status }}</span>
+            </div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm text-gray-500">Fecha de creación:</span>
+              <span class="text-sm text-gray-700">{{ quoteSummaryData?.creationDate }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-500">Producto:</span>
+              <span class="text-sm text-gray-700">{{ quoteSummaryData?.product }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Valor Asegurado -->
+        <div class="card-3d">
+          <div class="card-3d__header">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-dollar-sign"></i>
+            </div>
+            <h3 class="card-3d__title">Valor Asegurado</h3>
+          </div>
+          <div class="card-3d__body card-3d__body--center">
+            <span class="card-3d__value">$ {{ quoteSummaryData?.insuredValue?.toLocaleString() }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Cupo Disponible del Cliente (ancho completo) -->
+      <div class="card-3d card-3d--full-width mb-3">
+        <div class="card-3d__header">
+          <div class="icon-ring-bicolor">
+            <i class="fa-solid fa-credit-card"></i>
+          </div>
+          <h3 class="card-3d__title">Cupo Disponible del Cliente</h3>
+        </div>
+        <div class="card-3d__body card-3d__body--inline">
+          <span class="card-3d__value">$ {{ quoteSummaryData?.availableCredit?.toLocaleString() }}</span>
+        </div>
+      </div>
+
+      <!-- ✅ Datos Generales Póliza - Card 3D -->
+      <div class="card-3d card-3d--full-width mb-3">
+        <div class="card-3d__header">
+          <div class="icon-ring-bicolor">
+            <i class="fa-solid fa-file-contract"></i>
+          </div>
+          <h3 class="card-3d__title">Datos Generales Póliza</h3>
+        </div>
+        <div class="card-3d__body">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div class="card-3d__field">
+              <span class="card-3d__field-label">Número de contrato</span>
+              <span class="card-3d__field-value">{{ quoteSummaryData?.contractNumber }}</span>
+            </div>
+            <div class="card-3d__field">
+              <span class="card-3d__field-label">Tipo Doc. Tomador</span>
+              <span class="card-3d__field-value">{{ quoteSummaryData?.documentType }}</span>
+            </div>
+            <div class="card-3d__field">
+              <span class="card-3d__field-label">Nombre del Tomador</span>
+              <span class="card-3d__field-value">{{ quoteSummaryData?.clientName }}</span>
+            </div>
+            <div class="card-3d__field">
+              <span class="card-3d__field-label">Nro. Doc. Tomador</span>
+              <span class="card-3d__field-value">{{ quoteSummaryData?.clientDocument }}</span>
+            </div>
+            <div class="card-3d__field">
+              <span class="card-3d__field-label">Moneda</span>
+              <span class="card-3d__field-value">{{ quoteSummaryData?.currency }}</span>
+            </div>
+            <div class="card-3d__field">
+              <span class="card-3d__field-label">Tipo Doc. Asegurado</span>
+              <span class="card-3d__field-value">{{ quoteSummaryData?.insuredDocumentType }}</span>
+            </div>
+            <div class="card-3d__field">
+              <span class="card-3d__field-label">Nro. Doc. Asegurado</span>
+              <span class="card-3d__field-value">{{ quoteSummaryData?.insuredDocumentNumber }}</span>
+            </div>
+            <div class="card-3d__field">
+              <span class="card-3d__field-label">Nombre Asegurado</span>
+              <span class="card-3d__field-value">{{ quoteSummaryData?.insuredName }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Ubicación del Riesgo - Card 3D -->
+      <div class="card-3d card-3d--full-width mb-3">
+        <div class="card-3d__header">
+          <div class="icon-ring-bicolor">
+            <i class="fa-solid fa-map-marker-alt"></i>
+          </div>
+          <h3 class="card-3d__title">Ubicación del Riesgo</h3>
+        </div>
+        <div class="card-3d__body card-3d__body--inline">
+          <div class="card-3d__field">
+            <span class="card-3d__field-label">Departamento</span>
+            <span class="card-3d__field-value">{{ quoteSummaryData?.department }}</span>
+          </div>
+          <div class="card-3d__field">
+            <span class="card-3d__field-label">Localidad / Municipio</span>
+            <span class="card-3d__field-value">{{ quoteSummaryData?.localityMunicipality }}</span>
+          </div>
+          <div class="card-3d__field">
+            <span class="card-3d__field-label">Dirección del Riesgo</span>
+            <span class="card-3d__field-value">{{ quoteSummaryData?.riskAddress }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Detalles del Contrato - Card 3D horizontal -->
+      <div class="card-3d card-3d--full-width mb-3">
+        <div class="card-3d__header">
+          <div class="icon-ring-bicolor">
+            <i class="fa-solid fa-handshake"></i>
+          </div>
+          <h3 class="card-3d__title">Detalles del Contrato</h3>
+        </div>
+        <div class="card-3d__body card-3d__body--inline">
+          <div class="card-3d__field">
+            <span class="card-3d__field-label">Valor del Contrato</span>
+            <span class="card-3d__field-value font-bold text-primaryBase">$ {{ quoteSummaryData?.contractValue?.toLocaleString() }}</span>
+          </div>
+          <div class="card-3d__field">
+            <span class="card-3d__field-label">Fecha Inicio</span>
+            <span class="card-3d__field-value">{{ quoteSummaryData?.contractStartDate }}</span>
+          </div>
+          <div class="card-3d__field">
+            <span class="card-3d__field-label">Duración</span>
+            <span class="card-3d__field-value">{{ quoteSummaryData?.contractDuration }} meses</span>
+          </div>
+          <div class="card-3d__field">
+            <span class="card-3d__field-label">Fecha Fin</span>
+            <span class="card-3d__field-value">{{ quoteSummaryData?.contractEndDate }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Coberturas de Cumplimiento - Card 3D con tabla -->
+      <div class="card-3d card-3d--full-width mb-3">
+        <div class="card-3d__header">
+          <div class="icon-ring-bicolor">
+            <i class="fa-solid fa-clipboard-check"></i>
+          </div>
+          <h3 class="card-3d__title">Coberturas Cumplimiento</h3>
+        </div>
+        <div class="card-3d__body card-3d__body--table">
+          <div class="overflow-x-auto">
+            <table class="tabla-resumen">
+              <thead>
+                <tr>
+                  <th class="text-left">Cobertura</th>
+                  <th class="text-center">%</th>
+                  <th class="text-right">Valor Asegurado</th>
+                  <th class="text-center">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let coverage of quoteSummaryData?.complianceCoverages">
+                  <td>{{ coverage.name }}</td>
+                  <td class="text-center">{{ coverage.percentage }}%</td>
+                  <td class="text-right font-bold text-primaryBase">$ {{ coverage.value?.toLocaleString() }}</td>
+                  <td class="text-center"><span class="badge-activo">{{ coverage.status }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Coberturas RC - Card 3D con tabla -->
+      <div class="card-3d card-3d--full-width mb-3">
+        <div class="card-3d__header">
+          <div class="icon-ring-bicolor">
+            <i class="fa-solid fa-shield-alt"></i>
+          </div>
+          <h3 class="card-3d__title">Responsabilidad Civil</h3>
+        </div>
+        <div class="card-3d__body card-3d__body--table">
+          <div class="overflow-x-auto">
+            <table class="tabla-resumen">
+              <thead>
+                <tr>
+                  <th class="text-left">Cobertura</th>
+                  <th class="text-center">%</th>
+                  <th class="text-right">Valor Asegurado</th>
+                  <th class="text-center">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let coverage of quoteSummaryData?.rcCoverages">
+                  <td>{{ coverage.name }}</td>
+                  <td class="text-center">{{ coverage.percentage }}%</td>
+                  <td class="text-right font-bold text-primaryBase">$ {{ coverage.value?.toLocaleString() }}</td>
+                  <td class="text-center"><span class="badge-activo">{{ coverage.status }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Resumen de Costos - Card 3D destacada -->
+      <div class="card-3d card-3d--full-width card-3d--highlight">
+        <div class="card-3d__header">
+          <div class="icon-ring-bicolor">
+            <i class="fa-solid fa-calculator"></i>
+          </div>
+          <h3 class="card-3d__title">Resumen de Costos</h3>
+        </div>
+        <div class="card-3d__body card-3d__body--inline card-3d__body--costos">
+          <div class="card-3d__field text-center">
+            <span class="card-3d__field-label">Prima Neta</span>
+            <span class="card-3d__field-value text-lg font-bold">{{ getPrimaNeta() }}</span>
+          </div>
+          <div class="card-3d__field text-center">
+            <span class="card-3d__field-label">IVA (19%)</span>
+            <span class="card-3d__field-value text-lg font-bold">{{ getIVA() }}</span>
+          </div>
+          <div class="card-3d__field text-center card-3d__field--total">
+            <span class="card-3d__field-label">Prima Total</span>
+            <span class="card-3d__field-value text-2xl font-bold text-primaryBase">{{ getPrimaTotal() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de acción - FIJOS en la parte inferior -->
+    <div class="quote-summary-footer">
+      <button class="quote-summary-btn-volver"
+              (click)="closeQuoteSummary()">
+        <i class="fa-solid fa-arrow-left mr-2"></i>
+        Volver
+      </button>
+      <button class="quote-summary-btn-emitir"
+              (click)="onGenerarEmision()">
+        Generar Emisión
+        <i class="fa-solid fa-paper-plane ml-2"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Éxito - Compacto y fluido -->
+<div *ngIf="showSuccessModal" class="modal-overlay" (click)="closeSuccessModal()">
+  <div class="modal-success" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="closeSuccessModal()">
+      <i class="fa-solid fa-times"></i>
+    </button>
+    <div class="modal-success__body">
+      <!-- Icono central estilo Seguros Bolívar -->
+      <div class="success-icon-container">
+        <div class="success-icon-ring">
+          <i class="fa-solid fa-check"></i>
+        </div>
+      </div>
+      <!-- Título -->
+      <h3 class="success-title">¡Procesamiento completado exitosamente!</h3>
+      <!-- Mensaje -->
+      <p class="success-message">La información del contrato ha sido cargada automáticamente en el formulario.</p>
+    </div>
+    <div class="modal-success__footer">
+      <button class="btn-anterior" (click)="closeSuccessModal()">
+        Regresar
+      </button>
+      <button class="btn-continuar-icon" (click)="acceptSuccessModal()">
+        <i class="fa-solid fa-check"></i>
+        Continuar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Botón de ayuda flotante - como versión 15 -->
+<button class="btn-help-float" (click)="openHelp()">
+  <i class="fa-solid fa-circle-question"></i>
+  <span>¿Necesitas ayuda?</span>
+</button>
+
+<!-- ✅ Modal: Tomador no creado -->
+<div *ngIf="showClienteNoCreado" class="modal-overlay" (click)="closeClienteNoCreado()">
+  <div class="modal-cliente" (click)="$event.stopPropagation()">
+    <div class="modal-cliente__header">
+      <h2 class="modal-cliente__title">Tomador no creado</h2>
+      <button class="modal-cliente__close" (click)="closeClienteNoCreado()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-cliente__body">
+      <!-- Icono SIN fondo -->
+      <div class="modal-cliente__icon-row">
+        <i class="fa-solid fa-user-plus modal-cliente__icon--no-bg"></i>
+        <h3 class="modal-cliente__subtitle">Tomador no creado</h3>
+      </div>
+      <p class="modal-cliente__description">
+        Ingresa los datos solicitados para comenzar el registro del tomador.
+      </p>
+      <div class="modal-cliente__form">
+        <div class="form-group">
+          <label class="sb-ui-label">Número celular del tomador</label>
+          <input type="tel" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el número de celular del tomador"
+                 [(ngModel)]="celularCliente" />
+      </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Correo del tomador</label>
+          <input type="email" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el correo electrónico del tomador"
+                 [(ngModel)]="correoTomador" />
+      </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Número celular del asesor</label>
+          <input type="tel" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el número de celular del asesor"
+                 [(ngModel)]="celularAsesor" />
+    </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Correo del asesor</label>
+          <input type="email" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el correo electrónico del asesor"
+                 [(ngModel)]="correoAsesor" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-cliente__footer modal-cliente__footer--2-buttons">
+      <button class="btn-anterior" (click)="regresarPasoUno()">
+        <i class="fa-solid fa-arrow-left"></i>
+        Regresar
+      </button>
+      <button class="btn-agregar" (click)="crearCliente()">
+        <i class="fa-solid fa-user-plus"></i>
+        Crear tomador
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Modal: SARLAFT desactualizado -->
+<div *ngIf="showSarlaftDesactualizado" class="modal-overlay" (click)="closeSarlaftDesactualizado()">
+  <div class="modal-cliente" (click)="$event.stopPropagation()">
+    <div class="modal-cliente__header">
+      <h2 class="modal-cliente__title text-warningBase">El tomador tiene sarlaft desactualizado</h2>
+      <button class="modal-cliente__close" (click)="closeSarlaftDesactualizado()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-cliente__body">
+      <!-- Icono SVG personalizado: Persona con documento -->
+      <div class="modal-cliente__icon-center">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Persona (cabeza) -->
+          <circle cx="50" cy="20" r="10" fill="#4B5563" stroke="#374151" stroke-width="2"/>
+          <!-- Persona (cuerpo) -->
+          <path d="M35 45 C35 35, 65 35, 65 45 L65 55 C65 58, 62 60, 58 60 L42 60 C38 60, 35 58, 35 55 Z" fill="#4B5563" stroke="#374151" stroke-width="2"/>
+          <!-- Documento/Portapapeles -->
+          <rect x="12" y="25" width="28" height="38" rx="3" fill="#ffffff" stroke="#038450" stroke-width="2"/>
+          <!-- Clip del portapapeles -->
+          <rect x="20" y="22" width="12" height="6" rx="2" fill="#FFE16F" stroke="#038450" stroke-width="1.5"/>
+          <!-- Líneas del documento -->
+          <line x1="18" y1="38" x2="34" y2="38" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+          <line x1="18" y1="45" x2="34" y2="45" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+          <line x1="18" y1="52" x2="28" y2="52" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+          <!-- Check verde -->
+          <circle cx="32" cy="55" r="8" fill="#038450"/>
+          <path d="M28 55 L31 58 L37 51" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h3 class="modal-cliente__subtitle text-center">El tomador tiene sarlaft desactualizado</h3>
+      <p class="modal-cliente__description">
+        Ingresa la siguiente información para iniciar actualización en línea.
+      </p>
+      <div class="modal-cliente__form">
+        <div class="form-group">
+          <label class="sb-ui-label">Número celular del tomador</label>
+          <input type="tel" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el número de celular del tomador"
+                 [(ngModel)]="celularCliente" />
+      </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Correo del tomador</label>
+          <input type="email" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el correo electrónico del tomador"
+                 [(ngModel)]="correoTomador" />
+      </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Número celular del asesor</label>
+          <input type="tel" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el número de celular del asesor"
+                 [(ngModel)]="celularAsesor" />
+        </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Correo del asesor</label>
+          <input type="email" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el correo electrónico del asesor"
+                 [(ngModel)]="correoAsesor" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-cliente__footer" [class.modal-cliente__footer--3-buttons]="selectedAction === 'cotizar'" [class.modal-cliente__footer--2-buttons]="selectedAction === 'emitir'">
+      <button class="btn-anterior" (click)="regresarPasoUnoSarlaft()">
+        <i class="fa-solid fa-arrow-left"></i>
+        Regresar
+      </button>
+      <!-- En COTIZAR: Mostrar botón Actualizar + Continuar -->
+      <ng-container *ngIf="selectedAction === 'cotizar'">
+        <button class="btn-actualizar-sarlaft" (click)="actualizarSarlaft()">
+          <i class="fa-solid fa-sync"></i>
+          Actualizar
+        </button>
+        <button class="btn-agregar" (click)="continuarActualizacionSarlaft()">
+          Continuar
+          <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+      </ng-container>
+      <!-- En EMITIR: Solo botón Actualizar (NO permite avanzar) -->
+      <button *ngIf="selectedAction === 'emitir'" class="btn-agregar" (click)="actualizarSarlaft()">
+        Actualizar
+        <i class="fa-solid fa-sync ml-2"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Modal: Solicitar Cupo (cuando el tomador no tiene cupo disponible) -->
+<div *ngIf="showSolicitarCupo" class="modal-overlay" (click)="closeSolicitarCupo()">
+  <div class="modal-cliente modal-cliente--large" (click)="$event.stopPropagation()">
+    <div class="modal-cliente__header">
+      <h2 class="modal-cliente__title">Solicitar Cupo</h2>
+      <button class="modal-cliente__close" (click)="closeSolicitarCupo()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-cliente__body">
+      <p class="modal-cliente__description">
+        Por favor, cargue los estados financieros y seleccione la actividad económica del tomador.
+      </p>
+      
+      <div class="modal-cliente__form">
+        <!-- Campo: Cargar Estados Financieros -->
+        <div class="form-group">
+          <label class="sb-ui-label">
+            <i class="fa-solid fa-file-invoice-dollar mr-1"></i>
+            Estados Financieros *
+          </label>
+          
+          <!-- Área de carga de archivo -->
+          <div *ngIf="!estadosFinancierosFileName && !isUploadingEstadosFinancieros" 
+               class="file-upload-area"
+               (click)="inputEstadosFinancieros.click()">
+            <input type="file" 
+                   #inputEstadosFinancieros
+                   accept=".pdf,.xls,.xlsx,.doc,.docx"
+                   (change)="onSelectEstadosFinancieros($event)"
+                   style="display: none;" />
+            <div class="file-upload-content">
+              <i class="fa-solid fa-cloud-arrow-up file-upload-icon"></i>
+              <p class="file-upload-text">Haz clic para cargar estados financieros</p>
+              <small class="file-upload-hint">PDF, Excel o Word. Máximo 10 MB</small>
+            </div>
+          </div>
+
+          <!-- Estado de subiendo archivo -->
+          <div *ngIf="isUploadingEstadosFinancieros" class="file-uploading-container">
+            <div class="file-uploading-card">
+              <div class="file-uploading-info">
+                <div class="file-uploading-spinner">
+                  <i class="fa-solid fa-spinner fa-spin"></i>
+                </div>
+                <div class="file-uploading-details">
+                  <p class="file-uploading-name">{{ estadosFinancierosFileName }}</p>
+                  <p class="file-uploading-progress-text">Subiendo... {{ uploadProgressEstadosFinancieros }}%</p>
+                </div>
+              </div>
+              <div class="file-uploading-progress-bar">
+                <div class="file-uploading-progress-fill" [style.width.%]="uploadProgressEstadosFinancieros"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Archivo cargado exitosamente -->
+          <div *ngIf="estadosFinancierosFileName && !isUploadingEstadosFinancieros" class="file-uploaded-container">
+            <div class="file-uploaded-card">
+              <div class="file-uploaded-info">
+                <div class="file-uploaded-icon">
+                  <i class="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+                <div class="file-uploaded-details">
+                  <p class="file-uploaded-name">{{ estadosFinancierosFileName }}</p>
+                  <p class="file-uploaded-status">
+                    <i class="fa-solid fa-check-circle mr-1"></i>
+                    Archivo cargado correctamente
+                  </p>
+                </div>
+                <button class="file-uploaded-remove" (click)="removeEstadosFinancieros(); $event.stopPropagation()">
+                  <i class="fa-solid fa-trash-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campo: Actividad Económica -->
+        <div class="form-group">
+          <label class="sb-ui-label">
+            <i class="fa-solid fa-industry mr-1"></i>
+            Actividad Económica *
+          </label>
+          <div class="custom-dropdown" [class.open]="isDropdownOpen('actividadEconomica')" [class.error]="!actividadEconomica">
+            <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('actividadEconomica', $event)">
+              <span>{{ actividadEconomica ? (actividadEconomica + ' - ' + getActividadNombre(actividadEconomica)) : 'Seleccione la actividad económica' }}</span>
+            </button>
+            <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('actividadEconomica')">
+              <div class="custom-dropdown__option disabled">Seleccione la actividad económica</div>
+              <div class="custom-dropdown__option" *ngFor="let actividad of actividadesEconomicas" [class.selected]="actividadEconomica === actividad.codigo" (click)="actividadEconomica = actividad.codigo; toggleDropdown('actividadEconomica')">{{ actividad.codigo }} - {{ actividad.nombre }}</div>
+            </div>
+          </div>
+          <span *ngIf="!actividadEconomica" class="field-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            La actividad económica es obligatoria
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-cliente__footer modal-cliente__footer--2-buttons">
+      <button class="btn-anterior" (click)="regresarPasoUnoSolicitarCupo()">
+        <i class="fa-solid fa-arrow-left"></i>
+        Regresar
+      </button>
+      <button class="btn-agregar" 
+              [disabled]="!estadosFinancierosFileName || !actividadEconomica"
+              [class.btn-agregar--disabled]="!estadosFinancierosFileName || !actividadEconomica"
+              (click)="solicitarCupo()">
+        <i class="fa-solid fa-paper-plane"></i>
+        Solicitar Cupo
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Modal: Adicionar Agente -->
+<div *ngIf="showModalAgente" class="modal-overlay" (click)="cerrarModalAgente()">
+  <div class="modal-cliente modal-cliente--wide" (click)="$event.stopPropagation()">
+    <div class="modal-cliente__header">
+      <h2 class="modal-cliente__title">Adicionar Agente</h2>
+      <button class="modal-cliente__close" (click)="cerrarModalAgente()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-cliente__body">
+      <div class="modal-cliente__icon-row">
+        <i class="fa-solid fa-user-plus modal-cliente__icon--no-bg"></i>
+        <h3 class="modal-cliente__subtitle">Adicionar Agente</h3>
+      </div>
+      <p class="modal-cliente__description">
+        Ingresa la clave del agente para buscar sus datos y asignar el porcentaje de participación.
+      </p>
+      <div class="modal-cliente__form">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="sb-ui-label">* Clave</label>
+            <input type="text" 
+                   class="sb-ui-input" 
+                   placeholder="Ingrese la clave del agente"
+                   [(ngModel)]="agenteClave"
+                   (ngModelChange)="buscarAgentePorClave()" />
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">Nombres</label>
+            <input type="text" 
+                   class="sb-ui-input bg-grayscaleL400" 
+                   [(ngModel)]="agenteNombre"
+                   readonly />
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">* Participación</label>
+            <div class="flex items-center gap-2">
+              <input type="number" 
+                     class="sb-ui-input" 
+                     [class.sb-ui-input--error]="errorParticipacion"
+                     [(ngModel)]="agenteParticipacion"
+                     (ngModelChange)="validarParticipacion()"
+                     min="0" 
+                     [max]="porcentajeDisponible" 
+                     step="1" />
+              <span class="text-grayscaleD200">%</span>
+            </div>
+            <!-- ✅ Mostrar porcentaje disponible -->
+            <div class="participacion-info">
+              <small class="text-grayscaleD100 text-xs flex items-center">
+                <i class="fa-solid fa-info-circle mr-1 text-primaryBase"></i>
+                Porcentaje disponible: <strong class="ml-1 text-primaryBase">{{ porcentajeDisponible }}%</strong>
+              </small>
+              <small class="text-grayscaleD100 text-xs flex items-center mt-1">
+                <i class="fa-solid fa-user-tie mr-1"></i>
+                Líder: {{ liderParticipacion }}% | Otros agentes: {{ 100 - liderParticipacion - porcentajeDisponible }}%
+              </small>
+            </div>
+            <span *ngIf="errorParticipacion" class="field-error">
+              <i class="fa-solid fa-circle-exclamation"></i>
+              {{ errorParticipacion }}
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">Forma Actuación</label>
+            <input type="text" 
+                   class="sb-ui-input bg-grayscaleL400" 
+                   [(ngModel)]="agenteFormaActuacion"
+                   readonly />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-cliente__footer">
+      <button class="btn-continuar" 
+              (click)="agregarAgente()"
+              [disabled]="!agenteClave || !agenteNombre || errorParticipacion">
+        {{ agenteEditIndex !== null ? 'Actualizar' : 'Agregar' }}
+        <i class="fa-solid fa-arrow-right ml-2"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Modal: Adicionar/Editar Coaseguro Cedido -->
+<div *ngIf="showModalCoaseguroCedido" class="modal-overlay" (click)="cerrarModalCoaseguroCedido()">
+  <div class="modal-cliente modal-cliente--wide" (click)="$event.stopPropagation()">
+    <div class="modal-cliente__header">
+      <h2 class="modal-cliente__title">{{ coaseguroCedidoEditIndex !== null ? 'Editar' : 'Adicionar' }} Coaseguro Cedido</h2>
+      <button class="modal-cliente__close" (click)="cerrarModalCoaseguroCedido()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-cliente__body">
+      <div class="modal-cliente__icon-row">
+        <i class="fa-solid fa-handshake modal-cliente__icon--no-bg"></i>
+        <h3 class="modal-cliente__subtitle">Información del Coaseguro</h3>
+      </div>
+      <div class="modal-cliente__form">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="sb-ui-label">* Coaseguradora</label>
+            <div class="custom-dropdown" [class.open]="isDropdownOpen('coaseguroCedido')">
+              <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('coaseguroCedido', $event)">
+                <span>{{ coaseguroCedidoCoaseguradora || '--Seleccione--' }}</span>
+              </button>
+              <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('coaseguroCedido')">
+                <div class="custom-dropdown__option disabled">--Seleccione--</div>
+                <div class="custom-dropdown__option" *ngFor="let c of listaCoaseguradoras" [class.selected]="coaseguroCedidoCoaseguradora === c.nombre" (click)="coaseguroCedidoCoaseguradora = c.nombre; toggleDropdown('coaseguroCedido')">{{ c.nombre }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">* %Participación</label>
+            <div class="flex items-center gap-2">
+              <input type="number" 
+                     class="sb-ui-input" 
+                     [(ngModel)]="coaseguroCedidoParticipacion" 
+                     min="0" 
+                     max="100" 
+                     placeholder="Ej: 50" />
+              <span class="text-grayscaleD200">%</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">Número Póliza</label>
+            <input type="text" 
+                   class="sb-ui-input" 
+                   placeholder="Ingrese número" 
+                   [(ngModel)]="coaseguroCedidoNumeroPol" />
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">Certificado Modificación</label>
+            <input type="text" 
+                   class="sb-ui-input" 
+                   placeholder="Ingrese certificado" 
+                   [(ngModel)]="coaseguroCedidoCertificado" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-cliente__footer">
+      <button class="btn-anterior" (click)="cerrarModalCoaseguroCedido()">
+        Cancelar
+      </button>
+      <button class="btn-continuar" 
+              (click)="guardarCoaseguroCedido()"
+              [disabled]="!coaseguroCedidoCoaseguradora || !coaseguroCedidoParticipacion">
+        Aceptar
+        <i class="fa-solid fa-check ml-2"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Alerta: Confirmar Eliminar Coaseguro Cedido -->
+<div *ngIf="showAlertaEliminarCoaseguro" class="modal-overlay" (click)="cancelarEliminarCoaseguro()">
+  <div class="alert-bolivar" (click)="$event.stopPropagation()">
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Confirmar Eliminación</h3>
+        <p class="alert-bolivar__message">¿Está seguro que desea eliminar el Coaseguro Cedido? Esta acción no se puede deshacer.</p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cancelarEliminarCoaseguro()">
+        <i class="fa-solid fa-xmark"></i>
+</button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button class="alert-bolivar__btn alert-bolivar__btn--cancel" (click)="cancelarEliminarCoaseguro()">
+        Cancelar
+      </button>
+      <button class="alert-bolivar__btn alert-bolivar__btn--confirm" (click)="confirmarEliminarCoaseguro()">
+        Eliminar
+      </button>
+    </div>
+  </div>
+</div>

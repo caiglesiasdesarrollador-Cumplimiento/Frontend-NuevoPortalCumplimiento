@@ -1,0 +1,13 @@
+---
+id: delegation-to-services
+name: Delegar lógica a servicios
+description: Los componentes dentro de containers/ deben delegar la lógica a servicios dentro de core/ o shared/.
+globs:
+  - containers/**/*.component.ts
+type: comment
+alwaysApply: true
+---
+
+# Delegar lógica a servicios
+
+Mantén los componentes limpios delegando la lógica a servicios de `core/` o `shared/`.

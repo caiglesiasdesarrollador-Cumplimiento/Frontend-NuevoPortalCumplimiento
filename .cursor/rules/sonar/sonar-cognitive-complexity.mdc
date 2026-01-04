@@ -1,0 +1,14 @@
+---
+id: sonar-cognitive-complexity
+name: Reducir complejidad cognitiva
+description: Recomienda simplificar funciones o métodos con alta complejidad cognitiva, siguiendo métricas de Sonar.
+globs:
+  - "**/*.ts"
+type: comment
+alwaysApply: true
+---
+
+# Complejidad cognitiva
+
+Si un método tiene demasiadas bifurcaciones (`if`, `switch`, `loops`), evalúa dividirlo en funciones más pequeñas o aplicar patrones de diseño.
+Mantén la complejidad cognitiva baja para facilitar la comprensión y mantenimiento del código.

@@ -1,0 +1,333 @@
+# Configuración de floatLabel según Tema Activo
+
+## 🎯 **REGLA FUNDAMENTAL: floatLabel basado en tema**
+
+La propiedad `floatLabel` de los componentes de tech-block-lib debe configurarse automáticamente según el tema activo definido en `angular.json`.
+
+### 📋 **Componentes Afectados:**
+
+Esta regla aplica para los siguientes componentes de tech-block-lib:
+- ✅ **LibTbInputText** (`ILibTbInputText`)
+- ✅ **LibTbInputNumber** (`ILibTbInputNumber`) 
+- ✅ **LibTbInputTextArea** (`ILibTbInputTextArea`)
+- ✅ **LibTbDropdown** (`ILibTbDropdown`)
+- ✅ **LibTbDropdownMultiSelect** (`ILibTbDropdownMultiSelect`)
+- ✅ **LibTbPasswordMeter** (`ILibTbPasswordMeter`)
+- ✅ **LibTbCalendar** (`ILibTbCalendar`)
+
+### 🎨 **Configuración por Tema:**
+
+#### **📍 Ubicación del tema:** 
+```json
+// angular.json
+"node_modules/tech-block-lib/src/styles/themes/lib-theme-[THEME].css"
+```
+
+#### **⚙️ Valores de floatLabel por tema:**
+
+| Tema | Archivo CSS | floatLabel |
+|------|-------------|------------|
+| **Seguros Bolívar** | `lib-theme-segurosbolivar.css` | `false` |
+| **Jelpit** | `lib-theme-jelpit.css` | `true` |
+| **Ciencuadras** | `lib-theme-ciencuadras.css` | `true` |
+| **Doctor Aki** | `lib-theme-doctoraki.css` | `false` |
+
+## 🔧 **Implementación Automática:**
+
+### **✅ CORRECTO - Según tema activo:**
+
+#### **Tema Seguros Bolívar (floatLabel: false):**
+```typescript
+// ✅ CORRECTO para Seguros Bolívar
+firstNameInput: ILibTbInputText = {
+  name: 'firstName',
+  label: 'Nombre',
+  placeholder: 'Ingresa tu nombre',
+  floatLabel: false, // ✅ false para Seguros Bolívar
+};
+
+emailDropdown: ILibTbDropdown = {
+  name: 'email',
+  label: 'Correo electrónico',
+  placeholder: 'Selecciona tu correo',
+  floatLabel: false, // ✅ false para Seguros Bolívar
+  options: emailOptions,
+};
+
+passwordField: ILibTbPasswordMeter = {
+  name: 'password',
+  label: 'Contraseña',
+  placeholder: 'Ingresa tu contraseña',
+  floatLabel: false, // ✅ false para Seguros Bolívar
+};
+
+birthDateCalendar: ILibTbCalendar = {
+  name: 'birthDate',
+  label: 'Fecha de Nacimiento',
+  placeholder: 'dd/mm/aaaa',
+  floatLabel: false, // ✅ false para Seguros Bolívar
+  dateFormat: 'dd/mm/yy',
+};
+```
+
+#### **Tema Jelpit/Ciencuadras (floatLabel: true):**
+```typescript
+// ✅ CORRECTO para Jelpit o Ciencuadras
+firstNameInput: ILibTbInputText = {
+  name: 'firstName',
+  label: 'Nombre',
+  placeholder: 'Ingresa tu nombre',
+  floatLabel: true, // ✅ true para Jelpit/Ciencuadras
+};
+
+emailDropdown: ILibTbDropdown = {
+  name: 'email',
+  label: 'Correo electrónico',
+  placeholder: 'Selecciona tu correo',
+  floatLabel: true, // ✅ true para Jelpit/Ciencuadras
+  options: emailOptions,
+};
+
+passwordField: ILibTbPasswordMeter = {
+  name: 'password',
+  label: 'Contraseña',
+  placeholder: 'Ingresa tu contraseña',
+  floatLabel: true, // ✅ true para Jelpit/Ciencuadras
+};
+
+birthDateCalendar: ILibTbCalendar = {
+  name: 'birthDate',
+  label: 'Fecha de Nacimiento',
+  placeholder: 'dd/mm/aaaa',
+  floatLabel: true, // ✅ true para Jelpit/Ciencuadras
+  dateFormat: 'dd/mm/yy',
+};
+```
+
+#### **Tema Doctor Aki (floatLabel: false):**
+```typescript
+// ✅ CORRECTO para Doctor Aki
+firstNameInput: ILibTbInputText = {
+  name: 'firstName',
+  label: 'Nombre',
+  placeholder: 'Ingresa tu nombre',
+  floatLabel: false, // ✅ false para Doctor Aki
+};
+
+emailDropdown: ILibTbDropdown = {
+  name: 'email',
+  label: 'Correo electrónico',
+  placeholder: 'Selecciona tu correo',
+  floatLabel: false, // ✅ false para Doctor Aki
+  options: emailOptions,
+};
+
+passwordField: ILibTbPasswordMeter = {
+  name: 'password',
+  label: 'Contraseña',
+  placeholder: 'Ingresa tu contraseña',
+  floatLabel: false, // ✅ false para Doctor Aki
+};
+
+birthDateCalendar: ILibTbCalendar = {
+  name: 'birthDate',
+  label: 'Fecha de Nacimiento',
+  placeholder: 'dd/mm/aaaa',
+  floatLabel: false, // ✅ false para Doctor Aki
+  dateFormat: 'dd/mm/yy',
+};
+```
+
+### **❌ INCORRECTO - Valores inconsistentes:**
+
+```typescript
+// ❌ MAL: floatLabel inconsistente con el tema activo
+firstNameInput: ILibTbInputText = {
+  name: 'firstName',
+  label: 'Nombre',
+  placeholder: 'Ingresa tu nombre',
+  floatLabel: true, // ❌ MAL: true con tema Seguros Bolívar activo
+};
+
+emailDropdown: ILibTbDropdown = {
+  name: 'email',
+  label: 'Correo electrónico',
+  floatLabel: false, // ❌ MAL: false con tema Jelpit activo
+  options: emailOptions,
+};
+
+// ❌ MAL: No definir floatLabel (usará default que puede no coincidir)
+passwordField: ILibTbPasswordMeter = {
+  name: 'password',
+  label: 'Contraseña',
+  // floatLabel: undefined ❌ Siempre definir explícitamente
+};
+```
+
+## 🔍 **Cómo Verificar el Tema Activo:**
+
+### **Paso 1: Revisar angular.json**
+```json
+// angular.json
+"styles": [
+  "node_modules/primeng/resources/primeng.min.css",
+  "node_modules/@fortawesome/fontawesome-pro/css/all.min.css",
+  "node_modules/tech-block-lib/src/styles/lib-styles.css",
+  "node_modules/tech-block-lib/src/styles/lib-theme.css",
+  "node_modules/tech-block-lib/src/styles/themes/lib-theme-segurosbolivar.css", // ← TEMA ACTIVO
+  "node_modules/tech-block-lib/src/styles/lib-grid.css",
+  "node_modules/tech-block-lib/src/styles/lib-typography.css",
+  "src/styles.scss"
+]
+```
+
+### **Paso 2: Identificar el tema por el archivo CSS**
+- **`lib-theme-segurosbolivar.css`** → `floatLabel: false`
+- **`lib-theme-jelpit.css`** → `floatLabel: true`
+- **`lib-theme-ciencuadras.css`** → `floatLabel: true`
+- **`lib-theme-doctoraki.css`** → `floatLabel: false`
+
+## 📚 **Aplicación en Formularios Dinámicos:**
+
+### **Configuraciones de campos:**
+```typescript
+// configs/config-step-1/first-name.ts
+export const firstName: ILibTbDynamicFormConfigType = {
+  tbType: 'input',
+  containerId: 'step1-personal-info-container',
+  formId: 'firstName',
+  custom: {
+    name: 'firstName',
+    label: 'Nombre',
+    placeholder: 'Ingresa tu nombre',
+    floatLabel: false, // ✅ Según tema activo (Seguros Bolívar)
+  },
+  formProps: {
+    validators: [Validators.required, Validators.minLength(2)]
+  }
+};
+
+// configs/config-step-1/identification-type.ts
+export const identificationType: ILibTbDynamicFormConfigType = {
+  tbType: 'dropdown',
+  containerId: 'step1-personal-info-container', 
+  formId: 'identificationType',
+  custom: {
+    name: 'identificationType',
+    label: 'Tipo de Identificación',
+    placeholder: 'Selecciona el tipo',
+    floatLabel: false, // ✅ Según tema activo (Seguros Bolívar)
+    options: IDENTIFICATION_TYPES,
+  },
+  formProps: {
+    validators: [Validators.required]
+  }
+};
+
+// configs/config-step-2/password.ts
+export const password: ILibTbDynamicFormConfigType = {
+  tbType: 'password-meter',
+  containerId: 'step2-contact-info-container',
+  formId: 'password',
+  custom: {
+    name: 'password',
+    label: 'Contraseña',
+    placeholder: 'Ingresa tu contraseña',
+    floatLabel: false, // ✅ Según tema activo (Seguros Bolívar)
+    rules: passwordRules,
+  },
+  formProps: {
+    validators: [Validators.required, Validators.minLength(8)]
+  }
+};
+
+// configs/config-step-1/birth-date.ts
+export const birthDate: ILibTbDynamicFormConfigType = {
+  tbType: 'calendar',
+  containerId: 'step1-personal-info-container',
+  formId: 'birthDate',
+  custom: {
+    name: 'birthDate',
+    label: 'Fecha de Nacimiento',
+    placeholder: 'dd/mm/aaaa',
+    floatLabel: false, // ✅ Según tema activo (Seguros Bolívar)
+    dateFormat: 'dd/mm/yy',
+  },
+  formProps: {
+    validators: [Validators.required]
+  }
+};
+```
+
+## ⚠️ **Errores Comunes a Evitar:**
+
+❌ **No verificar el tema activo** antes de configurar `floatLabel`  
+❌ **Usar valores hardcodeados** sin considerar el tema  
+❌ **Omitir la propiedad** `floatLabel` (usar defaults inconsistentes)  
+❌ **Mezclar valores** diferentes en el mismo formulario  
+❌ **No actualizar** cuando se cambie el tema en angular.json
+
+## 🔄 **Proceso de Cambio de Tema:**
+
+### **Cuando se cambie el tema en angular.json:**
+
+#### **Paso 1: Identificar nuevo tema**
+```json
+// Cambio en angular.json
+- "node_modules/tech-block-lib/src/styles/themes/lib-theme-segurosbolivar.css",
++ "node_modules/tech-block-lib/src/styles/themes/lib-theme-jelpit.css",
+```
+
+#### **Paso 2: Actualizar valores floatLabel**
+```typescript
+// Actualizar todas las configuraciones de componentes
+firstName: ILibTbInputText = {
+  name: 'firstName',
+  label: 'Nombre',
+  placeholder: 'Ingresa tu nombre',
+- floatLabel: false, // Era false para Seguros Bolívar
++ floatLabel: true,  // Ahora true para Jelpit
+};
+```
+
+#### **Paso 3: Verificar consistencia**
+- ✅ Todos los input-text con `floatLabel: true`
+- ✅ Todos los dropdown con `floatLabel: true`
+- ✅ Todos los password-meter con `floatLabel: true`
+- ✅ Todos los input-number con `floatLabel: true`
+- ✅ Todos los input-text-area con `floatLabel: true`
+- ✅ Todos los dropdown-multi-select con `floatLabel: true`
+- ✅ Todos los calendar con `floatLabel: true`
+
+## 🚦 **Checklist de Verificación:**
+
+### **Antes de implementar un componente:**
+- [ ] ¿Revisé el tema activo en angular.json?
+- [ ] ¿Identifiqué el valor correcto de floatLabel para este tema?
+- [ ] ¿Configuré floatLabel explícitamente en todos los componentes?
+- [ ] ¿Todos los componentes del formulario usan el mismo valor?
+
+### **Al cambiar de tema:**
+- [ ] ¿Actualicé angular.json con el nuevo archivo CSS de tema?
+- [ ] ¿Actualicé todos los valores floatLabel en las configuraciones?
+- [ ] ¿Verifiqué que no hay inconsistencias en el mismo formulario?
+- [ ] ¿Probé visualmente que los labels se comportan correctamente?
+
+## 📋 **Tabla de Referencia Rápida:**
+
+| Tema | CSS File | floatLabel | Ejemplo de Uso |
+|------|----------|------------|----------------|
+| 🔵 **Seguros Bolívar** | `lib-theme-segurosbolivar.css` | `false` | Label fijo arriba del input/calendar |
+| 🟢 **Jelpit** | `lib-theme-jelpit.css` | `true` | Label flotante dentro del input/calendar |
+| 🟡 **Ciencuadras** | `lib-theme-ciencuadras.css` | `true` | Label flotante dentro del input/calendar |
+| 🔴 **Doctor Aki** | `lib-theme-doctoraki.css` | `false` | Label fijo arriba del input/calendar |
+
+## 🎯 **Resumen:**
+
+1. **SIEMPRE** revisar el tema activo en angular.json
+2. **SIEMPRE** configurar `floatLabel` explícitamente según la tabla
+3. **MANTENER** consistencia en todos los componentes del mismo proyecto
+4. **ACTUALIZAR** todos los valores cuando se cambie el tema
+5. **VERIFICAR** visualmente el comportamiento después de los cambios
+
+**REGLA DE ORO**: Un tema = un valor de `floatLabel` para todos los componentes compatibles (input-text, input-number, input-text-area, dropdown, dropdown-multi-select, password-meter, calendar).

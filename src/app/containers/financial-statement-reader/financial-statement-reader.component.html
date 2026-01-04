@@ -1,0 +1,136 @@
+<!-- ✅ PATRÓN POLICY-INPUT: Wrapper principal en HTML del component -->
+<div class="min-h-screen bg-grayscaleL400">
+  <div class="max-w-4xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation (como settings) -->
+    <div class="mb-4 sm:mb-6">
+      <lib-tb-breadcrumb [custom]="breadcrumbConfig"></lib-tb-breadcrumb>
+    </div>
+
+    <!-- ✅ Alertas dinámicas -->
+    <div class="mb-4 sm:mb-6" *ngIf="(alerts$ | async)?.length">
+      <lib-tb-alert [custom]="alertConfig"></lib-tb-alert>
+    </div>
+
+    <!-- ✅ Header principal -->
+    <div class="bg-grayscaleWhite p-6 rounded-lg shadow-sm border border-grayscaleL200 mb-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="lib-tb-h4-bold text-grayscaleBlack">Analizador de Estados Financieros</h1>
+          <p class="lib-tb-body-medium text-grayscaleD200 mt-2">
+            Analiza estados financieros con IA para evaluar riesgos y recomendar seguros
+            empresariales
+          </p>
+        </div>
+        <i class="fal fa-chart-line text-4xl text-primaryBase"></i>
+      </div>
+    </div>
+
+    <!-- ✅ Área de carga de archivos usando tech-block-lib -->
+    <div
+      *ngIf="!isLoading && !hasResults"
+      class="bg-grayscaleWhite p-6 rounded-lg shadow-sm border border-grayscaleL200 mb-6"
+    >
+      <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-4 text-center">
+        <i class="fal fa-file-upload text-primaryBase mr-2"></i>
+        Subir Estado Financiero
+      </h3>
+
+      <!-- ✅ USANDO TECH-BLOCK-LIB: FileUploadField component -->
+      <lib-tb-file-upload-field [custom]="fileUploadConfig"></lib-tb-file-upload-field>
+    </div>
+
+    <!-- ✅ Área de procesamiento - Solo mostrar durante análisis -->
+    <div
+      *ngIf="isLoading"
+      class="bg-grayscaleWhite p-8 rounded-lg shadow-sm border border-grayscaleL200 mb-6 text-center"
+    >
+      <lib-tb-progress-spinner
+        [custom]="{ strokeWidth: 6, infinite: true }"
+      ></lib-tb-progress-spinner>
+
+      <div class="mt-6">
+        <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-2">Analizando Estado Financiero</h3>
+        <p class="lib-tb-body-medium text-grayscaleD200 mb-4">
+          IA procesando:
+          <strong>{{ currentFile.name || 'archivo financiero' }}</strong> ({{ fileSize }})
+        </p>
+        <div class="bg-grayscaleL200 rounded-full h-3 mb-2 max-w-md mx-auto">
+          <div
+            class="bg-primaryBase h-3 rounded-full transition-all duration-300"
+            [style.width.%]="analysisProgress"
+          ></div>
+        </div>
+        <span class="lib-tb-body-small text-grayscaleD100">{{ analysisProgress }}% completado</span>
+      </div>
+    </div>
+
+    <!-- ✅ Resultados del análisis - Solo mostrar cuando esté completado -->
+    <div
+      *ngIf="hasResults"
+      class="bg-grayscaleWhite p-6 rounded-lg shadow-sm border border-grayscaleL200 mb-6"
+    >
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h3 class="lib-tb-h5-bold text-grayscaleBlack">Resultados del Análisis</h3>
+          <p class="lib-tb-body-medium text-grayscaleD200">Análisis completado con éxito</p>
+        </div>
+        <i class="fal fa-check-circle text-3xl text-successBase"></i>
+      </div>
+
+      <!-- ✅ Resumen de resultados -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="text-center p-4 bg-grayscaleL400 rounded-lg">
+          <div class="lib-tb-h4-bold text-primaryBase">85%</div>
+          <div class="lib-tb-body-small text-grayscaleD200">Confiabilidad</div>
+        </div>
+        <div class="text-center p-4 bg-grayscaleL400 rounded-lg">
+          <div class="lib-tb-h4-bold text-warningBase">Medio</div>
+          <div class="lib-tb-body-small text-grayscaleD200">Nivel de Riesgo</div>
+        </div>
+        <div class="text-center p-4 bg-grayscaleL400 rounded-lg">
+          <div class="lib-tb-h4-bold text-successBase">A-</div>
+          <div class="lib-tb-body-small text-grayscaleD200">Calificación</div>
+        </div>
+      </div>
+
+      <!-- ✅ Recomendaciones simuladas -->
+      <div class="border-t border-grayscaleL200 pt-6">
+        <h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">Recomendaciones de Seguros</h4>
+        <div class="space-y-3">
+          <div class="flex items-center p-3 bg-successBase bg-opacity-10 rounded-lg">
+            <i class="fal fa-shield text-successBase mr-3"></i>
+            <span class="lib-tb-body-medium text-grayscaleBlack"
+              >Seguro de Responsabilidad Civil - Recomendado</span
+            >
+          </div>
+          <div class="flex items-center p-3 bg-warningBase bg-opacity-10 rounded-lg">
+            <i class="fal fa-exclamation-triangle text-warningBase mr-3"></i>
+            <span class="lib-tb-body-medium text-grayscaleBlack"
+              >Seguro de Crédito - Considerar</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Botones de acción responsive -->
+    <div class="financial-reader__actions">
+      <div class="financial-reader__action-group">
+        <lib-tb-button [custom]="btnReset"></lib-tb-button>
+      </div>
+      <div class="financial-reader__primary-action" *ngIf="!isLoading && !hasResults">
+        <lib-tb-button [custom]="btnAnalyze"></lib-tb-button>
+      </div>
+    </div>
+
+    <!-- ✅ Loading state overlay (si se necesita overlay completo) -->
+    <div *ngIf="isLoading" class="financial-reader__loading-overlay">
+      <div class="financial-reader__loading-content">
+        <lib-tb-progress-spinner
+          [custom]="{ strokeWidth: 6, infinite: true }"
+        ></lib-tb-progress-spinner>
+        <p class="lib-tb-body-medium text-grayscaleD200 mt-4">Procesando análisis...</p>
+      </div>
+    </div>
+  </div>
+</div>

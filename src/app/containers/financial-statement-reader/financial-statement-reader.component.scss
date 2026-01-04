@@ -1,0 +1,118 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+// ✅ APLICANDO PATRÓN: policy-input (similar a settings pero para análisis)
+
+// Bloque principal: financial-reader
+.financial-reader {
+
+  // ✅ BEM Element: financial-reader__actions
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    // ✅ BEM Element: financial-reader__action-group
+    &__action-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    // ✅ BEM Element: financial-reader__primary-action
+    &__primary-action {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    // ✅ Responsive design (mobile-first)
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 1rem;
+
+      .financial-reader__action-group,
+      .financial-reader__primary-action {
+        order: 2;
+        width: 100%;
+
+        > * {
+          flex: 1;
+        }
+      }
+
+      .financial-reader__primary-action {
+        order: 1;
+      }
+    }
+  }
+
+  // ✅ BEM Element: financial-reader__loading-overlay
+  &__loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  // ✅ BEM Element: financial-reader__loading-content
+  &__loading-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    width: 90%;
+  }
+
+  // ✅ BEM Modifier: financial-reader--uploading
+  &--uploading {
+    .financial-reader__upload-area {
+      border-color: var(--c-lib-tb-primaryBase);
+      background-color: var(--c-lib-tb-primaryL100);
+    }
+  }
+
+  // ✅ BEM Modifier: financial-reader--processing
+  &--processing {
+    .financial-reader__actions {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+  }
+}
+
+// ✅ Animaciones sutiles para transiciones
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.financial-reader > * {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// ✅ Estados de hover para elementos interactivos
+.hover\:border-primaryBase:hover {
+  border-color: var(--c-lib-tb-primaryBase) !important;
+}
+
+// ✅ Media queries para responsive design
+@media (max-width: 640px) {
+  .financial-reader {
+    &__actions {
+      margin-top: 1rem;
+    }
+  }
+} 

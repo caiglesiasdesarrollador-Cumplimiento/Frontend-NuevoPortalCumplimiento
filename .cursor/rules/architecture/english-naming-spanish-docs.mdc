@@ -1,0 +1,410 @@
+# Nomenclatura en inglés con documentación en español
+
+Establece el estándar de nomenclatura y documentación para mantener consistencia en el código del proyecto.
+
+## 🎯 **Regla principal:**
+
+### **✅ EN INGLÉS:**
+- Nombres de componentes, archivos, carpetas
+- Variables, métodos, propiedades, interfaces
+- Clases, servicios, módulos
+- Contenido de código (lógica, implementación)
+- Nombres de rutas y URLs
+- Tests y especificaciones
+
+### **✅ EN ESPAÑOL:**
+- Comentarios de documentación (JSDoc, comentarios de bloque)
+- README y documentación técnica
+- Mensajes de error y notificaciones al usuario
+- Labels, placeholders y textos de UI
+- Comentarios explicativos del código
+
+## 📋 **Ejemplos correctos:**
+
+### **🔹 Nombres de archivos y carpetas:**
+```
+✅ CORRECTO:
+src/app/containers/user-registration/
+├── user-registration.component.ts
+├── user-registration.component.html
+├── user-registration.component.scss
+├── user-registration.interface.ts
+├── user-registration.module.ts
+└── configs/
+    ├── first-name.ts
+    ├── last-name.ts
+    └── user-registration-form.config.ts
+
+❌ INCORRECTO:
+src/app/containers/registro-usuario/
+├── registro-usuario.component.ts
+├── registro-usuario.component.html
+```
+
+### **🔹 Componentes y clases:**
+```typescript
+// ✅ CORRECTO: Nombres en inglés, documentación en español
+/**
+ * Componente de registro de usuario
+ * - Maneja el formulario de registro
+ * - Valida los datos ingresados
+ * - Navega al login tras registro exitoso
+ */
+@Component({
+  selector: 'app-user-registration',
+  templateUrl: './user-registration.component.html',
+  styleUrls: ['./user-registration.component.scss'],
+})
+export class UserRegistrationComponent implements OnInit {
+  // ✅ Variables en inglés, comentarios en español
+  userRegistrationForm: ILibTbDynamicForm = userRegistrationFormConfig();
+  isLoading = false;
+  
+  // ✅ Métodos en inglés, documentación en español
+  /**
+   * Envía el formulario de registro
+   * Valida los datos antes del envío
+   */
+  submitForm(): void {
+    // Validar formulario antes del envío
+    if (this.userRegistrationForm.form?.valid) {
+      this.processRegistration();
+    }
+  }
+}
+
+// ❌ INCORRECTO: Nombres en español
+export class RegistroUsuarioComponent {
+  formularioRegistro: any;
+  estaaCargando = false;
+  
+  enviarFormulario(): void {
+    // ...
+  }
+}
+```
+
+### **🔹 Interfaces y tipos:**
+```typescript
+// ✅ CORRECTO: Nombres en inglés, documentación en español
+/**
+ * Interface para los datos del formulario de registro de usuario
+ */
+export interface IUserRegistrationFormData {
+  firstName: string;        // Nombres del usuario
+  lastName: string;         // Apellidos del usuario
+  identificationType: string; // Tipo de identificación
+  identificationNumber: string; // Número de identificación
+  birthDate: string;        // Fecha de nacimiento
+}
+
+/**
+ * Estados posibles del componente de registro
+ */
+export interface IUserRegistrationState {
+  isLoading: boolean;       // Indica si está procesando
+  isFormValid: boolean;     // Indica si el formulario es válido
+  formData: Partial<IUserRegistrationFormData>; // Datos del formulario
+  errors: Record<string, string>; // Errores de validación
+}
+
+// ❌ INCORRECTO: Nombres en español
+export interface IDatosFormularioRegistroUsuario {
+  nombres: string;
+  apellidos: string;
+}
+```
+
+### **🔹 Configuraciones de formularios:**
+```typescript
+// ✅ CORRECTO: Variables en inglés, labels en español
+export const firstName: ILibTbDynamicFormConfigType = {
+  tbType: 'input',
+  containerId: 'personal-info-container',
+  formId: 'firstName',
+  custom: {
+    name: 'firstName',
+    label: 'Nombres',                    // ✅ Label en español (UI)
+    placeholder: 'Ingrese sus nombres',  // ✅ Placeholder en español (UI)
+    required: true,
+    captionText: {
+      help: 'Ingrese todos sus nombres como aparecen en su documento', // ✅ Texto de ayuda en español
+      error: 'Los nombres son obligatorios', // ✅ Mensaje de error en español
+    },
+  },
+  formProps: {
+    validators: [
+      {
+        name: 'required',
+        message: 'Los nombres son obligatorios', // ✅ Mensaje en español
+        validator: Validators.required,
+      },
+    ],
+  },
+};
+
+// ❌ INCORRECTO: Variables en español
+export const nombres: ILibTbDynamicFormConfigType = {
+  formId: 'nombres',
+  // ...
+};
+```
+
+### **🔹 Servicios:**
+```typescript
+// ✅ CORRECTO: Nombre y métodos en inglés, documentación en español
+/**
+ * Servicio para manejar el registro de usuarios
+ * - Envía datos al backend
+ * - Maneja errores de registro
+ * - Valida formatos de datos
+ */
+@Injectable({
+  providedIn: 'root',
+})
+export class UserRegistrationService {
+  /**
+   * Registra un nuevo usuario en el sistema
+   * @param userData - Datos del usuario a registrar
+   * @returns Observable con la respuesta del servidor
+   */
+  registerUser(userData: IUserRegistrationFormData): Observable<any> {
+    // Enviar datos al backend
+    return this.http.post('/api/users/register', userData);
+  }
+  
+  /**
+   * Valida el formato del número de identificación según el tipo
+   * @param type - Tipo de identificación (CC, CE, TI, etc.)
+   * @param number - Número de identificación
+   * @returns true si el formato es válido
+   */
+  validateIdentificationFormat(type: string, number: string): boolean {
+    // Lógica de validación específica por tipo
+    switch (type) {
+      case 'CC':
+        return this.validateCedulaCiudadania(number);
+      default:
+        return true;
+    }
+  }
+}
+
+// ❌ INCORRECTO: Nombres en español
+export class ServicioRegistroUsuario {
+  registrarUsuario(datosUsuario: any): Observable<any> {
+    // ...
+  }
+}
+```
+
+### **🔹 Tests:**
+```typescript
+// ✅ CORRECTO: Describe y métodos en inglés, comentarios en español
+describe('UserRegistrationComponent', () => {
+  let component: UserRegistrationComponent;
+  let fixture: ComponentFixture<UserRegistrationComponent>;
+
+  beforeEach(async () => {
+    // Configuración del módulo de testing
+    await TestBed.configureTestingModule({
+      declarations: [UserRegistrationComponent],
+    }).compileComponents();
+  });
+
+  it('should create component successfully', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should initialize form on component init', () => {
+    // Verificar que el formulario se inicializa correctamente
+    expect(component.userRegistrationForm).toBeDefined();
+    expect(component.userRegistrationForm.form).toBeDefined();
+  });
+
+  it('should validate form data before submission', () => {
+    // Simular datos de formulario inválidos
+    component.userRegistrationForm.form?.patchValue({});
+    component.submitForm();
+    
+    // Verificar que no se procesa el envío
+    expect(component.isLoading).toBe(false);
+  });
+});
+
+// ❌ INCORRECTO: Describe en español
+describe('RegistroUsuarioComponent', () => {
+  it('debería crear el componente exitosamente', () => {
+    // ...
+  });
+});
+```
+
+### **🔹 Rutas y navegación:**
+```typescript
+// ✅ CORRECTO: URLs en inglés
+const routes: Routes = [
+  { path: 'user-registration', component: UserRegistrationComponent },
+  { path: 'user-profile', component: UserProfileComponent },
+  { path: 'shopping-cart', component: ShoppingCartComponent },
+];
+
+// Router navigation
+this.router.navigate(['/user-registration']);
+this.router.navigate(['/user-profile', userId]);
+
+// ❌ INCORRECTO: URLs en español
+const routes: Routes = [
+  { path: 'registro-usuario', component: UserRegistrationComponent },
+  { path: 'perfil-usuario', component: UserProfileComponent },
+];
+```
+
+## 🚫 **Errores comunes a evitar:**
+
+### **❌ Mezclar idiomas en nombres:**
+```typescript
+// MAL: Mezcla inglés y español
+export class UserRegistroComponent { }
+export class ComponenteRegistration { }
+export interface IUserDatos { }
+
+// BIEN: Consistencia en inglés
+export class UserRegistrationComponent { }
+export interface IUserData { }
+```
+
+### **❌ Documentación en inglés:**
+```typescript
+// MAL: Comentarios en inglés
+/**
+ * Component for user registration
+ * - Handles registration form
+ * - Validates user input
+ */
+export class UserRegistrationComponent { }
+
+// BIEN: Comentarios en español
+/**
+ * Componente de registro de usuario
+ * - Maneja el formulario de registro
+ * - Valida la entrada del usuario
+ */
+export class UserRegistrationComponent { }
+```
+
+### **❌ Textos de UI en inglés:**
+```typescript
+// MAL: Labels en inglés
+label: 'First Name',
+placeholder: 'Enter your first name',
+captionText: {
+  error: 'First name is required',
+}
+
+// BIEN: Labels en español
+label: 'Nombres',
+placeholder: 'Ingrese sus nombres',
+captionText: {
+  error: 'Los nombres son obligatorios',
+}
+```
+
+## 📚 **Convenciones específicas:**
+
+### **🔹 Prefijos y sufijos estándar:**
+```typescript
+// ✅ Componentes
+UserRegistrationComponent
+ProductListComponent
+ShoppingCartComponent
+
+// ✅ Servicios
+UserRegistrationService
+ProductDataService
+PaymentProcessingService
+
+// ✅ Interfaces
+IUserRegistrationFormData
+IProductListItem
+IShoppingCartState
+
+// ✅ Enums
+UserRegistrationStatus
+ProductCategory
+PaymentMethod
+
+// ✅ Types
+UserRegistrationType
+ProductFilterType
+```
+
+### **🔹 Nombres de archivos:**
+```
+// ✅ Componentes
+user-registration.component.ts
+product-list.component.ts
+shopping-cart.component.ts
+
+// ✅ Servicios
+user-registration.service.ts
+product-data.service.ts
+
+// ✅ Configuraciones
+user-registration-form.config.ts
+product-filter.config.ts
+
+// ✅ Interfaces
+user-registration.interface.ts
+product-data.interface.ts
+```
+
+## ⚠️ **Excepciones permitidas:**
+
+### **✅ Casos donde se permite español:**
+- **Nombres de dominio específicos**: Cuando representan conceptos locales específicos de Colombia/LATAM
+- **Variables de configuración**: Que representen datos específicos del negocio local
+- **Constantes de negocio**: Que representen reglas específicas del mercado local
+
+```typescript
+// ✅ Excepciones válidas para conceptos locales
+export const TIPOS_IDENTIFICACION_COLOMBIA = [
+  { value: 'CC', label: 'Cédula de Ciudadanía' },
+  { value: 'CE', label: 'Cédula de Extranjería' },
+];
+
+export const DEPARTAMENTOS_COLOMBIA = [
+  'Antioquia', 'Bogotá D.C.', 'Valle del Cauca'
+];
+
+// Pero la interfaz sigue en inglés
+export interface IColombianIdentificationTypeConfig {
+  value: string;
+  label: string;
+}
+```
+
+## 🎯 **Beneficios de esta regla:**
+
+✅ **Consistencia internacional**: Código comprensible para desarrolladores de cualquier país  
+✅ **Integración con librerías**: Facilita el uso de librerías y frameworks en inglés  
+✅ **Documentación accesible**: Comentarios en español para el equipo local  
+✅ **Mantenibilidad**: Separación clara entre lógica (inglés) y documentación (español)  
+✅ **Best practices**: Sigue estándares internacionales de desarrollo  
+✅ **SEO y URLs**: URLs amigables en inglés para aplicaciones web
+
+## 📋 **Checklist de implementación:**
+
+✅ Nombres de componentes en inglés  
+✅ Nombres de archivos en inglés (kebab-case)  
+✅ Variables y métodos en inglés (camelCase)  
+✅ Interfaces y types en inglés (PascalCase con prefijo I)  
+✅ Servicios en inglés (PascalCase con sufijo Service)  
+✅ URLs y rutas en inglés (kebab-case)  
+✅ Tests en inglés (describe/it en inglés)  
+✅ Documentación JSDoc en español  
+✅ Comentarios explicativos en español  
+✅ Labels y textos de UI en español  
+✅ Mensajes de error y notificaciones en español
+
+**Esta regla asegura un código profesional, mantenible y accesible tanto para desarrolladores internacionales como para el equipo local.**

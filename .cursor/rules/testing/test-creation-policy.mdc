@@ -1,0 +1,141 @@
+---
+title: Política de Creación de Pruebas Unitarias
+alwaysApply: true
+---
+
+# Política de Creación de Pruebas Unitarias
+
+## 🚫 **REGLA FUNDAMENTAL: No crear tests prematuros**
+
+**NUNCA** crees pruebas unitarias automáticamente al crear componentes, servicios o funcionalidades. Las pruebas solo se crean bajo estas condiciones específicas:
+
+### ✅ **CUÁNDO crear pruebas unitarias:**
+
+#### **1. Después de validación completa:**
+- ✅ El código **compila sin errores**
+- ✅ La funcionalidad **se ejecuta correctamente** 
+- ✅ Los componentes **renderizan adecuadamente**
+- ✅ Los servicios **funcionan como se espera**
+- ✅ La integración **está validada manualmente**
+
+#### **2. Solo cuando el usuario lo solicite:**
+- ✅ **Solicitud explícita**: "crea las pruebas", "agrega tests", "implementa testing"
+- ✅ **Solicitud de cobertura**: "agrega cobertura de tests", "testing completo"
+- ✅ **Solicitud específica**: "test para el método X", "prueba del componente Y"
+
+### ❌ **CUÁNDO NO crear pruebas unitarias:**
+
+#### **❌ Nunca automáticamente:**
+- ❌ Al crear un nuevo componente
+- ❌ Al implementar un servicio
+- ❌ Al agregar una funcionalidad
+- ❌ Al refactorizar código existente
+- ❌ Durante el desarrollo inicial
+
+#### **❌ Nunca antes de validar:**
+- ❌ Código que no compila
+- ❌ Funcionalidad que no funciona
+- ❌ Componentes con errores
+- ❌ Servicios no probados manualmente
+- ❌ Integraciones fallidas
+
+## 🎯 **Flujo de Desarrollo Correcto**
+
+### **Fase 1: Desarrollo y Construcción**
+1. 📝 Crear interfaces y tipos
+2. 🏗️ Implementar componente/servicio
+3. 🔧 Configurar módulos e imports
+4. 🎨 Aplicar estilos (si aplica)
+5. 🔗 Configurar routing (si aplica)
+
+### **Fase 2: Validación Manual**
+6. ✅ Verificar compilación (ng build)
+7. ✅ Probar funcionalidad manualmente
+8. ✅ Validar integración con otros componentes
+9. ✅ Revisar UX y comportamiento esperado
+10. ✅ Confirmar que todo funciona correctamente
+
+### **Fase 3: Testing (Solo si el usuario lo solicita)**
+11. 🧪 Crear pruebas unitarias (SOLO si se solicita)
+12. 🧪 Implementar tests de integración (SOLO si se solicita)
+13. 🧪 Agregar cobertura completa (SOLO si se solicita)
+
+## 📋 **Ejemplos de Solicitudes**
+
+### ✅ **Solicitudes que SÍ requieren tests:**
+- "Ahora crea las pruebas unitarias para este componente"
+- "Agrega testing completo al servicio"
+- "Implementa tests para validar el formulario"
+- "Crea cobertura de pruebas para el stepper"
+- "Agrega tests unitarios con Jest"
+- "Necesito testing para el método X"
+
+### ❌ **Solicitudes que NO requieren tests automáticos:**
+- "Crea un componente de login"
+- "Implementa un servicio de usuarios"  
+- "Agrega un formulario dinámico"
+- "Crea un contenedor de registro"
+- "Implementa navegación con stepper"
+- "Refactoriza el código del componente"
+
+## 🧪 **Estándares de Testing (Cuando se Solicite)**
+
+### Cobertura Mínima:
+#### Componentes:
+- ✅ Creación del componente
+- ✅ Inicialización de propiedades
+- ✅ Métodos públicos principales
+- ✅ Navegación y eventos
+- ✅ Validaciones de formularios
+
+#### Servicios:
+- ✅ Creación del servicio
+- ✅ Métodos públicos
+- ✅ Manejo de errores
+- ✅ Llamadas HTTP (si aplica)
+
+## 🚦 **Checklist de Validación Antes de Testing**
+
+### Funcionalidad Básica:
+- [ ] El código compila sin errores
+- [ ] No hay errores de linting críticos
+- [ ] Los imports están correctos
+- [ ] Las interfaces están bien definidas
+
+### Funcionalidad Integrada:
+- [ ] El componente renderiza correctamente
+- [ ] Los formularios funcionan como se espera
+- [ ] La navegación funciona adecuadamente
+- [ ] Los servicios responden correctamente
+
+### UX Validada:
+- [ ] La interfaz es usable
+- [ ] Las validaciones funcionan
+- [ ] Los estados se muestran correctamente
+- [ ] Los errores se manejan adecuadamente
+
+## 📝 **Aplicación al Contenedor Register**
+
+NOTA: Tests pendientes de crear después de validación completa. 
+El componente register requiere validación manual antes de testing.
+
+Validación requerida:
+1. ✅ ng build --configuration development
+2. ✅ Probar navegación stepper manualmente
+3. ✅ Validar formularios dinámicos
+4. ✅ Confirmar validaciones de campos
+5. ✅ Probar envío completo
+
+Para solicitar tests: "crea las pruebas unitarias para register"
+
+## 📚 **Resumen**
+
+| Fase | Acción | Testing |
+|------|--------|---------|
+| **Desarrollo** | Crear funcionalidad | ❌ No crear tests |
+| **Validación** | Probar manualmente | ❌ No crear tests |
+| **Solicitud explícita** | Usuario pide tests | ✅ Crear tests |
+| **Funcionalidad estable** | Todo validado + solicitud | ✅ Tests completos |
+
+**REGLA DE ORO**: Funcionalidad primero, testing solo cuando se solicite explícitamente.
+

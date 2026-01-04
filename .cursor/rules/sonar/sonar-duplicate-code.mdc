@@ -1,0 +1,14 @@
+---
+id: sonar-duplicate-code
+name: Evitar duplicación de código
+description: Detecta patrones duplicados y recomienda factorizar para reducir deuda técnica.
+globs:
+  - "**/*.ts"
+type: comment
+alwaysApply: true
+---
+
+# Duplicación de código
+
+SonarQube marca duplicación como deuda técnica.  
+Factoriza bloques repetidos en funciones helpers o servicios compartidos.

@@ -1,0 +1,99 @@
+/* Regular */
+@font-face {
+    font-family: 'Davivienda Condensed';
+    src: url('/assets/fonts/Davivienda-Condensed/WOFF2/Davivienda-Condensed-Regular.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda-Condensed/WOFF/Davivienda-Condensed-Regular.woff') format('woff'),
+        url('/assets/fonts/Davivienda-Condensed/TTF/Davivienda-Condensed-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Italic */
+@font-face {
+    font-family: 'Davivienda Condensed';
+    src: url('/assets/fonts/Davivienda-Condensed/WOFF2/Davivienda-Condensed-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda-Condensed/WOFF/Davivienda-Condensed-Italic.woff') format('woff'),
+        url('/assets/fonts/Davivienda-Condensed/TTF/Davivienda-Condensed-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+/* Bold */
+@font-face {
+    font-family: 'Davivienda Condensed';
+    src: url('/assets/fonts/Davivienda-Condensed/WOFF2/Davivienda-Condensed-Bold.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda-Condensed/WOFF/Davivienda-Condensed-Bold.woff') format('woff'),
+        url('/assets/fonts/Davivienda-Condensed/TTF/Davivienda-Condensed-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Bold Italic */
+@font-face {
+    font-family: 'Davivienda Condensed';
+    src: url('/assets/fonts/Davivienda-Condensed/WOFF2/Davivienda-Condensed-Bold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda-Condensed/WOFF/Davivienda-Condensed-Bold-Italic.woff') format('woff'),
+        url('/assets/fonts/Davivienda-Condensed/TTF/Davivienda-Condensed-Bold-Italic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+/* ExtraBold */
+@font-face {
+    font-family: 'Davivienda Condensed';
+    src: url('/assets/fonts/Davivienda-Condensed/WOFF2/Davivienda-Condensed-ExtraBold.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda-Condensed/WOFF/Davivienda-Condensed-ExtraBold.woff') format('woff'),
+        url('/assets/fonts/Davivienda-Condensed/TTF/Davivienda-Condensed-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+/* ExtraBold Italic */
+@font-face {
+    font-family: 'Davivienda Condensed';
+    src: url('/assets/fonts/Davivienda-Condensed/WOFF2/Davivienda-Condensed-ExtraBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda-Condensed/WOFF/Davivienda-Condensed-ExtraBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Davivienda-Condensed/TTF/Davivienda-Condensed-ExtraBold-Italic.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+}
+
+/* Light */
+@font-face {
+    font-family: 'Davivienda Condensed';
+    src: url('/assets/fonts/Davivienda-Condensed/WOFF2/Davivienda-Condensed-Light.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda-Condensed/WOFF/Davivienda-Condensed-Light.woff') format('woff'),
+        url('/assets/fonts/Davivienda-Condensed/TTF/Davivienda-Condensed-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Light Italic */
+@font-face {
+    font-family: 'Davivienda Condensed';
+    src: url('/assets/fonts/Davivienda-Condensed/WOFF2/Davivienda-Condensed-Light-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda-Condensed/WOFF/Davivienda-Condensed-Light-Italic.woff') format('woff'),
+        url('/assets/fonts/Davivienda-Condensed/TTF/Davivienda-Condensed-Light-Italic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+/* SemiBold */
+@font-face {
+    font-family: 'Davivienda Condensed';
+    src: url('/assets/fonts/Davivienda-Condensed/WOFF2/Davivienda-Condensed-SemiBold.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda-Condensed/WOFF/Davivienda-Condensed-SemiBold.woff') format('woff'),
+        url('/assets/fonts/Davivienda-Condensed/TTF/Davivienda-Condensed-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* SemiBold Italic */
+@font-face {
+    font-family: 'Davivienda Condensed';
+    src: url('/assets/fonts/Davivienda-Condensed/WOFF2/Davivienda-Condensed-SemiBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda-Condensed/WOFF/Davivienda-Condensed-SemiBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Davivienda-Condensed/TTF/Davivienda-Condensed-SemiBold-Italic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}

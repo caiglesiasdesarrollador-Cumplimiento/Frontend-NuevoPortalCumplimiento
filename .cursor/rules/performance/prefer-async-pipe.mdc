@@ -1,0 +1,14 @@
+---
+id: prefer-async-pipe
+name: Usar async pipe
+description: Recomendar usar async pipe en lugar de subscribes manuales.
+globs:
+  - containers/**/*.component.ts
+  - shared/**/*.component.ts
+type: comment
+alwaysApply: true
+---
+
+# async pipe
+
+Reduce memoria y fugas de suscripciones usando `async pipe` en templates.

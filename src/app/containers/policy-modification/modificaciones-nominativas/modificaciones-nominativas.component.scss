@@ -1,0 +1,209 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+// ✅ APLICANDO REGLA: Usar clases Tailwind de tech-block-lib
+
+// Bloque principal: modificaciones-nominativas
+.modificaciones-nominativas {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  // ✅ BEM Element: modificaciones-nominativas__breadcrumb
+  &__breadcrumb {
+    margin-bottom: 1.5rem;
+  }
+
+  // ✅ BEM Element: modificaciones-nominativas__header
+  &__header {
+    // Los estilos están en Tailwind classes en el template
+  }
+
+  // ✅ BEM Element: modificaciones-nominativas__cupo-info
+  &__cupo-info {
+    // Los estilos están en Tailwind classes en el template
+  }
+
+  // ✅ BEM Element: modificaciones-nominativas__content
+  &__content {
+    min-height: 400px;
+  }
+
+  // ✅ BEM Element: modificaciones-nominativas__datos-generales
+  &__datos-generales {
+    // ✅ Animación suave para formularios dinámicos
+    animation: fadeInForm 0.3s ease-in-out;
+  }
+
+  // ✅ BEM Element: modificaciones-nominativas__ubicacion-riesgo
+  &__ubicacion-riesgo {
+    // ✅ Animación suave para formularios dinámicos
+    animation: fadeInForm 0.3s ease-in-out 0.1s both;
+  }
+
+  // ✅ BEM Element: modificaciones-nominativas__resumen
+  &__resumen {
+    // ✅ Animación suave para el resumen
+    animation: fadeInForm 0.3s ease-in-out 0.2s both;
+  }
+
+  // ✅ BEM Element: modificaciones-nominativas__actions
+  &__actions {
+    margin-top: 2rem;
+  }
+
+  // ✅ BEM Modifier: modificaciones-nominativas--modo-edicion
+  &--modo-edicion {
+    .modificaciones-nominativas__content {
+      // Estilos específicos cuando está en modo edición
+      border-left: 4px solid var(--c-lib-tb-successBase);
+      padding-left: 1rem;
+    }
+  }
+
+  // ✅ BEM Modifier: modificaciones-nominativas--solo-lectura
+  &--solo-lectura {
+    .modificaciones-nominativas__content {
+      // Estilos específicos cuando está en solo lectura
+      border-left: 4px solid var(--c-lib-tb-warningBase);
+      padding-left: 1rem;
+    }
+  }
+}
+
+// ✅ Keyframes para animaciones suaves
+@keyframes fadeInForm {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ✅ Mejoras visuales para containers de formularios dinámicos
+// ✅ APLICANDO REGLA: No modificar estilos de tech-block-lib directamente
+
+// ✅ Mejoras específicas para esta pantalla (NO para componentes tech-block-lib)
+.form-section-enhancement {
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  // ✅ Indicadores visuales para campos readonly
+  &.readonly-mode {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        45deg,
+        transparent 30%,
+        var(--c-lib-tb-grayscaleL300) 30%,
+        var(--c-lib-tb-grayscaleL300) 32%,
+        transparent 32%
+      );
+      pointer-events: none;
+      opacity: 0.03;
+      z-index: 1;
+    }
+  }
+}
+
+// ✅ Estilos para iconos en headers de sección
+.section-header-icon {
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+// ✅ Responsive design siguiendo breakpoints de tech-block-lib
+@media (max-width: 768px) {
+  .modificaciones-nominativas {
+    max-width: 100%;
+    padding: 1rem;
+
+    &__actions {
+      margin-top: 1.5rem;
+
+      // ✅ En móvil, botones en columna
+      .flex {
+        flex-direction: column;
+
+        &.sm\\:flex-row {
+          flex-direction: column;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .modificaciones-nominativas {
+    padding: 0.5rem;
+
+    &__breadcrumb {
+      margin-bottom: 1rem;
+    }
+
+    &__actions {
+      margin-top: 1rem;
+    }
+  }
+}
+
+// ✅ Mejoras para accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .modificaciones-nominativas {
+    &__datos-generales,
+    &__ubicacion-riesgo,
+    &__resumen {
+      animation: none;
+    }
+  }
+
+  @keyframes fadeInForm {
+    from,
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+// ✅ Estilos para estados de validación (siguiendo tech-block-lib)
+.form-validation-feedback {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  border-left: 4px solid;
+
+  &.success {
+    background-color: rgba(var(--c-lib-tb-successBase-rgb), 0.1);
+    border-left-color: var(--c-lib-tb-successBase);
+    color: var(--c-lib-tb-successBase);
+  }
+
+  &.error {
+    background-color: rgba(var(--c-lib-tb-errorBase-rgb), 0.1);
+    border-left-color: var(--c-lib-tb-errorBase);
+    color: var(--c-lib-tb-errorBase);
+  }
+
+  &.warning {
+    background-color: rgba(var(--c-lib-tb-warningBase-rgb), 0.1);
+    border-left-color: var(--c-lib-tb-warningBase);
+    color: var(--c-lib-tb-warningBase);
+  }
+}

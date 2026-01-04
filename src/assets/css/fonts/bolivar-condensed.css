@@ -1,0 +1,99 @@
+/* Regular */
+@font-face {
+    font-family: 'Bolivar Condensed';
+    src: url('/assets/fonts/Bolivar-Condensed/WOFF2/Bolivar-Condensed-Regular.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar-Condensed/WOFF/Bolivar-Condensed-Regular.woff') format('woff'),
+        url('/assets/fonts/Bolivar-Condensed/TTF/Bolivar-Condensed-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Italic */
+@font-face {
+    font-family: 'Bolivar Condensed';
+    src: url('/assets/fonts/Bolivar-Condensed/WOFF2/Bolivar-Condensed-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar-Condensed/WOFF/Bolivar-Condensed-Italic.woff') format('woff'),
+        url('/assets/fonts/Bolivar-Condensed/TTF/Bolivar-Condensed-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+/* Bold */
+@font-face {
+    font-family: 'Bolivar Condensed';
+    src: url('/assets/fonts/Bolivar-Condensed/WOFF2/Bolivar-Condensed-Bold.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar-Condensed/WOFF/Bolivar-Condensed-Bold.woff') format('woff'),
+        url('/assets/fonts/Bolivar-Condensed/TTF/Bolivar-Condensed-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Bold Italic */
+@font-face {
+    font-family: 'Bolivar Condensed';
+    src: url('/assets/fonts/Bolivar-Condensed/WOFF2/Bolivar-Condensed-Bold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar-Condensed/WOFF/Bolivar-Condensed-Bold-Italic.woff') format('woff'),
+        url('/assets/fonts/Bolivar-Condensed/TTF/Bolivar-Condensed-Bold-Italic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+/* ExtraBold */
+@font-face {
+    font-family: 'Bolivar Condensed';
+    src: url('/assets/fonts/Bolivar-Condensed/WOFF2/Bolivar-Condensed-ExtraBold.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar-Condensed/WOFF/Bolivar-Condensed-ExtraBold.woff') format('woff'),
+        url('/assets/fonts/Bolivar-Condensed/TTF/Bolivar-Condensed-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+/* ExtraBold Italic */
+@font-face {
+    font-family: 'Bolivar Condensed';
+    src: url('/assets/fonts/Bolivar-Condensed/WOFF2/Bolivar-Condensed-ExtraBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar-Condensed/WOFF/Bolivar-Condensed-ExtraBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Bolivar-Condensed/TTF/Bolivar-Condensed-ExtraBold-Italic.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+}
+
+/* Light */
+@font-face {
+    font-family: 'Bolivar Condensed';
+    src: url('/assets/fonts/Bolivar-Condensed/WOFF2/Bolivar-Condensed-Light.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar-Condensed/WOFF/Bolivar-Condensed-Light.woff') format('woff'),
+        url('/assets/fonts/Bolivar-Condensed/TTF/Bolivar-Condensed-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Light Italic */
+@font-face {
+    font-family: 'Bolivar Condensed';
+    src: url('/assets/fonts/Bolivar-Condensed/WOFF2/Bolivar-Condensed-Light-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar-Condensed/WOFF/Bolivar-Condensed-Light-Italic.woff') format('woff'),
+        url('/assets/fonts/Bolivar-Condensed/TTF/Bolivar-Condensed-Light-Italic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+/* SemiBold */
+@font-face {
+    font-family: 'Bolivar Condensed';
+    src: url('/assets/fonts/Bolivar-Condensed/WOFF2/Bolivar-Condensed-SemiBold.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar-Condensed/WOFF/Bolivar-Condensed-SemiBold.woff') format('woff'),
+        url('/assets/fonts/Bolivar-Condensed/TTF/Bolivar-Condensed-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* SemiBold Italic */
+@font-face {
+    font-family: 'Bolivar Condensed';
+    src: url('/assets/fonts/Bolivar-Condensed/WOFF2/Bolivar-Condensed-SemiBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar-Condensed/WOFF/Bolivar-Condensed-SemiBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Bolivar-Condensed/TTF/Bolivar-Condensed-SemiBold-Italic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}

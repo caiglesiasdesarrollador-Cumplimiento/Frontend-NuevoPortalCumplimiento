@@ -1,0 +1,317 @@
+<!-- ✅ Container principal del quote-details - Mobile responsive -->
+<div class="min-h-screen bg-grayscaleL400">
+  <div class="max-w-6xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation -->
+    <div class="mb-4 sm:mb-6">
+      <lib-tb-breadcrumb [custom]="breadcrumbConfig"></lib-tb-breadcrumb>
+    </div>
+
+    <!-- ✅ Título de la vista de detalles -->
+    <div class="quote-details__header text-center mb-4 sm:mb-6 md:mb-8">
+      <h1 class="lib-tb-h5-bold sm:lib-tb-h4-bold text-grayscaleBlack mb-2 px-2">
+        <i class="fal fa-eye text-primaryBase mr-2"></i>
+        Resumen de Cotización
+      </h1>
+      <p class="lib-tb-body-small sm:lib-tb-body-medium text-grayscaleD200 max-w-3xl mx-auto px-4">
+        Revisa todos los detalles de la cotización seleccionada.
+      </p>
+    </div>
+
+    <!-- ✅ Contenido principal -->
+    <div
+      *ngIf="hasQuoteData"
+      class="bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200"
+    >
+      <!-- ✅ Información básica de la cotización - Layout como imagen 2 -->
+      <div class="quote-details__basic-info mb-6 sm:mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <!-- ✅ Tarjeta de información de la cotización -->
+          <div class="bg-grayscaleL400 p-4 rounded-lg border border-grayscaleL200">
+            <div class="flex items-center mb-3">
+              <i class="fal fa-file-alt text-primaryBase text-xl mr-3"></i>
+              <h2 class="lib-tb-h6-bold text-grayscaleBlack">{{quoteData?.numero}}</h2>
+            </div>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="lib-tb-body-small text-grayscaleD100">Estado:</span>
+                <span
+                  class="lib-tb-body-medium text-primaryBase font-semibold"
+                  >{{quoteData?.estado}}</span
+                >
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="lib-tb-body-small text-grayscaleD100">Fecha de creación:</span>
+                <span class="lib-tb-body-medium text-grayscaleD200">{{formattedDate}}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="lib-tb-body-small text-grayscaleD100">Producto:</span>
+                <span class="lib-tb-body-medium text-grayscaleD200">{{getProductType()}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ Tarjeta de Valor Asegurado -->
+          <div class="bg-grayscaleL400 p-4 rounded-lg border border-grayscaleL200">
+            <div class="flex items-center mb-3">
+              <i class="fal fa-dollar-sign text-primaryBase text-xl mr-3"></i>
+              <h3 class="lib-tb-h6-bold text-grayscaleBlack">Valor Asegurado</h3>
+            </div>
+            <div class="text-center">
+              <p class="lib-tb-h5-bold text-primaryBase">{{formattedAmount}}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Tarjeta de Cupo Disponible del Cliente -->
+        <div class="bg-grayscaleL400 p-4 rounded-lg border border-grayscaleL200 mb-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <i class="fal fa-credit-card text-primaryBase text-xl mr-3"></i>
+              <h3 class="lib-tb-h6-bold text-grayscaleBlack">Cupo Disponible del Cliente</h3>
+            </div>
+            <div class="text-right">
+              <p class="lib-tb-h5-bold text-primaryBase">{{getCreditLimit()}}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Datos Generales Póliza - Layout compacto -->
+        <div class="quote-details__section mb-6">
+          <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
+            <i class="fal fa-file-contract text-primaryBase mr-2"></i>
+            Datos Generales Póliza
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Número de contrato</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{quoteData?.numeroContratoGeneral}}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Tipo de Documento Tomador</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{quoteData?.tipoDocumentoTomadorGeneral}}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Nombre del Tomador</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{quoteData?.nombreTomadorGeneral}}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100"
+                >Número del Documento Tomador</label
+              >
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{quoteData?.numeroDocumentoTomadorGeneral}}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Moneda</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">{{quoteData?.moneda}}</p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100"
+                >Tipo de Documento Asegurado</label
+              >
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{quoteData?.tipoDocumentoAseguradoGeneral}}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100"
+                >Número del Documento Asegurado</label
+              >
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{quoteData?.numeroDocumentoAseguradoGeneral}}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Nombre Asegurado</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{quoteData?.nombreAseguradoGeneral}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Ubicación del Riesgo -->
+      <div class="quote-details__section mb-6">
+        <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
+          <i class="fal fa-map-marker-alt text-primaryBase mr-2"></i>
+          Ubicación del Riesgo
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="quote-details__field">
+            <label class="lib-tb-body-small text-grayscaleD100">Departamento</label>
+            <p class="lib-tb-body-medium text-grayscaleD200">{{quoteData?.departamento}}</p>
+          </div>
+          <div class="quote-details__field">
+            <label class="lib-tb-body-small text-grayscaleD100">Localidad / Municipio</label>
+            <p class="lib-tb-body-medium text-grayscaleD200">{{quoteData?.localidadMunicipio}}</p>
+          </div>
+          <div class="quote-details__field col-span-2">
+            <label class="lib-tb-body-small text-grayscaleD100">Dirección del Riesgo</label>
+            <p class="lib-tb-body-medium text-grayscaleD200">{{quoteData?.direccionRiesgo}}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Detalles del Contrato -->
+      <div class="quote-details__section mb-6">
+        <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
+          <i class="fal fa-handshake text-primaryBase mr-2"></i>
+          Detalles del Contrato
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="quote-details__field">
+            <label class="lib-tb-body-small text-grayscaleD100">Valor del Contrato</label>
+            <p class="lib-tb-body-medium text-grayscaleD200">{{quoteData?.valorContrato}}</p>
+          </div>
+          <div class="quote-details__field">
+            <label class="lib-tb-body-small text-grayscaleD100">Fecha Inicio Contrato</label>
+            <p class="lib-tb-body-medium text-grayscaleD200">{{quoteData?.fechaInicioContrato}}</p>
+          </div>
+          <div class="quote-details__field">
+            <label class="lib-tb-body-small text-grayscaleD100">Duración del Contrato</label>
+            <p class="lib-tb-body-medium text-grayscaleD200">
+              {{quoteData?.duracionContrato}} meses
+            </p>
+          </div>
+          <div class="quote-details__field">
+            <label class="lib-tb-body-small text-grayscaleD100">Fecha Fin Contrato</label>
+            <p class="lib-tb-body-medium text-grayscaleD200">{{quoteData?.fechaFinContrato}}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Coberturas de Cumplimiento (tabla detallada) -->
+      <div class="quote-details__section mb-6">
+        <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
+          <i class="fal fa-clipboard-check text-primaryBase mr-2"></i>
+          Coberturas Cumplimiento
+        </h3>
+        <div class="bg-grayscaleL400 p-4 rounded-lg">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-grayscaleL200">
+                  <th class="text-left py-2 text-sm font-medium text-grayscaleD200">Cobertura</th>
+                  <th class="text-center py-2 text-sm font-medium text-grayscaleD200">
+                    Porcentaje
+                  </th>
+                  <th class="text-right py-2 text-sm font-medium text-grayscaleD200">
+                    Valor Asegurado
+                  </th>
+                  <th class="text-center py-2 text-sm font-medium text-grayscaleD200">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let coverage of complianceCoverages"
+                  class="border-b border-grayscaleL200"
+                >
+                  <td class="py-3 text-sm text-grayscaleBlack">{{ coverage.name }}</td>
+                  <td class="py-3 text-center text-sm font-semibold text-grayscaleBlack">
+                    {{ coverage.percentage }}%
+                  </td>
+                  <td class="py-3 text-right text-sm font-bold text-successBase">
+                    $ {{ coverage.value?.toLocaleString() }}
+                  </td>
+                  <td class="py-3 text-center text-sm font-semibold text-successBase">
+                    {{ coverage.status }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Coberturas RC (tabla detallada) -->
+      <div class="quote-details__section mb-6">
+        <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
+          <i class="fal fa-shield-alt text-primaryBase mr-2"></i>
+          Responsabilidad Civil
+        </h3>
+        <div class="bg-grayscaleL400 p-4 rounded-lg">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-grayscaleL200">
+                  <th class="text-left py-2 text-sm font-medium text-grayscaleD200">Cobertura</th>
+                  <th class="text-center py-2 text-sm font-medium text-grayscaleD200">
+                    Porcentaje
+                  </th>
+                  <th class="text-right py-2 text-sm font-medium text-grayscaleD200">
+                    Valor Asegurado
+                  </th>
+                  <th class="text-center py-2 text-sm font-medium text-grayscaleD200">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let coverage of rcCoverages" class="border-b border-grayscaleL200">
+                  <td class="py-3 text-sm text-grayscaleBlack">{{ coverage.name }}</td>
+                  <td class="py-3 text-center text-sm font-semibold text-grayscaleBlack">
+                    {{ coverage.percentage }}%
+                  </td>
+                  <td class="py-3 text-right text-sm font-bold text-successBase">
+                    $ {{ coverage.value?.toLocaleString() }}
+                  </td>
+                  <td class="py-3 text-center text-sm font-semibold text-successBase">
+                    {{ coverage.status }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Resumen de costos -->
+      <div class="quote-details__summary bg-grayscaleL400 p-4 rounded-lg mb-6">
+        <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
+          <i class="fal fa-calculator text-primaryBase mr-2"></i>
+          Resumen de Costos
+        </h3>
+        <div class="space-y-2">
+          <div class="flex justify-between">
+            <span class="lib-tb-body-medium text-grayscaleD200">Prima Neta:</span>
+            <span class="lib-tb-body-medium text-grayscaleBlack">{{getPrimaNeta()}}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="lib-tb-body-medium text-grayscaleD200">IVA (19%):</span>
+            <span class="lib-tb-body-medium text-grayscaleBlack">{{getIVA()}}</span>
+          </div>
+          <div class="flex justify-between border-t border-grayscaleL200 pt-2">
+            <span class="lib-tb-body-medium text-grayscaleBlack">Prima Total:</span>
+            <span class="lib-tb-h6-bold text-primaryBase">{{getPrimaTotal()}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Botones de acción dinámicos -->
+      <div class="quote-details__actions text-center">
+        <!-- Botón Generar Emisión (cuando viene desde management) -->
+        <lib-tb-button *ngIf="showEmissionButton" [custom]="btnGenerateEmission"> </lib-tb-button>
+
+        <!-- Botón Volver (vista normal) -->
+        <lib-tb-button *ngIf="!showEmissionButton" [custom]="btnBackToManagement"> </lib-tb-button>
+      </div>
+    </div>
+
+    <!-- ✅ Estado de carga -->
+    <div *ngIf="!hasQuoteData" class="flex justify-center items-center min-h-[400px]">
+      <div class="text-center">
+        <i class="fal fa-spinner fa-spin text-4xl text-primaryBase mb-4"></i>
+        <p class="lib-tb-body-medium text-grayscaleD200">Cargando detalles de la cotización...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Snackbar para notificaciones -->
+<lib-tb-snackbar [custom]="snackbarConfig"></lib-tb-snackbar>

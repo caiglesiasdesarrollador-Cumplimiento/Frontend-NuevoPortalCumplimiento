@@ -1,0 +1,46 @@
+<div class="error-page">
+  <!-- Header con Logo Seguros Bolívar -->
+  <header class="error-page__header">
+    <div class="error-page__header-content">
+      <img src="assets/img/seguros_bolivar.svg" alt="Seguros Bolívar" class="error-page__logo" />
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="error-page__content">
+    <div class="error-page__wrapper">
+      <!-- Spinner Seguros Bolívar INTEGRATED con icono WiFi -->
+      <div class="error-page__icon-container">
+        <!-- Fondo verde clarito -->
+        <div class="error-page__icon-bg"></div>
+        <!-- Spinner girando -->
+        <div class="error-page__spinner-wrapper">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="error-page__spinner-svg">
+            <!-- Círculo exterior - Verde oscuro -->
+            <circle class="spinner-outer" cx="100" cy="100" r="95" stroke="#038450" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="420 180"/>
+            <!-- Círculo medio - Verde claro -->
+            <circle class="spinner-middle" cx="100" cy="100" r="82" stroke="#02D46F" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="360 155"/>
+            <!-- Círculo interior - Amarillo -->
+            <circle class="spinner-inner" cx="100" cy="100" r="69" stroke="#FFE16F" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="300 133"/>
+          </svg>
+        </div>
+        <!-- Icono WiFi central fijo -->
+        <div class="error-page__icon-center">
+          <i class="fa-solid fa-wifi"></i>
+        </div>
+      </div>
+
+      <!-- Texto -->
+      <div class="error-page__text">
+        <h1 class="error-page__title">Parece que se interrumpió la conexión.</h1>
+        <p class="error-page__message">Actualice la página o regrese a la anterior.</p>
+        
+        <!-- Botón -->
+        <button class="error-page__button" (click)="refreshPage()">
+          Actualizar página
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+

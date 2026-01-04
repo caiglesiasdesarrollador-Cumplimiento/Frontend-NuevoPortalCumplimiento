@@ -1,0 +1,138 @@
+---
+alwaysApply: true
+---
+
+# Consultar tech-block-lib antes de crear componentes
+
+Antes de crear cualquier componente nuevo, **SIEMPRE** consulta primero el sistema de diseño tech-block-lib ubicado en `knowledge_base/tech_block_lib/`.
+
+## 🎯 Mapeo Inteligente de Componentes
+
+Usa esta tabla para identificar automáticamente qué componente tech-block-lib necesitas según las palabras clave:
+
+### **Atoms (componentes básicos):**
+
+| Palabras clave | Componente tech-block-lib | Interface |
+|---|---|---|
+| `botón`, `boton`, `button` | **LibTbButton** | `ILibTbButton` |
+| `entrada de texto`, `campo de texto`, `input text`, `input-text` | **LibTbInputText** | `ILibTbInputText` |
+| `entrada numérica`, `campo numérico`, `input number`, `input-number` | **LibTbInputNumber** | `ILibTbInputNumber` |
+| `área de texto`, `textarea`, `input-text-area` | **LibTbInputTextArea** | `ILibTbInputTextArea` |
+| `lista desplegable`, `selector`, `dropdown`, `select` | **LibTbDropdown** | `ILibTbDropdown` |
+| `selección múltiple`, `multi-select`, `dropdown-multi-select` | **LibTbDropdownMultiSelect** | `ILibTbDropdownMultiSelect` |
+| `casilla de verificación`, `checkbox`, `check` | **LibTbCheckbox** | `ILibTbCheckbox` |
+| `botón de radio`, `radio`, `radio-button` | **LibTbRadioButton** | `ILibTbRadioButton` |
+| `interruptor`, `switch`, `toggle` | **LibTbSwitch** | `ILibTbSwitch` |
+| `deslizador`, `slider`, `range` | **LibTbSlider** | `ILibTbSlider` |
+| `alerta`, `alert`, `aviso`, `notificación` | **LibTbAlert** | `ILibTbAlert` |
+| `avatar`, `foto de perfil`, `imagen de usuario` | **LibTbAvatar** | `ILibTbAvatar` |
+| `etiqueta`, `badge`, `distintivo` | **LibTbBadge** | `ILibTbBadge` |
+| `navegación`, `breadcrumb`, `migas de pan` | **LibTbBreadcrumb** | `ILibTbBreadcrumb` |
+| `chip`, `tag`, `etiqueta removible` | **LibTbChip** | `ILibTbChip` |
+| `mensaje vacío`, `empty-message`, `sin datos` | **LibTbEmptyMessage** | `ILibTbEmptyMessage` |
+| `galería de indicadores`, `indicator-gallery`, `dots` | **LibTbIndicatorGallery** | `ILibTbIndicatorGallery` |
+| `lista`, `list`, `listado` | **LibTbList** | `ILibTbList` |
+| `listbox`, `caja de lista`, `selectable list` | **LibTbListbox** | `ILibTbListbox` |
+| `barra de progreso`, `progress-bar`, `progreso lineal` | **LibTbProgressBar** | `ILibTbProgressBar` |
+| `spinner`, `progress-spinner`, `cargando circular` | **LibTbProgressSpinner** | `ILibTbProgressSpinner` |
+| `búsqueda`, `search`, `buscador` | **LibTbSearch** | `ILibTbSearch` |
+| `esqueleto`, `skeleton`, `loading placeholder` | **LibTbSkeleton** | `ILibTbSkeleton` |
+| `snackbar`, `toast`, `notificación temporal` | **LibTbSnackbar** | `ILibTbSnackbar` |
+| `tag`, `etiqueta`, `label` | **LibTbTag** | `ILibTbTag` |
+| `tooltip`, `ayuda contextual`, `tip` | **LibTbTooltip** | `ILibTbTooltip` |
+| `scroller`, `desplazamiento`, `scroll` | **LibTbScroller** | `ILibTbScroller` |
+
+### **Molecules (componentes combinados):**
+
+| Palabras clave | Componente tech-block-lib | Interface |
+|---|---|---|
+| `acordeón`, `accordion`, `desplegable múltiple` | **LibTbAccordion** | `ILibTbAccordion` |
+| `estado de respuesta`, `answer-state`, `resultado` | **LibTbAnswerState** | `ILibTbAnswerState` |
+| `banner`, `anuncio`, `mensaje destacado` | **LibTbBanner** | `ILibTbBanner` |
+| `calendario`, `calendar`, `selector de fecha` | **LibTbCalendar** | `ILibTbCalendar` |
+| `tarjeta`, `card`, `contenedor` | **LibTbCard** | `ILibTbCard` |
+| `menú contextual`, `context-menu`, `click derecho` | **LibTbContextMenu** | `ILibTbContextMenu` |
+| `estado vacío`, `empty-state`, `sin contenido` | **LibTbEmptyState** | `ILibTbEmptyState` |
+| `imagen`, `image`, `foto` | **LibTbImage** | `ILibTbImage` |
+| `modal`, `diálogo`, `ventana emergente` | **LibTbModal** | `ILibTbModal` |
+| `notificación modal`, `modal-notification`, `confirmación` | **LibTbModalNotification** | `ILibTbModalNotification` |
+| `onboarding`, `tutorial`, `introducción` | **LibTbOnboarding** | `ILibTbOnboarding` |
+| `paginador`, `paginator`, `paginación` | **LibTbPaginator** | `ILibTbPaginator` |
+| `medidor de contraseña`, `password-meter`, `fuerza password` | **LibTbPasswordMeter** | `ILibTbPasswordMeter` |
+| `stepper`, `pasos`, `wizard`, `asistente` | **LibTbStepper** | `ILibTbStepper` |
+| `stepper vertical`, `pasos verticales` | **LibTbStepperVertical** | `ILibTbStepperVertical` |
+| `pestañas`, `tabs`, `navegación por pestañas` | **LibTbTabs** | `ILibTbTabs` |
+| `subida de archivo`, `uploading-file`, `carga de archivos` | **LibTbUploadingFile** | `ILibTbUploadingFile` |
+
+### **Organisms (componentes complejos):**
+
+| Palabras clave | Componente tech-block-lib | Interface |
+|---|---|---|
+| `carrusel`, `carousel`, `slider de imágenes` | **LibTbCarousel** | `ILibTbCarousel` |
+| `gráfico`, `chart`, `estadísticas`, `dashboard` | **LibTbChart** | `ILibTbChart` |
+| `formulario dinámico`, `formulario`, `form`, `dynamic-form` | **LibTbDynamicForm** | `ILibTbDynamicForm` |
+| `subida de archivos`, `file-upload-field`, `drag and drop` | **LibTbFileUploadField** | `ILibTbFileUploadField` |
+| `mapa`, `map`, `geolocalización` | **LibTbMap** | `ILibTbMap` |
+| `tabla`, `table`, `grid`, `datos tabulares` | **LibTbTable** | `ILibTbTable` |
+
+## 🔍 Proceso obligatorio mejorado:
+
+1. **IDENTIFICA AUTOMÁTICAMENTE**: Usa la tabla de mapeo para encontrar el componente tech-block-lib que necesitas
+2. **CONSULTA LA DOCUMENTACIÓN**: Revisa `knowledge_base/tech_block_lib/[categoria]/[componente]/`
+3. **EVALÚA COMPATIBILIDAD**: Lee la definición e interfaz del componente
+4. **REVISA EJEMPLOS**: Lee el uso o ejemplos del componente para tener contexto
+5. **IMPLEMENTA O EXTIENDE**: Usa el componente directamente o extiéndelo según tus necesidades
+6. **DOCUMENTA DECISIÓN**: Si creas algo nuevo, explica por qué los existentes no servían
+
+## 📖 Ejemplos de consulta automática:
+
+### Para botones:
+```bash
+# 🎯 Palabras: "botón", "button" → LibTbButton
+ls knowledge_base/tech_block_lib/atoms/button/
+cat knowledge_base/tech_block_lib/atoms/button/button-definition.md
+cat knowledge_base/tech_block_lib/atoms/button/button-interface.md
+cat knowledge_base/tech_block_lib/atoms/button/button-usage.md
+```
+
+### Para formularios dinámicos:
+```bash
+# 🎯 Palabras: "formulario", "form", "formulario dinámico" → LibTbDynamicForm
+ls knowledge_base/tech_block_lib/organisms/dynamic_form/
+cat knowledge_base/tech_block_lib/organisms/dynamic_form/dynamic-form-definition.md
+cat knowledge_base/tech_block_lib/organisms/dynamic_form/dynamic-form-interface.md
+cat knowledge_base/tech_block_lib/organisms/dynamic_form/dynamic-form-usage.md
+```
+
+### Para steppers:
+```bash
+# 🎯 Palabras: "stepper", "pasos", "wizard" → LibTbStepper
+ls knowledge_base/tech_block_lib/molecules/stepper/
+cat knowledge_base/tech_block_lib/molecules/stepper/stepper-definition.md
+cat knowledge_base/tech_block_lib/molecules/stepper/stepper-interface.md
+cat knowledge_base/tech_block_lib/molecules/stepper/stepper-usage.md
+```
+
+## ⚠️ Reglas importantes:
+
+✅ **SIEMPRE** usa el mapeo de palabras clave para identificar componentes  
+✅ **SIEMPRE** consulta la documentación antes de implementar  
+✅ **SIEMPRE** prefiere reutilizar sobre crear desde cero  
+✅ **SIEMPRE** documenta por qué elegiste un componente específico  
+
+❌ **NUNCA** crees un componente sin consultar primero tech-block-lib  
+❌ **NUNCA** ignores un componente existente que cumpla tu necesidad  
+❌ **NUNCA** reimplemente funcionalidad que ya existe en el sistema de diseño  
+
+Esto asegura consistencia en el diseño y evita duplicación de esfuerzos.
+
+# Revisar definición e interfaz
+cat knowledge_base/tech_block_lib/atoms/button/button-definition.md
+cat knowledge_base/tech_block_lib/atoms/button/button-interface.md
+# Revisar uso o ejemplos
+cat knowledge_base/tech_block_lib/atoms/button/button-usage.md
+# Revisar cambio de theme o variables css existentes
+cat knowledge_base/tech_block_lib/atoms/button/button-theme.md
+```
+
+Esto asegura consistencia en el diseño y evita duplicación de esfuerzos.

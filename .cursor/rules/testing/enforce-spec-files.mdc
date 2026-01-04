@@ -1,0 +1,14 @@
+---
+id: enforce-spec-files
+name: Todo componente debe tener spec.ts
+description: Verificar que cada archivo .component.ts tenga su .component.spec.ts asociado.
+globs:
+  - containers/**/*.component.ts
+  - shared/**/*.component.ts
+type: lint
+alwaysApply: true
+---
+
+# Cobertura de pruebas
+
+Asegúrate de tener tests unitarios para cada componente usando Jest.

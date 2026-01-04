@@ -1,0 +1,50 @@
+<!-- ✅ APLICANDO PATRÓN: Mobile responsive para formularios pequeños -->
+<div class="h-auto" style="background-color: var(--sb-ui-color-grayscale-L400)">
+  <!-- ✅ Container wrapper principal mobile responsive -->
+  <div class="max-w-md mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- Formulario de Login -->
+    <div class="sb-ui-card p-6 rounded-lg shadow-sm" style="background-color: var(--sb-ui-color-grayscale-white)">
+      <h2 class="text-xl font-bold mb-6 text-center" style="color: var(--sb-ui-color-grayscale-black)">
+        Iniciar Sesión
+      </h2>
+      
+      <!-- Campo Email -->
+      <div class="mb-4">
+        <label class="sb-ui-label block mb-2">Correo electrónico</label>
+        <input 
+          type="email" 
+          class="sb-ui-input sb-ui-input--medium w-full"
+          placeholder="correo@ejemplo.com"
+          [(ngModel)]="email"
+        />
+      </div>
+
+      <!-- Campo Password -->
+      <div class="mb-6">
+        <label class="sb-ui-label block mb-2">Contraseña</label>
+        <input 
+          type="password" 
+          class="sb-ui-input sb-ui-input--medium w-full"
+          placeholder="••••••••"
+          [(ngModel)]="password"
+        />
+      </div>
+    </div>
+
+    <!-- ✅ Botones fuera del formulario dinámico, responsive -->
+    <div class="login__actions mt-4 sm:mt-6 flex gap-4 justify-center">
+      <button 
+        class="sb-ui-button sb-ui-button--secondary sb-ui-button--stroke sb-ui-button--medium"
+        (click)="onReset()"
+      >
+        Limpiar
+      </button>
+      <button 
+        class="sb-ui-button sb-ui-button--primary sb-ui-button--fill sb-ui-button--medium"
+        (click)="onSubmit()"
+      >
+        Ingresar
+      </button>
+    </div>
+  </div>
+</div>

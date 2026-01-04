@@ -1,0 +1,723 @@
+/* Importar fuentes */
+@import './assets/css/fonts/fonts.css';
+
+/* Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ✅ Sistema Responsive Seguros Bolívar */
+@import './styles-responsive.scss';
+
+/* Estilos globales */
+* {
+  font-family: var(--sb-ui-typography-fontFamily, 'Nunito Sans', 'Segoe UI', Roboto, sans-serif);
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  background-color: var(--sb-ui-color-grayscale-L400, #fafafa);
+}
+
+/* ============================================
+   ESTILOS GLOBALES DE @seguros-bolivar/ui-bundle
+   ============================================ */
+
+/* Botones */
+.sb-ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  text-decoration: none;
+
+  &--primary {
+    &.sb-ui-button--fill {
+      background-color: var(--sb-ui-color-primary-base, #009056);
+      color: var(--sb-ui-color-grayscale-white, #ffffff);
+      border-color: var(--sb-ui-color-primary-base, #009056);
+
+      &:hover {
+        background-color: var(--sb-ui-color-primary-D100, #007a4a);
+        border-color: var(--sb-ui-color-primary-D100, #007a4a);
+      }
+    }
+    &.sb-ui-button--stroke {
+      background-color: transparent;
+      color: var(--sb-ui-color-primary-base, #009056);
+      border-color: var(--sb-ui-color-primary-base, #009056);
+
+      &:hover {
+        background-color: var(--sb-ui-color-primary-L200, #e6f5ef);
+      }
+    }
+  }
+
+  &--secondary {
+    &.sb-ui-button--fill {
+      background-color: var(--sb-ui-color-feedback-warning-base, #f7c948);
+      color: var(--sb-ui-color-grayscale-black, #1a1a1a);
+      border-color: var(--sb-ui-color-feedback-warning-base, #f7c948);
+
+      &:hover {
+        background-color: var(--sb-ui-color-feedback-warning-D100, #e5b83a);
+        border-color: var(--sb-ui-color-feedback-warning-D100, #e5b83a);
+      }
+    }
+    &.sb-ui-button--stroke {
+      background-color: transparent;
+      color: var(--sb-ui-color-grayscale-black, #1a1a1a);
+      border-color: var(--sb-ui-color-grayscale-L200, #e5e7eb);
+
+      &:hover {
+        background-color: var(--sb-ui-color-grayscale-L400, #f5f5f5);
+      }
+    }
+  }
+
+  &--small {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+
+  &--medium {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  &--large {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+/* Inputs */
+.sb-ui-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--sb-ui-color-grayscale-L200, #e5e7eb);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  color: var(--sb-ui-color-grayscale-black, #1a1a1a);
+  background-color: var(--sb-ui-color-grayscale-white, #ffffff);
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--sb-ui-color-primary-base, #009056);
+    box-shadow: 0 0 0 3px var(--sb-ui-color-primary-L200, #e6f5ef);
+  }
+
+  &::placeholder {
+    color: var(--sb-ui-color-grayscale-D100, #9ca3af);
+  }
+}
+
+/* Labels */
+.sb-ui-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--sb-ui-color-grayscale-D200, #4b5563);
+  margin-bottom: 0.5rem;
+}
+
+/* Select/Dropdown */
+.sb-ui-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--sb-ui-color-grayscale-L200, #e5e7eb);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  color: var(--sb-ui-color-grayscale-black, #1a1a1a);
+  background-color: var(--sb-ui-color-grayscale-white, #ffffff);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23038450' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+  padding-right: 2.5rem;
+  transition: all 0.2s ease;
+
+  // Placeholder style
+  &:invalid,
+  &.placeholder-active {
+    color: #9ca3af;
+  }
+  
+  option:disabled {
+    color: #9ca3af;
+    font-style: italic;
+  }
+  
+  option:not(:disabled) {
+    color: #1f2937;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--sb-ui-color-primary-base, #038450);
+    box-shadow: 0 0 0 3px rgba(3, 132, 80, 0.15);
+  }
+  
+  &:hover:not(:focus) {
+    border-color: #038450;
+  }
+}
+
+/* File Upload */
+.sb-ui-file-upload {
+  border: 2px dashed var(--sb-ui-color-primary-base, #009056);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--sb-ui-color-grayscale-white, #ffffff);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--sb-ui-color-primary-L200, #e6f5ef);
+  }
+
+  &__icon {
+    font-size: 2rem;
+    color: var(--sb-ui-color-primary-base, #009056);
+    margin-bottom: 0.5rem;
+  }
+
+  &__text {
+    color: var(--sb-ui-color-grayscale-D200, #4b5563);
+    font-size: 0.875rem;
+  }
+
+  &--uploading {
+    cursor: default;
+    &:hover {
+      background-color: var(--sb-ui-color-grayscale-white, #ffffff);
+    }
+  }
+}
+
+/* Spinner */
+.sb-ui-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--sb-ui-color-grayscale-L200, #e5e7eb);
+  border-top-color: var(--sb-ui-color-primary-base, #009056);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Input con error */
+.sb-ui-input--error {
+  border-color: var(--sb-ui-color-feedback-error-base, #ef4444) !important;
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+  }
+}
+
+/* Select con error */
+.sb-ui-select--error {
+  border-color: var(--sb-ui-color-feedback-error-base, #ef4444) !important;
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+  }
+}
+
+/* Mensaje de error de campo */
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--sb-ui-color-feedback-error-base, #ef4444);
+  
+  i {
+    font-size: 0.75rem;
+  }
+}
+
+/* ============================================
+   BOTONES SEGUROS BOLÍVAR - Design System
+   Colores corporativos:
+   - Amarillo: #FFE16F
+   - Verde: #038450
+   ============================================ */
+
+/* Botón Agregar/Primario - Fondo Amarillo */
+.btn-agregar,
+.btn-bolivar-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: #FFE16F;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(255, 225, 111, 0.4);
+
+  &:hover {
+    background-color: #fcd34d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 225, 111, 0.5);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(255, 225, 111, 0.3);
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* Botón Siguiente - Fondo Amarillo (igual que Agregar) */
+.btn-siguiente,
+.btn-bolivar-success {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: #FFE16F;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(255, 225, 111, 0.4);
+
+  &:hover:not(:disabled) {
+    background-color: #fcd34d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 225, 111, 0.5);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(255, 225, 111, 0.3);
+  }
+
+  &:disabled,
+  &.btn-siguiente--disabled {
+    background-color: #e5e5e5;
+    color: #999999;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+
+    &:hover {
+      background-color: #e5e5e5;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* Botón Anterior - Borde Verde, Fondo Blanco */
+.btn-anterior,
+.btn-bolivar-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: #ffffff;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: 2px solid #038450;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background-color: #f0fdf4;
+    border-color: #026b41;
+    color: #026b41;
+  }
+
+  &:active {
+    background-color: #dcfce7;
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* Botón Quiero Emitir - Borde Verde con icono */
+.btn-quiero-emitir {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: #ffffff;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: 2px solid #038450;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background-color: #038450;
+    color: #ffffff;
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* Botón Generar Cotización - Amarillo con icono */
+.btn-generar-cotizacion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: #FFE16F;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(255, 225, 111, 0.4);
+
+  &:hover {
+    background-color: #fcd34d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 225, 111, 0.5);
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* Modal de éxito - CENTRADO MOBILE */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.modal-success {
+  background-color: #ffffff;
+  border-radius: 12px;
+  max-width: 300px;
+  width: calc(100% - 32px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: #9ca3af;
+  cursor: pointer;
+  
+  &:hover {
+    color: #374151;
+  }
+}
+
+/* Botón de ayuda flotante - Colores corporativos Seguros Bolívar */
+.btn-help-float {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background-color: #FFE16F; /* Amarillo Bolívar */
+  color: #038450; /* Verde Bolívar */
+  font-weight: 500;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  overflow: hidden;
+
+  span {
+    display: none;
+    white-space: nowrap;
+  }
+
+  i {
+    font-size: 1.25rem;
+  }
+
+  &:hover {
+    width: auto;
+    padding: 0.75rem 1rem;
+    border-radius: 2rem;
+    background-color: #f5d45a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+
+    span {
+      display: inline;
+      margin-left: 0.5rem;
+    }
+  }
+}
+
+/* Cards */
+.sb-ui-card {
+  background-color: var(--sb-ui-color-grayscale-white, #ffffff);
+  border: 1px solid var(--sb-ui-color-grayscale-L200, #e5e7eb);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Breadcrumb */
+.sb-ui-breadcrumb {
+  &__list {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+  }
+
+  &__link {
+    color: var(--sb-ui-color-primary-base, #009056);
+    text-decoration: none;
+    font-size: 0.875rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__separator {
+    color: var(--sb-ui-color-grayscale-D100, #9ca3af);
+    margin: 0 0.25rem;
+  }
+}
+
+/* Compatibilidad con clases antiguas de tech-block-lib */
+.lib-tb-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 1.3333333333em;
+  width: 1.3333333333em;
+}
+
+.p-float-label .p-placeholder,
+.p-float-label input::placeholder,
+.p-float-label .p-inputtext::placeholder {
+  opacity: 1 !important;
+}
+
+.lib-tb-input-text {
+  display: flex;
+}
+
+/* Clases de tipografía para compatibilidad */
+.lib-tb-h3-bold {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.lib-tb-h4-bold {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.lib-tb-h5-bold {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.lib-tb-h6-bold {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.lib-tb-body-medium {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.lib-tb-body-small {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.lib-tb-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Colores de compatibilidad con tech-block-lib */
+.text-grayscaleBlack { color: var(--sb-ui-color-grayscale-black, #1a1a1a); }
+.text-grayscaleD200 { color: var(--sb-ui-color-grayscale-D200, #4b5563); }
+.text-grayscaleD100 { color: var(--sb-ui-color-grayscale-D100, #6b7280); }
+.text-primaryBase { color: var(--sb-ui-color-primary-base, #009056); }
+.text-successBase { color: var(--sb-ui-color-feedback-success-base, #10b981); }
+.text-errorBase { color: var(--sb-ui-color-feedback-error-base, #ef4444); }
+.text-warningBase { color: var(--sb-ui-color-feedback-warning-base, #f59e0b); }
+
+.bg-grayscaleWhite { background-color: var(--sb-ui-color-grayscale-white, #ffffff); }
+.bg-grayscaleL400 { background-color: var(--sb-ui-color-grayscale-L400, #f5f5f5); }
+.bg-grayscaleL200 { background-color: var(--sb-ui-color-grayscale-L200, #e5e7eb); }
+.bg-primaryBase { background-color: var(--sb-ui-color-primary-base, #009056); }
+.bg-primaryL100 { background-color: var(--sb-ui-color-primary-L100, #66bc9a); }
+.bg-successBase { background-color: var(--sb-ui-color-feedback-success-base, #10b981); }
+.bg-successL100 { background-color: var(--sb-ui-color-feedback-success-L100, #6ee7b7); }
+.bg-errorBase { background-color: var(--sb-ui-color-feedback-error-base, #ef4444); }
+.bg-warningBase { background-color: var(--sb-ui-color-feedback-warning-base, #f59e0b); }
+.bg-infoBase { background-color: var(--sb-ui-color-feedback-info-base, #3b82f6); }
+
+.border-grayscaleL200 { border-color: var(--sb-ui-color-grayscale-L200, #e5e7eb); }
+.border-grayscaleL300 { border-color: var(--sb-ui-color-grayscale-L300, #d1d5db); }
+.border-primaryBase { border-color: var(--sb-ui-color-primary-base, #009056); }
+.border-successBase { border-color: var(--sb-ui-color-feedback-success-base, #10b981); }
+
+/* ============================================
+   MEJORAS MÓVIL - FULL WIDTH
+   ============================================ */
+@media (max-width: 640px) {
+  body {
+    background-color: #ffffff !important;
+  }
+  
+  .bg-grayscaleL400 {
+    background-color: #ffffff !important;
+  }
+  
+  .min-h-screen {
+    background-color: #ffffff !important;
+  }
+  
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  .mx-auto {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  .px-2, .px-4, .px-6, .px-8 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  .py-4, .py-6, .py-8 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+  
+  .mb-6, .mb-8 {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .sm\:mb-8 {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .gap-6, .gap-8 {
+    gap: 0.75rem !important;
+  }
+  
+  .sm\:gap-8 {
+    gap: 0.75rem !important;
+  }
+  
+  .p-6, .p-8 {
+    padding: 0.875rem !important;
+  }
+  
+  .sm\:p-8 {
+    padding: 0.875rem !important;
+  }
+  
+  .text-2xl {
+    font-size: 1.25rem !important;
+  }
+  
+  .text-xl {
+    font-size: 1.125rem !important;
+  }
+  
+  .text-base {
+    font-size: 0.875rem !important;
+  }
+}

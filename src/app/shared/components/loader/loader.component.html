@@ -1,0 +1,19 @@
+<!-- Loader Modal usando CSS de @seguros-bolivar/ui-bundle -->
+<div class="loader" *ngIf="isLoading">
+  <div class="sb-ui-modal-overlay">
+    <div class="sb-ui-modal sb-ui-modal--center">
+      <div class="flex flex-col gap-4 items-center justify-center p-8">
+        <!-- Spinner usando clases CSS -->
+        <div class="sb-ui-spinner sb-ui-spinner--large"></div>
+        <div class="grid justify-items-center items-center gap-2">
+          <p class="text-xl font-semibold" style="color: var(--sb-ui-color-secondary-base)">
+            Por favor, espere unos momentos
+          </p>
+          <p style="color: var(--sb-ui-color-grayscale-white)">
+            Estamos validando su información.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+---
+id: bem-naming-convention
+name: BEM Naming Convention
+description: Enforce using Block__Element--Modifier convention for CSS class names.
+globs:
+  - "**/*.scss"
+  - "**/*.css"
+  - "**/*.html"
+type: comment
+alwaysApply: true
+---
+
+# Use BEM Naming
+
+Name CSS classes using the **Block__Element--Modifier** convention.
+
+Examples:
+✅ `.button__icon--large`
+✅ `.card__header`
+✅ `.form__input--error`

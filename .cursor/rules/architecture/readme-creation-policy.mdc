@@ -1,0 +1,206 @@
+---
+title: Política de Creación de Archivos README
+alwaysApply: true
+---
+
+# Política de Creación de Archivos README
+
+## 🚫 **REGLA FUNDAMENTAL: No crear README automáticamente**
+
+**NUNCA** crees archivos README, documentación markdown o archivos de documentación automáticamente al crear componentes, servicios, módulos o funcionalidades. Los archivos de documentación solo se crean bajo estas condiciones específicas:
+
+### ✅ **CUÁNDO crear archivos README:**
+
+#### **1. Solo cuando el usuario lo solicite explícitamente:**
+- ✅ **Solicitud explícita**: "crea un README", "agrega documentación", "documenta el proyecto"
+- ✅ **Solicitud específica**: "README para el módulo X", "documenta el componente Y"
+- ✅ **Solicitud de guías**: "crea una guía de uso", "agrega instrucciones de instalación"
+- ✅ **Solicitud de onboarding**: "crea documentación para nuevos desarrolladores"
+
+#### **2. Tipos de README permitidos (solo cuando se solicite):**
+- ✅ **README.md del proyecto**: Instrucciones generales de instalación y uso
+- ✅ **README.md de módulos**: Documentación específica de módulos complejos
+- ✅ **README.md de componentes**: Solo para librerías o componentes reutilizables
+- ✅ **Guías de contribución**: CONTRIBUTING.md, DEVELOPMENT.md
+- ✅ **Documentación técnica**: Arquitectura, patrones, convenciones
+
+### ❌ **CUÁNDO NO crear archivos README:**
+
+#### **❌ Nunca automáticamente:**
+- ❌ Al crear un nuevo componente
+- ❌ Al implementar un servicio
+- ❌ Al agregar una funcionalidad
+- ❌ Al crear un módulo
+- ❌ Al refactorizar código existente
+- ❌ Durante el desarrollo inicial
+- ❌ Al finalizar una implementación
+
+#### **❌ Nunca presuponer necesidad:**
+- ❌ "Este proyecto necesita documentación"
+- ❌ "Voy a crear un README para explicar esto"
+- ❌ "Debería documentar este componente"
+- ❌ "Es buena práctica tener un README aquí"
+
+## 🎯 **Flujo de Desarrollo SIN Documentación Automática**
+
+### **Fase 1: Desarrollo (SIN README)**
+1. 📝 Crear interfaces y tipos
+2. 🏗️ Implementar componente/servicio/módulo
+3. 🔧 Configurar módulos e imports
+4. 🎨 Aplicar estilos (si aplica)
+5. 🔗 Configurar routing (si aplica)
+6. ✅ Validar funcionalidad
+
+### **Fase 2: Finalización (SIN README)**
+7. 🧪 Testing (solo si se solicita)
+8. 🚀 Deployment o integración
+9. ✅ Confirmación de que todo funciona
+
+### **Fase 3: Documentación (SOLO si el usuario lo solicita)**
+10. 📚 Crear README (SOLO si se solicita explícitamente)
+11. 📖 Agregar guías de uso (SOLO si se solicita)
+12. 📋 Documentar API o interfaces (SOLO si se solicita)
+
+## 📋 **Ejemplos de Solicitudes**
+
+### ✅ **Solicitudes que SÍ requieren README:**
+- "Ahora crea un README para este proyecto"
+- "Agrega documentación de instalación"
+- "Crea un README que explique cómo usar este módulo"
+- "Documenta la arquitectura del proyecto"
+- "Crea una guía para nuevos desarrolladores"
+- "Agrega un CONTRIBUTING.md"
+- "Documenta las interfaces de este componente"
+
+### ❌ **Solicitudes que NO requieren README automático:**
+- "Crea un componente de login"
+- "Implementa un servicio de usuarios"
+- "Agrega un formulario dinámico"
+- "Crea un contenedor de registro"
+- "Implementa navegación con stepper"
+- "Refactoriza el código del componente"
+- "Finaliza la implementación"
+- "El proyecto está listo"
+
+## 📚 **Tipos de Documentación y Cuándo Crearla**
+
+### **README.md del Proyecto (Solo si se solicita):**
+```markdown
+# Nombre del Proyecto
+Descripción del proyecto
+
+## Instalación
+Instrucciones de instalación
+
+## Uso
+Ejemplos de uso básico
+
+## Contribución
+Cómo contribuir al proyecto
+```
+
+### **README.md de Módulo (Solo si se solicita):**
+```markdown
+# Nombre del Módulo
+Propósito del módulo
+
+## Componentes incluidos
+Lista de componentes
+
+## Uso
+Cómo importar y usar el módulo
+```
+
+### **Documentación de Componente (Solo si se solicita):**
+```markdown
+# ComponentName
+Descripción del componente
+
+## Props/Inputs
+Documentación de propiedades
+
+## Ejemplos
+Ejemplos de uso
+```
+
+## 🚦 **Checklist Antes de Crear README**
+
+### **Verificar Solicitud Explícita:**
+- [ ] ¿El usuario pidió específicamente un README?
+- [ ] ¿El usuario mencionó "documentación" o "README"?
+- [ ] ¿Es para compartir con otros desarrolladores?
+- [ ] ¿Es para un repositorio público o librería?
+
+### **Verificar Necesidad Real:**
+- [ ] ¿El código no es autoexplicativo?
+- [ ] ¿Hay procesos de instalación complejos?
+- [ ] ¿Hay configuraciones especiales requeridas?
+- [ ] ¿Es una librería o API que otros van a usar?
+
+### **Evitar Documentación Innecesaria:**
+- [ ] ¿Es un componente simple autoexplicativo?
+- [ ] ¿La funcionalidad es evidente por el código?
+- [ ] ¿Es solo para uso interno del equipo?
+- [ ] ¿No hay procesos de instalación especiales?
+
+## ⚠️ **Casos Especiales**
+
+### **✅ README Justificado (pero solo si se solicita):**
+- 📦 **Librerías públicas**: Para que otros desarrolladores entiendan cómo usarlas
+- 🔧 **Proyectos con setup complejo**: Instalación, configuración, dependencias especiales
+- 🏗️ **Arquitecturas complejas**: Patrones de diseño, estructura de carpetas no estándar
+- 🚀 **Deployment especial**: Procesos de despliegue únicos o complejos
+
+### **❌ README Innecesario (incluso si se solicita, cuestionar):**
+- 🧩 **Componentes simples**: Botones, inputs, cards básicos
+- 📁 **Carpetas con estructura estándar**: Angular modules estándar
+- 🔄 **Funcionalidades obvias**: CRUD básico, formularios simples
+- 🎨 **Estilos CSS**: Si siguen convenciones estándar (BEM, etc.)
+
+## 📝 **Preguntas para Validar Necesidad**
+
+Antes de crear cualquier README, pregúntate:
+
+1. **¿El usuario lo pidió explícitamente?**
+2. **¿Hay información que no es obvia del código?**
+3. **¿Otros desarrolladores necesitarán esta documentación?**
+4. **¿Hay pasos de configuración no estándar?**
+5. **¿Es una API o librería que otros van a consumir?**
+
+Si la respuesta a todas es "No", **NO crear README**.
+
+## 🎯 **Mensaje de Respuesta Estándar**
+
+Cuando completes una funcionalidad sin crear README:
+
+```
+✅ [Funcionalidad] implementada exitosamente
+✅ Código autoexplicativo y bien estructurado
+✅ Siguiendo convenciones establecidas
+
+📚 Si necesitas documentación específica, puedes solicitarla con:
+"Crea un README para [específico]"
+```
+
+## 📚 **Resumen**
+
+| Situación | Acción | README |
+|-----------|--------|--------|
+| **Desarrollo normal** | Implementar funcionalidad | ❌ No crear README |
+| **Solicitud explícita** | Usuario pide documentación | ✅ Crear README específico |
+| **Proyecto complejo** | Funcionalidad compleja | ❌ No crear automáticamente |
+| **Librería pública** | Compartir con otros | ✅ Solo si se solicita |
+
+**REGLA DE ORO**: El código debe ser autoexplicativo. La documentación solo cuando se solicite explícitamente.
+
+## 🔄 **Alternativas a README**
+
+En lugar de crear README automáticamente, enfocar en:
+
+1. **✅ Código autoexplicativo**: Nombres claros, funciones pequeñas
+2. **✅ Comentarios inline**: Para lógica compleja específica
+3. **✅ Interfaces bien definidas**: TypeScript interfaces claras
+4. **✅ Convenciones consistentes**: BEM, Angular style guide
+5. **✅ Estructura estándar**: Carpetas y archivos organizados
+
+**¿Necesitas README?** Solicítalo explícitamente: "Crea un README para..."

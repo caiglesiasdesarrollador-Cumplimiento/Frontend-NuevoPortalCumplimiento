@@ -1,0 +1,223 @@
+<div class="min-h-screen" style="background-color: var(--sb-ui-color-grayscale-L400)">
+  <div class="portal-layout">
+    <aside class="portal-sidebar shadow-lg border-r" 
+           style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+      <div class="portal-sidebar__header p-4 border-b" style="border-color: var(--sb-ui-color-grayscale-L200)">
+        <div class="font-bold" style="color: var(--sb-ui-color-grayscale-black)">Menú</div>
+      </div>
+
+      <nav class="portal-sidebar__nav p-4">
+        <ul class="space-y-2">
+          <li>
+            <a href="#" class="portal-sidebar__nav-item flex items-center p-2 rounded hover:bg-gray-100">
+              <i class="fal fa-search mr-3" style="color: var(--sb-ui-color-grayscale-D200)"></i>
+              <span style="color: var(--sb-ui-color-grayscale-black)">Prospectar</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="portal-sidebar__nav-item flex items-center p-2 rounded hover:bg-gray-100">
+              <i class="fal fa-file-alt mr-3" style="color: var(--sb-ui-color-grayscale-D200)"></i>
+              <span style="color: var(--sb-ui-color-grayscale-black)">Gestión de pólizas</span>
+            </a>
+            <ul class="ml-6 mt-2 space-y-1">
+              <li>
+                <a href="#" class="portal-sidebar__submenu-item flex items-center justify-between p-2 text-sm rounded hover:bg-gray-100"
+                   (click)="navigateToUrl('/product-selection'); $event.preventDefault()">
+                  <span style="color: var(--sb-ui-color-grayscale-D200)">Cotizar o emitir</span>
+                  <i class="fal fa-chevron-right text-xs" style="color: var(--sb-ui-color-grayscale-D200)"></i>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="portal-sidebar__submenu-item flex items-center justify-between p-2 text-sm rounded hover:bg-gray-100"
+                   (click)="navigateToUrl('/modification-selection'); $event.preventDefault()">
+                  <span style="color: var(--sb-ui-color-grayscale-D200)">Modificar</span>
+                  <i class="fal fa-chevron-right text-xs" style="color: var(--sb-ui-color-grayscale-D200)"></i>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li>
+            <a href="#" class="portal-sidebar__nav-item flex items-center p-2 rounded hover:bg-gray-100">
+              <i class="fal fa-briefcase mr-3" style="color: var(--sb-ui-color-grayscale-D200)"></i>
+              <span style="color: var(--sb-ui-color-grayscale-black)">Servicios y reportes</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="portal-sidebar__nav-item flex items-center p-2 rounded hover:bg-gray-100">
+              <i class="fal fa-users mr-3" style="color: var(--sb-ui-color-grayscale-D200)"></i>
+              <span style="color: var(--sb-ui-color-grayscale-black)">Mis clientes</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="portal-main">
+      <div class="portal-content p-6">
+        <!-- Saludo -->
+        <section class="mb-6">
+          <div class="rounded-lg shadow-sm border p-6"
+               style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+            <h1 class="text-2xl font-bold mb-2" style="color: var(--sb-ui-color-grayscale-black)">
+              {{ userInfo.greeting }}
+            </h1>
+            <p class="text-lg" style="color: var(--sb-ui-color-grayscale-D200)">{{ userInfo.question }}</p>
+          </div>
+        </section>
+
+        <!-- Info usuario -->
+        <section class="mb-6">
+          <div class="rounded-lg shadow-sm border p-4"
+               style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-8">
+                <div class="text-center">
+                  <div class="text-sm" style="color: var(--sb-ui-color-grayscale-D200)">Clave:</div>
+                  <div class="font-medium" style="color: var(--sb-ui-color-grayscale-black)">{{ userInfo.code }}</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-sm" style="color: var(--sb-ui-color-grayscale-D200)">Especialidad:</div>
+                  <div class="font-medium" style="color: var(--sb-ui-color-grayscale-black)">{{ userInfo.specialty }}</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-sm" style="color: var(--sb-ui-color-grayscale-D200)">Fecha vigencia:</div>
+                  <div class="font-medium" style="color: var(--sb-ui-color-grayscale-black)">{{ userInfo.expirationDate }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Información general -->
+        <section class="mb-6">
+          <h2 class="font-bold mb-4" style="color: var(--sb-ui-color-grayscale-black)">Información general</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="rounded-lg border p-4" 
+                 style="background-color: var(--sb-ui-color-feedback-info-L400); border-color: var(--sb-ui-color-feedback-info-L200)">
+              <div class="flex items-center mb-3">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3"
+                     style="background-color: var(--sb-ui-color-feedback-info-base)">
+                  <i class="fal fa-history" style="color: var(--sb-ui-color-grayscale-white)"></i>
+                </div>
+                <div>
+                  <div class="text-2xl font-bold" style="color: var(--sb-ui-color-grayscale-black)">
+                    {{ informacionGeneral[0].count }}
+                  </div>
+                  <div class="text-sm" style="color: var(--sb-ui-color-grayscale-D200)">
+                    {{ informacionGeneral[0].title }}
+                  </div>
+                </div>
+              </div>
+              <button class="sb-ui-button sb-ui-button--secondary sb-ui-button--stroke sb-ui-button--small w-full"
+                      (click)="navigateToUrl('/management')">
+                Ver historial
+              </button>
+            </div>
+
+            <div class="rounded-lg border p-4"
+                 style="background-color: var(--sb-ui-color-feedback-error-L400); border-color: var(--sb-ui-color-feedback-error-L200)">
+              <div class="flex items-center mb-3">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3"
+                     style="background-color: var(--sb-ui-color-feedback-error-base)">
+                  <i class="fal fa-exclamation-circle" style="color: var(--sb-ui-color-grayscale-white)"></i>
+                </div>
+                <div>
+                  <div class="text-2xl font-bold" style="color: var(--sb-ui-color-grayscale-black)">
+                    {{ informacionGeneral[1].count }}
+                  </div>
+                  <div class="text-sm" style="color: var(--sb-ui-color-grayscale-D200)">
+                    {{ informacionGeneral[1].title }}
+                  </div>
+                </div>
+              </div>
+              <button class="sb-ui-button sb-ui-button--secondary sb-ui-button--stroke sb-ui-button--small w-full"
+                      (click)="navigateToUrl('/management')">
+                Ver solicitudes
+              </button>
+            </div>
+
+            <div class="rounded-lg border p-4"
+                 style="background-color: var(--sb-ui-color-feedback-warning-L400); border-color: var(--sb-ui-color-feedback-warning-L200)">
+              <div class="flex items-center mb-3">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3"
+                     style="background-color: var(--sb-ui-color-feedback-warning-base)">
+                  <i class="fal fa-clock" style="color: var(--sb-ui-color-grayscale-white)"></i>
+                </div>
+                <div>
+                  <div class="text-2xl font-bold" style="color: var(--sb-ui-color-grayscale-black)">
+                    {{ informacionGeneral[2].count }}
+                  </div>
+                  <div class="text-sm" style="color: var(--sb-ui-color-grayscale-D200)">
+                    {{ informacionGeneral[2].title }}
+                  </div>
+                </div>
+              </div>
+              <button class="sb-ui-button sb-ui-button--secondary sb-ui-button--stroke sb-ui-button--small w-full"
+                      (click)="navigateToUrl('/management')">
+                Ver en curso
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lo que más usas -->
+        <section class="mb-6">
+          <h3 class="font-bold mb-4" style="color: var(--sb-ui-color-grayscale-black)">Lo que más usas:</h3>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            <button class="sb-ui-button sb-ui-button--secondary sb-ui-button--stroke sb-ui-button--small"
+                    (click)="navigateToUrl('/policy-input')">
+              <i class="fal fa-plus mr-2"></i>
+              Crear consecutivo
+            </button>
+            <button class="sb-ui-button sb-ui-button--secondary sb-ui-button--stroke sb-ui-button--small"
+                    (click)="navigateToUrl('/policy-modification')">
+              <i class="fal fa-edit mr-2"></i>
+              Modificar póliza
+            </button>
+            <button class="sb-ui-button sb-ui-button--secondary sb-ui-button--stroke sb-ui-button--small"
+                    (click)="navigateToUrl('/management')">
+              <i class="fal fa-list mr-2"></i>
+              Precobros
+            </button>
+            <button class="sb-ui-button sb-ui-button--secondary sb-ui-button--stroke sb-ui-button--small"
+                    (click)="navigateToUrl('/settings')">
+              <i class="fal fa-cog mr-2"></i>
+              Configuración
+            </button>
+          </div>
+        </section>
+
+        <!-- Novedades -->
+        <section>
+          <h3 class="font-bold mb-4" style="color: var(--sb-ui-color-grayscale-black)">Novedades:</h3>
+
+          <div class="rounded-lg border p-4"
+               style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="rounded-lg overflow-hidden" style="background-color: var(--sb-ui-color-grayscale-L400)">
+                <img
+                  src="https://d9b6rardqz97a.cloudfront.net/wp-content/uploads/2025/07/0835/banner-vida-28Jul25-escritorio-1023x475.webp"
+                  alt="Banner Vida Seguros Bolívar"
+                  class="w-full h-48 object-cover rounded-lg"
+                  (error)="onImageError($event)"
+                />
+              </div>
+              <div class="rounded-lg p-6 flex items-center justify-center"
+                   style="background-color: var(--sb-ui-color-grayscale-L400)">
+                <div class="text-center">
+                  <i class="fal fa-image text-3xl mb-2" style="color: var(--sb-ui-color-grayscale-D200)"></i>
+                  <p class="text-sm" style="color: var(--sb-ui-color-grayscale-D200)">Banner 2</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>

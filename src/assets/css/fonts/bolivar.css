@@ -1,0 +1,99 @@
+/* Regular */
+@font-face {
+    font-family: 'Bolivar';
+    src: url('/assets/fonts/Bolivar/WOFF2/Bolivar-Regular.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar/WOFF/Bolivar-Regular.woff') format('woff'),
+        url('/assets/fonts/Bolivar/TTF/Bolivar-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Italic */
+@font-face {
+    font-family: 'Bolivar';
+    src: url('/assets/fonts/Bolivar/WOFF2/Bolivar-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar/WOFF/Bolivar-Italic.woff') format('woff'),
+        url('/assets/fonts/Bolivar/TTF/Bolivar-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+/* Bold */
+@font-face {
+    font-family: 'Bolivar';
+    src: url('/assets/fonts/Bolivar/WOFF2/Bolivar-Bold.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar/WOFF/Bolivar-Bold.woff') format('woff'),
+        url('/assets/fonts/Bolivar/TTF/Bolivar-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Bold Italic */
+@font-face {
+    font-family: 'Bolivar';
+    src: url('/assets/fonts/Bolivar/WOFF2/Bolivar-Bold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar/WOFF/Bolivar-Bold-Italic.woff') format('woff'),
+        url('/assets/fonts/Bolivar/TTF/Bolivar-Bold-Italic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+/* ExtraBold */
+@font-face {
+    font-family: 'Bolivar';
+    src: url('/assets/fonts/Bolivar/WOFF2/Bolivar-ExtraBold.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar/WOFF/Bolivar-ExtraBold.woff') format('woff'),
+        url('/assets/fonts/Bolivar/TTF/Bolivar-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+/* ExtraBold Italic */
+@font-face {
+    font-family: 'Bolivar';
+    src: url('/assets/fonts/Bolivar/WOFF2/Bolivar-ExtraBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar/WOFF/Bolivar-ExtraBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Bolivar/TTF/Bolivar-ExtraBold-Italic.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+}
+
+/* Light */
+@font-face {
+    font-family: 'Bolivar';
+    src: url('/assets/fonts/Bolivar/WOFF2/Bolivar-Light.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar/WOFF/Bolivar-Light.woff') format('woff'),
+        url('/assets/fonts/Bolivar/TTF/Bolivar-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Light Italic */
+@font-face {
+    font-family: 'Bolivar';
+    src: url('/assets/fonts/Bolivar/WOFF2/Bolivar-Light-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar/WOFF/Bolivar-Light-Italic.woff') format('woff'),
+        url('/assets/fonts/Bolivar/TTF/Bolivar-Light-Italic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+/* SemiBold */
+@font-face {
+    font-family: 'Bolivar';
+    src: url('/assets/fonts/Bolivar/WOFF2/Bolivar-SemiBold.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar/WOFF/Bolivar-SemiBold.woff') format('woff'),
+        url('/assets/fonts/Bolivar/TTF/Bolivar-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* SemiBold Italic */
+@font-face {
+    font-family: 'Bolivar';
+    src: url('/assets/fonts/Bolivar/WOFF2/Bolivar-SemiBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Bolivar/WOFF/Bolivar-SemiBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Bolivar/TTF/Bolivar-SemiBold-Italic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}

@@ -1,0 +1,14 @@
+---
+id: use-onpush-strategy
+name: Usar ChangeDetectionStrategy.OnPush
+description: Recomendar ChangeDetectionStrategy.OnPush en componentes para optimizar rendimiento.
+globs:
+  - containers/**/*.component.ts
+  - shared/**/*.component.ts
+type: comment
+alwaysApply: true
+---
+
+# ChangeDetectionStrategy.OnPush
+
+Mejora el rendimiento de tus componentes usando la estrategia OnPush.

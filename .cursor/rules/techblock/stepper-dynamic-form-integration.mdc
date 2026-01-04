@@ -1,0 +1,344 @@
+---
+id: stepper-dynamic-form-integration
+name: Integración de Stepper con Formularios Dinámicos
+description: Patrón estándar para integrar lib-tb-stepper con lib-tb-dynamic-form en formularios multi-paso usando tech-block-lib.
+globs:
+  - containers/**/*stepper*/**
+  - containers/**/*step*/**
+  - "**/*stepper*.component.ts"
+  - "**/*step*.config.ts"
+type: comment
+alwaysApply: true
+---
+
+# Integración de Stepper con Formularios Dinámicos
+
+Patrón estándar para crear formularios multi-paso combinando `lib-tb-stepper` y `lib-tb-dynamic-form`.
+
+## 🔥 **REGLA CRÍTICA: formId y name OBLIGATORIOS EN CADA PASO**
+
+**SIEMPRE** incluir **AMBOS** parámetros en **TODOS** los campos de cada paso del stepper. Sin estos, los formularios multi-paso fallan completamente.
+
+### **✅ PATRÓN OBLIGATORIO PARA STEPPERS:**
+```typescript
+// ✅ CORRECTO: Campo en cualquier paso del stepper
+export const campoStep1: ILibTbDynamicFormConfigType = {
+  tbType: 'dropdown|input|number',
+  containerId: 'step1-content-container',
+  formId: 'campoStep1',           // ✅ OBLIGATORIO: Para Angular FormControl
+  custom: {
+    name: 'campoStep1',           // ✅ OBLIGATORIO: Debe coincidir con formId
+    // ... resto de configuración
+  }
+};
+
+export const campoStep2: ILibTbDynamicFormConfigType = {
+  tbType: 'input',
+  containerId: 'step2-content-container', 
+  formId: 'campoStep2',           // ✅ OBLIGATORIO: Para Angular FormControl
+  custom: {
+    name: 'campoStep2',           // ✅ OBLIGATORIO: Debe coincidir con formId
+    // ... resto de configuración
+  }
+};
+```
+
+### **🚨 CRÍTICO PARA STEPPERS:**
+- ❌ **Sin formId/name** → Stepper NO renderiza pasos → Parece roto
+- ❌ **Errores en cualquier paso** → TODO el stepper falla
+- ❌ **Navegación imposible** → Clicks manuales no funcionan
+- ❌ **Change detection roto** → Formularios no responden
+
+### **✅ VERIFICACIÓN POR PASO:**
+```typescript
+// ✅ CHECKLIST para cada paso del stepper:
+// Paso 1: ¿Todos los campos tienen formId y name?
+// Paso 2: ¿Todos los campos tienen formId y name?  
+// Paso N: ¿Todos los campos tienen formId y name?
+// ¿Nombres únicos across todos los pasos?
+```
+
+## 🎯 Estructura del componente principal:
+
+```typescript
+import { ILibTbStepper, ILibTbDynamicForm, ILibTbButton } from 'tech-block-lib';
+
+@Component({
+  selector: 'mi-formulario-stepper',
+  templateUrl: './mi-formulario-stepper.component.html',
+  styleUrls: ['./mi-formulario-stepper.component.scss']
+})
+export class MiFormularioStepperComponent {
+  currentStep = 0; // ✅ Control del paso actual
+
+  // ✅ OBLIGATORIO: Configuración del stepper
+  stepperConfig: ILibTbStepper = {
+    activeIndex: 0,
+    readonly: false,
+    type: 'number', // o 'icon' o 'mix'
+    items: [
+      {
+        label: 'Paso 1: Información Personal',
+        icon: 'fal fa-user',
+        command: () => this.goToStep(0),
+      },
+      {
+        label: 'Paso 2: Ubicación',
+        icon: 'fal fa-map-marker-alt',
+        command: () => this.goToStep(1),
+      },
+    ],
+    libTbActiveIndexChange: (index: number) => {
+      this.currentStep = index;
+    },
+  };
+
+  // ✅ OBLIGATORIO: Un formulario dinámico por paso
+  step1Form: ILibTbDynamicForm = step1ConfigForm();
+  step2Form: ILibTbDynamicForm = step2ConfigForm();
+
+  // ✅ OBLIGATORIO: Botones de navegación
+  btnNext: ILibTbButton = {
+    label: 'Siguiente',
+    icon: 'fal fa-arrow-right',
+    libTbClick: () => this.nextStep(),
+  };
+
+  btnPrevious: ILibTbButton = {
+    label: 'Anterior', 
+    icon: 'fal fa-arrow-left',
+    libTbClick: () => this.previousStep(),
+  };
+
+  btnSubmit: ILibTbButton = {
+    label: 'Enviar',
+    icon: 'fal fa-paper-plane',
+    libTbClick: () => this.submitForm(),
+  };
+
+  // ✅ OBLIGATORIO: Métodos de navegación
+  goToStep(step: number): void {
+    if (step > this.currentStep && !this.validateCurrentStep()) {
+      return; // No permitir avanzar si el paso actual no es válido
+    }
+    this.currentStep = step;
+    this.stepperConfig.activeIndex = step;
+  }
+
+  nextStep(): void {
+    if (this.currentStep < this.stepperConfig.items!.length - 1 && this.validateCurrentStep()) {
+      this.currentStep++;
+      this.stepperConfig.activeIndex = this.currentStep;
+    }
+  }
+
+  previousStep(): void {
+    if (this.currentStep > 0) {
+      this.currentStep--;
+      this.stepperConfig.activeIndex = this.currentStep;
+    }
+  }
+
+  validateCurrentStep(): boolean {
+    const currentForm = this.getCurrentStepForm();
+    currentForm.libTbCallSubmit?.();
+    return currentForm.form?.valid ?? false;
+  }
+
+  private getCurrentStepForm(): ILibTbDynamicForm {
+    switch (this.currentStep) {
+      case 0: return this.step1Form;
+      case 1: return this.step2Form;
+      default: return this.step1Form;
+    }
+  }
+
+  submitForm(): void {
+    // Validar todos los pasos antes del envío final
+    const allValid = this.stepperConfig.items!.every((_, index) => {
+      this.currentStep = index;
+      return this.validateCurrentStep();
+    });
+
+    if (allValid) {
+      // Combinar datos de todos los formularios
+      const allData = {
+        ...this.step1Form.form?.value,
+        ...this.step2Form.form?.value,
+      };
+      console.log('Formulario completo:', allData);
+      // Enviar datos...
+    }
+  }
+
+  // ✅ Métodos auxiliares para el template
+  get isFirstStep(): boolean {
+    return this.currentStep === 0;
+  }
+
+  get isLastStep(): boolean {
+    return this.currentStep === (this.stepperConfig.items!.length - 1);
+  }
+}
+```
+
+## 🖼️ Template estándar:
+
+```html
+<div class="stepper-form-container">
+  <!-- ✅ OBLIGATORIO: Stepper de navegación -->
+  <div class="stepper-nav">
+    <lib-tb-stepper [custom]="stepperConfig"></lib-tb-stepper>
+  </div>
+
+  <!-- ✅ OBLIGATORIO: Contenido de pasos con renderizado condicional -->
+  <div class="step-content">
+    <!-- Paso 1 -->
+    <div *ngIf="currentStep === 0" class="step-form">
+      <lib-tb-dynamic-form [custom]="step1Form"></lib-tb-dynamic-form>
+      
+      <div class="navigation-buttons">
+        <lib-tb-button [custom]="btnNext"></lib-tb-button>
+      </div>
+    </div>
+
+    <!-- Paso 2 -->
+    <div *ngIf="currentStep === 1" class="step-form">
+      <lib-tb-dynamic-form [custom]="step2Form"></lib-tb-dynamic-form>
+      
+      <div class="navigation-buttons">
+        <lib-tb-button [custom]="btnPrevious"></lib-tb-button>
+        <lib-tb-button [custom]="btnSubmit"></lib-tb-button>
+      </div>
+    </div>
+
+    <!-- Más pasos según sea necesario -->
+  </div>
+</div>
+```
+
+## 📦 Módulo requerido:
+
+```typescript
+import { 
+  LibTbStepperModule, 
+  LibTbDynamicFormModule, 
+  LibTbButtonModule 
+} from 'tech-block-lib';
+
+@NgModule({
+  declarations: [MiFormularioStepperComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    LibTbStepperModule,      // ✅ OBLIGATORIO para stepper
+    LibTbDynamicFormModule,  // ✅ OBLIGATORIO para formularios dinámicos
+    LibTbButtonModule,       // ✅ OBLIGATORIO para botones de navegación
+  ]
+})
+export class MiFormularioStepperModule {}
+```
+
+## 🎨 Estilos base recomendados:
+
+```scss
+.stepper-form-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.stepper-nav {
+  margin-bottom: 2rem;
+}
+
+.step-content {
+  min-height: 400px;
+}
+
+.step-form {
+  animation: fadeInStep 0.3s ease-in-out;
+}
+
+@keyframes fadeInStep {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  
+  &.single-button {
+    justify-content: flex-end;
+  }
+}
+```
+
+## ⚙️ Configuraciones de paso con containerId específicos:
+
+```typescript
+// configs/step1-personal.config.ts
+export const step1PersonalForm = (): ILibTbDynamicForm => {
+  return {
+    configContainers: [
+      {
+        id: 'step1-header-container',    // ✅ ID específico del paso
+        tagName: 'header',
+        class: 'step-header'
+      },
+      {
+        id: 'step1-content-container',   // ✅ ID específico del paso
+        tagName: 'section', 
+        class: 'step-content'
+      }
+    ],
+    config: [
+      {
+        containerId: 'step1-header-container',
+        htmlContent: '<h3>Paso 1: Información Personal</h3>'
+      },
+      nombre,    // containerId: 'step1-content-container'
+      apellidos, // containerId: 'step1-content-container'
+      email,     // containerId: 'step1-content-container'
+    ]
+  };
+};
+```
+
+## ⚠️ Errores comunes a evitar:
+
+❌ **No validar pasos**: Permitir avanzar sin validar el paso actual  
+❌ **containerId genéricos**: Usar los mismos IDs en todos los pasos  
+❌ **No manejar el estado**: No sincronizar currentStep con stepper.activeIndex  
+❌ **Lógica en template**: Poner validaciones complejas en el HTML  
+❌ **Botones mal ubicados**: No mostrar botones contextuales por paso  
+❌ **No combinar datos**: No unir la información de todos los pasos al final
+
+## 🎯 Casos de uso recomendados:
+
+- **Registro de usuarios**: Información personal → Configuración → Confirmación
+- **Configuración de productos**: Básico → Avanzado → Precios → Resumen  
+- **Procesos de onboarding**: Bienvenida → Perfil → Preferencias → Finalización
+- **Formularios largos**: División lógica en pasos manejables
+- **Wizards complejos**: Navegación guiada con validación progresiva
+
+## 📋 Checklist de implementación:
+
+✅ Stepper configurado con items y navegación  
+✅ Un ILibTbDynamicForm por paso  
+✅ Método goToStep() con validación  
+✅ Métodos nextStep() y previousStep()  
+✅ Validación validateCurrentStep()  
+✅ containerId específicos por paso  
+✅ Botones de navegación contextuales  
+✅ Template con renderizado condicional  
+✅ Animaciones de transición entre pasos  
+✅ Combinación de datos al envío final

@@ -1,0 +1,250 @@
+---
+id: use-tech-block-lib-classes
+name: Usar clases Tailwind de tech-block-lib
+description: Obligatorio usar las clases de color de tech-block-lib definidas en tailwind.config.js en lugar de clases estándar de Tailwind.
+globs:
+  - "**/*.html"
+  - "**/*.ts"
+  - "**/*.scss"
+  - "**/*.css"
+type: comment
+alwaysApply: true
+---
+
+# Usar clases Tailwind de tech-block-lib
+
+**SIEMPRE** usa las clases de color de tech-block-lib definidas en `tailwind.config.js` que mapean a las variables CSS del sistema de diseño.
+
+## 📋 **Basado en:**
+
+### **Ejemplo del Header (referencia):**
+```html
+<!-- ✅ BIEN: Header usando clases tech-block-lib -->
+<div class="relative z-10 top-0 left-0 bg-grayscaleWhite w-full h-[54px] shadow-sm">
+  <img class="block h-[50px] w-auto mx-auto" />
+</div>
+```
+
+### **Variables definidas en `tailwind.config.js`:**
+```javascript
+colors: {
+  // Grayscale (más comunes)
+  grayscaleBlack: 'var(--c-lib-tb-grayscaleBlack)',
+  grayscaleWhite: 'var(--c-lib-tb-grayscaleWhite)',
+  grayscaleL400: 'var(--c-lib-tb-grayscaleL400)',
+  grayscaleL200: 'var(--c-lib-tb-grayscaleL200)',
+  grayscaleD200: 'var(--c-lib-tb-grayscaleD200)',
+  grayscaleD100: 'var(--c-lib-tb-grayscaleD100)',
+  
+  // Colores primarios
+  primaryBase: 'var(--c-lib-tb-primaryBase)',
+  primaryL100: 'var(--c-lib-tb-primaryL100)',
+  primaryD100: 'var(--c-lib-tb-primaryD100)',
+  
+  // Estados
+  errorBase: 'var(--c-lib-tb-errorBase)',
+  successBase: 'var(--c-lib-tb-successBase)',
+  warningBase: 'var(--c-lib-tb-warningBase)',
+  infoBase: 'var(--c-lib-tb-infoBase)',
+}
+```
+
+## ✅ **CLASES PERMITIDAS - tech-block-lib:**
+
+### **Fondos más comunes:**
+```html
+<!-- ✅ Fondos tech-block-lib -->
+class="bg-grayscaleWhite"     <!-- Blanco (cards, modales) -->
+class="bg-grayscaleL400"      <!-- Gris muy claro (página, backgrounds) -->
+class="bg-grayscaleL300"      <!-- Gris claro (secciones) -->
+class="bg-primaryBase"        <!-- Color primario -->
+class="bg-secondaryBase"      <!-- Color secundario -->
+class="bg-errorBase"          <!-- Fondo error -->
+class="bg-successBase"        <!-- Fondo éxito -->
+```
+
+### **Bordes más comunes:**
+```html
+<!-- ✅ Bordes tech-block-lib -->
+class="border-grayscaleL200"  <!-- Borde gris claro (cards) -->
+class="border-grayscaleL300"  <!-- Borde gris medio -->
+class="border-primaryBase"    <!-- Borde color primario -->
+class="border-errorBase"      <!-- Borde error -->
+```
+
+### **Textos más comunes:**
+```html
+<!-- ✅ Textos tech-block-lib -->
+class="text-grayscaleBlack"   <!-- Negro (títulos principales) -->
+class="text-grayscaleD200"    <!-- Gris oscuro (párrafos) -->
+class="text-grayscaleD100"    <!-- Gris medio (labels) -->
+class="text-primaryBase"      <!-- Color primario (links) -->
+class="text-errorBase"        <!-- Color error -->
+class="text-successBase"      <!-- Color éxito -->
+```
+
+### **Dimensiones Tailwind nativas (permitidas):**
+```html
+<!-- ✅ Dimensiones estándar Tailwind (NO son colores) -->
+class="w-full h-[54px]"       <!-- Como en el header -->
+class="max-w-md mx-auto"      <!-- Layout y posicionamiento -->
+class="px-4 py-8"             <!-- Spacing -->
+class="rounded-lg shadow-sm"  <!-- Formas y sombras -->
+class="min-h-screen"          <!-- Altura mínima -->
+```
+
+## ❌ **CLASES PROHIBIDAS - Tailwind estándar:**
+
+### **Fondos estándar (NO usar):**
+```html
+<!-- ❌ PROHIBIDO: Fondos Tailwind estándar -->
+class="bg-white"              <!-- ❌ Usar: bg-grayscaleWhite -->
+class="bg-gray-50"            <!-- ❌ Usar: bg-grayscaleL400 -->
+class="bg-gray-100"           <!-- ❌ Usar: bg-grayscaleL300 -->
+class="bg-blue-500"           <!-- ❌ Usar: bg-primaryBase -->
+class="bg-red-500"            <!-- ❌ Usar: bg-errorBase -->
+class="bg-green-500"          <!-- ❌ Usar: bg-successBase -->
+```
+
+### **Bordes estándar (NO usar):**
+```html
+<!-- ❌ PROHIBIDO: Bordes Tailwind estándar -->
+class="border-gray-200"       <!-- ❌ Usar: border-grayscaleL200 -->
+class="border-gray-300"       <!-- ❌ Usar: border-grayscaleL300 -->
+class="border-blue-500"       <!-- ❌ Usar: border-primaryBase -->
+class="border-red-500"        <!-- ❌ Usar: border-errorBase -->
+```
+
+### **Textos estándar (NO usar):**
+```html
+<!-- ❌ PROHIBIDO: Textos Tailwind estándar -->
+class="text-black"            <!-- ❌ Usar: text-grayscaleBlack -->
+class="text-gray-900"         <!-- ❌ Usar: text-grayscaleBlack -->
+class="text-gray-700"         <!-- ❌ Usar: text-grayscaleD100 -->
+class="text-gray-600"         <!-- ❌ Usar: text-grayscaleD200 -->
+class="text-blue-500"         <!-- ❌ Usar: text-primaryBase -->
+class="text-red-500"          <!-- ❌ Usar: text-errorBase -->
+```
+
+## 📋 **Tabla de Equivalencias Completa:**
+
+| ❌ Tailwind Estándar | ✅ Tech-Block-Lib | 🎯 Uso Recomendado |
+|----------------------|-------------------|-------------------|
+| `bg-white` | `bg-grayscaleWhite` | Cards, modales, formularios |
+| `bg-gray-50` | `bg-grayscaleL400` | Fondo de página, layouts |
+| `bg-gray-100` | `bg-grayscaleL300` | Secciones, containers |
+| `bg-gray-200` | `bg-grayscaleL200` | Elementos deshabilitados |
+| `border-gray-200` | `border-grayscaleL200` | Bordes suaves (cards) |
+| `border-gray-300` | `border-grayscaleL300` | Bordes más definidos |
+| `text-black` | `text-grayscaleBlack` | Títulos principales |
+| `text-gray-900` | `text-grayscaleBlack` | Texto de alta jerarquía |
+| `text-gray-700` | `text-grayscaleD100` | Labels, subtítulos |
+| `text-gray-600` | `text-grayscaleD200` | Texto descriptivo |
+| `text-blue-500` | `text-primaryBase` | Links, acciones primarias |
+| `text-red-500` | `text-errorBase` | Mensajes de error |
+| `text-green-500` | `text-successBase` | Mensajes de éxito |
+| `bg-blue-500` | `bg-primaryBase` | Botones primarios, destacados |
+| `bg-red-500` | `bg-errorBase` | Alertas de error |
+| `bg-green-500` | `bg-successBase` | Alertas de éxito |
+
+## 🎯 **Ejemplos Prácticos:**
+
+### **Formulario típico:**
+```html
+<!-- ✅ BIEN: Usando tech-block-lib -->
+<div class="min-h-screen bg-grayscaleL400">
+  <div class="max-w-md mx-auto px-4 py-8">
+    <div class="bg-grayscaleWhite p-6 rounded-lg shadow-sm border border-grayscaleL200">
+      <h2 class="lib-tb-h4-bold text-grayscaleBlack">Título</h2>
+      <p class="lib-tb-body-medium text-grayscaleD200 mt-2">Descripción</p>
+    </div>
+  </div>
+</div>
+
+<!-- ❌ MAL: Usando Tailwind estándar -->
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-md mx-auto px-4 py-8">
+    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+      <h2 class="text-xl font-bold text-gray-900">Título</h2>
+      <p class="text-gray-600 mt-2">Descripción</p>
+    </div>
+  </div>
+</div>
+```
+
+### **Header (como referencia):**
+```html
+<!-- ✅ PERFECTO: Como el header actual -->
+<div class="relative z-10 top-0 left-0 bg-grayscaleWhite w-full h-[54px] shadow-sm">
+  <img class="block h-[50px] w-auto mx-auto" />
+</div>
+```
+
+### **Estados de mensajes:**
+```html
+<!-- ✅ BIEN: Estados con tech-block-lib -->
+<div class="bg-errorBase text-grayscaleWhite p-4 rounded">Error</div>
+<div class="bg-successBase text-grayscaleWhite p-4 rounded">Éxito</div>
+<div class="bg-warningBase text-grayscaleBlack p-4 rounded">Advertencia</div>
+<div class="bg-infoBase text-grayscaleWhite p-4 rounded">Información</div>
+
+<!-- ❌ MAL: Estados con Tailwind estándar -->
+<div class="bg-red-500 text-white p-4 rounded">Error</div>
+<div class="bg-green-500 text-white p-4 rounded">Éxito</div>
+<div class="bg-yellow-500 text-black p-4 rounded">Advertencia</div>
+<div class="bg-blue-500 text-white p-4 rounded">Información</div>
+```
+
+## 🔧 **Proceso de Migración:**
+
+### **1. Identificar clases problemáticas:**
+```bash
+# Buscar clases Tailwind estándar en el proyecto:
+grep -r "bg-white\|bg-gray-\|text-gray-\|border-gray-" src/
+```
+
+### **2. Reemplazar sistemáticamente:**
+```typescript
+// ❌ Antes:
+class: 'bg-white border border-gray-200 text-gray-900'
+
+// ✅ Después:
+class: 'bg-grayscaleWhite border border-grayscaleL200 text-grayscaleBlack'
+```
+
+### **3. Verificar con el header:**
+- Si el header usa `bg-grayscaleWhite` → es la referencia correcta
+- Si necesitas el mismo color → usa `bg-grayscaleWhite`
+- Para fondos de página → usa `bg-grayscaleL400`
+
+## ⚠️ **Excepciones Permitidas:**
+
+### **Clases de layout y dimensiones (NO son colores):**
+```html
+<!-- ✅ PERMITIDO: Layout, spacing, dimensiones -->
+class="w-full h-[54px]"       <!-- Dimensiones exactas -->
+class="max-w-4xl mx-auto"     <!-- Layout responsivo -->
+class="px-4 py-8 mb-6"        <!-- Spacing -->
+class="rounded-lg shadow-sm"  <!-- Formas y efectos -->
+class="flex justify-center"   <!-- Flexbox -->
+class="grid grid-cols-2"      <!-- CSS Grid -->
+class="relative absolute"     <!-- Posicionamiento -->
+class="z-10 top-0 left-0"     <!-- Z-index y posición -->
+```
+
+## 🎯 **Beneficios de esta regla:**
+
+✅ **Consistencia visual** → Todos los colores del sistema de diseño  
+✅ **Mantenimiento fácil** → Cambios centralizados en variables CSS  
+✅ **Tema dinámico** → Soporte para cambios de tema automático  
+✅ **Accesibilidad** → Contraste y colores validados por tech-block-lib  
+✅ **Performance** → Uso eficiente de variables CSS nativas  
+
+## 📚 **Referencias:**
+
+1. **Header actual**: `src/app/shared/components/header/header.component.html`
+2. **Configuración**: `tailwind.config.js` (líneas 6-90)
+3. **Variables CSS**: Definidas en tech-block-lib theme files
+4. **Documentación**: `knowledge_base/tech_block_lib/`
+
+**Recuerda**: Si el header lo hace bien, úsa el mismo patrón en tu componente.

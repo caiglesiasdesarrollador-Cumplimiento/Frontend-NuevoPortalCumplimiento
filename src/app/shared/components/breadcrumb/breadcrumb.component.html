@@ -1,0 +1,4 @@
+<!-- ✅ Breadcrumb usando tech-block-lib con async pipe -->
+<div class="breadcrumb-container" *ngIf="breadcrumb$ | async as breadcrumbConfig">
+  <lib-tb-breadcrumb [custom]="breadcrumbConfig"></lib-tb-breadcrumb>
+</div>

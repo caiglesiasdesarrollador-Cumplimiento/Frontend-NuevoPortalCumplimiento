@@ -1,0 +1,278 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+// ✅ APLICANDO REGLA: Usar clases Tailwind de tech-block-lib
+
+// Bloque principal: dashboard
+.dashboard {
+
+  // ✅ BEM Element: dashboard__header
+  &__header {
+    animation: fadeInUp 0.6s ease-out;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  // ✅ BEM Element: dashboard__main-actions (las dos cards principales)
+  &__main-actions {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  // ✅ BEM Element: dashboard__action-card (cards de acciones principales)
+  &__action-card {
+    transition: all 0.3s ease;
+    animation: fadeInScale 0.6s ease-out;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    // ✅ Estilos para el icono de la card
+    .dashboard__icon-container {
+      transition: transform 0.3s ease;
+    }
+
+    &:hover .dashboard__icon-container {
+      transform: scale(1.1);
+    }
+  }
+
+  // ✅ BEM Element: dashboard__action-button
+  &__action-button {
+    // ✅ El botón ocupa todo el ancho de la card
+    width: 100%;
+    
+    // ✅ Mejorar la apariencia del botón
+    ::ng-deep lib-tb-button button {
+      width: 100%;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+    }
+  }
+
+  // ✅ BEM Element: dashboard__performance (Mi desempeño como en la imagen)
+  &__performance {
+    animation: fadeInUp 1s ease-out;
+  }
+
+  // ✅ BEM Element: dashboard__performance-header
+  &__performance-header {
+    // ✅ Ya tiene estilos por defecto de Tailwind
+  }
+
+  // ✅ BEM Element: dashboard__stat-card con modificadores de colores
+  &__stat-card {
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    // ✅ BEM Modifier: dashboard__stat-card--warning (Amarillo)
+    &--warning {
+      background-color: #fef3c7; /* yellow-100 equivalent */
+      border-color: #fde68a; /* yellow-200 equivalent */
+    }
+
+    // ✅ BEM Modifier: dashboard__stat-card--success (Verde) 
+    &--success {
+      background-color: #dcfce7; /* green-100 equivalent */
+      border-color: #bbf7d0; /* green-200 equivalent */
+    }
+
+    // ✅ BEM Modifier: dashboard__stat-card--info (Azul)
+    &--info {
+      background-color: #dbeafe; /* blue-100 equivalent */
+      border-color: #bfdbfe; /* blue-200 equivalent */
+    }
+
+    // ✅ BEM Modifier: dashboard__stat-card--error (Rosa/Rojo)
+    &--error {
+      background-color: #fee2e2; /* red-100 equivalent */
+      border-color: #fecaca; /* red-200 equivalent */
+    }
+  }
+
+  // ✅ BEM Element: dashboard__stat-icon con modificadores de colores
+  &__stat-icon {
+    &--warning { color: #d97706; /* yellow-600 equivalent */ }
+    &--success { color: #059669; /* green-600 equivalent */ }
+    &--info { color: #2563eb; /* blue-600 equivalent */ }
+    &--error { color: #dc2626; /* red-600 equivalent */ }
+  }
+
+  // ✅ BEM Element: dashboard__stat-number con modificadores de colores
+  &__stat-number {
+    &--warning { color: #92400e; /* yellow-800 equivalent */ }
+    &--success { color: #065f46; /* green-800 equivalent */ }
+    &--info { color: #1e40af; /* blue-800 equivalent */ }
+    &--error { color: #991b1b; /* red-800 equivalent */ }
+  }
+
+  // ✅ BEM Element: dashboard__stat-label con modificadores de colores
+  &__stat-label {
+    &--warning { color: #a16207; /* yellow-700 equivalent */ }
+    &--success { color: #047857; /* green-700 equivalent */ }
+    &--info { color: #1d4ed8; /* blue-700 equivalent */ }
+    &--error { color: #b91c1c; /* red-700 equivalent */ }
+  }
+
+  // ✅ BEM Element: dashboard__performance-summary
+  &__performance-summary {
+    // ✅ Ya tiene estilos por defecto de Tailwind
+  }
+
+  // ✅ BEM Element: dashboard__additional-actions
+  &__additional-actions {
+    animation: fadeInUp 1.2s ease-out;
+
+    // ✅ Cards adicionales son más compactas
+    .dashboard__action-card {
+      // ✅ Íconos más pequeños para herramientas adicionales
+      .dashboard__icon-container {
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+
+      // ✅ Títulos más pequeños
+      h3 {
+        font-size: 1rem;
+        line-height: 1.4;
+      }
+
+      // ✅ Descripciones más compactas
+      p {
+        font-size: 0.875rem;
+        line-height: 1.4;
+      }
+    }
+  }
+
+  // ✅ BEM Element: dashboard__stat-card (modificaciones específicas para cards de estadísticas)
+  &__stat-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid transparent;
+  }
+}
+
+// ✅ Keyframes para animaciones
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// ✅ Mobile responsive adjustments - NO usar @extend dentro de media queries
+@media (max-width: 768px) {
+  .dashboard {
+    &__header {
+      padding: 1.5rem;
+
+      h1 {
+        font-size: 1.75rem;
+      }
+    }
+
+    &__action-card {
+      padding: 1rem;
+
+      // ✅ Reducir efectos hover en mobile
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .dashboard__icon-container {
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+
+      &:hover .dashboard__icon-container {
+        transform: scale(1.05);
+      }
+    }
+
+    &__action-button {
+      ::ng-deep lib-tb-button button {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    &__additional-actions {
+      .dashboard__action-card {
+        padding: 1rem;
+
+        .dashboard__icon-container {
+          width: 2rem;
+          height: 2rem;
+        }
+
+        h3 {
+          font-size: 0.875rem;
+        }
+
+        p {
+          font-size: 0.75rem;
+        }
+      }
+    }
+
+    &__performance {
+      // ✅ Reducir padding en mobile
+      > div {
+        padding: 1rem;
+      }
+    }
+
+    &__stat-card {
+      padding: 1rem;
+
+      // ✅ Reducir efectos hover en mobile
+      &:hover {
+        transform: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+
+      // ✅ Iconos más pequeños en mobile
+      i {
+        font-size: 1.25rem;
+      }
+    }
+  }
+}
+
+// ✅ Media query para tablets
+@media (max-width: 1024px) and (min-width: 769px) {
+  .dashboard {
+    &__main-actions {
+      .grid {
+        grid-template-columns: 1fr;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+    }
+  }
+} 

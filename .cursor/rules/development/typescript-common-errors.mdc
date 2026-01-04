@@ -1,0 +1,312 @@
+# 🚨 ERRORES COMUNES DE TYPESCRIPT Y COMPILACIÓN
+
+**REGLA PREVENTIVA**: Evitar errores recurrentes de TypeScript que rompen la compilación y causan problemas de desarrollo.
+
+## 🔥 **ERRORES MÁS FRECUENTES Y SOLUCIONES:**
+
+### **❌ Error #1: Imports de bibliotecas incorrectas**
+
+#### **🔴 Problema común:**
+```typescript
+// ❌ MAL: Importar de librería incorrecta
+import { Validators } from 'tech-block-lib';        // ❌ NO existe
+import { FormBuilder } from 'tech-block-lib';       // ❌ NO existe
+import { Observable } from 'tech-block-lib';        // ❌ NO existe
+```
+
+#### **✅ Solución correcta:**
+```typescript
+// ✅ BIEN: Imports desde las librerías correctas
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { ILibTbDynamicFormConfigType, ILibTbButton } from 'tech-block-lib';
+```
+
+#### **📋 Guía de imports comunes:**
+```typescript
+// ✅ ANGULAR CORE
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+
+// ✅ ANGULAR FORMS
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+
+// ✅ RXJS
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { map, filter, switchMap, takeUntil } from 'rxjs/operators';
+
+// ✅ TECH-BLOCK-LIB (solo interfaces y tipos específicos)
+import { 
+  ILibTbDynamicFormConfigType, 
+  ILibTbButton, 
+  ILibTbStepper,
+  ILibTbDynamicForm 
+} from 'tech-block-lib';
+```
+
+### **❌ Error #2: Imports no utilizados**
+
+#### **🔴 Problema común:**
+```typescript
+// ❌ MAL: Imports declarados pero nunca usados
+import { FormGroup } from '@angular/forms';         // ❌ Declarado pero no usado
+import { QuotePolicyStep } from './interface';      // ❌ Declarado pero no usado
+import { Validators } from '@angular/forms';        // ❌ Declarado pero no usado
+
+@Component({...})
+export class MyComponent {
+  // Ninguna de las variables importadas se usa aquí
+}
+```
+
+#### **✅ Solución correcta:**
+```typescript
+// ✅ BIEN: Solo importar lo que se usa
+import { Component, OnInit } from '@angular/core';
+import { ILibTbButton } from 'tech-block-lib';
+
+@Component({...})
+export class MyComponent implements OnInit {
+  // ✅ USAR las variables importadas
+  btnAction: ILibTbButton = {
+    label: 'Action',
+    libTbClick: () => this.doAction()
+  };
+
+  ngOnInit(): void {
+    // Implementación
+  }
+
+  doAction(): void {
+    // Lógica del botón
+  }
+}
+```
+
+### **❌ Error #3: Propiedades en interfaces incorrectas**
+
+#### **🔴 Problema común:**
+```typescript
+// ❌ MAL: Propiedades que no existen en la interfaz
+const formConfig: ILibTbDynamicForm = {
+  dataQaId: 'form-id',        // ❌ NO existe en ILibTbDynamicForm
+  validateOnSubmit: true,     // ✅ Existe
+  configContainers: [...],    // ✅ Existe
+  config: [...]              // ✅ Existe
+};
+```
+
+#### **✅ Solución correcta:**
+```typescript
+// ✅ BIEN: Solo propiedades válidas de la interfaz
+const formConfig: ILibTbDynamicForm = {
+  validateOnSubmit: true,     // ✅ Propiedad válida
+  class: 'form-class',        // ✅ Propiedad válida
+  configContainers: [...],    // ✅ Propiedad válida
+  config: [...]              // ✅ Propiedad válida
+};
+
+// ✅ dataQaId va en campos individuales, no en el formulario completo
+const campo: ILibTbDynamicFormConfigType = {
+  tbType: 'input',
+  containerId: 'container',
+  formId: 'campo',
+  custom: {
+    name: 'campo',
+    dataQaId: 'campo-id',     // ✅ AQUÍ sí es válido
+    label: 'Campo'
+  }
+};
+```
+
+### **❌ Error #4: Tipos inexistentes o mal escritos**
+
+#### **🔴 Problema común:**
+```typescript
+// ❌ MAL: Tipos mal escritos o inexistentes
+import { ILibTbDynamicFormConfig } from 'tech-block-lib';    // ❌ Mal escrito
+import { LibTbButtonConfig } from 'tech-block-lib';          // ❌ No existe
+import { IFormConfig } from 'tech-block-lib';               // ❌ No existe
+```
+
+#### **✅ Solución correcta:**
+```typescript
+// ✅ BIEN: Tipos exactos y existentes
+import { ILibTbDynamicFormConfigType } from 'tech-block-lib';  // ✅ Correcto
+import { ILibTbButton } from 'tech-block-lib';                // ✅ Correcto
+import { ILibTbDynamicForm } from 'tech-block-lib';           // ✅ Correcto
+```
+
+### **❌ Error #5: Variables de clase no utilizadas**
+
+#### **🔴 Problema común:**
+```typescript
+export class MyComponent {
+  private unusedProperty: string = 'value';    // ❌ Declarada pero nunca usada
+  private anotherUnused: number = 0;           // ❌ Declarada pero nunca usada
+  
+  constructor() {
+    // Variables nunca referenciadas
+  }
+}
+```
+
+#### **✅ Solución correcta:**
+```typescript
+export class MyComponent {
+  // ✅ Solo declarar propiedades que se usan
+  currentStep: number = 0;
+  
+  constructor() {}
+  
+  // ✅ USAR las propiedades declaradas
+  nextStep(): void {
+    this.currentStep++; // ✅ currentStep se usa aquí
+  }
+}
+```
+
+## 🔧 **HERRAMIENTAS PARA DETECTAR ERRORES:**
+
+### **✅ VSCode/IDE Configuration:**
+```json
+// ✅ settings.json recomendado
+{
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.suggest.autoImports": true,
+  "typescript.preferences.organizeImports": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+    "source.removeUnusedImports": true
+  }
+}
+```
+
+### **✅ Angular CLI Commands:**
+```bash
+# ✅ Comandos útiles para detectar errores
+ng build --configuration development    # Detecta errores de compilación
+ng lint                                # Detecta problemas de linting
+npm run build                          # Build completo con errores
+```
+
+## 📋 **CHECKLIST ANTES DE COMMIT:**
+
+### **🔍 Verificación de Imports:**
+```typescript
+// ✅ VERIFICAR CADA ARCHIVO:
+// 1. ¿Todos los imports están correctos?           □ Sí / □ No
+// 2. ¿Todos los imports se están usando?           □ Sí / □ No
+// 3. ¿Las librerías de origen son correctas?       □ Sí / □ No
+// 4. ¿No hay tipos mal escritos?                   □ Sí / □ No
+```
+
+### **🔍 Verificación de Propiedades:**
+```typescript
+// ✅ VERIFICAR INTERFACES:
+// 1. ¿Todas las propiedades existen en la interfaz? □ Sí / □ No
+// 2. ¿Los tipos coinciden exactamente?              □ Sí / □ No
+// 3. ¿dataQaId está en el lugar correcto?           □ Sí / □ No
+```
+
+### **🔍 Verificación de Variables:**
+```typescript
+// ✅ VERIFICAR VARIABLES DE CLASE:
+// 1. ¿Todas las propiedades se usan?                □ Sí / □ No
+// 2. ¿Todos los métodos se referencian?             □ Sí / □ No
+// 3. ¿No hay código muerto?                         □ Sí / □ No
+```
+
+## 🎯 **BUENAS PRÁCTICAS PREVENTIVAS:**
+
+### **✅ Imports organizados:**
+```typescript
+// ✅ PATRÓN RECOMENDADO de organización:
+// 1. Angular imports
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
+// 2. RxJS imports  
+import { Observable } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
+
+// 3. Third-party libraries
+import { ILibTbButton, ILibTbDynamicForm } from 'tech-block-lib';
+
+// 4. Internal imports
+import { MyService } from '@core/services/my.service';
+import { MyInterface } from './my.interface';
+```
+
+### **✅ Uso inmediato de imports:**
+```typescript
+// ✅ REGLA: Si importas algo, úsalo inmediatamente
+import { Validators } from '@angular/forms';
+
+export const campo: ILibTbDynamicFormConfigType = {
+  tbType: 'input',
+  containerId: 'container',
+  formId: 'campo',
+  custom: {
+    name: 'campo',
+    label: 'Campo'
+  },
+  formProps: {
+    validators: [Validators.required] // ✅ Validators usado inmediatamente
+  }
+};
+```
+
+### **✅ Validación antes de push:**
+```bash
+# ✅ COMANDOS OBLIGATORIOS antes de hacer commit:
+ng build --configuration development
+ng lint --fix
+```
+
+## 🚨 **ERRORES CRÍTICOS QUE ROMPEN COMPILACIÓN:**
+
+### **🔴 Errores que SIEMPRE fallan el build:**
+1. **Imports de módulos inexistentes**: `'tech-block-lib' has no exported member 'X'`
+2. **Propiedades inexistentes**: `Property 'X' does not exist on type 'Y'`
+3. **Tipos mal escritos**: `Cannot find name 'X'`
+4. **Referencias circular**: `Circular dependency detected`
+
+### **🟡 Warnings que pueden volverse errores:**
+1. **Variables no utilizadas**: `'X' is declared but its value is never read`
+2. **Imports no utilizados**: `'X' is defined but never used`
+3. **Any tipos implícitos**: `Parameter 'X' implicitly has an 'any' type`
+
+## 💡 **SOLUCIÓN RÁPIDA PARA ERRORES COMUNES:**
+
+### **🔧 Template de corrección:**
+```typescript
+// ❌ ANTES: Con errores
+import { Validators } from 'tech-block-lib';           // ❌ Import incorrecto
+import { FormGroup } from '@angular/forms';           // ❌ No usado
+
+export const campo = {                                // ❌ Sin tipo
+  // Sin formId/name                                  // ❌ Faltan propiedades críticas
+};
+
+// ✅ DESPUÉS: Corregido
+import { Validators } from '@angular/forms';          // ✅ Import correcto
+
+export const campo: ILibTbDynamicFormConfigType = {  // ✅ Con tipo
+  tbType: 'input',
+  containerId: 'container',
+  formId: 'campo',                                    // ✅ Propiedad crítica
+  custom: {
+    name: 'campo',                                    // ✅ Propiedad crítica
+    label: 'Campo'
+  },
+  formProps: {
+    validators: [Validators.required]                 // ✅ Validators usado
+  }
+};
+```
+
+---
+
+**RECORDATORIO**: Estos errores son **100% prevenibles** con verificación adecuada antes de compilar. Siempre ejecutar `ng build` antes de hacer commit.

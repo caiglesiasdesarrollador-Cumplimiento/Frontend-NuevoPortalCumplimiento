@@ -1,0 +1,48 @@
+<!-- Header principal con breadcrumb izquierda y logo derecha - STICKY -->
+<div class="header-banner">
+  <!-- Sección izquierda: Menú + Breadcrumb -->
+  <div class="header-banner__left">
+    <!-- Botón de menú hamburguesa -->
+    <button
+      class="header-banner__menu-btn"
+      [class.menu-button--active]="isMenuOpen"
+      (click)="toggleMenu()"
+    >
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <!-- Breadcrumb integrado en el header -->
+    <nav *ngIf="breadcrumbItems.length > 0" class="header-banner__breadcrumb">
+      <ol class="header-breadcrumb__list">
+        <ng-container *ngFor="let item of breadcrumbItems; let last = last">
+          <li class="header-breadcrumb__item" [class.header-breadcrumb__item--active]="item.isActive">
+            <a *ngIf="item.routerLink && !item.isActive" [routerLink]="item.routerLink" class="header-breadcrumb__link">
+              <i *ngIf="item.icon" [class]="item.icon"></i>
+              <span>{{ item.label }}</span>
+            </a>
+            <span *ngIf="!item.routerLink || item.isActive" class="header-breadcrumb__text">
+              <i *ngIf="item.icon" [class]="item.icon"></i>
+              <span>{{ item.label }}</span>
+            </span>
+          </li>
+          <li *ngIf="!last" class="header-breadcrumb__separator">&gt;</li>
+        </ng-container>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Logo a la derecha -->
+  <img
+    class="header-banner__logo"
+    src="assets/img/seguros_bolivar.svg"
+    alt="Seguros Bolívar"
+  />
+</div>
+
+<!-- Menu lateral/overlay -->
+<div class="header__menu-container" [class.header__menu-container--open]="isMenuOpen">
+  <app-shared-menu [isMobile]="isMobile" (menuClose)="closeMenu()"> </app-shared-menu>
+</div>
+
+<!-- Overlay para móvil -->
+<div *ngIf="isMobile && isMenuOpen" class="header__overlay" (click)="closeMenu()"></div>

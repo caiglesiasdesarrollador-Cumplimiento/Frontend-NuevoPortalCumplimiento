@@ -1,0 +1,41 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+// ✅ APLICANDO REGLA: Usar clases Tailwind de tech-block-lib
+
+// Bloque principal: breadcrumb-container
+.breadcrumb-container {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--c-lib-tb-grayscaleWhite);
+  border-bottom: 1px solid var(--c-lib-tb-grayscaleL200);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  // ✅ Mobile responsive
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+  }
+
+  // ✅ BEM Modifier: breadcrumb-container--sticky
+  &--sticky {
+    position: sticky;
+    top: 54px; // Altura del header
+    z-index: 10;
+    background-color: var(--c-lib-tb-grayscaleWhite);
+  }
+
+  // ✅ BEM Modifier: breadcrumb-container--compact
+  &--compact {
+    padding: 0.5rem 1rem;
+    border-bottom: none;
+    box-shadow: none;
+  }
+}
+
+// ✅ Variables CSS para personalización (solo forma, NO colores)
+.breadcrumb-container {
+  /* ✅ Variables permitidas para forma del breadcrumb */
+  --c-lib-tb-breadcrumb-border-radius: 0.25rem;
+  --c-lib-tb-breadcrumb-padding: 0.5rem 0.75rem;
+  
+  /* ❌ NO modificar colores - preservar sistema de diseño */
+  /* --c-lib-tb-breadcrumb-bg: white; */
+  /* --c-lib-tb-breadcrumb-color: black; */
+} 

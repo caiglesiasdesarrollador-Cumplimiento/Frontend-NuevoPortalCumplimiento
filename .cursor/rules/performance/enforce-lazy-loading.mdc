@@ -1,0 +1,13 @@
+---
+id: enforce-lazy-loading
+name: Usar Lazy Loading
+description: Recomendar dividir módulos grandes usando lazy loading con loadChildren.
+globs:
+  - "**/*.module.ts"
+type: comment
+alwaysApply: true
+---
+
+# Lazy Loading
+
+Optimiza el tiempo de carga dividiendo módulos pesados y cargándolos bajo demanda.

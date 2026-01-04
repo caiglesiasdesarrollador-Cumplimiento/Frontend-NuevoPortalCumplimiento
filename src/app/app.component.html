@@ -1,0 +1,7 @@
+<app-header *ngIf="showHeader"></app-header>
+<!-- ✅ BREADCRUMB NAVIGATION usando tech-block-lib 
+<app-breadcrumb></app-breadcrumb> -->
+<app-loader *ngIf="showHeader"></app-loader>
+<app-notification *ngIf="showHeader"></app-notification>
+<router-outlet></router-outlet>
+<app-help *ngIf="showHeader"></app-help>

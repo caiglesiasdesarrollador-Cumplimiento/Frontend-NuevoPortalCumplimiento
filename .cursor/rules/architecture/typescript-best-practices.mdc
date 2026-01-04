@@ -1,0 +1,237 @@
+# Mejores prácticas de TypeScript
+
+Establece estándares de codificación TypeScript para prevenir errores comunes y mejorar la calidad del código.
+
+## 🎯 **Reglas principales:**
+
+### **✅ SIEMPRE APLICAR:**
+- Usar `readonly` para propiedades de constructor que no se reasignan
+- Prefijo `_` para parámetros de métodos no utilizados
+- Verificar interfaces de librerías externas antes de usar
+- Implementar todos los métodos de interfaces definidas
+- Usar tipos explícitos para evitar `any`
+
+### **❌ EVITAR:**
+- Propiedades de constructor sin `readonly` cuando no se reasignan
+- Parámetros sin usar sin prefijo `_`
+- Asumir estructura de interfaces sin verificar documentación
+- Métodos vacíos sin implementación o comentario explicativo
+- Uso de `any` sin justificación
+
+## 📋 **Errores comunes y soluciones:**
+
+### **🔹 Propiedades readonly en constructor:**
+
+```typescript
+// ❌ INCORRECTO: Sin readonly para propiedades que no se reasignan
+export class UserRegistrationComponent {
+  constructor(
+    private router: Router,                    // ❌ Se puede marcar como readonly
+    private notificationService: NotificationService  // ❌ Se puede marcar como readonly
+  ) {}
+}
+
+// ✅ CORRECTO: Usar readonly para propiedades no reasignadas
+export class UserRegistrationComponent {
+  constructor(
+    private readonly router: Router,                    // ✅ Readonly explícito
+    private readonly notificationService: NotificationService, // ✅ Readonly explícito
+  ) {}
+}
+```
+
+### **🔹 Parámetros no utilizados:**
+
+```typescript
+// ❌ INCORRECTO: Parámetros definidos pero no utilizados
+onPasswordChange(password: string): void {
+  // Método que no usa el parámetro password
+  this.validatePasswordMatch();
+}
+
+onConfirmPasswordChange(confirmPassword: string): void {
+  // Método que no usa el parámetro confirmPassword
+  this.validatePasswordMatch();
+}
+
+// ✅ CORRECTO: Prefijo _ para parámetros no utilizados
+onPasswordChange(_password: string): void {
+  // ✅ Prefijo _ indica que el parámetro no se usa intencionalmente
+  this.validatePasswordMatch();
+}
+
+onConfirmPasswordChange(_confirmPassword: string): void {
+  // ✅ Prefijo _ indica que el parámetro no se usa intencionalmente
+  this.validatePasswordMatch();
+}
+
+// ✅ ALTERNATIVA: Remover parámetro si no es necesario
+onPasswordChange(): void {
+  // ✅ Si el parámetro no es necesario, removerlo completamente
+  this.validatePasswordMatch();
+}
+```
+
+### **🔹 Verificación de interfaces de librerías externas:**
+
+```typescript
+// ❌ INCORRECTO: Asumir estructura de interface sin verificar
+this.notificationService.show({
+  type: 'warning',        // ❌ Esta propiedad no existe en ILibTbModalNotification
+  title: 'Error',
+  message: 'Mensaje',
+  actions: [              // ❌ Esta propiedad no existe en ILibTbModalNotification
+    {
+      label: 'OK',
+      action: () => {},
+    },
+  ],
+});
+
+// ✅ CORRECTO: Verificar documentación y usar estructura correcta
+this.notificationService.show({
+  icon: 'fal fa-exclamation-triangle', // ✅ Propiedad válida según interface
+  title: 'Error',
+  message: 'Mensaje',
+  acceptButtonVisible: true,            // ✅ Propiedad válida según interface
+  acceptButton: {                       // ✅ Propiedad válida según interface
+    label: 'OK',
+    styleBtn: 'fill',
+    typeBtn: 'primary',
+    libTbClick: () => this.notificationService.close(),
+  },
+});
+```
+
+### **🔹 Implementación completa de interfaces:**
+
+```typescript
+// ❌ INCORRECTO: Interface implementada parcialmente
+export class UserRegistrationComponent implements IUserRegistrationComponent {
+  // ✅ Propiedades implementadas correctamente
+  step1Form: ILibTbDynamicForm = step1PersonalInfoForm();
+  step2Form: ILibTbDynamicForm = step2CredentialsForm();
+  
+  // ❌ Métodos definidos en interface pero no implementados adecuadamente
+  onPasswordChange(password: string): void {
+    // Implementar lógica de cambio de contraseña si es necesario
+  }
+}
+
+// ✅ CORRECTO: Implementación completa o documentación clara
+export class UserRegistrationComponent implements IUserRegistrationComponent {
+  // ✅ Propiedades implementadas correctamente
+  step1Form: ILibTbDynamicForm = step1PersonalInfoForm();
+  step2Form: ILibTbDynamicForm = step2CredentialsForm();
+  
+  // ✅ Implementación con lógica específica o comentario explicativo
+  onPasswordChange(_password: string): void {
+    // Método requerido por interface, actualmente no necesita lógica específica
+    // Solo se ejecuta la validación de coincidencia de contraseñas
+    this.validatePasswordMatch();
+  }
+}
+```
+
+### **🔹 Tipos explícitos vs any:**
+
+```typescript
+// ❌ INCORRECTO: Uso de any sin justificación
+step1Form: any = step1PersonalInfoForm();      // ❌ Pierde type safety
+step2Form: any = step2CredentialsForm();       // ❌ Pierde type safety
+
+// ✅ CORRECTO: Tipos explícitos
+step1Form: ILibTbDynamicForm = step1PersonalInfoForm();  // ✅ Type safety completo
+step2Form: ILibTbDynamicForm = step2CredentialsForm();   // ✅ Type safety completo
+
+// ✅ JUSTIFICADO: any con comentario explicativo
+step1Form: any = step1PersonalInfoForm(); // any necesario por limitación temporal de tech-block-lib
+```
+
+## 🔍 **Proceso de verificación antes de implementar:**
+
+### **1. Verificar interfaces de librerías externas:**
+```bash
+# ✅ Consultar documentación de tech-block-lib
+cat knowledge_base/tech_block_lib/molecules/modal_notification/modal-notification-interface.md
+cat knowledge_base/tech_block_lib/molecules/stepper/stepper-interface.md
+cat knowledge_base/tech_block_lib/organisms/dynamic_form/dynamic-form-interface.md
+```
+
+### **2. Revisar propiedades de constructor:**
+```typescript
+// ✅ Preguntarse: ¿Esta propiedad se reasigna después de la inicialización?
+constructor(
+  private readonly router: Router,                    // ✅ No se reasigna → readonly
+  private readonly notificationService: NotificationService, // ✅ No se reasigna → readonly
+  private currentUser: User,                          // ✅ Se reasigna → sin readonly
+) {}
+```
+
+### **3. Evaluar parámetros de métodos:**
+```typescript
+// ✅ Preguntarse: ¿Este parámetro se usa en el método?
+onFormChange(formData: any): void {
+  console.log('Form changed:', formData); // ✅ Se usa → mantener sin prefijo
+}
+
+onStepChange(_step: number): void {
+  this.updateCurrentStep();              // ✅ No se usa → prefijo _
+}
+```
+
+## 📚 **Herramientas de verificación:**
+
+### **ESLint rules recomendadas:**
+```json
+{
+  "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+  "@typescript-eslint/prefer-readonly-parameter-types": "warn",
+  "@typescript-eslint/explicit-function-return-type": "warn",
+  "@typescript-eslint/no-explicit-any": "warn"
+}
+```
+
+### **Comandos de verificación:**
+```bash
+# Verificar tipos y compilación
+npm run build
+
+# Verificar linting
+npm run lint
+
+# Verificar tests
+npm run test
+```
+
+## ⚠️ **Banderas rojas a evitar:**
+
+### **🚨 Errores críticos:**
+- **TS2345**: Argument of type 'X' is not assignable to parameter of type 'Y'
+- **TS6133**: 'parameter' is declared but its value is never read
+- **TS2540**: Cannot assign to 'property' because it is a read-only property
+
+### **🔧 Soluciones rápidas:**
+1. **Interface mismatch**: Consultar documentación de la librería
+2. **Unused parameters**: Agregar prefijo `_` o remover si no es necesario
+3. **Readonly violations**: Agregar `readonly` a propiedades no reasignadas
+
+## 🎯 **Beneficios de seguir estas reglas:**
+
+✅ **Prevención de errores**: Detección temprana de problemas de tipos  
+✅ **Mejor rendimiento**: TypeScript optimiza mejor el código tipado  
+✅ **Mantenibilidad**: Código más predecible y fácil de refactorizar  
+✅ **Documentación implícita**: Los tipos actúan como documentación  
+✅ **IntelliSense mejorado**: Mejor autocompletado en IDEs  
+
+## 📋 **Checklist de implementación:**
+
+✅ Verificar documentación de interfaces externas antes de usar  
+✅ Marcar propiedades de constructor como `readonly` cuando corresponda  
+✅ Usar prefijo `_` para parámetros no utilizados intencionalmente  
+✅ Implementar todos los métodos requeridos por interfaces  
+✅ Usar tipos explícitos en lugar de `any` cuando sea posible  
+✅ Compilar sin errores TypeScript antes de commit  
+✅ Ejecutar linter y corregir warnings relevantes
+
+**Esta regla previene los errores más comunes de TypeScript y asegura código de mayor calidad y mantenibilidad.**

@@ -1,0 +1,395 @@
+.sb-calendar-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.sb-calendar-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.sb-calendar-input-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 48px;
+
+  &:hover {
+    border-color: #038450;
+    box-shadow: 0 0 0 3px rgba(3, 132, 80, 0.1);
+  }
+
+  &:focus-within {
+    border-color: #038450;
+    box-shadow: 0 0 0 3px rgba(3, 132, 80, 0.15);
+  }
+
+  &--error {
+    border-color: #ef4444;
+    
+    &:hover, &:focus-within {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+  }
+
+  &--disabled {
+    background: #f3f4f6;
+    cursor: not-allowed;
+    opacity: 0.6;
+    
+    &:hover {
+      border-color: #e5e7eb;
+      box-shadow: none;
+    }
+  }
+
+  // ✅ Modo compacto sin icono (para tablas) - Estilo 3D
+  &--no-icon {
+    padding: 0.35rem 0.5rem;
+    min-height: 34px;
+    border-width: 1px;
+    border-color: #d1d5db;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+    box-shadow: 
+      inset 0 1px 2px rgba(0, 0, 0, 0.06),
+      0 1px 0 rgba(255, 255, 255, 0.8);
+    
+    &:hover {
+      border-color: #038450;
+      box-shadow: 
+        0 2px 4px rgba(3, 132, 80, 0.1),
+        inset 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+    
+    .sb-calendar-input {
+      gap: 0;
+      justify-content: center;
+    }
+    
+    .sb-calendar-value,
+    .sb-calendar-placeholder {
+      font-size: 0.8rem;
+      text-align: center;
+      width: 100%;
+      font-weight: 500;
+    }
+    
+    .sb-calendar-actions {
+      display: none;
+    }
+  }
+}
+
+.sb-calendar-input {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.sb-calendar-icon {
+  color: #038450;
+  font-size: 1.125rem;
+}
+
+.sb-calendar-value {
+  font-size: 0.9375rem;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.sb-calendar-placeholder {
+  font-size: 0.9375rem;
+  color: #9ca3af;
+}
+
+.sb-calendar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sb-calendar-clear {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #ef4444;
+    background: #fee2e2;
+  }
+
+  i {
+    font-size: 0.875rem;
+  }
+}
+
+.sb-calendar-chevron {
+  color: #6b7280;
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+.sb-calendar-popup {
+  position: absolute;
+  z-index: 9999;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 15px rgba(0, 0, 0, 0.15);
+  animation: calendarSlideIn 0.2s ease-out;
+  overflow: hidden;
+  min-width: 300px;
+  
+  // Posición por defecto (abajo-derecha)
+  top: calc(100% + 8px);
+  left: 0;
+  
+  // Posición arriba-izquierda
+  &.popup-top-left {
+    animation: calendarSlideUp 0.2s ease-out;
+  }
+  
+  // Posición arriba-derecha
+  &.popup-top-right {
+    animation: calendarSlideUp 0.2s ease-out;
+  }
+  
+  // Posición abajo-izquierda
+  &.popup-bottom-left {
+    animation: calendarSlideIn 0.2s ease-out;
+  }
+}
+
+@keyframes calendarSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes calendarSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sb-calendar-error {
+  display: flex;
+  align-items: center;
+  font-size: 0.8125rem;
+  color: #ef4444;
+  margin-top: 0.375rem;
+  
+  i {
+    font-size: 0.75rem;
+  }
+}
+
+// ✅ Calendario Nativo - Estilos Seguros Bolívar
+.sb-calendar-native {
+  padding: 1rem;
+}
+
+.sb-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0 0.5rem;
+}
+
+.sb-calendar-nav-btn {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f0fdf4;
+    color: #038450;
+  }
+
+  i {
+    font-size: 0.875rem;
+  }
+}
+
+.sb-calendar-month-year {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sb-calendar-select {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #038450;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #038450;
+    box-shadow: 0 0 0 2px rgba(3, 132, 80, 0.1);
+  }
+}
+
+.sb-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 0.5rem;
+  padding: 0 0.25rem;
+
+  span {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 0.5rem 0;
+  }
+}
+
+.sb-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  padding: 0 0.25rem;
+}
+
+.sb-calendar-day {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+
+  &:hover:not(:disabled) {
+    background: #f0fdf4;
+    color: #038450;
+  }
+
+  &--other-month {
+    color: #d1d5db;
+    cursor: default;
+
+    &:hover {
+      background: none;
+      color: #d1d5db;
+    }
+  }
+
+  &--today {
+    border: 2px solid #038450;
+    font-weight: 600;
+  }
+
+  &--selected {
+    background: #038450 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+
+    &:hover {
+      background: #065f46 !important;
+    }
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.sb-calendar-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.sb-calendar-btn {
+  padding: 0.625rem 1.25rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &--cancel {
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    color: #6b7280;
+
+    &:hover {
+      border-color: #038450;
+      color: #038450;
+      background: #f0fdf4;
+    }
+  }
+
+  &--accept {
+    background: #FFE16F;
+    border: none;
+    color: #038450;
+
+    &:hover {
+      background: #fcd34d;
+    }
+  }
+}

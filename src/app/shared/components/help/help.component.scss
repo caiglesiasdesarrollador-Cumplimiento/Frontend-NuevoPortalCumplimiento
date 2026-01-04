@@ -1,0 +1,56 @@
+// ✅ Contenedor del botón de ayuda flotante
+.help-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  
+  // Responsive para móviles
+  @media (max-width: 768px) {
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+// ✅ Botón de ayuda con efecto hover (se expande automáticamente)
+.help-btn--hover {
+  ::ng-deep .p-button {
+    // Estado inicial: solo icono (circular)
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    min-width: 48px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    
+    // Icono centrado
+    .p-button-icon {
+      margin: 0 !important;
+      font-size: 18px !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    // Hover effect: expandir a botón con texto
+    &:hover {
+      width: auto !important;
+      min-width: 160px !important;
+      height: 48px !important;
+      border-radius: 24px !important;
+      padding: 0 16px !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
+      
+      // Ajustar icono en hover
+      .p-button-icon {
+        margin-right: 8px !important;
+        font-size: 16px !important;
+      }
+    }
+    
+    // Focus effect
+    &:focus {
+      outline: 2px solid var(--c-lib-tb-primaryL100) !important;
+      outline-offset: 2px !important;
+    }
+  }
+}

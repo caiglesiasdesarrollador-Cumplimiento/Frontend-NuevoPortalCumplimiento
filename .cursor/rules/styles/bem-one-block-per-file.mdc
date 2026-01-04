@@ -1,0 +1,17 @@
+---
+id: bem-one-block-per-file
+name: One Block per File
+description: Recommend using one BEM block per style file to improve maintainability.
+globs:
+  - "**/*.scss"
+  - "**/*.css"
+type: comment
+alwaysApply: true
+---
+
+# One Block per File
+
+Keep each BEM block isolated in its own file.
+
+✅ Good: `button.scss` contains `.button` block and its elements/modifiers.  
+🚫 Bad: Multiple unrelated blocks in one `.scss` file.

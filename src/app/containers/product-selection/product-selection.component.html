@@ -1,0 +1,162 @@
+<!-- ✅ Container principal - Product Selection -->
+<div class="min-h-screen" style="background-color: var(--sb-ui-color-grayscale-L400)">
+  <div class="max-w-6xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation -->
+    <div class="mb-4 sm:mb-6">
+      <nav class="sb-ui-breadcrumb">
+        <ol class="sb-ui-breadcrumb__list flex items-center gap-2 text-sm">
+          <li class="sb-ui-breadcrumb__item">
+            <a routerLink="/portal" class="sb-ui-breadcrumb__link flex items-center gap-1" style="color: var(--sb-ui-color-primary-base)">
+              <i class="fal fa-home"></i>
+              <span>Portal</span>
+            </a>
+          </li>
+          <li class="sb-ui-breadcrumb__separator" style="color: var(--sb-ui-color-grayscale-D200)">></li>
+          <li class="sb-ui-breadcrumb__item">
+            <span class="flex items-center gap-1" style="color: var(--sb-ui-color-grayscale-D200)">
+              <i class="fal fa-paper-plane"></i>
+              <span>Cotizar o Emitir</span>
+            </span>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <!-- ✅ Header con título y descripción -->
+    <div class="text-center mb-6 sm:mb-8">
+      <h1 class="text-xl sm:text-2xl font-bold mb-2 px-2" style="color: var(--sb-ui-color-grayscale-black)">
+        {{ productData.title }}
+      </h1>
+      <p class="text-sm sm:text-base max-w-3xl mx-auto px-4" style="color: var(--sb-ui-color-grayscale-D200)">
+        {{ productData.subtitle }}
+      </p>
+    </div>
+
+    <!-- ✅ Grid de productos - Primera fila -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <!-- Protección familiar individual -->
+      <div class="rounded-lg shadow-sm border p-4 sm:p-6 h-full flex flex-col transition-shadow hover:shadow-md"
+           style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+        <div class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-lg mb-3 sm:mb-4 mx-auto"
+             style="background-color: var(--sb-ui-color-primary-base)">
+          <i class="fal fa-home-heart text-lg sm:text-2xl" style="color: var(--sb-ui-color-grayscale-white)"></i>
+            </div>
+            <div class="text-center flex-grow">
+          <h3 class="font-bold mb-2" style="color: var(--sb-ui-color-grayscale-black)">Protección familiar individual</h3>
+          <div class="text-sm mb-4 text-left" style="color: var(--sb-ui-color-grayscale-D200)">
+                <p class="mb-1">Autos</p>
+                <p class="mb-1">Vida</p>
+                <p class="mb-1">Salud</p>
+                <p class="mb-1">Hogar</p>
+              </div>
+            </div>
+        <button class="sb-ui-button sb-ui-button--secondary sb-ui-button--fill sb-ui-button--medium w-full"
+                (click)="navigateToProduct('simon-cotizadores')">
+          Ir a Simón Cotizadores
+          <i class="fal fa-arrow-right ml-2"></i>
+        </button>
+            </div>
+
+      <!-- Pymes + Digital -->
+      <div class="rounded-lg shadow-sm border p-4 sm:p-6 h-full flex flex-col transition-shadow hover:shadow-md"
+           style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+        <div class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-lg mb-3 sm:mb-4 mx-auto"
+             style="background-color: var(--sb-ui-color-primary-base)">
+          <i class="fal fa-briefcase text-lg sm:text-2xl" style="color: var(--sb-ui-color-grayscale-white)"></i>
+        </div>
+            <div class="text-center flex-grow">
+          <h3 class="font-bold mb-2" style="color: var(--sb-ui-color-grayscale-black)">Pymes + Digital</h3>
+          <p class="text-sm mb-4" style="color: var(--sb-ui-color-grayscale-D200)">
+            Protección empresarial con emisión 100% digital. Respaldo en daños, responsabilidad y servicios de asistencia.
+              </p>
+            </div>
+        <button class="sb-ui-button sb-ui-button--secondary sb-ui-button--fill sb-ui-button--medium w-full"
+                (click)="navigateToProduct('pymes-digital')">
+          Ir a Pymes + Digital
+          <i class="fal fa-arrow-right ml-2"></i>
+        </button>
+            </div>
+
+      <!-- Protección de créditos -->
+      <div class="rounded-lg shadow-sm border p-4 sm:p-6 h-full flex flex-col transition-shadow hover:shadow-md"
+           style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+        <div class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-lg mb-3 sm:mb-4 mx-auto"
+             style="background-color: var(--sb-ui-color-primary-base)">
+          <i class="fal fa-handshake text-lg sm:text-2xl" style="color: var(--sb-ui-color-grayscale-white)"></i>
+        </div>
+            <div class="text-center flex-grow">
+          <h3 class="font-bold mb-2" style="color: var(--sb-ui-color-grayscale-black)">Protección de créditos</h3>
+          <div class="text-sm mb-4 text-left" style="color: var(--sb-ui-color-grayscale-D200)">
+                <p class="mb-1">Vida</p>
+                <p class="mb-1">Hogar</p>
+          </div>
+        </div>
+        <button class="sb-ui-button sb-ui-button--secondary sb-ui-button--fill sb-ui-button--medium w-full"
+                (click)="navigateToProduct('procreditos')">
+          Ir a Procreditos
+          <i class="fal fa-arrow-right ml-2"></i>
+        </button>
+        </div>
+      </div>
+
+      <!-- ✅ Segunda fila: 3 productos adicionales -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+      <!-- Otros productos -->
+      <div class="rounded-lg shadow-sm border p-4 sm:p-6 h-full flex flex-col transition-shadow hover:shadow-md"
+           style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+        <div class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-lg mb-3 sm:mb-4 mx-auto"
+             style="background-color: var(--sb-ui-color-primary-base)">
+          <i class="fal fa-cog text-lg sm:text-2xl" style="color: var(--sb-ui-color-grayscale-white)"></i>
+            </div>
+            <div class="text-center flex-grow">
+          <h3 class="font-bold mb-2" style="color: var(--sb-ui-color-grayscale-black)">Otros productos</h3>
+          <p class="text-sm mb-4" style="color: var(--sb-ui-color-grayscale-D200)">
+            Use el trámite tradicional para todos los productos que aún no pueden ser gestionados por el usuario.
+              </p>
+            </div>
+        <button class="sb-ui-button sb-ui-button--secondary sb-ui-button--fill sb-ui-button--medium w-full"
+                (click)="navigateToProduct('simon-web')">
+          Ir a Simón Web
+          <i class="fal fa-arrow-right ml-2"></i>
+        </button>
+        </div>
+
+      <!-- ✅ CUMPLIMIENTO (Destacado con borde verde) -->
+      <div class="rounded-lg shadow-md border-2 p-4 sm:p-6 h-full flex flex-col relative overflow-hidden transition-shadow hover:shadow-lg"
+           style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-feedback-success-base)">
+            <!-- Gradiente sutil de fondo -->
+        <div class="absolute inset-0 pointer-events-none"
+             style="background: linear-gradient(to bottom right, rgba(var(--sb-ui-color-feedback-success-base-rgb, 0, 128, 0), 0.1), transparent)"></div>
+
+            <div class="relative z-10 h-full flex flex-col">
+          <div class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-lg mb-3 sm:mb-4 mx-auto"
+               style="background-color: var(--sb-ui-color-feedback-success-base)">
+            <i class="fal fa-check-circle text-lg sm:text-2xl" style="color: var(--sb-ui-color-grayscale-white)"></i>
+              </div>
+              <div class="text-center flex-grow">
+            <h3 class="font-bold mb-2" style="color: var(--sb-ui-color-grayscale-black)">Cumplimiento</h3>
+            <p class="text-sm mb-4" style="color: var(--sb-ui-color-grayscale-D200)">
+                  Protección para grandes contratos particulares y estatales con cobertura integral.
+                </p>
+              </div>
+          <!-- ✅ BOTÓN PRINCIPAL DE CUMPLIMIENTO - FUNCIONA -->
+          <button class="sb-ui-button sb-ui-button--primary sb-ui-button--fill sb-ui-button--medium w-full"
+                  style="background-color: var(--sb-ui-color-feedback-success-base); border-color: var(--sb-ui-color-feedback-success-base)"
+                  (click)="navigateToProduct('cumplimiento')">
+            Ir a Cumplimiento
+            <i class="fal fa-arrow-right ml-2"></i>
+          </button>
+          </div>
+        </div>
+
+      <!-- Espacio vacío o placeholder -->
+      <div class="rounded-lg border p-4 sm:p-6 h-full flex flex-col items-center justify-center min-h-[200px] hidden md:flex"
+           style="background-color: var(--sb-ui-color-grayscale-L400); border-color: var(--sb-ui-color-grayscale-L300)">
+            <div class="text-center">
+          <i class="fal fa-plus text-3xl mb-3" style="color: var(--sb-ui-color-grayscale-D200)"></i>
+          <p class="text-sm" style="color: var(--sb-ui-color-grayscale-D200)">Próximamente más productos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,148 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+// ✅ USANDO CLASES TECH-BLOCK-LIB para colores
+
+// Bloque principal: menu-list
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--c-lib-tb-grayscaleWhite);
+  width: 100%;
+  padding: 1rem;
+
+  // ✅ BEM Element: menu-list__content
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  // ✅ BEM Element: menu-list__item
+  &__item {
+    background-color: transparent;
+    border-bottom: 1px solid var(--c-lib-tb-grayscaleL200);
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--c-lib-tb-grayscaleL400);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  // ✅ BEM Modifier: menu-list--mobile
+  &--mobile {
+    padding: 0.5rem;
+
+    .menu-list__item {
+      &:hover {
+        background-color: var(--c-lib-tb-grayscaleL400);
+      }
+    }
+  }
+
+  // ✅ Personalización de lib-tb-list para items del menú
+  :deep(.menu-list__item) {
+    // ✅ Ocultar completamente el checkbox
+    .p-checkbox {
+      display: none !important;
+    }
+
+    // ✅ Container del list item sin backgrounds
+    .p-checkbox-box {
+      display: none !important;
+    }
+
+    // ✅ Label del item del menú
+    .p-checkbox-label {
+      font-weight: 500;
+      color: var(--c-lib-tb-grayscaleBlack);
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      display: flex !important;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      font-size: 0.875rem;
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      transition: all 0.2s ease;
+      pointer-events: none;
+
+      &:hover {
+        color: var(--c-lib-tb-grayscaleBlack) !important;
+        background: transparent !important;
+        font-weight: 500 !important;
+      }
+
+      &:focus {
+        outline: none !important;
+        background: transparent !important;
+        color: var(--c-lib-tb-grayscaleBlack) !important;
+      }
+
+      &:active {
+        background: transparent !important;
+        color: var(--c-lib-tb-grayscaleBlack) !important;
+      }
+
+      // ✅ Íconos de los items del menú
+      i {
+        color: var(--c-lib-tb-primaryBase);
+        font-size: 1rem;
+        flex-shrink: 0;
+        width: 1.25rem;
+        text-align: center;
+        pointer-events: none;
+      }
+    }
+
+    // ✅ Eliminar cualquier hover/focus/active de lib-tb-list
+    .p-component {
+      background: transparent !important;
+      border: none !important;
+      pointer-events: none;
+
+      &:hover {
+        background: transparent !important;
+      }
+
+      &:focus {
+        background: transparent !important;
+        outline: none !important;
+      }
+
+      &:active {
+        background: transparent !important;
+      }
+    }
+
+    // ✅ Eliminar hover de cualquier elemento interno
+    * {
+      &:hover {
+        background: transparent !important;
+      }
+    }
+  }
+
+  // ✅ Responsive - Mobile
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+
+    .menu-list__content {
+      height: calc(100vh - 120px);
+    }
+
+    :deep(.menu-list__item) {
+      .p-checkbox-label {
+        padding: 0.625rem 0.75rem;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+      }
+    }
+  }
+}

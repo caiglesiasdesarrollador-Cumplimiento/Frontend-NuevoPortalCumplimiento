@@ -1,0 +1,239 @@
+---
+alwaysApply: true
+---
+
+# Organización por grupos en formularios dinámicos
+
+Al crear formularios dinámicos con **tech-block-lib**, usa `configContainers` y `containerId` para organizar componentes por grupos lógicos con diseño centrado y responsive.
+
+## Estructura recomendada:
+
+### 1. Define containers con diseño centrado y responsive
+```typescript
+configContainers: [
+  {
+    id: 'form-wrapper-container',
+    class: 'max-w-md mx-auto px-2 py-4 sm:px-4 sm:py-8', // ✅ Mobile responsive
+    tagName: 'div',
+  },
+  {
+    id: 'header-container',
+    class: 'text-center mb-4 sm:mb-8', // ✅ Mobile responsive
+    tagName: 'header',
+  },
+  {
+    id: 'personal-info-container', 
+    class: 'bg-grayscaleWhite p-3 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200 mb-3 sm:mb-6', // ✅ Mobile responsive
+    tagName: 'section',
+  },
+  {
+    id: 'location-info-container',
+    class: 'bg-grayscaleWhite p-3 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200 mb-3 sm:mb-6', // ✅ Mobile responsive
+    tagName: 'section',
+  },
+  {
+    id: 'actions-container',
+    class: 'flex justify-center gap-2 sm:gap-4 mt-4 sm:mt-8', // ✅ Mobile responsive
+    tagName: 'div',
+  },
+]
+```
+
+### 🎨 **CRITICAL: Usar clases de color de tech-block-lib**
+
+**SIEMPRE** usa las clases de color definidas en `tailwind.config.js` que mapean a las variables CSS de tech-block-lib:
+
+#### **✅ CORRECTO - Clases tech-block-lib:**
+```typescript
+// Fondos
+class: 'bg-grayscaleWhite'     // ✅ Fondo blanco
+class: 'bg-grayscaleL400'      // ✅ Fondo gris claro
+class: 'bg-primaryBase'        // ✅ Fondo color primario
+
+// Bordes  
+class: 'border-grayscaleL200'  // ✅ Borde gris claro
+class: 'border-primaryBase'    // ✅ Borde color primario
+
+// Textos
+class: 'text-grayscaleBlack'   // ✅ Texto negro
+class: 'text-grayscaleD200'    // ✅ Texto gris oscuro
+class: 'text-primaryBase'      // ✅ Texto color primario
+```
+
+#### **❌ INCORRECTO - Clases estándar de Tailwind:**
+```typescript
+// ❌ NO usar estas clases estándar:
+class: 'bg-white'              // ❌ Usar bg-grayscaleWhite
+class: 'bg-gray-50'            // ❌ Usar bg-grayscaleL400
+class: 'border-gray-200'       // ❌ Usar border-grayscaleL200  
+class: 'text-gray-900'         // ❌ Usar text-grayscaleBlack
+class: 'text-gray-600'         // ❌ Usar text-grayscaleD200
+```
+
+## 📏 **Opciones de altura y ancho por tipo de formulario:**
+
+### **📐 Reglas de altura según tipo de formulario:**
+
+#### **📋 Guía de altura por tipo:**
+
+**🔹 Formularios pequeños (login, contacto, búsqueda):**
+```typescript
+// Wrapper principal: Altura automática para que botones no queden muy abajo
+class: 'h-auto bg-grayscaleL400' // ✅ h-auto en formularios pequeños
+
+// Container interno: Mobile responsive
+{
+  id: 'form-wrapper-container',
+  class: 'max-w-md mx-auto px-2 py-4 sm:px-4 sm:py-8', // ✅ Mobile: px-2 py-4, Desktop: px-4 py-8
+  tagName: 'div',
+}
+```
+
+**🔹 Formularios grandes (registro, stepper, múltiples secciones):**
+```typescript
+// Wrapper principal: Altura completa de pantalla para formularios largos
+class: 'min-h-screen bg-grayscaleL400' // ✅ min-h-screen para formularios grandes
+
+// Container interno: Mobile responsive según complejidad
+{
+  id: 'form-wrapper-container',
+  class: 'max-w-2xl mx-auto px-2 py-4 sm:px-4 sm:py-8',   // Registro estándar
+  class: 'max-w-4xl mx-auto px-2 py-4 sm:px-4 sm:py-8',   // Stepper, formularios complejos
+  tagName: 'div',
+}
+```
+
+#### **📱 Mobile Responsive (CRÍTICO):**
+
+**🔹 Secciones de contenido mobile:**
+```typescript
+{
+  id: 'content-container',
+  class: 'bg-grayscaleWhite p-3 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200 mb-3 sm:mb-6',
+  tagName: 'section',
+}
+```
+
+**🎯 Patrón HTML responsive completo:**
+```html
+<!-- ✅ BIEN: Formularios PEQUEÑOS responsive (login, contacto) -->
+<div class="h-auto bg-grayscaleL400">
+  <div class="max-w-md mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <lib-tb-dynamic-form [custom]="formularioConfig"></lib-tb-dynamic-form>
+    
+    <!-- Botones responsive -->
+    <div class="component__actions mt-4 sm:mt-6">
+      <lib-tb-button [custom]="btnAction"></lib-tb-button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ BIEN: Formularios GRANDES responsive (stepper, registro) -->
+<div class="min-h-screen bg-grayscaleL400">
+  <div class="max-w-4xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <lib-tb-dynamic-form [custom]="formularioConfig"></lib-tb-dynamic-form>
+    
+    <!-- Botones responsive -->
+    <div class="component__actions mt-4 sm:mt-6">
+      <lib-tb-button [custom]="btnAction"></lib-tb-button>
+    </div>
+  </div>
+</div>
+```
+
+#### **📐 Guía de diseño centrado:**
+
+#### **Container principal (wrapper) - MOBILE RESPONSIVE:**
+- ✅ **max-w-md/2xl/4xl**: Ancho máximo según tipo de formulario
+- ✅ **mx-auto**: Centrado horizontal automático
+- ✅ **px-2 sm:px-4**: Padding horizontal responsive (8px mobile, 16px desktop)
+- ✅ **py-4 sm:py-8**: Padding vertical responsive (16px mobile, 32px desktop)
+
+#### **Secciones de contenido - MOBILE RESPONSIVE:**
+- ✅ **mb-3 sm:mb-6**: Separación responsive entre secciones (12px mobile, 24px desktop)
+- ✅ **p-3 sm:p-6**: Padding interno responsive (12px mobile, 24px desktop)
+- ✅ **rounded-lg**: Bordes redondeados suaves (8px)
+- ✅ **shadow-sm**: Sombra sutil para elevación
+
+#### **Responsive breakpoints actualizados:**
+- **Móvil (< 640px)**: `px-2 py-4 p-3 mb-3 gap-2` - Padding y gaps reducidos
+- **Desktop (≥ 640px)**: `sm:px-4 sm:py-8 sm:p-6 sm:mb-6 sm:gap-4` - Padding estándar
+
+### **Formularios por tipo (mobile responsive):**
+
+### **Formularios simples (login, contacto):**
+```typescript
+{
+  id: 'form-wrapper-container',
+  class: 'max-w-md mx-auto px-2 py-4 sm:px-4 sm:py-8', // ✅ Mobile responsive
+  tagName: 'div',
+}
+```
+
+### **Formularios estándar (registro, configuración):**
+```typescript
+{
+  id: 'form-wrapper-container',
+  class: 'max-w-2xl mx-auto px-2 py-4 sm:px-4 sm:py-6', // ✅ Mobile responsive
+  tagName: 'div',
+}
+```
+
+### **Formularios complejos (stepper, múltiples secciones):**
+```typescript
+{
+  id: 'form-wrapper-container',
+  class: 'max-w-4xl mx-auto px-2 py-4 sm:px-4 sm:py-6', // ✅ Mobile responsive
+  tagName: 'div',
+}
+```
+
+## ✅ **Beneficios de esta organización:**
+
+✅ **Mobile-first responsive**: Optimizado para móviles con clases `sm:`  
+✅ **Centrado automático**: `mx-auto` centra el formulario en cualquier pantalla  
+✅ **Responsive nativo**: `max-w-*` se adapta automáticamente  
+✅ **Separación lógica**: Cada grupo tiene su propio container  
+✅ **Spacing consistente**: Márgenes y paddings responsive estandarizados  
+✅ **Mantenimiento**: Más fácil agregar/quitar secciones completas
+
+## ⚠️ **Errores comunes a evitar:**
+
+❌ **No usar clases responsive**: Solo usar `px-4` sin `px-2 sm:px-4`  
+❌ **Padding fijo en mobile**: No adaptar espaciado para pantallas pequeñas  
+❌ **Gaps grandes en mobile**: Usar `gap-4` en lugar de `gap-2 sm:gap-4`  
+❌ **No definir containerId**: Los componentes se agruparán sin orden  
+❌ **Containers sin usar**: Genera containers vacíos en el DOM  
+❌ **`min-h-screen` en formularios pequeños**: Hace que se estiren innecesariamente  
+
+### **🚨 CRÍTICO: Error de altura según tamaño del formulario**
+
+#### **❌ Problema común:**
+```html
+<!-- MAL: Login pequeño con min-h-screen (botones muy abajo) -->
+<div class="min-h-screen bg-grayscaleL400">
+  <div class="max-w-md mx-auto px-4 py-8">
+    <!-- Formulario pequeño pero pantalla completa → botones muy lejos -->
+  </div>
+</div>
+```
+
+#### **✅ Solución correcta:**
+```html
+<!-- BIEN: Login pequeño con h-auto y responsive -->
+<div class="h-auto bg-grayscaleL400">
+  <div class="max-w-md mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- Formulario pequeño responsive → botones cerca -->
+  </div>
+</div>
+```
+
+#### **🎯 Regla de altura por tamaño:**
+
+**✅ Criterio para elegir altura:**
+- **Formularios pequeños** (2-4 campos): `h-auto` → Botones cerca del contenido
+- **Formularios grandes** (5+ campos, stepper): `min-h-screen` → Aprovechar pantalla completa
+
+**✅ SIEMPRE usar responsive classes:**
+- Mobile: `px-2 py-4 p-3 mb-3 gap-2`
+- Desktop: `sm:px-4 sm:py-8 sm:p-6 sm:mb-6 sm:gap-4`

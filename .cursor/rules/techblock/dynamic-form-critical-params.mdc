@@ -1,0 +1,217 @@
+# 🔥 PARÁMETROS CRÍTICOS: formId y name OBLIGATORIOS
+
+**REGLA FUNDAMENTAL**: TODOS los campos de tech-block-lib DEBEN incluir `formId` y `custom.name` definidos y coincidentes. Sin estos parámetros, los formularios dinámicos y steppers fallan completamente.
+
+## 🚨 **ERRORES CRÍTICOS CAUSADOS POR OMITIR ESTOS PARÁMETROS:**
+
+### **🔴 Errores de Compilación/Runtime:**
+```
+ERROR: Falta la propiedad "name" en la configuración
+ERROR: Cannot find control with unspecified name attribute
+```
+
+### **🔴 Fallas Funcionales:**
+- ❌ **Formularios no renderizan** → Campos vacíos o ausentes
+- ❌ **Steppers muestran contenido vacío** → Pasos sin formularios
+- ❌ **Change detection roto** → Requiere clicks manuales para funcionar
+- ❌ **Navegación imposible** → Botones Anterior/Siguiente no funcionan
+- ❌ **Experiencia de usuario completamente rota** → Aplicación parece no funcionar
+
+## ✅ **PATRÓN OBLIGATORIO:**
+
+### **Para CUALQUIER tipo de campo:**
+```typescript
+export const miCampo: ILibTbDynamicFormConfigType = {
+  tbType: 'dropdown|input|number|textarea|calendar', // Cualquier tipo
+  containerId: 'container-id',
+  formId: 'nombreUnico',           // ✅ OBLIGATORIO #1: Para Angular FormControl
+  custom: {
+    name: 'nombreUnico',           // ✅ OBLIGATORIO #2: Para HTML name attribute
+    // CRÍTICO: custom.name DEBE ser igual a formId
+    // ... resto de configuración específica del tipo
+  },
+  formProps: {
+    validators: [...] // Opcional
+  }
+};
+```
+
+### **Ejemplo por tipo de campo:**
+```typescript
+// ✅ Input de texto
+export const nombre: ILibTbDynamicFormConfigType = {
+  tbType: 'input',
+  containerId: 'personal-container',
+  formId: 'nombre',              // ✅ OBLIGATORIO
+  custom: {
+    name: 'nombre',              // ✅ OBLIGATORIO (igual a formId)
+    type: 'text',
+    label: 'Nombre completo',
+    placeholder: 'Ingresa tu nombre'
+  }
+};
+
+// ✅ Dropdown/Select
+export const pais: ILibTbDynamicFormConfigType = {
+  tbType: 'dropdown',
+  containerId: 'location-container',
+  formId: 'pais',                // ✅ OBLIGATORIO
+  custom: {
+    name: 'pais',                // ✅ OBLIGATORIO (igual a formId)
+    label: 'País',
+    options: [
+      { id: 'co', label: 'Colombia' },
+      { id: 'mx', label: 'México' }
+    ],
+    optionLabel: 'label',
+    optionValue: 'id'
+  }
+};
+
+// ✅ Número/Currency
+export const valor: ILibTbDynamicFormConfigType = {
+  tbType: 'number',
+  containerId: 'financial-container',
+  formId: 'valor',               // ✅ OBLIGATORIO
+  custom: {
+    name: 'valor',               // ✅ OBLIGATORIO (igual a formId)
+    label: 'Valor del contrato',
+    mode: 'currency',
+    currency: 'COP',
+    locale: 'es-CO'
+  }
+};
+```
+
+## ❌ **ERRORES COMUNES A EVITAR:**
+
+### **❌ Error #1: Falta formId**
+```typescript
+// ❌ MAL: Sin formId
+export const campo = {
+  tbType: 'input',
+  containerId: 'container',
+  // ❌ FALTA: formId
+  custom: {
+    name: 'campo',
+    label: 'Campo'
+  }
+};
+```
+
+### **❌ Error #2: Falta name en custom**
+```typescript
+// ❌ MAL: Sin custom.name
+export const campo = {
+  tbType: 'input',
+  containerId: 'container',
+  formId: 'campo',
+  custom: {
+    // ❌ FALTA: name
+    label: 'Campo'
+  }
+};
+```
+
+### **❌ Error #3: formId y name no coinciden**
+```typescript
+// ❌ MAL: formId !== custom.name
+export const campo = {
+  tbType: 'input',
+  containerId: 'container',
+  formId: 'campo',
+  custom: {
+    name: 'otroNombre',        // ❌ MAL: Debe ser 'campo'
+    label: 'Campo'
+  }
+};
+```
+
+### **❌ Error #4: Nombres duplicados**
+```typescript
+// ❌ MAL: Nombres duplicados en el mismo formulario
+export const nombre1 = {
+  formId: 'nombre',            // ❌ Nombre duplicado
+  custom: { name: 'nombre' }
+};
+
+export const nombre2 = {
+  formId: 'nombre',            // ❌ Nombre duplicado
+  custom: { name: 'nombre' }
+};
+```
+
+## ✅ **CHECKLIST OBLIGATORIO ANTES DE IMPLEMENTAR:**
+
+### **🔍 Verificación por campo:**
+```typescript
+// Para CADA campo de formulario dinámico:
+// 1. ¿Tiene formId definido?                    □ Sí / □ No
+// 2. ¿Tiene custom.name definido?              □ Sí / □ No  
+// 3. ¿formId === custom.name?                  □ Sí / □ No
+// 4. ¿Es único en todo el formulario?          □ Sí / □ No
+// 5. ¿Nombre es descriptivo y claro?           □ Sí / □ No
+```
+
+### **🔍 Verificación por formulario:**
+```typescript
+// Para formularios simples:
+// ¿TODOS los campos pasan el checklist?        □ Sí / □ No
+
+// Para steppers multi-paso:  
+// ¿TODOS los campos del Paso 1 pasan?          □ Sí / □ No
+// ¿TODOS los campos del Paso 2 pasan?          □ Sí / □ No
+// ¿TODOS los campos del Paso N pasan?          □ Sí / □ No
+// ¿NO hay nombres duplicados across pasos?     □ Sí / □ No
+```
+
+## 🚨 **REGLA DE ORO:**
+
+### **NUNCA crear un campo sin formId y custom.name**
+```typescript
+// ✅ PLANTILLA OBLIGATORIA para cualquier campo nuevo:
+export const nuevoCampo: ILibTbDynamicFormConfigType = {
+  tbType: 'TIPO_AQUI',           // dropdown, input, number, etc.
+  containerId: 'CONTAINER_AQUI', // ID del container donde renderizar
+  formId: 'NOMBRE_UNICO_AQUI',   // ✅ CRÍTICO: Para Angular FormControl
+  custom: {
+    name: 'NOMBRE_UNICO_AQUI',   // ✅ CRÍTICO: Mismo valor que formId
+    // ... resto de configuración específica del tipo
+  }
+};
+```
+
+## 💡 **¿POR QUÉ AMBOS PARÁMETROS SON NECESARIOS?**
+
+### **1. formId → Angular FormControl**
+- Angular usa `formId` para crear el `FormControl` en el `FormGroup`
+- Sin `formId` → Angular no puede crear el control → "Cannot find control"
+
+### **2. custom.name → HTML name attribute**  
+- Tech-block-lib usa `custom.name` para el atributo `name` del elemento HTML
+- Sin `custom.name` → "Falta la propiedad 'name' en la configuración"
+
+### **3. Deben coincidir para funcionar**
+- Angular busca el control por `formId`
+- HTML bindea por `custom.name`  
+- Si no coinciden → Desconexión entre Angular y HTML → Formulario roto
+
+## 🎯 **APLICACIÓN EN DIFERENTES CONTEXTOS:**
+
+### **✅ Formularios simples (sin stepper):**
+- Cada campo DEBE tener formId y custom.name
+- Nombres únicos dentro del formulario
+
+### **✅ Formularios con stepper (multi-paso):**
+- Cada campo en cada paso DEBE tener formId y custom.name
+- Nombres únicos en TODO el stepper (across todos los pasos)
+- UN solo campo sin estos parámetros → TODO el stepper falla
+
+### **✅ Formularios anidados o complejos:**
+- Misma regla aplica independientemente de la complejidad
+- Containers, grupos, secciones → No importa
+- CADA campo individual DEBE cumplir la regla
+
+---
+
+**RECORDATORIO CRÍTICO**: Esta no es una sugerencia o buena práctica. Es un **REQUISITO FUNDAMENTAL** para que tech-block-lib funcione. Sin estos parámetros, los formularios dinámicos simplemente NO FUNCIONAN.

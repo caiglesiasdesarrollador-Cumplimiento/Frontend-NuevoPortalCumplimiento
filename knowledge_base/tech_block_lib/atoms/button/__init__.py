@@ -1,0 +1,68 @@
+# agent: { description, prefixes }
+component_mapping_button_agent = {
+    "button-general": { # Nombre de Agente
+        "description": "Consultas sobre componente button",
+        "prefixes": ["button-interface", "button-definition", "button-usage"] # Nombre de archivos .md a consultar
+    },
+    "button-theme": {
+        "description": "Consultas sobre las variables css del componente button",
+        "prefixes": ["button-interface", "button-definition", "button-usage", "button-theme"]
+    },
+}
+
+# Diccionario de componentes en inglés y español
+# query: agent
+component_mapping_button_query = {
+    "ilibtbbutton": "button-general",
+    "libtbbuttonmodule": "button-general",
+    "lib-tb-button": "button-general",
+    "botón": "button-general",
+    "boton": "button-general",
+    "button": "button-general",    
+    "boton y variables css": "button-theme",
+    "botón y variables css": "button-theme",
+    "button y variables css": "button-theme",
+    "boton + variables css": "button-theme",
+    "botón + variables css": "button-theme",
+    "button + variables css": "button-theme",
+    "boton mas variables css": "button-theme",
+    "botón mas variables css": "button-theme",
+    "button mas variables css": "button-theme",
+    "boton más variables css": "button-theme",
+    "botón más variables css": "button-theme",
+    "button más variables css": "button-theme",
+    "variables css del boton": "button-theme",
+    "variables css del botón": "button-theme",
+    "variables css del button": "button-theme",
+    "variables css y boton": "button-theme",
+    "variables css y botón": "button-theme",
+    "variables css y button": "button-theme",
+    "variables css + boton": "button-theme",
+    "variables css + botón": "button-theme",
+    "variables css + button": "button-theme",
+    "variables css mas boton": "button-theme",
+    "variables css mas botón": "button-theme",
+    "variables css mas button": "button-theme",
+    "variables css más boton": "button-theme",
+    "variables css más botón": "button-theme",
+    "variables css más button": "button-theme",
+    "variables css del componente boton": "button-theme",
+    "variables css del componente botón": "button-theme",
+    "variables css del componente button": "button-theme",
+    "variables css y componente boton": "button-theme",
+    "variables css y componente botón": "button-theme",
+    "variables css y componente button": "button-theme",
+    "variables css + componente boton": "button-theme",
+    "variables css + componente botón": "button-theme",
+    "variables css + componente button": "button-theme",
+    "variables css mas componente boton": "button-theme",
+    "variables css mas componente botón": "button-theme",
+    "variables css mas componente button": "button-theme",
+    "variables css más componente boton": "button-theme",
+    "variables css más componente botón": "button-theme",
+    "variables css más componente button": "button-theme",
+    "button css variables": "button-theme",
+    "css variables button": "button-theme",
+    "button component css variables": "button-theme",
+    "css variables button component": "button-theme",
+}

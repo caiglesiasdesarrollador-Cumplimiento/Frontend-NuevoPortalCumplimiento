@@ -1,0 +1,143 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+
+// Bloque principal: management
+.management {
+  // ✅ BEM Element: management__header
+  &__header {
+    animation: fadeInDown 0.6s ease-out;
+  }
+
+  // ✅ BEM Element: management__filters
+  &__filters {
+    animation: fadeInUp 0.8s ease-out;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  // ✅ BEM Element: management__filter-item
+  &__filter-item {
+    transition: all 0.3s ease;
+  }
+
+  // ✅ BEM Element: management__filter-actions
+  &__filter-actions {
+    border-top: 1px solid var(--c-lib-tb-grayscaleL300);
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+
+  // ✅ BEM Element: management__table-container
+  &__table-container {
+    animation: fadeInUp 1s ease-out;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // ✅ BEM Element: management__table
+  &__table {
+    // Usando variables CSS de tech-block-lib para colores
+    --c-lib-tb-table-bg-header: var(--c-lib-tb-grayscaleL400);
+    --c-lib-tb-table-color-header: var(--c-lib-tb-grayscaleBlack);
+    --c-lib-tb-table-bg-body: var(--c-lib-tb-grayscaleWhite);
+    --c-lib-tb-table-color-body: var(--c-lib-tb-grayscaleBlack);
+    --c-lib-tb-table-border-color: var(--c-lib-tb-grayscaleL200);
+  }
+
+  // ✅ BEM Element: management__table-row
+  &__table-row {
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: var(--c-lib-tb-grayscaleL400);
+    }
+  }
+
+  // ✅ BEM Element: management__number-cell
+  &__number-cell {
+    transition: all 0.3s ease;
+  }
+
+  // ✅ BEM Element: management__tomador-cell
+  &__tomador-cell {
+    max-width: 200px;
+    
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+    }
+  }
+
+  // ✅ BEM Element: management__empty-state
+  &__empty-state {
+    animation: fadeInUp 1.2s ease-out;
+  }
+}
+
+// ✅ Keyframes para animaciones
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ✅ Media queries responsive - NO usar @extend dentro
+@media (max-width: 768px) {
+  .management {
+    &__filters {
+      // ✅ Reducir efectos hover en mobile
+      &:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+    }
+
+    &__table-container {
+      &:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+    }
+
+    &__filter-actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+
+    &__tomador-cell {
+      max-width: 150px;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .management {
+    &__filter-actions {
+      border-top: none;
+      padding-top: 0.75rem;
+      margin-top: 0.75rem;
+    }
+  }
+} 

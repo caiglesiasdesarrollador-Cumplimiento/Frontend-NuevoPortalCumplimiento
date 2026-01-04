@@ -1,0 +1,106 @@
+# Pre-Implementation Rules Checklist
+
+**SIEMPRE** realizar un check explícito de reglas aplicables antes de cualquier implementación, creación de componentes, servicios o funcionalidades.
+
+## 🎯 **OBLIGATORIO: Mostrar checklist antes de implementar**
+
+Antes de cualquier desarrollo, mostrar este checklist marcando las secciones aplicables:
+
+```
+🔍 **PRE-IMPLEMENTATION RULES CHECK**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 **TECH-BLOCK-LIB:**
+□ ¿Necesito crear/usar componentes? → Consultar knowledge_base/tech_block_lib/
+□ ¿Mapeo automático completado? → Usar tabla de palabras clave
+□ ¿Variables CSS correctas? → Solo forma/dimensiones, NO colores/tipografía  
+□ ¿floatLabel configurado? → Según tema en angular.json
+
+🎨 **ESTILOS BEM:**
+□ ¿Creando estilos? → Aplicar BEM: Block__Element--Modifier
+□ ¿Un bloque por archivo? → Separar bloques en archivos diferentes
+□ ¿Límite de anidamiento? → Máximo 2-3 niveles
+□ ¿Media queries? → NUNCA usar @extend dentro de @media
+
+🎨 **COLORES TAILWIND:**
+□ ¿Usando clases de color? → SOLO tech-block-lib: bg-grayscaleWhite, text-grayscaleBlack
+□ ¿Evitando Tailwind estándar? → NO usar bg-white, text-gray-900, etc.
+
+📝 **FORMULARIOS DINÁMICOS:**
+□ ¿Formulario simple? → Estructura estándar sin stepper
+□ ¿Formulario multi-paso? → Integración stepper + formularios dinámicos
+□ ¿formId definido en TODOS los campos? → OBLIGATORIO para Angular FormControl
+□ ¿name en custom definido en TODOS los campos? → OBLIGATORIO para HTML name attribute
+□ ¿formId === custom.name en cada campo? → Deben coincidir para funcionar
+□ ¿Organización por grupos? → Usar configContainers con diseño centrado
+□ ¿Mobile responsive? → px-2 sm:px-4, py-4 sm:py-8, etc.
+
+📚 **DOCUMENTACIÓN:**
+□ ¿Crear README? → SOLO si usuario lo solicita explícitamente
+□ ¿Código autoexplicativo? → Preferir sobre documentación automática
+
+🧪 **TESTING:**
+□ ¿Crear tests? → SOLO si usuario lo solicita explícitamente  
+□ ¿Código validado? → Compilación + funcionalidad confirmada primero
+
+🏗️ **ARQUITECTURA:**
+□ ¿Delegar lógica? → Servicios en core/ o shared/
+□ ¿Evitar DOM directo? → Usar Renderer2 o ElementRef
+□ ¿OnPush strategy? → Mejorar rendimiento
+□ ¿async pipe? → Reducir memory leaks
+
+🚨 **ERRORES TYPESCRIPT COMUNES:**
+□ ¿Imports correctos? → Angular desde @angular/*, RxJS desde rxjs, tech-block-lib solo interfaces
+□ ¿Todos los imports usados? → Eliminar imports no utilizados
+□ ¿Propiedades válidas? → Verificar que existen en las interfaces
+□ ¿Tipos exactos? → ILibTbDynamicFormConfigType, ILibTbButton (sin errores de escritura)
+□ ¿Variables utilizadas? → Eliminar propiedades/métodos no referenciados
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+## 📋 **Proceso obligatorio:**
+
+### **1. Mostrar checklist**
+- Copiar el checklist completo
+- Marcar con ✅ las secciones aplicables  
+- Marcar con ❌ las que no aplican
+- Explicar decisiones importantes
+
+### **2. Aplicar reglas marcadas**
+- Seguir cada regla marcada durante la implementación
+- Documentar cuando una regla influye en una decisión
+- No proceder si hay conflictos no resueltos
+
+### **3. Ejemplo de aplicación:**
+```
+🔍 RULES CHECK para "crear formulario de login":
+
+✅ TECH-BLOCK-LIB: 
+   - Consultar input-text, button, dynamic-form
+   - floatLabel: false (tema Seguros Bolívar)
+
+✅ FORMULARIOS DINÁMICOS:
+   - Formulario simple (sin stepper)
+   - Diseño centrado y responsive
+
+✅ COLORES TAILWIND:
+   - bg-grayscaleWhite, text-grayscaleBlack
+
+❌ README: No crear automáticamente
+❌ TESTING: No crear automáticamente
+
+📝 PROCEDO CON IMPLEMENTACIÓN...
+```
+
+## ⚠️ **Excepciones:**
+
+El checklist se puede omitir SOLO en:
+- Consultas informativas sin implementación
+- Correcciones menores de bugs
+- Lectura/búsqueda de código existente
+
+## 🎯 **Objetivo:**
+
+Garantizar **consistencia máxima** en la aplicación de todas las reglas del workspace, reduciendo errores y asegurando calidad en cada implementación.
+

@@ -1,0 +1,16 @@
+---
+id: bem-limit-nesting
+name: Limit Selector Nesting
+description: Limit SCSS nesting to a maximum of 2 levels for maintainable BEM.
+globs:
+  - "**/*.scss"
+type: comment
+alwaysApply: true
+---
+
+# Limit SCSS Nesting
+
+Avoid deep nesting to keep selectors readable.
+
+✅ Good: `.block { &__element { } }`  
+🚫 Bad: More than 2–3 levels of nesting.

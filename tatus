@@ -1,0 +1,21 @@
+[33md9bbd5a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/cumplimiento-digital-cursorai-v2[m[33m, [m[1;31morigin/feature/cumplimiento-digital-cursorai-v2[m[33m)[m feat: cambiar formato de moneda de COP a $ en tablas de coberturas
+[33m615fc81[m feat: ajustar anchos de columnas y campos de entrada en tabla de coberturas RC
+[33md907e9e[m feat: ajustar anchos de columnas y campos de entrada en tabla de coberturas
+[33m3ede0ce[m feat: cambiar texto del botón de cumplimiento a 'Ir a cumplimiento'
+[33m193e917[m feat: Update EMITIR step 2 description - change to imperative form and remove 'simulado' reference
+[33m0a53999[m feat: Update EMITIR action step 1 title and description - unify with COTIZAR action format
+[33m797def0[m feat: Remove step 3 title and icon from container - removed 'Paso 3: Confirmar Emisión de Póliza' and check-circle icon
+[33mbcf15b1[m feat: Update step 3 title and description for cotización - 'Paso 3: Confirmar la generación de la cotización' with 'Revisa los detalles y confirma antes de generar la cotización.'
+[33m9ddb984[m feat: Add dynamic step titles and descriptions - step 2 shows 'Paso 2: Formulario de cotización' when in step 2
+[33m86910b9[m fix: Update step 2 title to 'Formulario de cotización' and update descriptions for cotización flow
+[33m3dce3a8[m fix: Update main title to 'Paso 1: Información del Producto y Partes' and remove duplicate header in step container
+[33m14305ab[m fix: Update step title to 'Cotización cumplimiento' and simplify description text
+[33m3eb1f0c[m fix: Remove 'Paso 1:' from step title in policy-input screen
+[33mda112c8[m fix: Clean build to ensure help button hover styles are compiled
+[33mbec0a2f[m feat: Implement hover-based help button - expands on hover with tech-block-lib yellow color
+[33m9d6f5c8[m feat: Make help button fully dynamic - can collapse and expand with separate action buttons
+[33m8c50000[m fix: Remove invalid iconPosition 'center' value from help button
+[33m4146021[m feat: Improve help button with collapsible design - shows only icon initially, expands on click
+[33m61d17aa[m feat: Initialize 'Cotizar' as default selected option in policy-input screen
+[33m049e490[m feat: Set 'Cotizar' as default selected option in policy-input
+[33mdd3c85b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/cumplimiento-digital-cursorai-v2[m[33m)[m feat: Implementar modal SARLAFT con comportamiento diferenciado por modo

@@ -1,0 +1,13 @@
+---
+id: jest-best-practices
+name: Buenas prácticas con Jest
+description: Asegura el uso correcto de mocks, spies y estructura en tests unitarios con Jest.
+globs:
+  - "**/*.spec.ts"
+type: lint
+alwaysApply: true
+---
+
+# Buenas prácticas Jest
+
+Usa mocks, spies y evita código innecesario en tests unitarios.

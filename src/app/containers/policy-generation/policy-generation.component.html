@@ -1,0 +1,183 @@
+<!-- ✅ APLICANDO PATRÓN CORRECTO: settings (wrapper principal en HTML) -->
+<div class="h-auto bg-grayscaleL400">
+  <div class="max-w-2xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation (patrón settings) -->
+    <div class="mb-4 sm:mb-6">
+      <lib-tb-breadcrumb [custom]="breadcrumbConfig"></lib-tb-breadcrumb>
+    </div>
+
+    <!-- ✅ Alertas dinámicas (patrón settings) -->
+    <div class="mb-4 sm:mb-6" *ngIf="(alerts$ | async)?.length">
+      <lib-tb-alert [custom]="alertConfig"></lib-tb-alert>
+    </div>
+
+    <!-- ✅ Formulario dinámico principal (patrón settings) -->
+    <lib-tb-dynamic-form [custom]="policyGenerationForm"></lib-tb-dynamic-form>
+
+    <!-- ✅ Botones de acción responsive (patrón settings) -->
+    <div class="policy-generation__actions mt-4 sm:mt-6" *ngIf="!generationResult && !isProcessing">
+      <div class="policy-generation__action-group">
+        <lib-tb-button [custom]="btnReset"></lib-tb-button>
+      </div>
+      <div class="policy-generation__primary-action">
+        <lib-tb-button [custom]="btnGenerate"></lib-tb-button>
+      </div>
+    </div>
+
+    <!-- ✅ Loading state overlay (patrón settings) -->
+    <div *ngIf="isProcessing" class="policy-generation__loading-overlay">
+      <div class="policy-generation__loading-content">
+        <lib-tb-progress-spinner [custom]="processingSpinner"></lib-tb-progress-spinner>
+        <p class="lib-tb-body-medium text-grayscaleD200 mt-4">
+          Generando póliza automáticamente...
+        </p>
+      </div>
+    </div>
+
+    <!-- ✅ Resultados de la generación (patrón settings) -->
+    <div class="policy-generation__results mt-6" *ngIf="generationResult && !isProcessing">
+      <div class="bg-grayscaleWhite p-6 rounded-lg shadow-sm border border-grayscaleL200">
+        <!-- Header de resultados -->
+        <div class="policy-generation__result-header">
+          <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-4">
+            <i class="fal fa-file-contract text-successBase mr-2"></i>
+            Póliza Generada Exitosamente
+          </h3>
+
+          <div class="policy-generation__policy-number">
+            <span class="lib-tb-body-small text-grayscaleD100">Número de Póliza:</span>
+            <span class="lib-tb-h6-bold text-primaryBase">{{ generationResult.policyNumber }}</span>
+          </div>
+        </div>
+
+        <!-- Información básica -->
+        <div class="policy-generation__basic-info">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="info-item">
+              <span class="lib-tb-body-small text-grayscaleD100">Cliente:</span>
+              <p class="lib-tb-body-medium text-grayscaleBlack">
+                {{ generationResult.customerInfo.customerName }}
+              </p>
+            </div>
+
+            <div class="info-item">
+              <span class="lib-tb-body-small text-grayscaleD100">Documento:</span>
+              <p class="lib-tb-body-medium text-grayscaleBlack">
+                {{ generationResult.customerInfo.customerDocument }}
+              </p>
+            </div>
+
+            <div class="info-item">
+              <span class="lib-tb-body-small text-grayscaleD100">Tipo de Póliza:</span>
+              <p class="lib-tb-body-medium text-grayscaleBlack">
+                {{ generationResult.customerInfo.policyType | titlecase }}
+              </p>
+            </div>
+
+            <div class="info-item">
+              <span class="lib-tb-body-small text-grayscaleD100">Estado:</span>
+              <p class="lib-tb-body-medium" [ngClass]="getStatusClass(generationResult.status)">
+                {{ generationResult.status | titlecase }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información financiera -->
+        <div class="policy-generation__financial-info">
+          <h4 class="lib-tb-h6-bold text-grayscaleBlack mb-3">Información Financiera</h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div class="financial-item">
+              <span class="lib-tb-body-small text-grayscaleD100">Valor Asegurado:</span>
+              <p class="lib-tb-h6-bold text-primaryBase">
+                {{ formatCurrency(generationResult.customerInfo.insuredValue) }}
+              </p>
+            </div>
+
+            <div class="financial-item">
+              <span class="lib-tb-body-small text-grayscaleD100">Prima Anual:</span>
+              <p class="lib-tb-h6-bold text-successBase">
+                {{ formatCurrency(generationResult.premiumAmount) }}
+              </p>
+            </div>
+
+            <div class="financial-item">
+              <span class="lib-tb-body-small text-grayscaleD100">Deducible:</span>
+              <p class="lib-tb-body-medium text-grayscaleBlack">
+                {{ formatCurrency(generationResult.deductible) }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vigencia -->
+        <div class="policy-generation__validity">
+          <h4 class="lib-tb-h6-bold text-grayscaleBlack mb-3">Vigencia</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="validity-item">
+              <span class="lib-tb-body-small text-grayscaleD100">Fecha de Inicio:</span>
+              <p class="lib-tb-body-medium text-grayscaleBlack">
+                {{ generationResult.validFrom | date:'dd/MM/yyyy' }}
+              </p>
+            </div>
+
+            <div class="validity-item">
+              <span class="lib-tb-body-small text-grayscaleD100">Fecha de Vencimiento:</span>
+              <p class="lib-tb-body-medium text-grayscaleBlack">
+                {{ generationResult.validTo | date:'dd/MM/yyyy' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cobertura -->
+        <div
+          class="policy-generation__coverage"
+          *ngIf="generationResult.coverageDetails && generationResult.coverageDetails.length > 0"
+        >
+          <h4 class="lib-tb-h6-bold text-grayscaleBlack mb-3">Coberturas Incluidas</h4>
+          <div class="coverage-list">
+            <div
+              *ngFor="let coverage of generationResult.coverageDetails"
+              class="coverage-item bg-grayscaleL400 p-3 rounded mb-2"
+              [ngClass]="{ 'opacity-50': !coverage.included }"
+            >
+              <div class="flex justify-between items-start">
+                <div class="coverage-info flex-1">
+                  <p class="lib-tb-body-medium-bold text-grayscaleBlack">{{ coverage.name }}</p>
+                  <p class="lib-tb-body-small text-grayscaleD100 mt-1">
+                    {{ coverage.description }}
+                  </p>
+                </div>
+
+                <div class="coverage-amount text-right">
+                  <p class="lib-tb-body-small text-grayscaleD100">Hasta:</p>
+                  <p class="lib-tb-body-medium-bold text-primaryBase">
+                    {{ formatCurrency(coverage.maxAmount) }}
+                  </p>
+                  <p class="lib-tb-body-small text-grayscaleD100" *ngIf="coverage.deductible > 0">
+                    Deducible: {{ formatCurrency(coverage.deductible) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones de resultado -->
+        <div class="policy-generation__result-actions">
+          <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-between">
+            <div class="flex gap-2">
+              <lib-tb-button [custom]="btnDownloadPolicy"></lib-tb-button>
+              <lib-tb-button [custom]="btnExportResult"></lib-tb-button>
+            </div>
+
+            <div class="flex gap-2">
+              <lib-tb-button [custom]="btnNewPolicy"></lib-tb-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

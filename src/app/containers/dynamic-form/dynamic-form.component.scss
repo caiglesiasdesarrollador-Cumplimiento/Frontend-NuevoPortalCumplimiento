@@ -1,0 +1,76 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+// ✅ APLICANDO REGLA: dynamic-form-containers (centrado manejado por containers) - MOBILE RESPONSIVE
+
+// Bloque principal: dynamic-form (solo para elementos no manejados por containers)
+.dynamic-form {
+  // ✅ BEM Element: dynamic-form__content
+  &__content {
+    min-height: 400px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  // ✅ BEM Element: dynamic-form__step
+  &__step {
+    animation: fadeInStep 0.4s ease-in-out;
+  }
+
+  // ✅ BEM Element: dynamic-form__actions (botones fuera del formulario dinámico) - MOBILE RESPONSIVE
+  &__actions {
+    margin-top: 1rem; // Mobile: reducido
+    padding-top: 0.75rem; // Mobile: reducido
+    border-top: 1px solid var(--c-lib-tb-grayscaleL200); // ✅ Usando variable tech-block-lib
+
+    // ✅ Desktop: más espacio
+    @media (min-width: 640px) {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+    }
+
+    // ✅ BEM Modifier: cuando solo hay un botón
+    &--single {
+      text-align: right;
+    }
+  }
+}
+
+// ✅ Keyframes para animación de pasos
+@keyframes fadeInStep {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// ✅ Media query adicional para mobile extremadamente pequeño
+@media (max-width: 480px) {
+  .dynamic-form {
+    &__actions {
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+
+      .flex {
+        flex-direction: column;
+        gap: 0.5rem !important; // Mobile extremo: botones en columna con gap pequeño
+      }
+    }
+  }
+}
+
+// ✅ Media query para desktop - mejoras de UX
+@media (min-width: 640px) {
+  .dynamic-form {
+    &__actions {
+      .flex {
+        gap: 1rem; // Desktop: más espacio entre botones
+      }
+    }
+  }
+}
+
+// ✅ Imports de otros bloques BEM (separados por archivo)
+@import './styles/stepper';
+@import './styles/form-containers';

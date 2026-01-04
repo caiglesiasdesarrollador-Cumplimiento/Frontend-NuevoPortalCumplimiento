@@ -1,0 +1,17 @@
+<!-- ✅ Menú usando clases CSS de @seguros-bolivar/ui-bundle -->
+<div class="menu-list" [class.menu-list--mobile]="isMobile">
+  <nav class="menu-list__content">
+    <!-- ✅ Lista de opciones del menú -->
+    <ul class="sb-ui-list">
+      <li
+        *ngFor="let menuItem of menuItems"
+        class="sb-ui-list__item"
+        [class.sb-ui-list__item--disabled]="menuItem.disabled"
+        (click)="onMenuItemClick(menuItem)"
+      >
+        <i *ngIf="menuItem.icon" [class]="menuItem.icon + ' sb-ui-list__icon'"></i>
+        <span class="sb-ui-list__label">{{ menuItem.name }}</span>
+      </li>
+    </ul>
+  </nav>
+</div>

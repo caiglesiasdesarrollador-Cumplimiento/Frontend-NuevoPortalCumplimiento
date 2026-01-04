@@ -1,0 +1,248 @@
+---
+id: no-extend-in-media-queries
+name: No usar @extend en media queries
+description: Prevenir errores de compilación SCSS evitando el uso de @extend dentro de media queries.
+globs:
+  - "**/*.scss"
+  - "**/*.sass"
+type: comment
+alwaysApply: true
+---
+
+# No usar @extend en media queries
+
+**NUNCA** uses `@extend` dentro de media queries en SCSS. Esto causa errores de compilación y fallos en el build.
+
+## ❌ **Prohibido:**
+
+### **@extend dentro de media queries:**
+```scss
+// ❌ MAL: Esto causará error de compilación
+.component {
+  &--mobile {
+    font-size: 14px;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .component {
+    @extend .component--mobile; // ❌ Error: "You may not @extend selectors across media queries"
+  }
+}
+```
+
+### **@extend con selectores complejos en media queries:**
+```scss
+// ❌ MAL: También causará errores
+@media (max-width: 768px) {
+  .card {
+    @extend %mobile-card; // ❌ Error de compilación
+  }
+  
+  .button {
+    @extend .button--small; // ❌ Error de compilación
+  }
+}
+```
+
+## ✅ **Soluciones permitidas:**
+
+### **1. Mixins en lugar de @extend:**
+```scss
+// ✅ BIEN: Usar mixins que funcionan en media queries
+@mixin mobile-styles {
+  font-size: 14px;
+  padding: 0.5rem;
+  line-height: 1.4;
+}
+
+.component {
+  font-size: 16px;
+  padding: 1rem;
+  
+  @media (max-width: 768px) {
+    @include mobile-styles; // ✅ Los mixins funcionan perfectamente
+  }
+}
+```
+
+### **2. Aplicar estilos directamente:**
+```scss
+// ✅ BIEN: Aplicar estilos directamente en media queries
+.component {
+  font-size: 16px;
+  padding: 1rem;
+  
+  &__title {
+    font-size: 24px;
+    margin-bottom: 1rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 14px;      // ✅ Aplicar directamente
+    padding: 0.5rem;      // ✅ Aplicar directamente
+    
+    &__title {
+      font-size: 20px;    // ✅ Anidamiento permitido
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+```
+
+### **3. Usar placeholders fuera de media queries:**
+```scss
+// ✅ BIEN: Placeholders compartidos fuera de media queries
+%card-base {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+}
+
+.card {
+  @extend %card-base; // ✅ @extend fuera de media query
+  
+  @media (max-width: 768px) {
+    padding: 0.5rem;   // ✅ Solo propiedades específicas
+    border-radius: 4px; // ✅ Sin @extend
+  }
+}
+```
+
+### **4. BEM con responsive directo:**
+```scss
+// ✅ BIEN: Estructura BEM con responsive integrado
+.form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  // ✅ Responsive integrado sin @extend
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 1rem;
+    
+    &__actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+}
+```
+
+## 🔧 **Cómo migrar código existente:**
+
+### **Paso 1: Identificar @extend en media queries**
+```scss
+// ❌ Código problemático a migrar:
+@media (max-width: 768px) {
+  .component {
+    @extend .component--mobile; // ← Identificar esto
+  }
+}
+```
+
+### **Paso 2: Convertir a mixin o estilos directos**
+```scss
+// ✅ Opción A: Convertir a mixin
+@mixin component-mobile {
+  font-size: 14px;
+  padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .component {
+    @include component-mobile; // ✅ Usar mixin
+  }
+}
+
+// ✅ Opción B: Estilos directos
+@media (max-width: 768px) {
+  .component {
+    font-size: 14px;  // ✅ Copiar estilos directamente
+    padding: 0.5rem;  // ✅ Sin @extend
+  }
+}
+```
+
+## ⚠️ **Error típico de compilación:**
+
+```
+SassError: You may not @extend selectors across media queries.
+   ╷
+55 │     @extend .dynamic-form--mobile;
+   │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   ╵
+```
+
+## 💡 **Mejores prácticas:**
+
+### **1. Usar mixins para reutilización:**
+```scss
+// ✅ BIEN: Mixins para estilos reutilizables
+@mixin button-mobile {
+  padding: 0.5rem 1rem;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.btn-primary {
+  @media (max-width: 768px) {
+    @include button-mobile;
+  }
+}
+
+.btn-secondary {
+  @media (max-width: 768px) {
+    @include button-mobile;
+  }
+}
+```
+
+### **2. Responsive-first con mobile-first:**
+```scss
+// ✅ BIEN: Mobile-first sin @extend
+.component {
+  // Estilos mobile por defecto
+  font-size: 14px;
+  padding: 0.5rem;
+  
+  // Desktop con min-width
+  @media (min-width: 769px) {
+    font-size: 16px;
+    padding: 1rem;
+  }
+}
+```
+
+### **3. Variables CSS para valores reutilizables:**
+```scss
+// ✅ BIEN: Variables CSS para consistency
+.component {
+  --mobile-padding: 0.5rem;
+  --desktop-padding: 1rem;
+  
+  padding: var(--mobile-padding);
+  
+  @media (min-width: 769px) {
+    padding: var(--desktop-padding);
+  }
+}
+```
+
+## 🎯 **Resumen:**
+
+1. **NUNCA** uses `@extend` dentro de `@media` queries
+2. **USA** `@mixin` para estilos reutilizables en responsive
+3. **APLICA** estilos directamente en media queries cuando sea simple
+4. **MANTÉN** `@extend` solo en el nivel root, fuera de media queries
+5. **PREFIERE** mobile-first approach para evitar complicaciones
+
+**Recuerda**: Los mixins son tu mejor amigo para responsive design en SCSS.

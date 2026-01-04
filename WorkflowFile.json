@@ -1,0 +1,67 @@
+{
+  "environment": {
+    "appDir": ".",
+    "releasePath": "dist"
+  },
+  "s3": {
+    "dev": {
+      "name": "bucket-dev",
+      "acl": "public-read"
+    },
+    "stage": {
+      "name": "bucket-stage",
+      "acl": "public-read"
+    },
+    "prod": {
+      "name": "bucket-prod",
+      "acl": "public-read"
+    }
+  },
+  "configuration": {
+    "develop": "dev",
+    "stage": "stage",
+    "master": "prod"
+  },
+  "cloudfront": {
+    "dev": {
+      "distributionId": "",
+      "invalidationPaths": "/*"
+    },
+    "stage": {
+      "distributionId": "",
+      "invalidationPaths": "/*"
+    },
+    "prod": {
+      "distributionId": "",
+      "invalidationPaths": "/*"
+    }
+  },
+  "environments": {
+    "dev": {
+      "apiUrl": "/{projectName}/dev/environment/front/apiUrlFront",
+      "secretKey": "/{projectName}/dev/environment/front/secretKeyFront",
+      "secretIv": "/{projectName}/dev/environment/front/secretIvFront"
+    },
+    "stage": {
+      "apiUrl": "/{projectName}/stage/environment/front/apiUrlFront",
+      "secretKey": "/{projectName}/stage/environment/front/secretKeyFront",
+      "secretIv": "/{projectName}/stage/environment/front/secretIvFront"
+    },
+    "prod": {
+      "apiUrl": "/{projectName}/prod/environment/front/apiUrlFront",
+      "secretKey": "/{projectName}/prod/environment/front/secretKeyFront",
+      "secretIv": "/{projectName}/prod/environment/front/secretIvFront"
+    }
+  },
+  "repositoryUrl": {
+    "dev": {
+      "repository_url": "bolivar-npm-core-web-kit-components-lib-prod-virtual"
+    },
+    "stage": {
+      "repository_url": "bolivar-npm-core-web-kit-components-lib-prod-virtual"
+    },
+    "prod": {
+      "repository_url": "bolivar-npm-core-web-kit-components-lib-prod-virtual"
+    }
+  }
+}

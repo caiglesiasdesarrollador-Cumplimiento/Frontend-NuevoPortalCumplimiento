@@ -1,0 +1,99 @@
+/* Regular */
+@font-face {
+    font-family: 'Davivienda';
+    src: url('/assets/fonts/Davivienda/WOFF2/Davivienda-Regular.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda/WOFF/Davivienda-Regular.woff') format('woff'),
+        url('/assets/fonts/Davivienda/TTF/Davivienda-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Italic */
+@font-face {
+    font-family: 'Davivienda';
+    src: url('/assets/fonts/Davivienda/WOFF2/Davivienda-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda/WOFF/Davivienda-Italic.woff') format('woff'),
+        url('/assets/fonts/Davivienda/TTF/Davivienda-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+/* Bold */
+@font-face {
+    font-family: 'Davivienda';
+    src: url('/assets/fonts/Davivienda/WOFF2/Davivienda-Bold.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda/WOFF/Davivienda-Bold.woff') format('woff'),
+        url('/assets/fonts/Davivienda/TTF/Davivienda-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Bold Italic */
+@font-face {
+    font-family: 'Davivienda';
+    src: url('/assets/fonts/Davivienda/WOFF2/Davivienda-Bold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda/WOFF/Davivienda-Bold-Italic.woff') format('woff'),
+        url('/assets/fonts/Davivienda/TTF/Davivienda-Bold-Italic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+/* ExtraBold */
+@font-face {
+    font-family: 'Davivienda';
+    src: url('/assets/fonts/Davivienda/WOFF2/Davivienda-ExtraBold.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda/WOFF/Davivienda-ExtraBold.woff') format('woff'),
+        url('/assets/fonts/Davivienda/TTF/Davivienda-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+/* ExtraBold Italic */
+@font-face {
+    font-family: 'Davivienda';
+    src: url('/assets/fonts/Davivienda/WOFF2/Davivienda-ExtraBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda/WOFF/Davivienda-ExtraBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Davivienda/TTF/Davivienda-ExtraBold-Italic.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+}
+
+/* Light */
+@font-face {
+    font-family: 'Davivienda';
+    src: url('/assets/fonts/Davivienda/WOFF2/Davivienda-Light.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda/WOFF/Davivienda-Light.woff') format('woff'),
+        url('/assets/fonts/Davivienda/TTF/Davivienda-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Light Italic */
+@font-face {
+    font-family: 'Davivienda';
+    src: url('/assets/fonts/Davivienda/WOFF2/Davivienda-Light-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda/WOFF/Davivienda-Light-Italic.woff') format('woff'),
+        url('/assets/fonts/Davivienda/TTF/Davivienda-Light-Italic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+/* SemiBold */
+@font-face {
+    font-family: 'Davivienda';
+    src: url('/assets/fonts/Davivienda/WOFF2/Davivienda-SemiBold.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda/WOFF/Davivienda-SemiBold.woff') format('woff'),
+        url('/assets/fonts/Davivienda/TTF/Davivienda-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* SemiBold Italic */
+@font-face {
+    font-family: 'Davivienda';
+    src: url('/assets/fonts/Davivienda/WOFF2/Davivienda-SemiBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Davivienda/WOFF/Davivienda-SemiBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Davivienda/TTF/Davivienda-SemiBold-Italic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}

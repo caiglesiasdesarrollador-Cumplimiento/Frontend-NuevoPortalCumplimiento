@@ -1,0 +1,99 @@
+/* Regular */
+@font-face {
+    font-family: 'Ciencuadras';
+    src: url('/assets/fonts/Ciencuadras/WOFF2/Ciencuadras-Regular.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras/WOFF/Ciencuadras-Regular.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras/TTF/Ciencuadras-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Italic */
+@font-face {
+    font-family: 'Ciencuadras';
+    src: url('/assets/fonts/Ciencuadras/WOFF2/Ciencuadras-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras/WOFF/Ciencuadras-Italic.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras/TTF/Ciencuadras-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+/* Bold */
+@font-face {
+    font-family: 'Ciencuadras';
+    src: url('/assets/fonts/Ciencuadras/WOFF2/Ciencuadras-Bold.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras/WOFF/Ciencuadras-Bold.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras/TTF/Ciencuadras-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Bold Italic */
+@font-face {
+    font-family: 'Ciencuadras';
+    src: url('/assets/fonts/Ciencuadras/WOFF2/Ciencuadras-Bold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras/WOFF/Ciencuadras-Bold-Italic.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras/TTF/Ciencuadras-Bold-Italic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+/* ExtraBold */
+@font-face {
+    font-family: 'Ciencuadras';
+    src: url('/assets/fonts/Ciencuadras/WOFF2/Ciencuadras-ExtraBold.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras/WOFF/Ciencuadras-ExtraBold.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras/TTF/Ciencuadras-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+/* ExtraBold Italic */
+@font-face {
+    font-family: 'Ciencuadras';
+    src: url('/assets/fonts/Ciencuadras/WOFF2/Ciencuadras-ExtraBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras/WOFF/Ciencuadras-ExtraBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras/TTF/Ciencuadras-ExtraBold-Italic.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+}
+
+/* Light */
+@font-face {
+    font-family: 'Ciencuadras';
+    src: url('/assets/fonts/Ciencuadras/WOFF2/Ciencuadras-Light.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras/WOFF/Ciencuadras-Light.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras/TTF/Ciencuadras-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Light Italic */
+@font-face {
+    font-family: 'Ciencuadras';
+    src: url('/assets/fonts/Ciencuadras/WOFF2/Ciencuadras-Light-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras/WOFF/Ciencuadras-Light-Italic.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras/TTF/Ciencuadras-Light-Italic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+/* SemiBold */
+@font-face {
+    font-family: 'Ciencuadras';
+    src: url('/assets/fonts/Ciencuadras/WOFF2/Ciencuadras-SemiBold.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras/WOFF/Ciencuadras-SemiBold.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras/TTF/Ciencuadras-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* SemiBold Italic */
+@font-face {
+    font-family: 'Ciencuadras';
+    src: url('/assets/fonts/Ciencuadras/WOFF2/Ciencuadras-SemiBold-Italic.woff2') format('woff2'),
+        url('/assets/fonts/Ciencuadras/WOFF/Ciencuadras-SemiBold-Italic.woff') format('woff'),
+        url('/assets/fonts/Ciencuadras/TTF/Ciencuadras-SemiBold-Italic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}

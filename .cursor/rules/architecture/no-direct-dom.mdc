@@ -1,0 +1,13 @@
+---
+id: no-direct-dom
+name: No acceso directo al DOM
+description: Evita usar document.querySelector o getElementById. Usa Renderer2 o ElementRef.
+globs:
+  - "**/*.ts"
+type: lint
+alwaysApply: true
+---
+
+# Evitar acceso directo al DOM
+
+Para mantener compatibilidad con Angular y SSR, usa `Renderer2` o `ElementRef`.

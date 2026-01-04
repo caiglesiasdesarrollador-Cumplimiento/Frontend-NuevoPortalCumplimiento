@@ -1,0 +1,13 @@
+---
+id: no-skipped-tests
+name: No pruebas saltadas
+description: Evita usar it.skip o describe.skip para garantizar cobertura completa.
+globs:
+  - "**/*.spec.ts"
+type: lint
+alwaysApply: true
+---
+
+# Pruebas completas
+
+No dejes tests pendientes usando `skip`. Mantén la cobertura al 100%.

@@ -1,0 +1,409 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+// ✅ APLICANDO REGLA: Usar clases Tailwind de tech-block-lib
+
+// Bloque principal: valor-asegurado-modification
+.valor-asegurado-modification {
+  // ✅ BEM Element: valor-asegurado-modification__header
+  &__header {
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  // ✅ BEM Element: valor-asegurado-modification__stepper
+  &__stepper {
+    margin-bottom: 2rem;
+    width: 100%;
+
+    // ✅ Estilos para el stepper usando variables CSS de tech-block-lib
+    :deep(.p-steps) {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.5rem 3rem;
+      position: relative;
+      width: 100%;
+      gap: 2rem;
+
+      .p-steps-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        min-width: 0;
+
+        .p-steps-number {
+          width: 3.5rem;
+          height: 3.5rem;
+          font-size: 1.125rem;
+          font-weight: 700;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: var(--c-lib-tb-grayscaleL200);
+          color: var(--c-lib-tb-grayscaleD200);
+          border: 3px solid var(--c-lib-tb-grayscaleL300);
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+          z-index: 2;
+          position: relative;
+        }
+
+        &.p-steps-current {
+          .p-steps-number {
+            background-color: var(--c-lib-tb-primaryBase);
+            color: var(--c-lib-tb-grayscaleWhite);
+            border-color: var(--c-lib-tb-primaryBase);
+            box-shadow: 0 0 0 6px rgba(var(--c-lib-tb-primaryBase), 0.15);
+            transform: scale(1.1);
+          }
+        }
+
+        &.p-steps-complete {
+          .p-steps-number {
+            background-color: var(--c-lib-tb-successBase);
+            color: var(--c-lib-tb-grayscaleWhite);
+            border-color: var(--c-lib-tb-successBase);
+          }
+        }
+
+        .p-steps-title {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: var(--c-lib-tb-grayscaleD100);
+          margin-top: 1rem;
+          line-height: 1.2;
+          text-align: center;
+          width: 100%;
+          max-width: 120px;
+          word-wrap: break-word;
+          white-space: normal;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          min-height: 2.4rem;
+        }
+
+        &.p-steps-current .p-steps-title {
+          color: var(--c-lib-tb-primaryBase);
+          font-weight: 700;
+        }
+
+        &.p-steps-complete .p-steps-title {
+          color: var(--c-lib-tb-successBase);
+        }
+      }
+
+      .p-steps-connector {
+        position: absolute;
+        top: 1.75rem;
+        left: 50%;
+        right: -50%;
+        height: 3px;
+        background-color: var(--c-lib-tb-grayscaleL300);
+        z-index: 1;
+        transform: translateX(50%);
+      }
+
+      .p-steps-item:last-child .p-steps-connector {
+        display: none;
+      }
+    }
+  }
+}
+
+// ✅ Continuar con el bloque principal
+.valor-asegurado-modification {
+  // ✅ BEM Element: valor-asegurado-modification__cupo
+  &__cupo {
+    background: linear-gradient(
+      135deg,
+      var(--c-lib-tb-grayscaleWhite) 0%,
+      var(--c-lib-tb-grayscaleL400) 100%
+    );
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  // ✅ BEM Element: valor-asegurado-modification__table
+  &__table {
+    transition: all 0.3s ease;
+
+    // ✅ Estilos para inputs editables
+    input[type='number'],
+    input[type='text'] {
+      transition: all 0.2s ease;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(var(--c-lib-tb-primaryBase-rgb), 0.1);
+      }
+
+      &:hover:not(:focus) {
+        border-color: var(--c-lib-tb-primaryL100);
+      }
+    }
+
+    // ✅ Estilos para filas de tabla
+    tbody tr {
+      &:hover {
+        background-color: var(--c-lib-tb-grayscaleL400);
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    // ✅ Estilos para checkboxes
+    input[type='checkbox'] {
+      transition: all 0.2s ease;
+
+      &:checked {
+        background-color: var(--c-lib-tb-primaryBase);
+        border-color: var(--c-lib-tb-primaryBase);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(var(--c-lib-tb-primaryBase-rgb), 0.2);
+      }
+    }
+  }
+
+  // ✅ BEM Element: valor-asegurado-modification__summary
+  &__summary {
+    border-left: 4px solid var(--c-lib-tb-primaryBase);
+    background: linear-gradient(
+      135deg,
+      var(--c-lib-tb-grayscaleWhite) 0%,
+      var(--c-lib-tb-primaryL100) 100%
+    );
+
+    // ✅ Animación de entrada
+    animation: slideInSummary 0.4s ease-out;
+  }
+
+  // ✅ BEM Element: valor-asegurado-modification__resumen
+  &__resumen {
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    // ✅ Estilos para items del resumen
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--c-lib-tb-grayscaleL200);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      // ✅ Animación de entrada escalonada
+      animation: fadeInItem 0.3s ease-out;
+      animation-fill-mode: both;
+
+      &:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      &:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      &:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      &:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      &:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      &:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+      &:nth-child(7) {
+        animation-delay: 0.7s;
+      }
+      &:nth-child(8) {
+        animation-delay: 0.8s;
+      }
+    }
+  }
+
+  // ✅ BEM Element: valor-asegurado-modification__actions
+  &__actions {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--c-lib-tb-grayscaleL200);
+  }
+
+  // ✅ BEM Modifier: valor-asegurado-modification--mobile
+  &--mobile {
+    .valor-asegurado-modification__table {
+      font-size: 0.875rem;
+
+      input {
+        padding: 0.25rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    .valor-asegurado-modification__actions {
+      flex-direction: column;
+
+      .btn-group {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// ✅ Animaciones usando tech-block-lib variables
+@keyframes slideInSummary {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInStepper {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInItem {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInTable {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ✅ Aplicar animación a la tabla
+.valor-asegurado-modification__table table {
+  animation: fadeInTable 0.5s ease-out;
+}
+
+// ✅ Media query aplicando modifier (sin @extend para evitar problemas)
+@media (max-width: 768px) {
+  .valor-asegurado-modification {
+    .valor-asegurado-modification__table {
+      font-size: 0.875rem;
+
+      input {
+        width: 100%;
+        max-width: 80px;
+        padding: 0.25rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    .valor-asegurado-modification__actions {
+      flex-direction: column;
+      gap: 1rem;
+
+      > div {
+        width: 100%;
+
+        lib-tb-button {
+          width: 100%;
+        }
+      }
+    }
+
+    &__stepper {
+      // ✅ Estilos responsivos para el stepper en móviles
+      :deep(.p-steps) {
+        padding: 1rem 1.5rem;
+        gap: 1rem;
+
+        .p-steps-item {
+          .p-steps-number {
+            width: 3rem;
+            height: 3rem;
+            font-size: 1rem;
+            border-width: 2px;
+          }
+
+          .p-steps-title {
+            font-size: 0.7rem;
+            max-width: 80px;
+            margin-top: 0.75rem;
+            min-height: 2rem;
+            -webkit-line-clamp: 2;
+          }
+        }
+
+        .p-steps-connector {
+          top: 1.5rem;
+          height: 2px;
+        }
+      }
+    }
+
+    // ✅ Ajustes para tabla responsive
+    .valor-asegurado-modification__table table {
+      font-size: 0.875rem;
+
+      th,
+      td {
+        padding: 0.5rem 0.25rem;
+      }
+    }
+  }
+}
+
+// ✅ Estados de validación usando tech-block-lib
+.input-error {
+  border-color: var(--c-lib-tb-errorBase) !important;
+  box-shadow: 0 0 0 3px rgba(var(--c-lib-tb-errorBase-rgb), 0.1) !important;
+}
+
+.input-success {
+  border-color: var(--c-lib-tb-successBase) !important;
+  box-shadow: 0 0 0 3px rgba(var(--c-lib-tb-successBase-rgb), 0.1) !important;
+}
+
+// ✅ Utilidades específicas
+.currency-input {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.percentage-input {
+  text-align: center;
+}

@@ -1,0 +1,93 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+// ✅ APLICANDO PATRÓN CORRECTO: settings
+
+// Bloque principal: credit-limit-validation
+.credit-limit-validation {
+  
+  // ✅ BEM Element: credit-limit-validation__actions (patrón settings)
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+
+  // ✅ BEM Element: credit-limit-validation__action-group (patrón settings)
+  &__action-group {
+    display: flex;
+    gap: 1rem;
+
+    @media (max-width: 640px) {
+      order: 2;
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  // ✅ BEM Element: credit-limit-validation__primary-action (patrón settings)
+  &__primary-action {
+    @media (max-width: 640px) {
+      order: 1;
+      width: 100%;
+    }
+  }
+
+  // ✅ BEM Element: credit-limit-validation__loading-overlay (patrón settings)
+  &__loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  // ✅ BEM Element: credit-limit-validation__loading-content (patrón settings)
+  &__loading-content {
+    background-color: var(--c-lib-tb-grayscaleWhite);
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  // ✅ BEM Element: credit-limit-validation__results (patrón settings adaptado)
+  &__results {
+    animation: fadeInResults 0.3s ease-in-out;
+  }
+
+  // ✅ BEM Element: credit-limit-validation__result-actions (patrón settings)
+  &__result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--c-lib-tb-grayscaleL200);
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+}
+
+// ✅ Keyframes para animaciones
+@keyframes fadeInResults {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 

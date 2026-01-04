@@ -1,0 +1,39 @@
+<!-- ✅ APLICANDO REGLAS: dynamic-form-containers + BEM + stepper (MOBILE RESPONSIVE) -->
+<div class="min-h-screen bg-grayscaleL400">
+  <!-- ✅ Container wrapper principal mobile responsive para todo el stepper -->
+  <div class="max-w-4xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Stepper de navegación -->
+    <div class="stepper__container mb-4 sm:mb-6">
+      <lib-tb-stepper [custom]="stepperConfig"></lib-tb-stepper>
+    </div>
+
+    <!-- ✅ Contenido de pasos responsive -->
+    <div class="dynamic-form__content">
+      <!-- Paso 1 -->
+      <div *ngIf="currentStep === 0" class="dynamic-form__step">
+        <lib-tb-dynamic-form [custom]="step1Form"></lib-tb-dynamic-form>
+      </div>
+
+      <!-- Paso 2 -->
+      <div *ngIf="currentStep === 1" class="dynamic-form__step">
+        <lib-tb-dynamic-form [custom]="step2Form"></lib-tb-dynamic-form>
+      </div>
+
+      <!-- Más pasos según sea necesario -->
+    </div>
+
+    <!-- ✅ Botones fuera del formulario dinámico, responsive -->
+    <div class="dynamic-form__actions mt-4 sm:mt-6">
+      <!-- Botones del paso 1 -->
+      <div *ngIf="currentStep === 0" class="flex justify-end">
+        <lib-tb-button [custom]="btnNext"></lib-tb-button>
+      </div>
+
+      <!-- Botones del paso 2 -->
+      <div *ngIf="currentStep === 1" class="flex justify-between gap-2 sm:gap-4">
+        <lib-tb-button [custom]="btnPrevious"></lib-tb-button>
+        <lib-tb-button [custom]="btnSubmit"></lib-tb-button>
+      </div>
+    </div>
+  </div>
+</div>

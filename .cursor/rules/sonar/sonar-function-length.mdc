@@ -1,0 +1,14 @@
+---
+id: sonar-function-length
+name: Control de longitud de funciones
+description: Recomienda dividir funciones extensas en partes más pequeñas y mantenibles.
+globs:
+  - "**/*.ts"
+type: comment
+alwaysApply: true
+---
+
+# Mantén funciones pequeñas
+
+Si una función supera las 50 líneas, considera refactorizarla.  
+Funciones más pequeñas son más fáciles de entender, testear y mantener.

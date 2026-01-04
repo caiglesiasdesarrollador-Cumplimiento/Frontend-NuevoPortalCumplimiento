@@ -1,0 +1,196 @@
+// ✅ Estilos para el módulo de modificaciones de pólizas
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+
+// Bloque principal: policy-modification
+.policy-modification {
+  // ✅ BEM Element: policy-modification__header
+  &__header {
+    // Estilos específicos del header si son necesarios
+  }
+
+  // ✅ BEM Element: policy-modification__stepper
+  &__stepper {
+    margin-bottom: 2rem;
+    width: 100%;
+
+    // ✅ Estilos para el stepper usando variables CSS de tech-block-lib
+    :deep(.p-steps) {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.5rem 3rem;
+      position: relative;
+      width: 100%;
+      gap: 2rem;
+
+      .p-steps-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        min-width: 0;
+
+        .p-steps-number {
+          width: 3.5rem;
+          height: 3.5rem;
+          font-size: 1.125rem;
+          font-weight: 700;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: var(--c-lib-tb-grayscaleL200);
+          color: var(--c-lib-tb-grayscaleD200);
+          border: 3px solid var(--c-lib-tb-grayscaleL300);
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+          z-index: 2;
+          position: relative;
+        }
+
+        &.p-steps-current {
+          .p-steps-number {
+            background-color: var(--c-lib-tb-primaryBase);
+            color: var(--c-lib-tb-grayscaleWhite);
+            border-color: var(--c-lib-tb-primaryBase);
+            box-shadow: 0 0 0 6px rgba(var(--c-lib-tb-primaryBase), 0.15);
+            transform: scale(1.1);
+          }
+        }
+
+        &.p-steps-complete {
+          .p-steps-number {
+            background-color: var(--c-lib-tb-successBase);
+            color: var(--c-lib-tb-grayscaleWhite);
+            border-color: var(--c-lib-tb-successBase);
+          }
+        }
+
+        .p-steps-title {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: var(--c-lib-tb-grayscaleD100);
+          margin-top: 1rem;
+          line-height: 1.2;
+          text-align: center;
+          width: 100%;
+          max-width: 120px;
+          word-wrap: break-word;
+          white-space: normal;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          min-height: 2.4rem;
+        }
+
+        &.p-steps-current .p-steps-title {
+          color: var(--c-lib-tb-primaryBase);
+          font-weight: 700;
+        }
+
+        &.p-steps-complete .p-steps-title {
+          color: var(--c-lib-tb-successBase);
+        }
+      }
+
+      .p-steps-connector {
+        position: absolute;
+        top: 1.75rem;
+        left: 50%;
+        right: -50%;
+        height: 3px;
+        background-color: var(--c-lib-tb-grayscaleL300);
+        z-index: 1;
+        transform: translateX(50%);
+      }
+
+      .p-steps-item:last-child .p-steps-connector {
+        display: none;
+      }
+    }
+  }
+
+  // ✅ BEM Element: policy-modification__content
+  &__content {
+    min-height: 400px;
+  }
+
+  // ✅ BEM Element: policy-modification__actions
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--c-lib-tb-grayscaleL200);
+
+    // ✅ BEM Modifier: cuando solo hay un botón
+    &--single {
+      justify-content: flex-end;
+    }
+  }
+}
+
+// ✅ Estilos para elementos de resumen (reutilizables)
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--c-lib-tb-grayscaleL200);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// ✅ Media queries para responsividad
+@media (max-width: 768px) {
+  .policy-modification {
+    &__actions {
+      .flex {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+
+    &__stepper {
+      // ✅ Estilos responsivos para el stepper en móviles
+      :deep(.p-steps) {
+        padding: 1rem 1.5rem;
+        gap: 1rem;
+
+        .p-steps-item {
+          .p-steps-number {
+            width: 3rem;
+            height: 3rem;
+            font-size: 1rem;
+            border-width: 2px;
+          }
+
+          .p-steps-title {
+            font-size: 0.7rem;
+            max-width: 80px;
+            margin-top: 0.75rem;
+            min-height: 2rem;
+            -webkit-line-clamp: 2;
+          }
+        }
+
+        .p-steps-connector {
+          top: 1.5rem;
+          height: 2px;
+        }
+      }
+    }
+  }
+
+  .summary-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}

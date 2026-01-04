@@ -1,0 +1,96 @@
+<div class="sb-calendar-wrapper" #calendarContainer>
+  <!-- Label -->
+  <label *ngIf="label" class="sb-calendar-label">
+    <i *ngIf="icon && showLabelIcon" [class]="icon + ' text-primaryBase mr-2'"></i>
+    {{ label }}
+    <span *ngIf="required" class="text-errorBase">*</span>
+  </label>
+  
+  <!-- Input de fecha con trigger -->
+  <div class="sb-calendar-input-container" 
+       [class.sb-calendar-input-container--error]="error"
+       [class.sb-calendar-input-container--disabled]="disabled"
+       [class.sb-calendar-input-container--no-icon]="!icon"
+       (click)="toggleCalendar()">
+    <div class="sb-calendar-input">
+      <i *ngIf="icon" class="fa-solid fa-calendar-alt sb-calendar-icon"></i>
+      <span *ngIf="displayValue" class="sb-calendar-value">{{ displayValue }}</span>
+      <span *ngIf="!displayValue" class="sb-calendar-placeholder">{{ placeholder }}</span>
+    </div>
+    <div class="sb-calendar-actions">
+      <button *ngIf="value && !disabled" 
+              type="button"
+              class="sb-calendar-clear" 
+              (click)="clearDate($event)"
+              title="Limpiar fecha">
+        <i class="fa-solid fa-times"></i>
+      </button>
+      <i class="fa-solid fa-chevron-down sb-calendar-chevron" 
+         [class.sb-calendar-chevron--open]="showCalendar"></i>
+    </div>
+  </div>
+  
+  <!-- Calendario popup con controles propios -->
+  <div *ngIf="showCalendar" class="sb-calendar-popup" 
+       [ngStyle]="popupStyle"
+       [class.popup-top-left]="popupPosition === 'top-left'"
+       [class.popup-top-right]="popupPosition === 'top-right'"
+       [class.popup-bottom-left]="popupPosition === 'bottom-left'"
+       (click)="$event.stopPropagation()">
+    <div class="sb-calendar-native">
+      <!-- Header del calendario -->
+      <div class="sb-calendar-header">
+        <button type="button" class="sb-calendar-nav-btn" (click)="prevMonth()">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <div class="sb-calendar-month-year">
+          <select [(ngModel)]="currentMonth" (change)="updateCalendar()" class="sb-calendar-select">
+            <option *ngFor="let m of months; let i = index" [value]="i">{{ m }}</option>
+          </select>
+          <select [(ngModel)]="currentYear" (change)="updateCalendar()" class="sb-calendar-select">
+            <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+          </select>
+        </div>
+        <button type="button" class="sb-calendar-nav-btn" (click)="nextMonth()">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+      
+      <!-- Días de la semana -->
+      <div class="sb-calendar-weekdays">
+        <span *ngFor="let day of weekDays">{{ day }}</span>
+      </div>
+      
+      <!-- Días del mes -->
+      <div class="sb-calendar-days">
+        <button *ngFor="let day of calendarDays"
+                type="button"
+                class="sb-calendar-day"
+                [class.sb-calendar-day--other-month]="!day.currentMonth"
+                [class.sb-calendar-day--selected]="day.selected"
+                [class.sb-calendar-day--today]="day.today"
+                [disabled]="!day.currentMonth"
+                (click)="selectDate(day)">
+          {{ day.day }}
+        </button>
+      </div>
+      
+      <!-- Botones de acción -->
+      <div class="sb-calendar-footer">
+        <button type="button" class="sb-calendar-btn sb-calendar-btn--cancel" (click)="cancelSelection()">
+          Cancelar
+        </button>
+        <button type="button" class="sb-calendar-btn sb-calendar-btn--accept" (click)="acceptSelection()">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Mensaje de error -->
+  <span *ngIf="error && errorMessage" class="sb-calendar-error">
+    <i class="fa-solid fa-circle-exclamation mr-1"></i>
+    {{ errorMessage }}
+  </span>
+</div>
+

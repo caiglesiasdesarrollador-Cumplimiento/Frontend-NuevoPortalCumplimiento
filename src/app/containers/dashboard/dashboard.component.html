@@ -1,0 +1,235 @@
+<!-- ✅ Container principal del dashboard - Mobile responsive -->
+<div class="min-h-screen" style="background-color: var(--sb-ui-color-grayscale-L400)">
+  <div class="max-w-6xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation -->
+    <div class="mb-4 sm:mb-6">
+      <nav class="sb-ui-breadcrumb">
+        <ol class="sb-ui-breadcrumb__list flex items-center gap-2 text-sm">
+          <li class="sb-ui-breadcrumb__item">
+            <a routerLink="/portal" class="sb-ui-breadcrumb__link flex items-center gap-1">
+              <i class="fal fa-home"></i>
+              <span>Portal</span>
+            </a>
+          </li>
+          <li class="sb-ui-breadcrumb__separator">/</li>
+          <li class="sb-ui-breadcrumb__item">
+            <a routerLink="/product-selection" class="sb-ui-breadcrumb__link flex items-center gap-1">
+              <i class="fal fa-paper-plane"></i>
+              <span>Cotizar o Emitir</span>
+            </a>
+          </li>
+          <li class="sb-ui-breadcrumb__separator">/</li>
+          <li class="sb-ui-breadcrumb__item sb-ui-breadcrumb__item--active">
+            <span class="flex items-center gap-1">
+              <i class="fal fa-clipboard-check"></i>
+              <span>Producto de cumplimiento</span>
+            </span>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <!-- ✅ Header principal -->
+    <div class="rounded-lg shadow-sm border p-6 sm:p-8 mb-6 sm:mb-8"
+         style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+      <div class="text-center max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold mb-4" style="color: var(--sb-ui-color-grayscale-black)">
+          Bienvenido a Cumplimiento
+        </h1>
+        <p class="text-lg font-medium mb-6" style="color: var(--sb-ui-color-grayscale-D200)">
+          Su plataforma para la gestión inteligente de pólizas de cumplimiento.
+        </p>
+        <p style="color: var(--sb-ui-color-grayscale-D200)">
+          Cree, rastree y analice sus pólizas para maximizar la eficiencia y garantizar el
+          cumplimiento normativo.
+        </p>
+      </div>
+    </div>
+
+    <!-- ✅ Cards de acciones principales -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <!-- Card: Emitir y/o cotizar Póliza -->
+      <div class="rounded-lg shadow-sm border p-6"
+           style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex-1">
+            <h3 class="text-lg font-bold mb-3" style="color: var(--sb-ui-color-grayscale-black)">
+              Emitir y/o cotizar Póliza
+            </h3>
+            <p style="color: var(--sb-ui-color-grayscale-D200)">
+              Iniciar un nuevo proceso de emisión o cotización de póliza.
+            </p>
+          </div>
+          <div class="ml-4">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                 style="background-color: var(--sb-ui-color-feedback-success-base)">
+              <i class="fal fa-plus text-xl" style="color: var(--sb-ui-color-grayscale-white)"></i>
+            </div>
+          </div>
+        </div>
+        <button class="sb-ui-button sb-ui-button--primary sb-ui-button--fill sb-ui-button--medium w-full"
+                (click)="navigateToUrl('/policy-input')">
+          Cotizar o Emitir Negocio
+          <i class="fal fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ✅ Sección Mi desempeño -->
+    <div class="mt-8 sm:mt-12">
+      <div class="rounded-lg shadow-sm border p-6 sm:p-8"
+           style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+        <div class="mb-6">
+          <h2 class="text-xl font-bold mb-3" style="color: var(--sb-ui-color-grayscale-black)">
+            Mi desempeño
+          </h2>
+          <p style="color: var(--sb-ui-color-grayscale-D200)">
+            Para evaluar el rendimiento y conocer el estado actual de la gestión de las cotizaciones.
+          </p>
+        </div>
+
+        <!-- Grid de estadísticas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <!-- Card: Cotizaciones en proceso -->
+          <div class="rounded-lg p-6 text-center cursor-pointer transition-all duration-300 hover:shadow-md"
+               style="background-color: var(--sb-ui-color-feedback-warning-L400)"
+               (click)="navigateToUrl('/management')">
+            <div class="flex flex-col items-center">
+              <i class="fal fa-clock text-2xl mb-3" style="color: var(--sb-ui-color-feedback-warning-base)"></i>
+              <div class="text-3xl font-bold mb-2" style="color: var(--sb-ui-color-feedback-warning-D300)">5</div>
+              <div style="color: var(--sb-ui-color-feedback-warning-D200)">Cotizaciones en proceso</div>
+            </div>
+          </div>
+
+          <!-- Card: Cotizaciones emitidas -->
+          <div class="rounded-lg p-6 text-center cursor-pointer transition-all duration-300 hover:shadow-md"
+               style="background-color: var(--sb-ui-color-feedback-success-L400)"
+               (click)="navigateToUrl('/management')">
+            <div class="flex flex-col items-center">
+              <i class="fal fa-shield-check text-2xl mb-3" style="color: var(--sb-ui-color-feedback-success-base)"></i>
+              <div class="text-3xl font-bold mb-2" style="color: var(--sb-ui-color-feedback-success-D300)">25</div>
+              <div style="color: var(--sb-ui-color-feedback-success-D200)">Cotizaciones emitidas</div>
+            </div>
+          </div>
+
+          <!-- Card: Pólizas emitidas -->
+          <div class="rounded-lg p-6 text-center cursor-pointer transition-all duration-300 hover:shadow-md"
+               style="background-color: var(--sb-ui-color-feedback-info-L400)"
+               (click)="navigateToUrl('/management')">
+            <div class="flex flex-col items-center">
+              <i class="fal fa-shield-check text-2xl mb-3" style="color: var(--sb-ui-color-feedback-info-base)"></i>
+              <div class="text-3xl font-bold mb-2" style="color: var(--sb-ui-color-feedback-info-D300)">15</div>
+              <div style="color: var(--sb-ui-color-feedback-info-D200)">Pólizas emitidas</div>
+            </div>
+          </div>
+
+          <!-- Card: Pólizas por vencer -->
+          <div class="rounded-lg p-6 text-center cursor-pointer transition-all duration-300 hover:shadow-md"
+               style="background-color: var(--sb-ui-color-feedback-error-L400)"
+               (click)="navigateToUrl('/management')">
+            <div class="flex flex-col items-center">
+              <i class="fal fa-triangle-exclamation text-2xl mb-3" style="color: var(--sb-ui-color-feedback-error-base)"></i>
+              <div class="text-3xl font-bold mb-2" style="color: var(--sb-ui-color-feedback-error-D300)">3</div>
+              <div style="color: var(--sb-ui-color-feedback-error-D200)">Pólizas por vencer</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total y período -->
+        <div class="text-center pt-4 border-t" style="border-color: var(--sb-ui-color-grayscale-L200)">
+          <div class="text-xl font-bold mb-2" style="color: var(--sb-ui-color-grayscale-black)">
+            {{ totalStats }} en total
+          </div>
+          <div style="color: var(--sb-ui-color-grayscale-D200)">Durante los últimos 30 días</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Herramientas Adicionales -->
+    <div class="mt-8 sm:mt-12">
+      <h2 class="text-lg font-bold mb-4 text-center" style="color: var(--sb-ui-color-grayscale-black)">
+        Herramientas Adicionales
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Card: Generación Automatizada -->
+        <div class="rounded-lg shadow-sm border p-6"
+             style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+          <div class="flex items-start justify-between mb-6">
+            <div class="flex-1">
+              <h3 class="font-bold mb-3" style="color: var(--sb-ui-color-grayscale-black)">
+                Generación Automatizada
+              </h3>
+              <p class="text-sm" style="color: var(--sb-ui-color-grayscale-D200)">
+                Generar pólizas automáticamente con validaciones inteligentes.
+              </p>
+            </div>
+            <div class="ml-4">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                   style="background-color: var(--sb-ui-color-primary-base)">
+                <i class="fal fa-magic text-lg" style="color: var(--sb-ui-color-grayscale-white)"></i>
+              </div>
+            </div>
+          </div>
+          <button class="sb-ui-button sb-ui-button--primary sb-ui-button--fill sb-ui-button--small w-full"
+                  (click)="navigateToUrl('/policy-generation')">
+            Generar Automático
+            <i class="fal fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+
+        <!-- Card: Análisis Financiero -->
+        <div class="rounded-lg shadow-sm border p-6"
+             style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+          <div class="flex items-start justify-between mb-6">
+            <div class="flex-1">
+              <h3 class="font-bold mb-3" style="color: var(--sb-ui-color-grayscale-black)">
+                Análisis Financiero
+              </h3>
+              <p class="text-sm" style="color: var(--sb-ui-color-grayscale-D200)">
+                Cargar y analizar estados financieros con AI.
+              </p>
+            </div>
+            <div class="ml-4">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                   style="background-color: var(--sb-ui-color-feedback-info-base)">
+                <i class="fal fa-chart-line text-lg" style="color: var(--sb-ui-color-grayscale-white)"></i>
+              </div>
+            </div>
+          </div>
+          <button class="sb-ui-button sb-ui-button--primary sb-ui-button--fill sb-ui-button--small w-full"
+                  (click)="navigateToUrl('/financial-statement-reader')">
+            Analizar Estados
+            <i class="fal fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+
+        <!-- Card: Configuración -->
+        <div class="rounded-lg shadow-sm border p-6"
+             style="background-color: var(--sb-ui-color-grayscale-white); border-color: var(--sb-ui-color-grayscale-L200)">
+          <div class="flex items-start justify-between mb-6">
+            <div class="flex-1">
+              <h3 class="font-bold mb-3" style="color: var(--sb-ui-color-grayscale-black)">
+                Configuración
+              </h3>
+              <p class="text-sm" style="color: var(--sb-ui-color-grayscale-D200)">
+                Personalizar configuraciones del sistema.
+              </p>
+            </div>
+            <div class="ml-4">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                   style="background-color: var(--sb-ui-color-grayscale-D200)">
+                <i class="fal fa-cog text-lg" style="color: var(--sb-ui-color-grayscale-white)"></i>
+              </div>
+            </div>
+          </div>
+          <button class="sb-ui-button sb-ui-button--primary sb-ui-button--fill sb-ui-button--small w-full"
+                  (click)="navigateToUrl('/settings')">
+            Configurar
+            <i class="fal fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

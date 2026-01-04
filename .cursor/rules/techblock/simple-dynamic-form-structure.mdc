@@ -1,0 +1,352 @@
+---
+id: simple-dynamic-form-structure
+name: Estructura para formularios dinámicos simples
+description: Guía para crear formularios dinámicos de un solo paso sin stepper, manteniendo organización clara de configs y componentes.
+globs:
+  - containers/**/*form*/**
+  - containers/**/*dynamic*/**
+  - "**/*form*.config.ts"
+  - "**/*form*.component.ts"
+type: comment
+alwaysApply: true
+---
+
+# Estructura para formularios dinámicos simples
+
+Estructura estándar para formularios dinámicos de **un solo paso** sin stepper usando tech-block-lib.
+
+## 📁 Estructura de carpetas requerida:
+
+```
+src/app/containers/mi-formulario/
+├── configs/                              # 📂 Configuraciones separadas
+│   ├── campo1.ts                        # ⚙️ Config individual por campo
+│   ├── campo2.ts                        # ⚙️ Config individual por campo
+│   ├── campo3.ts                        # ⚙️ Config individual por campo
+│   └── mi-formulario.config.ts          # 📋 Config principal del formulario
+├── mi-formulario.component.ts            # 🎮 Lógica principal del formulario
+├── mi-formulario.component.html          # 🖼️ Template del formulario
+├── mi-formulario.component.scss          # 🎨 Estilos del formulario
+├── mi-formulario.interface.ts            # 📝 Interfaces y tipos
+├── mi-formulario.module.ts               # 📦 Módulo con importaciones
+├── mi-formulario-routing.module.ts       # 🛣️ Rutas del módulo
+└── mi-formulario.component.spec.ts       # 🧪 Tests unitarios
+```
+
+## 🔥 **REGLA CRÍTICA: formId y name OBLIGATORIOS**
+
+**SIEMPRE** incluir **AMBOS** parámetros en cada campo de formulario dinámico. Sin estos, los formularios no funcionan y causan errores de renderizado.
+
+### **✅ PATRÓN OBLIGATORIO:**
+```typescript
+// ✅ CORRECTO: Con formId Y name
+export const campo: ILibTbDynamicFormConfigType = {
+  tbType: 'dropdown|input|number',
+  containerId: 'container-id',
+  formId: 'nombreUnico',        // ✅ OBLIGATORIO: Para Angular FormControl
+  custom: {
+    name: 'nombreUnico',        // ✅ OBLIGATORIO: Para atributo HTML name (debe coincidir con formId)
+    // ... resto de configuración
+  }
+};
+```
+
+### **❌ ERRORES COMUNES:**
+```typescript
+// ❌ MAL: Sin formId
+export const campo = {
+  tbType: 'dropdown',
+  containerId: 'container-id',
+  // ❌ FALTA: formId
+  custom: { name: 'campo' }
+};
+
+// ❌ MAL: Sin name en custom
+export const campo = {
+  tbType: 'dropdown',
+  containerId: 'container-id',
+  formId: 'campo',
+  custom: {
+    // ❌ FALTA: name
+    label: 'Campo'
+  }
+};
+
+// ❌ MAL: formId y name no coinciden
+export const campo = {
+  tbType: 'dropdown',
+  containerId: 'container-id',
+  formId: 'campo',
+  custom: {
+    name: 'otroNombre', // ❌ Debe ser igual a formId
+  }
+};
+```
+
+### **🚨 CONSECUENCIAS de omitir formId o name:**
+- ❌ **Error**: "Falta la propiedad 'name' en la configuración"
+- ❌ **Error**: "Cannot find control with unspecified name attribute"
+- ❌ **Formularios no renderizan** → Stepper muestra contenido vacío
+- ❌ **Change detection falla** → Requiere clicks manuales para funcionar
+- ❌ **Experiencia de usuario degradada** → Aplicación aparenta estar rota
+
+### **✅ VERIFICACIÓN ANTES DE IMPLEMENTAR:**
+```typescript
+// ✅ CHECKLIST OBLIGATORIO para cada campo:
+// 1. ¿Tiene formId definido?
+// 2. ¿Tiene name en custom definido?
+// 3. ¿formId === custom.name?
+// 4. ¿Nombre es único en todo el formulario?
+```
+
+## 🎯 Reglas de nomenclatura:
+
+### **Configuraciones individuales (configs/):**
+```typescript
+// configs/nombre.ts - ✅ EJEMPLO CORRECTO
+export const nombre: ILibTbDynamicFormConfigType = {
+  tbType: 'input',
+  containerId: 'personal-info-container',
+  formId: 'nombre',              // ✅ OBLIGATORIO: Para Angular FormControl
+  custom: {
+    name: 'nombre',              // ✅ OBLIGATORIO: Debe coincidir con formId
+    label: 'Nombre completo',
+    placeholder: 'Ingresa tu nombre',
+  },
+  formProps: {
+    validators: [Validators.required, Validators.minLength(2)]
+  }
+};
+```
+
+### **Configuración principal (configs/):**
+```typescript
+// configs/mi-formulario.config.ts
+import { ILibTbDynamicForm } from 'tech-block-lib';
+import { nombre } from './nombre';
+import { email } from './email';
+import { telefono } from './telefono';
+
+export const miFormularioConfig = (): ILibTbDynamicForm => {
+  return {
+    validateOnSubmit: true,
+    class: 'grid grid-cols-1 gap-6',
+    configContainers: [
+      {
+        id: 'header-container',
+        tagName: 'header',
+        class: 'text-center mb-6'
+      },
+      {
+        id: 'personal-info-container',
+        tagName: 'section',
+        class: 'bg-white p-6 rounded-lg shadow-sm border border-gray-200'
+      },
+      {
+        id: 'contact-info-container', 
+        tagName: 'section',
+        class: 'bg-white p-6 rounded-lg shadow-sm border border-gray-200'
+      }
+    ],
+    config: [
+      // Header
+      {
+        containerId: 'header-container',
+        htmlContent: '<h2 class="lib-tb-h4-bold">Registro de Usuario</h2>'
+      },
+      
+      // Información personal
+      {
+        containerId: 'personal-info-container',
+        htmlContent: '<h3 class="lib-tb-h6-bold mb-4">Información Personal</h3>'
+      },
+      nombre,     // containerId: 'personal-info-container'
+      
+      // Información de contacto
+      {
+        containerId: 'contact-info-container',
+        htmlContent: '<h3 class="lib-tb-h6-bold mb-4">Información de Contacto</h3>'
+      },
+      email,      // containerId: 'contact-info-container'
+      telefono,   // containerId: 'contact-info-container'
+    ]
+  };
+};
+```
+
+### **Componente principal:**
+```typescript
+// mi-formulario.component.ts
+import { ILibTbDynamicForm, ILibTbButton } from 'tech-block-lib';
+import { miFormularioConfig } from './configs/mi-formulario.config';
+
+@Component({
+  selector: 'mi-formulario',
+  templateUrl: './mi-formulario.component.html',
+  styleUrls: ['./mi-formulario.component.scss']
+})
+export class MiFormularioComponent {
+  // ✅ OBLIGATORIO: Un solo formulario dinámico
+  dynamicForm: ILibTbDynamicForm = miFormularioConfig();
+
+  // ✅ OBLIGATORIO: Botones de acción usando propiedades nativas de tech-block-lib
+  btnSubmit: ILibTbButton = {
+    label: 'Enviar',
+    icon: 'fal fa-paper-plane',
+    iconPosition: 'right',
+    styleBtn: 'fill',
+    typeBtn: 'primary',
+    libTbClick: () => this.submitForm(),
+  };
+
+  btnReset: ILibTbButton = {
+    label: 'Limpiar',
+    icon: 'fal fa-redo',
+    iconPosition: 'left',
+    styleBtn: 'stroke',
+    typeBtn: 'secondary',
+    libTbClick: () => this.resetForm(),
+  };
+
+  // ✅ Métodos principales
+  submitForm(): void {
+    this.dynamicForm.libTbCallSubmit?.();
+    
+    if (this.dynamicForm.form?.valid) {
+      const formData = this.dynamicForm.form.value;
+      console.log('Datos del formulario:', formData);
+      // Enviar datos al servicio...
+    } else {
+      console.log('Formulario inválido');
+    }
+  }
+
+  resetForm(): void {
+    this.dynamicForm.form?.reset();
+  }
+
+  // ✅ Métodos auxiliares
+  get isFormValid(): boolean {
+    return this.dynamicForm.form?.valid ?? false;
+  }
+
+  get formData(): any {
+    return this.dynamicForm.form?.value;
+  }
+}
+```
+
+## 📦 Módulo requerido:
+
+```typescript
+// mi-formulario.module.ts
+import { LibTbDynamicFormModule, LibTbButtonModule } from 'tech-block-lib';
+
+@NgModule({
+  declarations: [MiFormularioComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    LibTbDynamicFormModule,    // ✅ OBLIGATORIO para formularios dinámicos
+    LibTbButtonModule,         // ✅ OBLIGATORIO para botones
+    MiFormularioRoutingModule
+  ]
+})
+export class MiFormularioModule {}
+```
+
+## 🖼️ Template estándar:
+
+```html
+<!-- mi-formulario.component.html -->
+<div class="simple-form-container">
+  <lib-tb-dynamic-form [custom]="dynamicForm"></lib-tb-dynamic-form>
+  
+  <div class="form-actions">
+    <lib-tb-button [custom]="btnReset"></lib-tb-button>
+    <lib-tb-button [custom]="btnSubmit"></lib-tb-button>
+  </div>
+</div>
+```
+
+## 🎨 Estilos base recomendados (siguiendo reglas BEM):
+
+```scss
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+
+// Bloque principal del formulario
+.form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  // ✅ BEM Element: form__actions
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  // ✅ BEM Modifier: form--mobile
+  &--mobile {
+    max-width: 100%;
+    padding: 1rem;
+
+    .form__actions {
+      flex-direction: column;
+    }
+  }
+}
+
+// ✅ Media query aplicando modifier
+@media (max-width: 768px) {
+  .form {
+    @extend .form--mobile;
+  }
+}
+```
+
+### **Reglas BEM aplicadas:**
+- ✅ **BEM Naming Convention**: `Block__Element--Modifier`
+- ✅ **Limit SCSS Nesting**: Máximo 2-3 niveles de anidamiento
+- ✅ **One Block per File**: Un bloque principal por archivo SCSS
+
+## ⚠️ Errores comunes a evitar:
+
+❌ **Un solo archivo config**: No pongas todos los campos en un archivo gigante  
+❌ **Lógica en configs**: No mezcles lógica de negocio en archivos de configuración  
+❌ **containerId inconsistentes**: Asegúrate que coincidan con configContainers  
+❌ **Sin validación**: No olvides implementar la validación del formulario  
+❌ **Sin manejo de estados**: No manejar los estados loading/error/success
+
+## 🎯 Casos de uso recomendados:
+
+- **Formularios de contacto**: Información básica en una sola vista
+- **Formularios de login/registro simple**: Sin pasos múltiples
+- **Configuraciones básicas**: Ajustes simples de usuario
+- **Formularios de feedback**: Comentarios y valoraciones
+- **Filtros de búsqueda**: Criterios de búsqueda en una sola vista
+
+## 📚 Ejemplos de nombres válidos:
+
+✅ **Configs individuales**: `nombre.ts`, `email.ts`, `telefono.ts`  
+✅ **Config principal**: `contacto-form.config.ts`, `registro-form.config.ts`  
+✅ **Componente**: `contacto-form.component.ts`  
+✅ **Interface**: `contacto-form.interface.ts`  
+✅ **Módulo**: `contacto-form.module.ts`
+
+## 📋 Checklist de implementación:
+
+✅ Estructura de carpetas creada  
+✅ Interface definida con tipos correctos  
+✅ Configs individuales por campo  
+✅ Config principal con containers organizados  
+✅ Componente con métodos submitForm() y resetForm()  
+✅ Template con formulario dinámico y botones  
+✅ Módulo con imports necesarios  
+✅ Estilos base aplicados  
+✅ Validaciones implementadas  
+✅ Tests unitarios creados
