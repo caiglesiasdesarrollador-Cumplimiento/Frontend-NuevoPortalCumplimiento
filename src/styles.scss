@@ -644,30 +644,30 @@ body {
 .border-successBase { border-color: var(--sb-ui-color-feedback-success-base, #10b981); }
 
 /* ============================================
-   MEJORAS MÓVIL - FULL WIDTH
+   MEJORAS MÓVIL - FULL WIDTH - COMPLETO
    ============================================ */
 @media (max-width: 640px) {
-  body {
+  /* FONDO BLANCO EN TODO */
+  html, body {
     background-color: #ffffff !important;
   }
   
-  .bg-grayscaleL400 {
+  .bg-grayscaleL400,
+  .min-h-screen,
+  .policy-input-main-container {
     background-color: #ffffff !important;
   }
   
-  .min-h-screen {
-    background-color: #ffffff !important;
-  }
-  
+  /* CONTENEDORES FULL WIDTH */
   .max-w-7xl,
   .max-w-6xl,
   .max-w-5xl,
-  .max-w-4xl {
+  .max-w-4xl,
+  .policy-input-inner-container {
     max-width: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
+    padding: 0.5rem !important;
   }
   
   .mx-auto {
@@ -675,49 +675,238 @@ body {
     margin-right: 0 !important;
   }
   
-  .px-2, .px-4, .px-6, .px-8 {
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
+  /* PADDING COMPACTO */
+  .px-2, .px-4, .px-6, .px-8,
+  .lg\:px-8 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
   }
   
-  .py-4, .py-6, .py-8 {
+  .py-2, .py-4, .py-6, .py-8 {
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
   }
   
-  .mb-6, .mb-8 {
-    margin-bottom: 0.75rem !important;
-  }
-  
-  .sm\:mb-8 {
-    margin-bottom: 0.75rem !important;
-  }
-  
-  .gap-6, .gap-8 {
-    gap: 0.75rem !important;
-  }
-  
-  .sm\:gap-8 {
-    gap: 0.75rem !important;
-  }
-  
-  .p-6, .p-8 {
-    padding: 0.875rem !important;
-  }
-  
+  .p-4, .p-6, .p-8,
   .sm\:p-8 {
-    padding: 0.875rem !important;
+    padding: 0.75rem !important;
   }
   
+  /* MÁRGENES COMPACTOS */
+  .mb-4, .mb-6, .mb-8,
+  .sm\:mb-8 {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .mt-4, .mt-6, .mt-8 {
+    margin-top: 0.5rem !important;
+  }
+  
+  /* GAPS COMPACTOS */
+  .gap-4, .gap-6, .gap-8,
+  .sm\:gap-8 {
+    gap: 0.5rem !important;
+  }
+  
+  /* TEXTO MÁS PEQUEÑO */
   .text-2xl {
-    font-size: 1.25rem !important;
+    font-size: 1.125rem !important;
   }
   
   .text-xl {
-    font-size: 1.125rem !important;
+    font-size: 1rem !important;
+  }
+  
+  .text-lg {
+    font-size: 0.9375rem !important;
   }
   
   .text-base {
     font-size: 0.875rem !important;
+  }
+  
+  .text-sm {
+    font-size: 0.8125rem !important;
+  }
+  
+  /* CARDS Y CONTENEDORES BLANCOS */
+  .bg-grayscaleWhite,
+  .rounded-lg {
+    border-radius: 0.5rem !important;
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  /* FILE UPLOAD AREA - COMPACTO */
+  .file-upload-area {
+    padding: 1rem !important;
+    min-height: auto !important;
+    
+    &__icon {
+      font-size: 1.5rem !important;
+      margin-bottom: 0.25rem !important;
+    }
+    
+    &__text {
+      font-size: 0.8125rem !important;
+    }
+    
+    &__hint {
+      font-size: 0.75rem !important;
+    }
+  }
+  
+  /* FILE UPLOADING - COMPACTO */
+  .file-uploading-container {
+    padding: 0.75rem !important;
+  }
+  
+  .file-uploading-card {
+    padding: 0.75rem !important;
+  }
+  
+  .file-uploading-header {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .file-uploading-title {
+    font-size: 1rem !important;
+  }
+  
+  .file-uploading-subtitle {
+    font-size: 0.75rem !important;
+  }
+  
+  .file-uploading-name {
+    font-size: 0.8125rem !important;
+  }
+  
+  .file-uploading-progress-bar {
+    height: 6px !important;
+  }
+  
+  /* FILE UPLOADED - COMPACTO */
+  .file-uploaded-container {
+    padding: 0.5rem !important;
+  }
+  
+  .file-uploaded-card {
+    padding: 0.625rem !important;
+  }
+  
+  .file-uploaded-icon {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    
+    i {
+      font-size: 0.875rem !important;
+    }
+  }
+  
+  .file-uploaded-name {
+    font-size: 0.75rem !important;
+    word-break: break-all !important;
+  }
+  
+  .file-uploaded-status {
+    font-size: 0.6875rem !important;
+  }
+  
+  .file-uploaded-remove {
+    width: 28px !important;
+    height: 28px !important;
+    
+    i {
+      font-size: 0.75rem !important;
+    }
+  }
+  
+  /* BOTONES COMPACTOS */
+  .btn-agregar,
+  .btn-siguiente,
+  .btn-anterior {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8125rem !important;
+    min-height: 40px !important;
+    border-radius: 1.5rem !important;
+  }
+  
+  /* TABLAS - CARDS EN MÓVIL */
+  .table-container {
+    overflow-x: auto !important;
+    margin: 0 -0.5rem !important;
+    padding: 0 0.5rem !important;
+  }
+  
+  table {
+    font-size: 0.75rem !important;
+  }
+  
+  th, td {
+    padding: 0.375rem 0.25rem !important;
+  }
+  
+  /* SECTION HEADERS */
+  .section-block-bolivar,
+  .policy-input__step {
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  /* FORM GROUPS */
+  .form-group {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  /* INPUTS */
+  .sb-ui-input,
+  .sb-ui-select,
+  input,
+  select {
+    padding: 0.5rem !important;
+    font-size: 0.875rem !important;
+    min-height: 38px !important;
+  }
+  
+  /* LABELS */
+  .sb-ui-label,
+  label {
+    font-size: 0.75rem !important;
+    margin-bottom: 0.1875rem !important;
+  }
+  
+  /* STEPPER SUPER COMPACTO */
+  .stepper-v15 {
+    padding: 0.25rem 0 !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .stepper-v15__circle {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .stepper-v15__label {
+    font-size: 0.625rem !important;
+    max-width: 50px !important;
+  }
+  
+  /* DROPDOWN */
+  .sb-dropdown {
+    min-height: 38px !important;
+    padding: 0.375rem 0.5rem !important;
+  }
+  
+  .sb-dropdown__selected-text,
+  .sb-dropdown__placeholder {
+    font-size: 0.8125rem !important;
+  }
+  
+  /* HIDE UNNECESSARY SPACING */
+  .space-y-6 > * + * {
+    margin-top: 0.5rem !important;
   }
 }
