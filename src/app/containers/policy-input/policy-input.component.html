@@ -988,41 +988,30 @@
                 </button>
               </div>
 
-              <!-- ✅ TABLA DE DOCUMENTOS CARGADOS - Estilo Coberturas -->
-              <div *ngIf="documentosSoporte.length > 0" class="table-container mt-6">
-                <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--compact coberturas-editable w-full">
-                  <thead>
-                    <tr>
-                      <th style="min-width: 200px;">Tipo de Documento</th>
-                      <th style="min-width: 250px;">Nombre Archivo</th>
-                      <th class="text-center" style="width: 120px;">Fecha</th>
-                      <th class="text-center" style="width: 80px;">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let doc of documentosSoporte; let i = index">
-                      <td class="font-medium">
-                        <i class="fa-solid fa-file-lines text-primaryBase mr-2"></i>
-                        {{ getTipoDocumentoLabel(doc.tipo) }}
-                      </td>
-                      <td>{{ doc.nombreArchivo }}</td>
-                      <td class="text-center">{{ doc.fecha }}</td>
-                      <td class="text-center">
-                        <button class="btn-eliminar-tabla" (click)="eliminarDocumentoSoporte(i)" title="Eliminar">
-                          <i class="fa-solid fa-trash-alt"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                  <tfoot>
-                    <tr class="total-row">
-                      <td colspan="4" class="text-right font-semibold" style="background-color: #E5F4EE; color: #038450;">
-                        <i class="fa-solid fa-folder-open mr-2"></i>
-                        Total: {{ documentosSoporte.length }} documento(s) cargado(s)
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
+              <!-- ✅ LISTA DE DOCUMENTOS CARGADOS - Cards para móvil -->
+              <div *ngIf="documentosSoporte.length > 0" class="documentos-lista-container mt-4">
+                <!-- Header con contador -->
+                <div class="documentos-lista-header">
+                  <i class="fa-solid fa-folder-open"></i>
+                  <span>{{ documentosSoporte.length }} documento(s) cargado(s)</span>
+                </div>
+                
+                <!-- Lista de documentos como cards -->
+                <div class="documentos-lista">
+                  <div *ngFor="let doc of documentosSoporte; let i = index" class="documento-card">
+                    <div class="documento-card__icon">
+                      <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <div class="documento-card__info">
+                      <span class="documento-card__tipo">{{ getTipoDocumentoLabel(doc.tipo) }}</span>
+                      <span class="documento-card__nombre">{{ doc.nombreArchivo }}</span>
+                      <span class="documento-card__fecha">{{ doc.fecha }}</span>
+                    </div>
+                    <button class="documento-card__eliminar" (click)="eliminarDocumentoSoporte(i)" title="Eliminar">
+                      <i class="fa-solid fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
