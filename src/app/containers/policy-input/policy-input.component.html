@@ -1218,50 +1218,43 @@
                     Adicionar Agente
                   </button>
                   
-                  <!-- Tabla de Agentes Adicionales -->
-                  <div *ngIf="agentesAdicionales.length > 0" class="table-agentes mt-4">
-                    <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--bordered w-full">
-                      <thead style="background-color: #E5F4EE;">
-                        <tr>
-                          <th class="font-semibold px-3 py-2 cursor-pointer hover:bg-green-100 transition-colors" style="color: #038450;" (click)="ordenarAgentes('clave')">
-                            Clave <i class="fa-solid ml-1" [ngClass]="getSortIcon('clave')"></i>
-                          </th>
-                          <th class="font-semibold px-3 py-2 cursor-pointer hover:bg-green-100 transition-colors" style="color: #038450;" (click)="ordenarAgentes('formaActuacion')">
-                            Forma actuación <i class="fa-solid ml-1" [ngClass]="getSortIcon('formaActuacion')"></i>
-                          </th>
-                          <th class="font-semibold px-3 py-2 text-center cursor-pointer hover:bg-green-100 transition-colors" style="color: #038450;" (click)="ordenarAgentes('convenio')">
-                            Convenio <i class="fa-solid ml-1" [ngClass]="getSortIcon('convenio')"></i>
-                          </th>
-                          <th class="font-semibold px-3 py-2 cursor-pointer hover:bg-green-100 transition-colors" style="color: #038450;" (click)="ordenarAgentes('nombre')">
-                            Nombre <i class="fa-solid ml-1" [ngClass]="getSortIcon('nombre')"></i>
-                          </th>
-                          <th class="font-semibold px-3 py-2 text-center cursor-pointer hover:bg-green-100 transition-colors" style="color: #038450;" (click)="ordenarAgentes('participacion')">
-                            %Participación <i class="fa-solid ml-1" [ngClass]="getSortIcon('participacion')"></i>
-                          </th>
-                          <th class="font-semibold px-3 py-2 text-center" style="color: #038450;">Acciones</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let agente of agentesAdicionales; let i = index">
-                          <td class="px-3 py-2">{{ agente.clave }}</td>
-                          <td class="px-3 py-2">{{ agente.formaActuacion }}</td>
-                          <td class="px-3 py-2 text-center">{{ agente.convenio }}</td>
-                          <td class="px-3 py-2 font-medium">{{ agente.nombre }}</td>
-                          <td class="px-3 py-2 text-center font-semibold">%{{ agente.participacion }}.00</td>
-                          <td class="px-3 py-2 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                              <button class="action-btn-circle action-btn-circle--edit" (click)="editarAgente(i)" title="Editar">
-                                <i class="fa-solid fa-pencil"></i>
-                              </button>
-                              <button class="action-btn-circle action-btn-circle--delete" (click)="eliminarAgente(i)" title="Eliminar">
-                                <i class="fa-solid fa-xmark"></i>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-              </div>
+                  <!-- ✅ Lista de Agentes Adicionales - Cards para móvil -->
+                  <div *ngIf="agentesAdicionales.length > 0" class="agentes-lista-container mt-4">
+                    <!-- Header con contador -->
+                    <div class="agentes-lista-header">
+                      <i class="fa-solid fa-users"></i>
+                      <span>{{ agentesAdicionales.length }} agente(s) adicional(es)</span>
+                    </div>
+                    
+                    <!-- Lista de agentes como cards -->
+                    <div class="agentes-lista">
+                      <div *ngFor="let agente of agentesAdicionales; let i = index" class="agente-card">
+                        <div class="agente-card__icon">
+                          <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div class="agente-card__info">
+                          <div class="agente-card__row">
+                            <span class="agente-card__nombre">{{ agente.nombre }}</span>
+                            <span class="agente-card__participacion">{{ agente.participacion }}%</span>
+                          </div>
+                          <div class="agente-card__details">
+                            <span class="agente-card__clave">Clave: {{ agente.clave }}</span>
+                            <span class="agente-card__sep">•</span>
+                            <span class="agente-card__forma">{{ agente.formaActuacion }}</span>
+                          </div>
+                          <span class="agente-card__convenio">{{ agente.convenio }}</span>
+                        </div>
+                        <div class="agente-card__acciones">
+                          <button class="agente-card__btn agente-card__btn--edit" (click)="editarAgente(i)" title="Editar">
+                            <i class="fa-solid fa-pencil"></i>
+                          </button>
+                          <button class="agente-card__btn agente-card__btn--delete" (click)="eliminarAgente(i)" title="Eliminar">
+                            <i class="fa-solid fa-xmark"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
             </div>
                   </div>
 
