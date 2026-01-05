@@ -1267,36 +1267,30 @@
                     </div>
                     <h3 class="section-block__title">Ubicación del Riesgo</h3>
                   </div>
-                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- ✅ Campo unificado: Ciudad - Departamento -->
               <div class="form-group">
-                <label class="sb-ui-label">Departamento</label>
-                <div class="custom-dropdown" [class.open]="isDropdownOpen('departamento')">
-                  <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('departamento', $event)">
-                    <span>Cundinamarca</span>
+                <label class="sb-ui-label">Ciudad - Departamento</label>
+                <div class="custom-dropdown" [class.open]="isDropdownOpen('ubicacionRiesgo')">
+                  <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('ubicacionRiesgo', $event)">
+                    <span>{{ ubicacionRiesgoSeleccionada || 'Seleccione ubicación' }}</span>
                   </button>
-                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('departamento')">
-                    <div class="custom-dropdown__option selected" (click)="toggleDropdown('departamento')">Cundinamarca</div>
-                    <div class="custom-dropdown__option" (click)="toggleDropdown('departamento')">Antioquia</div>
+                  <div class="custom-dropdown__menu custom-dropdown__menu--scrollable" [class.open]="isDropdownOpen('ubicacionRiesgo')">
+                    <div class="custom-dropdown__option disabled">Seleccione ubicación</div>
+                    <div class="custom-dropdown__option" 
+                         *ngFor="let ub of listaUbicacionesRiesgo" 
+                         [class.selected]="ubicacionRiesgoSeleccionada === ub"
+                         (click)="ubicacionRiesgoSeleccionada = ub; toggleDropdown('ubicacionRiesgo')">
+                      {{ ub }}
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="form-group">
-                <label class="sb-ui-label">Ciudad</label>
-                <div class="custom-dropdown" [class.open]="isDropdownOpen('ciudad')">
-                  <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('ciudad', $event)">
-                    <span>Bogotá</span>
-                  </button>
-                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('ciudad')">
-                    <div class="custom-dropdown__option selected" (click)="toggleDropdown('ciudad')">Bogotá</div>
-                    <div class="custom-dropdown__option" (click)="toggleDropdown('ciudad')">Medellín</div>
-              </div>
-                </div>
-              </div>
-              <div class="form-group md:col-span-2">
                 <label class="sb-ui-label">Dirección del riesgo</label>
-                      <input type="text" class="sb-ui-input" placeholder="Dirección completa" />
+                <input type="text" class="sb-ui-input" placeholder="Dirección completa" [(ngModel)]="direccionRiesgo" />
+              </div>
             </div>
-                  </div>
 
                   <!-- Contragarantía (dentro de Ubicación del Riesgo) -->
                   <div class="mt-6">

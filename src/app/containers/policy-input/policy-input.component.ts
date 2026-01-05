@@ -526,6 +526,44 @@ export class PolicyInputComponent implements OnInit {
   tipoContragarantia = '';
   numeroContragarantia = '';
 
+  // ✅ Ubicación del Riesgo - Campo unificado Ciudad-Departamento
+  ubicacionRiesgoSeleccionada = 'BOGOTÁ D.C. - CUNDINAMARCA';
+  direccionRiesgo = '';
+  listaUbicacionesRiesgo = [
+    'BOGOTÁ D.C. - CUNDINAMARCA',
+    'MEDELLÍN - ANTIOQUIA',
+    'CALI - VALLE DEL CAUCA',
+    'BARRANQUILLA - ATLÁNTICO',
+    'CARTAGENA - BOLÍVAR',
+    'BUCARAMANGA - SANTANDER',
+    'CÚCUTA - NORTE DE SANTANDER',
+    'PEREIRA - RISARALDA',
+    'MANIZALES - CALDAS',
+    'IBAGUÉ - TOLIMA',
+    'NEIVA - HUILA',
+    'VILLAVICENCIO - META',
+    'PASTO - NARIÑO',
+    'MONTERÍA - CÓRDOBA',
+    'SANTA MARTA - MAGDALENA',
+    'ARMENIA - QUINDÍO',
+    'POPAYÁN - CAUCA',
+    'SINCELEJO - SUCRE',
+    'VALLEDUPAR - CESAR',
+    'TUNJA - BOYACÁ',
+    'FLORENCIA - CAQUETÁ',
+    'QUIBDÓ - CHOCÓ',
+    'RIOHACHA - LA GUAJIRA',
+    'YOPAL - CASANARE',
+    'MOCOA - PUTUMAYO',
+    'ARAUCA - ARAUCA',
+    'SAN JOSÉ DEL GUAVIARE - GUAVIARE',
+    'LETICIA - AMAZONAS',
+    'MITÚ - VAUPÉS',
+    'PUERTO CARREÑO - VICHADA',
+    'INÍRIDA - GUAINÍA',
+    'SAN ANDRÉS - SAN ANDRÉS Y PROVIDENCIA'
+  ];
+
   // ✅ Coaseguro
   tipoCoaseguro = 'sin-coaseguro'; // 'sin-coaseguro' | 'cedido' | 'aceptado'
   
