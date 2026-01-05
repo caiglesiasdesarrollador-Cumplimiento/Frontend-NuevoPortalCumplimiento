@@ -1369,8 +1369,8 @@
                           Adicionar Coaseguro Cedido
                         </button>
                         
-                        <!-- Tabla de Coaseguros Cedidos -->
-                        <div *ngIf="coasegurosCedidos.length > 0" class="coaseguros-table-wrapper mt-4">
+                        <!-- Tabla de Coaseguros Cedidos - DESKTOP -->
+                        <div *ngIf="coasegurosCedidos.length > 0 && !isMobile" class="coaseguros-table-wrapper mt-4">
                           <div class="coaseguros-table-scroll">
                             <table class="coaseguros-table-full">
                               <thead>
@@ -1411,6 +1411,37 @@
                                 </tr>
                               </tbody>
                             </table>
+                          </div>
+                        </div>
+                        
+                        <!-- Cards de Coaseguros Cedidos - MOBILE -->
+                        <div *ngIf="coasegurosCedidos.length > 0 && isMobile" class="coaseguro-cards-list mt-4">
+                          <div class="coaseguro-cards-header">
+                            <i class="fa-solid fa-handshake"></i>
+                            <span>{{ coasegurosCedidos.length }} coaseguradora(s)</span>
+                          </div>
+                          <div *ngFor="let coaseguro of coasegurosCedidosPaginados; let i = index" class="coaseguro-card">
+                            <div class="coaseguro-card__main">
+                              <div class="coaseguro-card__icon">
+                                <i class="fa-solid fa-building"></i>
+                              </div>
+                              <div class="coaseguro-card__info">
+                                <span class="coaseguro-card__name">{{ coaseguro.coaseguradora }}</span>
+                                <span class="coaseguro-card__details">
+                                  <span *ngIf="coaseguro.participacion" class="coaseguro-card__badge">{{ coaseguro.participacion | number:'1.2-2' }}%</span>
+                                  <span *ngIf="coaseguro.numeroPol">Póliza: {{ coaseguro.numeroPol }}</span>
+                                </span>
+                                <span *ngIf="coaseguro.certificado" class="coaseguro-card__cert">Cert: {{ coaseguro.certificado }}</span>
+                              </div>
+                            </div>
+                            <div class="coaseguro-card__actions" *ngIf="!coaseguro.esDefecto">
+                              <button class="btn-edit-sm" (click)="editarCoaseguroCedido(coaseguro.indexOriginal)" title="Editar">
+                                <i class="fa-solid fa-pencil"></i>
+                              </button>
+                              <button class="btn-delete-sm" (click)="eliminarCoaseguroCedido(coaseguro.indexOriginal)" title="Eliminar">
+                                <i class="fa-solid fa-xmark"></i>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
