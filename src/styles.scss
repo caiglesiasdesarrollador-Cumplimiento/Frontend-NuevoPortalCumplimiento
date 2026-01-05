@@ -1507,3 +1507,65 @@ body {
     }
   }
 }
+
+// ✅ Calendario/Datepicker - Responsive para MÓVIL
+@media (max-width: 640px) {
+  // Angular Material Datepicker
+  .mat-datepicker-popup,
+  .mat-datepicker-content,
+  .cdk-overlay-pane {
+    max-width: calc(100vw - 16px) !important;
+    left: 8px !important;
+    right: 8px !important;
+  }
+  
+  .mat-calendar {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  // NGX-Bootstrap Datepicker / Custom Datepicker
+  .bs-datepicker,
+  .bs-datepicker-container,
+  .datepicker,
+  .datepicker-dropdown,
+  .ngb-dp-month,
+  [class*="datepicker"],
+  [class*="calendar"] {
+    max-width: calc(100vw - 16px) !important;
+    width: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin: 0 auto !important;
+  }
+  
+  .bs-datepicker-head,
+  .bs-datepicker-body {
+    width: 100% !important;
+    min-width: auto !important;
+  }
+  
+  // Calendario genérico
+  .calendar-container,
+  .date-picker-container,
+  .flatpickr-calendar {
+    max-width: calc(100vw - 16px) !important;
+    left: 8px !important;
+    right: 8px !important;
+  }
+  
+  // PrimeNG Calendar
+  .p-datepicker,
+  .p-datepicker-panel {
+    max-width: calc(100vw - 16px) !important;
+    width: auto !important;
+  }
+  
+  // Inputs de fecha - ancho completo
+  input[type="date"],
+  .sb-ui-input[type="date"],
+  .date-input {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}

@@ -30,6 +30,9 @@
     </div>
   </div>
   
+  <!-- Overlay para móvil -->
+  <div *ngIf="showCalendar" class="sb-calendar-overlay" (click)="cancelSelection()"></div>
+  
   <!-- Calendario popup con controles propios -->
   <div *ngIf="showCalendar" class="sb-calendar-popup" 
        [ngStyle]="popupStyle"
