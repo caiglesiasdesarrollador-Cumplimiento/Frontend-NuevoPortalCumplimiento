@@ -1,6 +1,8 @@
 .sb-calendar-wrapper {
   position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .sb-calendar-label {
@@ -9,6 +11,10 @@
   font-weight: 500;
   color: #1f2937;
   margin-bottom: 0.5rem;
+  
+  @media (max-width: 640px) {
+    font-size: 0.8125rem;
+  }
 }
 
 .sb-calendar-input-container {
@@ -22,6 +28,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 48px;
+  width: 100%;
 
   &:hover {
     border-color: #038450;
@@ -50,6 +57,28 @@
     &:hover {
       border-color: #e5e7eb;
       box-shadow: none;
+    }
+  }
+  
+  // ✅ MÓVIL: Asegurar que se muestre el contenido
+  @media (max-width: 640px) {
+    padding: 0.625rem 0.75rem;
+    min-height: 44px;
+    
+    .sb-calendar-value,
+    .sb-calendar-placeholder {
+      font-size: 0.875rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .sb-calendar-icon {
+      font-size: 1rem;
+    }
+    
+    .sb-calendar-chevron {
+      font-size: 0.625rem;
     }
   }
 

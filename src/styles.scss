@@ -1508,8 +1508,33 @@ body {
   }
 }
 
-// ✅ Calendario/Datepicker - Responsive para MÓVIL
+// ✅ Calendario SB-Calendar y form-groups - Responsive para MÓVIL
 @media (max-width: 640px) {
+  // ✅ Form groups con calendario deben ocupar 100%
+  .form-group {
+    width: 100% !important;
+    
+    app-sb-calendar,
+    .sb-calendar-wrapper {
+      width: 100% !important;
+    }
+    
+    .sb-calendar-input-container {
+      width: 100% !important;
+    }
+  }
+  
+  // ✅ Grids en 1 columna en móvil
+  .grid.grid-cols-1 {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    
+    > * {
+      width: 100% !important;
+    }
+  }
+  
   // Angular Material Datepicker
   .mat-datepicker-popup,
   .mat-datepicker-content,
