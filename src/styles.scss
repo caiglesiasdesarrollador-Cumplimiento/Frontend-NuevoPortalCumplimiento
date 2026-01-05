@@ -1509,7 +1509,7 @@ body {
 }
 
 // ✅ Calendario SB-Calendar y form-groups - Responsive para MÓVIL
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   // ✅ Form groups con calendario deben ocupar 100%
   .form-group {
     width: 100% !important;
@@ -1517,10 +1517,19 @@ body {
     app-sb-calendar,
     .sb-calendar-wrapper {
       width: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
     }
     
     .sb-calendar-input-container {
       width: 100% !important;
+      min-height: 44px !important;
+    }
+    
+    .sb-calendar-label {
+      display: block !important;
+      margin-bottom: 0.375rem !important;
+      font-size: 0.8125rem !important;
     }
   }
   
@@ -1533,6 +1542,32 @@ body {
     > * {
       width: 100% !important;
     }
+  }
+  
+  // ✅ SB Calendar Popup - CENTRADO FORZADO
+  .sb-calendar-popup {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: translate(-50%, -50%) !important;
+    width: calc(100vw - 40px) !important;
+    max-width: 320px !important;
+    min-width: 300px !important;
+    z-index: 10000 !important;
+  }
+  
+  // ✅ SB Calendar Overlay
+  .sb-calendar-overlay {
+    display: block !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    z-index: 9999 !important;
   }
   
   // Angular Material Datepicker
