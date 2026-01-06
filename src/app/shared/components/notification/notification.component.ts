@@ -1,11 +1,11 @@
 import { Component, ViewEncapsulation, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { ConfirmationService } from 'primeng/api';
 import { ILibTbModalNotification } from 'tech-block-lib';
 import { NotificationService } from './notification.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-notification',
+  standalone: false,
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.scss'],
   encapsulation: ViewEncapsulation.None,
@@ -22,59 +22,71 @@ export class NotificationComponent implements OnInit, OnDestroy {
     message: 'Mensaje de confirmacion',
   };
 
+  isVisible = false;
   notificacionSub?: Subscription;
 
   constructor(
-    private confirmationService: ConfirmationService,
-    private notificationService: NotificationService,
-    private cdr: ChangeDetectorRef,
+    private readonly notificationService: NotificationService,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.notificacionSub = this.notificationService.notificationObserver.subscribe(data => {
       if (!data) {
-        this.confirmationService.close();
+        this.close();
         return;
       }
 
       this.modalNotification = {
         ...this.modalNotification,
         ...data,
-        class: `app-notification ${data.class || ''}`,
+        class: `app-notification ${data.class ?? ''}`,
+        showClose: data.showClose,
         closeButton: {
           icon: 'fal fa-times',
           styleBtn: 'text',
           typeBtn: 'secondary',
-          ...data.closeButton,
+          ...(data.closeButton || {}),
           libTbClick: () => {
-            data.closeButton?.libTbClick?.(true);
-            this.confirmationService.close();
+            if (data.closeButton?.libTbClick) {
+              data.closeButton.libTbClick(true);
+            }
+            this.close();
           },
         },
         acceptButton: {
           label: 'Aceptar',
           typeBtn: 'primary',
-          ...data.acceptButton,
+          ...(data.acceptButton || {}),
           libTbClick: () => {
-            data.acceptButton?.libTbClick?.(true);
-            this.confirmationService.close();
+            if (data.acceptButton?.libTbClick) {
+              data.acceptButton.libTbClick(true);
+            }
+            this.close();
           },
         },
-        rejectButtonVisible: !!data.rejectButton!.label,
+        rejectButtonVisible: !!(data.rejectButton?.label),
         rejectButton: {
           label: 'Cancelar',
           styleBtn: 'stroke',
           typeBtn: 'secondary',
-          ...data.rejectButton,
+          ...(data.rejectButton || {}),
           libTbClick: () => {
-            data.rejectButton?.libTbClick?.(true);
-            this.confirmationService.close();
+            if (data.rejectButton?.libTbClick) {
+              data.rejectButton.libTbClick(true);
+            }
+            this.close();
           },
         },
       };
+      this.isVisible = true;
       this.cdr.detectChanges();
-      this.confirmationService.confirm({ key: 'app-notification' });
     });
+  }
+
+  close(): void {
+    this.isVisible = false;
+    this.cdr.detectChanges();
   }
 
   ngOnDestroy(): void {

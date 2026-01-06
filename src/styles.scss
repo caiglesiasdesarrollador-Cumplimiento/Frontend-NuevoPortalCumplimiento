@@ -1,19 +1,562 @@
+/* Importar fuentes */
 @import './assets/css/fonts/fonts.css';
 
+/* Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ✅ Sistema Responsive Seguros Bolívar */
+@import './styles-responsive.scss';
+
+/* Estilos globales */
 * {
-  font-family: var(--c-lib-tb-font-family);
+  font-family: var(--sb-ui-typography-fontFamily, 'Nunito Sans', 'Segoe UI', Roboto, sans-serif);
   margin: 0px;
   padding: 0px;
 }
 
 body {
-  background-color: var(--c-lib-tb-grayscaleL400);
+  background-color: var(--sb-ui-color-grayscale-L400, #fafafa);
 }
 
+/* ============================================
+   ESTILOS GLOBALES DE @seguros-bolivar/ui-bundle
+   ============================================ */
+
+/* Botones */
+.sb-ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  text-decoration: none;
+
+  &--primary {
+    &.sb-ui-button--fill {
+      background-color: var(--sb-ui-color-primary-base, #009056);
+      color: var(--sb-ui-color-grayscale-white, #ffffff);
+      border-color: var(--sb-ui-color-primary-base, #009056);
+
+      &:hover {
+        background-color: var(--sb-ui-color-primary-D100, #007a4a);
+        border-color: var(--sb-ui-color-primary-D100, #007a4a);
+      }
+    }
+    &.sb-ui-button--stroke {
+      background-color: transparent;
+      color: var(--sb-ui-color-primary-base, #009056);
+      border-color: var(--sb-ui-color-primary-base, #009056);
+
+      &:hover {
+        background-color: var(--sb-ui-color-primary-L200, #e6f5ef);
+      }
+    }
+  }
+
+  &--secondary {
+    &.sb-ui-button--fill {
+      background-color: var(--sb-ui-color-feedback-warning-base, #f7c948);
+      color: var(--sb-ui-color-grayscale-black, #1a1a1a);
+      border-color: var(--sb-ui-color-feedback-warning-base, #f7c948);
+
+      &:hover {
+        background-color: var(--sb-ui-color-feedback-warning-D100, #e5b83a);
+        border-color: var(--sb-ui-color-feedback-warning-D100, #e5b83a);
+      }
+    }
+    &.sb-ui-button--stroke {
+      background-color: transparent;
+      color: var(--sb-ui-color-grayscale-black, #1a1a1a);
+      border-color: var(--sb-ui-color-grayscale-L200, #e5e7eb);
+
+      &:hover {
+        background-color: var(--sb-ui-color-grayscale-L400, #f5f5f5);
+      }
+    }
+  }
+
+  &--small {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+
+  &--medium {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  &--large {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+/* Inputs */
+.sb-ui-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--sb-ui-color-grayscale-L200, #e5e7eb);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  color: var(--sb-ui-color-grayscale-black, #1a1a1a);
+  background-color: var(--sb-ui-color-grayscale-white, #ffffff);
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--sb-ui-color-primary-base, #009056);
+    box-shadow: 0 0 0 3px var(--sb-ui-color-primary-L200, #e6f5ef);
+  }
+
+  &::placeholder {
+    color: var(--sb-ui-color-grayscale-D100, #9ca3af);
+  }
+}
+
+/* Labels */
+.sb-ui-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--sb-ui-color-grayscale-D200, #4b5563);
+  margin-bottom: 0.5rem;
+}
+
+/* Select/Dropdown */
+.sb-ui-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--sb-ui-color-grayscale-L200, #e5e7eb);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  color: var(--sb-ui-color-grayscale-black, #1a1a1a);
+  background-color: var(--sb-ui-color-grayscale-white, #ffffff);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23038450' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+  padding-right: 2.5rem;
+  transition: all 0.2s ease;
+
+  // Placeholder style
+  &:invalid,
+  &.placeholder-active {
+    color: #9ca3af;
+  }
+  
+  option:disabled {
+    color: #9ca3af;
+    font-style: italic;
+  }
+  
+  option:not(:disabled) {
+    color: #1f2937;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--sb-ui-color-primary-base, #038450);
+    box-shadow: 0 0 0 3px rgba(3, 132, 80, 0.15);
+  }
+  
+  &:hover:not(:focus) {
+    border-color: #038450;
+  }
+}
+
+/* File Upload */
+.sb-ui-file-upload {
+  border: 2px dashed var(--sb-ui-color-primary-base, #009056);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--sb-ui-color-grayscale-white, #ffffff);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--sb-ui-color-primary-L200, #e6f5ef);
+  }
+
+  &__icon {
+    font-size: 2rem;
+    color: var(--sb-ui-color-primary-base, #009056);
+    margin-bottom: 0.5rem;
+  }
+
+  &__text {
+    color: var(--sb-ui-color-grayscale-D200, #4b5563);
+    font-size: 0.875rem;
+  }
+
+  &--uploading {
+    cursor: default;
+    &:hover {
+      background-color: var(--sb-ui-color-grayscale-white, #ffffff);
+    }
+  }
+}
+
+/* Spinner */
+.sb-ui-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--sb-ui-color-grayscale-L200, #e5e7eb);
+  border-top-color: var(--sb-ui-color-primary-base, #009056);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Input con error */
+.sb-ui-input--error {
+  border-color: var(--sb-ui-color-feedback-error-base, #ef4444) !important;
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+  }
+}
+
+/* Select con error */
+.sb-ui-select--error {
+  border-color: var(--sb-ui-color-feedback-error-base, #ef4444) !important;
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+  }
+}
+
+/* Mensaje de error de campo */
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--sb-ui-color-feedback-error-base, #ef4444);
+  
+  i {
+    font-size: 0.75rem;
+  }
+}
+
+/* ============================================
+   BOTONES SEGUROS BOLÍVAR - Design System
+   Colores corporativos:
+   - Amarillo: #FFE16F
+   - Verde: #038450
+   ============================================ */
+
+/* Botón Agregar/Primario - Fondo Amarillo */
+.btn-agregar,
+.btn-bolivar-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: #FFE16F;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(255, 225, 111, 0.4);
+
+  &:hover {
+    background-color: #fcd34d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 225, 111, 0.5);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(255, 225, 111, 0.3);
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* Botón Siguiente - Fondo Amarillo (igual que Agregar) */
+.btn-siguiente,
+.btn-bolivar-success {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: #FFE16F;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(255, 225, 111, 0.4);
+
+  &:hover:not(:disabled) {
+    background-color: #fcd34d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 225, 111, 0.5);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(255, 225, 111, 0.3);
+  }
+
+  &:disabled,
+  &.btn-siguiente--disabled {
+    background-color: #e5e5e5;
+    color: #999999;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+
+    &:hover {
+      background-color: #e5e5e5;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* Botón Anterior - Borde Verde, Fondo Blanco */
+.btn-anterior,
+.btn-bolivar-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: #ffffff;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: 2px solid #038450;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background-color: #f0fdf4;
+    border-color: #026b41;
+    color: #026b41;
+  }
+
+  &:active {
+    background-color: #dcfce7;
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* Botón Quiero Emitir - Borde Verde con icono */
+.btn-quiero-emitir {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: #ffffff;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: 2px solid #038450;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background-color: #038450;
+    color: #ffffff;
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* Botón Generar Cotización - Amarillo con icono */
+.btn-generar-cotizacion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: #FFE16F;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(255, 225, 111, 0.4);
+
+  &:hover {
+    background-color: #fcd34d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 225, 111, 0.5);
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+/* Modal de éxito - CENTRADO MOBILE */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.modal-success {
+  background-color: #ffffff;
+  border-radius: 12px;
+  max-width: 300px;
+  width: calc(100% - 32px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: #9ca3af;
+  cursor: pointer;
+  
+  &:hover {
+    color: #374151;
+  }
+}
+
+/* Botón de ayuda flotante - Colores corporativos Seguros Bolívar */
+.btn-help-float {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background-color: #FFE16F; /* Amarillo Bolívar */
+  color: #038450; /* Verde Bolívar */
+  font-weight: 500;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  overflow: hidden;
+
+  span {
+    display: none;
+    white-space: nowrap;
+  }
+
+  i {
+    font-size: 1.25rem;
+  }
+
+  &:hover {
+    width: auto;
+    padding: 0.75rem 1rem;
+    border-radius: 2rem;
+    background-color: #f5d45a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+
+    span {
+      display: inline;
+      margin-left: 0.5rem;
+    }
+  }
+}
+
+/* Cards */
+.sb-ui-card {
+  background-color: var(--sb-ui-color-grayscale-white, #ffffff);
+  border: 1px solid var(--sb-ui-color-grayscale-L200, #e5e7eb);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Breadcrumb */
+.sb-ui-breadcrumb {
+  &__list {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+  }
+
+  &__link {
+    color: var(--sb-ui-color-primary-base, #009056);
+    text-decoration: none;
+    font-size: 0.875rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__separator {
+    color: var(--sb-ui-color-grayscale-D100, #9ca3af);
+    margin: 0 0.25rem;
+  }
+}
+
+/* Compatibilidad con clases antiguas de tech-block-lib */
 .lib-tb-icon {
   display: inline-flex;
   justify-content: center;
@@ -21,8 +564,1068 @@ body {
   height: 1.3333333333em;
   width: 1.3333333333em;
 }
+
 .p-float-label .p-placeholder,
 .p-float-label input::placeholder,
 .p-float-label .p-inputtext::placeholder {
   opacity: 1 !important;
+}
+
+.lib-tb-input-text {
+  display: flex;
+}
+
+/* Clases de tipografía para compatibilidad */
+.lib-tb-h3-bold {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.lib-tb-h4-bold {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.lib-tb-h5-bold {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.lib-tb-h6-bold {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.lib-tb-body-medium {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.lib-tb-body-small {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.lib-tb-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Colores de compatibilidad con tech-block-lib */
+.text-grayscaleBlack { color: var(--sb-ui-color-grayscale-black, #1a1a1a); }
+.text-grayscaleD200 { color: var(--sb-ui-color-grayscale-D200, #4b5563); }
+.text-grayscaleD100 { color: var(--sb-ui-color-grayscale-D100, #6b7280); }
+.text-primaryBase { color: var(--sb-ui-color-primary-base, #009056); }
+.text-successBase { color: var(--sb-ui-color-feedback-success-base, #10b981); }
+.text-errorBase { color: var(--sb-ui-color-feedback-error-base, #ef4444); }
+.text-warningBase { color: var(--sb-ui-color-feedback-warning-base, #f59e0b); }
+
+.bg-grayscaleWhite { background-color: var(--sb-ui-color-grayscale-white, #ffffff); }
+.bg-grayscaleL400 { background-color: var(--sb-ui-color-grayscale-L400, #f5f5f5); }
+.bg-grayscaleL200 { background-color: var(--sb-ui-color-grayscale-L200, #e5e7eb); }
+.bg-primaryBase { background-color: var(--sb-ui-color-primary-base, #009056); }
+.bg-primaryL100 { background-color: var(--sb-ui-color-primary-L100, #66bc9a); }
+.bg-successBase { background-color: var(--sb-ui-color-feedback-success-base, #10b981); }
+.bg-successL100 { background-color: var(--sb-ui-color-feedback-success-L100, #6ee7b7); }
+.bg-errorBase { background-color: var(--sb-ui-color-feedback-error-base, #ef4444); }
+.bg-warningBase { background-color: var(--sb-ui-color-feedback-warning-base, #f59e0b); }
+.bg-infoBase { background-color: var(--sb-ui-color-feedback-info-base, #3b82f6); }
+
+.border-grayscaleL200 { border-color: var(--sb-ui-color-grayscale-L200, #e5e7eb); }
+.border-grayscaleL300 { border-color: var(--sb-ui-color-grayscale-L300, #d1d5db); }
+.border-primaryBase { border-color: var(--sb-ui-color-primary-base, #009056); }
+.border-successBase { border-color: var(--sb-ui-color-feedback-success-base, #10b981); }
+
+/* ============================================
+   MEJORAS MÓVIL - FULL WIDTH - COMPLETO
+   ============================================ */
+@media (max-width: 640px) {
+  /* FONDO BLANCO EN TODO */
+  html, body {
+    background-color: #ffffff !important;
+  }
+  
+  .bg-grayscaleL400,
+  .min-h-screen,
+  .policy-input-main-container {
+    background-color: #ffffff !important;
+  }
+  
+  /* CONTENEDORES FULL WIDTH */
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl,
+  .policy-input-inner-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0.5rem !important;
+  }
+  
+  .mx-auto {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* PADDING COMPACTO */
+  .px-2, .px-4, .px-6, .px-8,
+  .lg\:px-8 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  .py-2, .py-4, .py-6, .py-8 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+  
+  .p-4, .p-6, .p-8,
+  .sm\:p-8 {
+    padding: 0.75rem !important;
+  }
+  
+  /* MÁRGENES COMPACTOS */
+  .mb-4, .mb-6, .mb-8,
+  .sm\:mb-8 {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .mt-4, .mt-6, .mt-8 {
+    margin-top: 0.5rem !important;
+  }
+  
+  /* GAPS COMPACTOS */
+  .gap-4, .gap-6, .gap-8,
+  .sm\:gap-8 {
+    gap: 0.5rem !important;
+  }
+  
+  /* TEXTO MÁS PEQUEÑO */
+  .text-2xl {
+    font-size: 1.125rem !important;
+  }
+  
+  .text-xl {
+    font-size: 1rem !important;
+  }
+  
+  .text-lg {
+    font-size: 0.9375rem !important;
+  }
+  
+  .text-base {
+    font-size: 0.875rem !important;
+  }
+  
+  .text-sm {
+    font-size: 0.8125rem !important;
+  }
+  
+  /* CARDS Y CONTENEDORES BLANCOS */
+  .bg-grayscaleWhite,
+  .rounded-lg {
+    border-radius: 0.5rem !important;
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  /* FILE UPLOAD AREA - COMPACTO */
+  .file-upload-area {
+    padding: 1rem !important;
+    min-height: auto !important;
+    
+    &__icon {
+      font-size: 1.5rem !important;
+      margin-bottom: 0.25rem !important;
+    }
+    
+    &__text {
+      font-size: 0.8125rem !important;
+    }
+    
+    &__hint {
+      font-size: 0.75rem !important;
+    }
+  }
+  
+  /* FILE UPLOADING - COMPACTO */
+  .file-uploading-container {
+    padding: 0.75rem !important;
+  }
+  
+  .file-uploading-card {
+    padding: 0.75rem !important;
+  }
+  
+  .file-uploading-header {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .file-uploading-title {
+    font-size: 1rem !important;
+  }
+  
+  .file-uploading-subtitle {
+    font-size: 0.75rem !important;
+  }
+  
+  .file-uploading-name {
+    font-size: 0.8125rem !important;
+  }
+  
+  .file-uploading-progress-bar {
+    height: 6px !important;
+  }
+  
+  /* FILE UPLOADED - COMPACTO */
+  .file-uploaded-container {
+    padding: 0.5rem !important;
+  }
+  
+  .file-uploaded-card {
+    padding: 0.625rem !important;
+  }
+  
+  .file-uploaded-icon {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    
+    i {
+      font-size: 0.875rem !important;
+    }
+  }
+  
+  .file-uploaded-name {
+    font-size: 0.75rem !important;
+    word-break: break-all !important;
+  }
+  
+  .file-uploaded-status {
+    font-size: 0.6875rem !important;
+  }
+  
+  .file-uploaded-remove {
+    width: 28px !important;
+    height: 28px !important;
+    
+    i {
+      font-size: 0.75rem !important;
+    }
+  }
+  
+  /* BOTONES COMPACTOS */
+  .btn-agregar,
+  .btn-siguiente,
+  .btn-anterior {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8125rem !important;
+    min-height: 40px !important;
+    border-radius: 1.5rem !important;
+  }
+  
+  /* TABLAS - CARDS EN MÓVIL */
+  .table-container {
+    overflow-x: auto !important;
+    margin: 0 -0.5rem !important;
+    padding: 0 0.5rem !important;
+  }
+  
+  table {
+    font-size: 0.75rem !important;
+  }
+  
+  th, td {
+    padding: 0.375rem 0.25rem !important;
+  }
+  
+  /* SECTION HEADERS */
+  .section-block-bolivar,
+  .policy-input__step {
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  /* FORM GROUPS */
+  .form-group {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  /* INPUTS */
+  .sb-ui-input,
+  .sb-ui-select,
+  input,
+  select {
+    padding: 0.5rem !important;
+    font-size: 0.875rem !important;
+    min-height: 38px !important;
+  }
+  
+  /* LABELS */
+  .sb-ui-label,
+  label {
+    font-size: 0.75rem !important;
+    margin-bottom: 0.1875rem !important;
+  }
+  
+  /* STEPPER SUPER COMPACTO */
+  .stepper-v15 {
+    padding: 0.25rem 0 !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .stepper-v15__circle {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .stepper-v15__label {
+    font-size: 0.625rem !important;
+    max-width: 50px !important;
+  }
+  
+  /* DROPDOWN */
+  .sb-dropdown {
+    min-height: 38px !important;
+    padding: 0.375rem 0.5rem !important;
+  }
+  
+  .sb-dropdown__selected-text,
+  .sb-dropdown__placeholder {
+    font-size: 0.8125rem !important;
+  }
+  
+  /* HIDE UNNECESSARY SPACING */
+  .space-y-6 > * + * {
+    margin-top: 0.5rem !important;
+  }
+}
+
+/* ============================================
+   DOCUMENTOS LISTA - Cards Modernas
+   ============================================ */
+.documentos-lista-container {
+  background: #ffffff;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.documentos-lista-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #E5F4EE;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.875rem;
+  
+  i {
+    font-size: 1rem;
+  }
+}
+
+.documentos-lista {
+  display: flex;
+  flex-direction: column;
+}
+
+.documento-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  background: #ffffff;
+  transition: background 0.2s ease;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    background: #f9fafb;
+  }
+  
+  &__icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #E5F4EE;
+    border-radius: 8px;
+    
+    i {
+      color: #038450;
+      font-size: 1rem;
+    }
+  }
+  
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+  
+  &__tipo {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #038450;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  &__nombre {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #1f2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  &__fecha {
+    font-size: 0.6875rem;
+    color: #6b7280;
+  }
+  
+  &__eliminar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fee2e2;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    i {
+      color: #dc2626;
+      font-size: 0.75rem;
+    }
+    
+    &:hover {
+      background: #fecaca;
+    }
+  }
+}
+
+/* Móvil - más compacto */
+@media (max-width: 640px) {
+  .documentos-lista-header {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    
+    i {
+      font-size: 0.875rem;
+    }
+  }
+  
+  .documento-card {
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+    
+    &__icon {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: 6px;
+      
+      i {
+        font-size: 0.875rem;
+      }
+    }
+    
+    &__tipo {
+      font-size: 0.625rem;
+    }
+    
+    &__nombre {
+      font-size: 0.75rem;
+    }
+    
+    &__fecha {
+      font-size: 0.625rem;
+    }
+    
+    &__eliminar {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      
+      i {
+        font-size: 0.6875rem;
+      }
+    }
+  }
+}
+
+/* ============================================
+   AGENTES LISTA - Cards Modernas
+   ============================================ */
+.agentes-lista-container {
+  background: #ffffff;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.agentes-lista-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #E5F4EE;
+  color: #038450;
+  font-weight: 600;
+  font-size: 0.875rem;
+  
+  i {
+    font-size: 1rem;
+  }
+}
+
+.agentes-lista {
+  display: flex;
+  flex-direction: column;
+}
+
+.agente-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  background: #ffffff;
+  transition: background 0.2s ease;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    background: #f9fafb;
+  }
+  
+  &__icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #038450 0%, #026b42 100%);
+    border-radius: 10px;
+    
+    i {
+      color: #ffffff;
+      font-size: 1rem;
+    }
+  }
+  
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  &__nombre {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1f2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  &__participacion {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #038450;
+    background: #E5F4EE;
+    padding: 0.125rem 0.5rem;
+    border-radius: 1rem;
+  }
+  
+  &__details {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+  }
+  
+  &__clave {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+  
+  &__sep {
+    font-size: 0.625rem;
+    color: #d1d5db;
+  }
+  
+  &__forma {
+    font-size: 0.75rem;
+    color: #038450;
+    font-weight: 500;
+  }
+  
+  &__convenio {
+    font-size: 0.6875rem;
+    color: #9ca3af;
+    font-style: italic;
+  }
+  
+  &__acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  
+  &__btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    i {
+      font-size: 0.6875rem;
+    }
+    
+    &--edit {
+      background: #dbeafe;
+      
+      i {
+        color: #2563eb;
+      }
+      
+      &:hover {
+        background: #bfdbfe;
+      }
+    }
+    
+    &--delete {
+      background: #fee2e2;
+      
+      i {
+        color: #dc2626;
+      }
+      
+      &:hover {
+        background: #fecaca;
+      }
+    }
+  }
+}
+
+/* Agentes - Móvil más compacto */
+@media (max-width: 640px) {
+  .agentes-lista-header {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    
+    i {
+      font-size: 0.875rem;
+    }
+  }
+  
+  .agente-card {
+    padding: 0.625rem 0.75rem;
+    gap: 0.5rem;
+    
+    &__icon {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      border-radius: 8px;
+      
+      i {
+        font-size: 0.875rem;
+      }
+    }
+    
+    &__nombre {
+      font-size: 0.8125rem;
+    }
+    
+    &__participacion {
+      font-size: 0.75rem;
+      padding: 0.0625rem 0.375rem;
+    }
+    
+    &__clave,
+    &__forma {
+      font-size: 0.6875rem;
+    }
+    
+    &__convenio {
+      font-size: 0.625rem;
+    }
+    
+    &__acciones {
+      flex-direction: row;
+      gap: 0.25rem;
+    }
+    
+    &__btn {
+      width: 26px;
+      height: 26px;
+      
+      i {
+        font-size: 0.625rem;
+      }
+    }
+  }
+}
+
+// ✅ Cards de Coaseguros Cedidos - MOBILE
+.coaseguro-cards-list {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.coaseguro-cards-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #E5F4EE;
+  border-bottom: 1px solid #d1fae5;
+  
+  i {
+    color: #038450;
+    font-size: 1rem;
+  }
+  
+  span {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #038450;
+  }
+}
+
+.coaseguro-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  background: #ffffff;
+  transition: background 0.2s ease;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    background: #f9fafb;
+  }
+  
+  &__main {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  &__icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #038450 0%, #026b42 100%);
+    border-radius: 10px;
+    
+    i {
+      color: #ffffff;
+      font-size: 1rem;
+    }
+  }
+  
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  &__name {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #1f2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  &__details {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+  
+  &__badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #038450;
+    background: #E5F4EE;
+    padding: 0.125rem 0.5rem;
+    border-radius: 1rem;
+  }
+  
+  &__cert {
+    font-size: 0.6875rem;
+    color: #9ca3af;
+  }
+  
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-shrink: 0;
+  }
+}
+
+.btn-edit-sm,
+.btn-delete-sm {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  i {
+    font-size: 0.75rem;
+  }
+}
+
+.btn-edit-sm {
+  background: #E5F4EE;
+  color: #038450;
+  
+  &:hover {
+    background: #d1fae5;
+  }
+}
+
+.btn-delete-sm {
+  background: #fee2e2;
+  color: #dc2626;
+  
+  &:hover {
+    background: #fecaca;
+  }
+}
+
+// ✅ Media query compacto para pantallas muy pequeñas
+@media (max-width: 400px) {
+  .coaseguro-card {
+    padding: 0.625rem 0.75rem;
+    gap: 0.5rem;
+    
+    &__icon {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      border-radius: 8px;
+      
+      i {
+        font-size: 0.875rem;
+      }
+    }
+    
+    &__name {
+      font-size: 0.75rem;
+    }
+    
+    &__details {
+      font-size: 0.6875rem;
+    }
+    
+    &__badge {
+      font-size: 0.6875rem;
+      padding: 0.0625rem 0.375rem;
+    }
+  }
+  
+  .btn-edit-sm,
+  .btn-delete-sm {
+    width: 28px;
+    height: 28px;
+    
+    i {
+      font-size: 0.6875rem;
+    }
+  }
+}
+
+// ✅ Calendario SB-Calendar y form-groups - Responsive para MÓVIL
+@media (max-width: 768px) {
+  // ✅ Form groups con calendario deben ocupar 100%
+  .form-group {
+    width: 100% !important;
+    
+    app-sb-calendar,
+    .sb-calendar-wrapper {
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .sb-calendar-input-container {
+      width: 100% !important;
+      min-height: 44px !important;
+    }
+    
+    .sb-calendar-label {
+      display: block !important;
+      margin-bottom: 0.375rem !important;
+      font-size: 0.8125rem !important;
+    }
+  }
+  
+  // ✅ Grids en 1 columna en móvil
+  .grid.grid-cols-1 {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    
+    > * {
+      width: 100% !important;
+    }
+  }
+  
+  // ✅ SB Calendar Popup - CENTRADO FORZADO
+  .sb-calendar-popup {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: translate(-50%, -50%) !important;
+    width: calc(100vw - 40px) !important;
+    max-width: 320px !important;
+    min-width: 300px !important;
+    z-index: 10000 !important;
+  }
+  
+  // ✅ SB Calendar Overlay
+  .sb-calendar-overlay {
+    display: block !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    z-index: 9999 !important;
+  }
+  
+  // Angular Material Datepicker
+  .mat-datepicker-popup,
+  .mat-datepicker-content,
+  .cdk-overlay-pane {
+    max-width: calc(100vw - 16px) !important;
+    left: 8px !important;
+    right: 8px !important;
+  }
+  
+  .mat-calendar {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  // NGX-Bootstrap Datepicker / Custom Datepicker
+  .bs-datepicker,
+  .bs-datepicker-container,
+  .datepicker,
+  .datepicker-dropdown,
+  .ngb-dp-month,
+  [class*="datepicker"],
+  [class*="calendar"] {
+    max-width: calc(100vw - 16px) !important;
+    width: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin: 0 auto !important;
+  }
+  
+  .bs-datepicker-head,
+  .bs-datepicker-body {
+    width: 100% !important;
+    min-width: auto !important;
+  }
+  
+  // Calendario genérico
+  .calendar-container,
+  .date-picker-container,
+  .flatpickr-calendar {
+    max-width: calc(100vw - 16px) !important;
+    left: 8px !important;
+    right: 8px !important;
+  }
+  
+  // PrimeNG Calendar
+  .p-datepicker,
+  .p-datepicker-panel {
+    max-width: calc(100vw - 16px) !important;
+    width: auto !important;
+  }
+  
+  // Inputs de fecha - ancho completo
+  input[type="date"],
+  .sb-ui-input[type="date"],
+  .date-input {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
 }

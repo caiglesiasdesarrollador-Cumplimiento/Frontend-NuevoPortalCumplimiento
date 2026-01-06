@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class LoaderService {
-  private loader = new Subject<boolean>();
+  private readonly loader = new Subject<boolean>();
   loaderObserver = this.loader.asObservable();
 
   show(): void {

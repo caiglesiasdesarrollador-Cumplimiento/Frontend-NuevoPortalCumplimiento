@@ -1,0 +1,63 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+
+// Bloque principal del modal SARLAFT
+.sarlaft-modal {
+  // ✅ BEM Element: sarlaft-modal__icon
+  &__icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+
+    img {
+      width: 48px;
+      height: 48px;
+      display: block;
+    }
+  }
+
+  // ✅ BEM Element: sarlaft-modal__button
+  &__button {
+    // ✅ BEM Modifier: sarlaft-modal__button--primary (modo EMITIR)
+    &--primary {
+      background-color: var(--c-lib-tb-warningBase);
+      color: var(--c-lib-tb-grayscaleBlack);
+      border: none;
+
+      &:hover {
+        background-color: var(--c-lib-tb-warningD100);
+      }
+    }
+
+    // ✅ BEM Modifier: sarlaft-modal__button--continue (modo COTIZAR)
+    &--continue {
+      background-color: var(--c-lib-tb-primaryBase);
+      color: var(--c-lib-tb-grayscaleWhite);
+      border: none;
+
+      &:hover {
+        background-color: var(--c-lib-tb-primaryD100);
+      }
+    }
+
+    // ✅ BEM Modifier: sarlaft-modal__button--secondary (modo EMITIR)
+    &--secondary {
+      background-color: transparent;
+      color: var(--c-lib-tb-primaryBase);
+      border: 1px solid var(--c-lib-tb-primaryBase);
+
+      &:hover {
+        background-color: var(--c-lib-tb-primaryL100);
+      }
+    }
+  }
+}
+
+// ✅ Contenido del modal con estilos específicos
+.sarlaft-modal-content {
+  padding: 1rem;
+
+  // ✅ Responsive para mobile
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+  }
+}

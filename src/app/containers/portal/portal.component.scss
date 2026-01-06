@@ -1,0 +1,303 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+
+// Bloque principal: portal-layout
+.portal-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+// ✅ Bloque: portal-sidebar
+.portal-sidebar {
+  width: 220px;
+  min-height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10;
+
+  // ✅ BEM Element: portal-sidebar__header
+  &__header {
+    // Estilos ya aplicados en HTML con clases Tailwind
+  }
+
+  // ✅ BEM Element: portal-sidebar__nav
+  &__nav {
+    // Estilos ya aplicados en HTML con clases Tailwind
+  }
+
+  // ✅ BEM Element: portal-sidebar__nav-item (EXACTO como imagen 1)
+  &__nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    transition: all 0.2s ease;
+    color: var(--c-lib-tb-grayscaleD200);
+    text-decoration: none;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+
+    &:hover {
+      color: var(--c-lib-tb-grayscaleBlack);
+    }
+
+    // ✅ BEM Modifier: portal-sidebar__nav-item--active
+    &--active {
+      color: var(--c-lib-tb-primaryBase);
+      font-weight: 600;
+    }
+  }
+
+  // ✅ BEM Element: portal-sidebar__submenu-item (EXACTO como imagen 1)
+  &__submenu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    transition: all 0.2s ease;
+    color: var(--c-lib-tb-grayscaleD200);
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--c-lib-tb-grayscaleBlack);
+    }
+  }
+}
+
+// ✅ Bloque: portal-main
+.portal-main {
+  flex: 1;
+  margin-left: 220px; // Compensar el sidebar fijo
+  min-height: 100vh;
+}
+
+// ✅ Bloque: portal-header
+.portal-header {
+  // Estilos ya aplicados en HTML con clases Tailwind
+
+  // ✅ BEM Element: portal-header__user
+  &__user {
+    // Estilos ya aplicados en HTML con clases Tailwind
+  }
+
+  // ✅ BEM Element: portal-header__info
+  &__info {
+    // Estilos ya aplicados en HTML con clases Tailwind
+  }
+}
+
+// ✅ Bloque: portal-content
+.portal-content {
+  // Estilos ya aplicados en HTML con clases Tailwind
+}
+
+// ✅ Bloque: portal-stat-card (EXACTO como imagen 1)
+.portal-stat-card {
+  background: var(--c-lib-tb-grayscaleWhite);
+  border-radius: 0.5rem;
+  border: 1px solid var(--c-lib-tb-grayscaleL200);
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+
+  // ✅ BEM Element: portal-stat-card__icon
+  &__icon {
+    // Estilos ya aplicados en HTML
+  }
+
+  // ✅ BEM Element: portal-stat-card__content
+  &__content {
+    // Estilos ya aplicados en HTML
+  }
+
+  // ✅ BEM Element: portal-stat-card__action
+  &__action {
+    // Estilos ya aplicados en HTML
+  }
+
+  // ✅ BEM Modifier: portal-stat-card--info (Azul como imagen 1)
+  &--info {
+    border-left: 3px solid var(--c-lib-tb-infoBase);
+  }
+
+  // ✅ BEM Modifier: portal-stat-card--error (Rojo como imagen 1)
+  &--error {
+    border-left: 3px solid var(--c-lib-tb-errorBase);
+  }
+
+  // ✅ BEM Modifier: portal-stat-card--warning (Amarillo como imagen 1)
+  &--warning {
+    border-left: 3px solid var(--c-lib-tb-warningBase);
+  }
+
+  // ✅ BEM Modifier: portal-stat-card--success (Verde)
+  &--success {
+    border-left: 3px solid var(--c-lib-tb-successBase);
+  }
+}
+
+// ✅ Bloque: portal-action-item
+.portal-action-item {
+  // Contenedor para cada botón de acción
+}
+
+
+// ✅ Responsive design
+@media (max-width: 768px) {
+  .portal-layout {
+    flex-direction: column;
+  }
+
+  .portal-sidebar {
+    position: relative;
+    width: 100%;
+    min-height: auto;
+  }
+
+  .portal-main {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .portal-sidebar {
+    width: 200px;
+  }
+
+  .portal-main {
+    margin-left: 200px;
+  }
+}
+
+// ✅ Estilos adicionales para hacer que los botones se vean como imagen 1
+:host ::ng-deep {
+  // ✅ Botones perfectamente alineados como imagen 1
+  .portal-action-item lib-tb-button button {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    height: 3rem; // ✅ ALTURA FIJA para alineación perfecta
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: row;
+    gap: 0.25rem;
+  }
+
+  // ✅ Iconos perfectamente alineados
+  .portal-action-item lib-tb-button button i {
+    font-size: 0.875rem;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  // ✅ Grid container para alineación perfecta
+  .portal-action-item {
+    min-width: 0;
+    display: flex;
+    align-items: stretch; // ✅ Estira todos los elementos a la misma altura
+  }
+
+  // ✅ Asegura que lib-tb-button ocupe todo el contenedor
+  .portal-action-item lib-tb-button {
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+  }
+
+  // ✅ Botones dentro de las cards de estadísticas - siguiendo reglas tech-block-lib
+  .portal-stat-card lib-tb-button button {
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    border: 1px solid;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    min-height: auto;
+    height: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  // ✅ Botón en card info (azul) - usando primary
+  .portal-stat-card--info lib-tb-button button {
+    color: var(--c-lib-tb-primaryBase);
+    border-color: var(--c-lib-tb-primaryBase);
+    background-color: transparent;
+
+    &:hover {
+      background-color: var(--c-lib-tb-primaryBase);
+      color: var(--c-lib-tb-grayscaleWhite);
+    }
+  }
+
+  // ✅ Botón en card error (rojo) - usando error
+  .portal-stat-card--error lib-tb-button button {
+    color: var(--c-lib-tb-errorBase);
+    border-color: var(--c-lib-tb-errorBase);
+    background-color: transparent;
+
+    &:hover {
+      background-color: var(--c-lib-tb-errorBase);
+      color: var(--c-lib-tb-grayscaleWhite);
+    }
+  }
+
+  // ✅ Botón en card warning (amarillo) - usando secondary pero con colores warning
+  .portal-stat-card--warning lib-tb-button button {
+    color: var(--c-lib-tb-warningBase);
+    border-color: var(--c-lib-tb-warningBase);
+    background-color: transparent;
+
+    &:hover {
+      background-color: var(--c-lib-tb-warningBase);
+      color: var(--c-lib-tb-grayscaleBlack);
+    }
+  }
+
+  // ✅ Iconos en botones de estadísticas
+  .portal-stat-card lib-tb-button button i {
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  // ✅ Estilos para las cajas de productos
+  .portal-product-card {
+    // ✅ BEM Modifier: portal-product-card--featured
+    &--featured {
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(
+          45deg,
+          var(--c-lib-tb-primaryBase),
+          var(--c-lib-tb-primaryL100)
+        );
+        border-radius: 0.5rem;
+        z-index: -1;
+        opacity: 0.1;
+      }
+    }
+  }
+}

@@ -1,0 +1,108 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+
+// Bloque principal: quote-details
+.quote-details {
+  // ✅ BEM Element: quote-details__header
+  &__header {
+    transition: all 0.3s ease;
+  }
+
+  // ✅ BEM Element: quote-details__basic-info
+  &__basic-info {
+    border-bottom: 1px solid var(--c-lib-tb-grayscaleL200);
+    padding-bottom: 1.5rem;
+  }
+
+  // ✅ BEM Element: quote-details__section
+  &__section {
+    border-bottom: 1px solid var(--c-lib-tb-grayscaleL200);
+    padding-bottom: 1.5rem;
+
+    &:last-of-type {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+  }
+
+  // ✅ BEM Element: quote-details__field
+  &__field {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--c-lib-tb-grayscaleL300);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  // ✅ BEM Element: quote-details__actions
+  &__actions {
+    margin-top: 2rem;
+  }
+
+  // ✅ BEM Modifier: quote-details--mobile
+  &--mobile {
+    .quote-details__field {
+      padding: 0.5rem 0;
+    }
+
+    .quote-details__actions {
+      margin-top: 1.5rem;
+    }
+  }
+}
+
+// ✅ Animaciones para transiciones suaves
+@keyframes fadeInContent {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quote-details__section {
+  animation: fadeInContent 0.3s ease-in-out;
+}
+
+// ✅ Media query aplicando modifier (sin @extend para evitar problemas)
+@media (max-width: 768px) {
+  .quote-details {
+    .quote-details__field {
+      padding: 0.5rem 0;
+    }
+
+    .quote-details__actions {
+      margin-top: 1.5rem;
+    }
+  }
+  
+  .grid {
+    gap: 1rem;
+  }
+}
+
+// ✅ Estilos para snackbar de éxito siguiendo lineamientos tech-block-lib
+.snackbar-success-theme {
+  // ✅ Variables CSS de tech-block-lib para snackbar
+  --c-lib-tb-snackbar-font-family: var(--font-family-base);
+  --c-lib-tb-snackbar-font-size: 14px;
+  --c-lib-tb-snackbar-max-width: 400px;
+  --c-lib-tb-snackbar-bg: var(--c-lib-tb-successBase);
+  --c-lib-tb-snackbar-color: var(--c-lib-tb-grayscaleWhite);
+  --c-lib-tb-snackbar-border-radius: 8px;
+  --c-lib-tb-snackbar-border-width: 1px;
+  --c-lib-tb-snackbar-border-color: var(--c-lib-tb-successBase);
+  --c-lib-tb-snackbar-box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}

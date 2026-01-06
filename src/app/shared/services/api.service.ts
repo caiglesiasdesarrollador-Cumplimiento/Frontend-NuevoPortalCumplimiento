@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiService {
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
-  getData(): Observable<any> {
+  getData(): Observable<unknown> {
     return this.http.get('/assets/api/data.json');
   }
 }

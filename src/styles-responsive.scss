@@ -1,0 +1,1079 @@
+/* ============================================
+   SEGUROS BOLÍVAR - SISTEMA RESPONSIVE
+   Diseño adaptativo para todos los dispositivos:
+   - Móvil (320px - 640px)
+   - Tablet (641px - 1024px)
+   - Laptop (1025px - 1440px)
+   - Desktop/TV (1441px+)
+   ============================================ */
+
+/* ============================================
+   1. VARIABLES Y BREAKPOINTS
+   ============================================ */
+:root {
+  /* Breakpoints */
+  --breakpoint-xs: 320px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --breakpoint-tv: 1920px;
+
+  /* Espaciado responsive */
+  --spacing-xs: clamp(0.25rem, 1vw, 0.5rem);
+  --spacing-sm: clamp(0.5rem, 2vw, 1rem);
+  --spacing-md: clamp(1rem, 3vw, 1.5rem);
+  --spacing-lg: clamp(1.5rem, 4vw, 2.5rem);
+  --spacing-xl: clamp(2rem, 5vw, 4rem);
+
+  /* Tipografía fluida */
+  --font-size-xs: clamp(0.7rem, 1.5vw, 0.75rem);
+  --font-size-sm: clamp(0.8rem, 1.8vw, 0.875rem);
+  --font-size-base: clamp(0.875rem, 2vw, 1rem);
+  --font-size-lg: clamp(1rem, 2.5vw, 1.125rem);
+  --font-size-xl: clamp(1.125rem, 3vw, 1.5rem);
+  --font-size-2xl: clamp(1.5rem, 4vw, 2rem);
+  --font-size-3xl: clamp(1.875rem, 5vw, 3rem);
+
+  /* Contenedor máximo */
+  --container-max: 1400px;
+  --container-padding: clamp(1rem, 4vw, 2rem);
+}
+
+/* ============================================
+   2. RESET Y BASE RESPONSIVE
+   ============================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--sb-ui-typography-fontFamily, 'Nunito Sans', 'Segoe UI', Roboto, sans-serif);
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+img, video, svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ============================================
+   3. CONTENEDOR PRINCIPAL RESPONSIVE
+   ============================================ */
+.app-container,
+.policy-input-container,
+.main-content {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--container-padding);
+}
+
+/* ============================================
+   4. HEADER RESPONSIVE
+   ============================================ */
+.app-header,
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: var(--spacing-sm) var(--container-padding);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--container-max);
+  margin: 0 auto;
+}
+
+.header-logo {
+  height: clamp(32px, 5vw, 48px);
+  width: auto;
+}
+
+/* Menú hamburguesa para móvil */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  z-index: 101;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: #038450;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  &.active {
+    span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    span:nth-child(2) {
+      opacity: 0;
+    }
+    span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+  }
+}
+
+/* Navegación responsive */
+.main-nav {
+  @media (max-width: 768px) {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 85%;
+    max-width: 320px;
+    height: 100vh;
+    background: #ffffff;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+    padding: 5rem 1.5rem 2rem;
+    transition: left 0.3s ease;
+    z-index: 100;
+    overflow-y: auto;
+
+    &.open {
+      left: 0;
+    }
+  }
+}
+
+/* Overlay para menú móvil */
+.nav-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+
+  @media (max-width: 768px) {
+    &.active {
+      display: block;
+    }
+  }
+}
+
+/* ============================================
+   5. BREADCRUMB RESPONSIVE
+   ============================================ */
+.breadcrumb,
+.policy-input__breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) 0;
+  font-size: var(--font-size-sm);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  @media (max-width: 640px) {
+    font-size: var(--font-size-xs);
+    padding: 0.5rem 0;
+    
+    /* Ocultar items intermedios en móvil */
+    .breadcrumb-item:not(:first-child):not(:last-child) {
+      display: none;
+    }
+  }
+}
+
+/* ============================================
+   6. STEPPER RESPONSIVE
+   ============================================ */
+.stepper-v15,
+.sb-stepper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: var(--spacing-md);
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+
+  @media (max-width: 640px) {
+    padding: var(--spacing-sm);
+  }
+}
+
+.stepper-v15__items {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.stepper-v15__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.stepper-v15__circle {
+  width: clamp(36px, 8vw, 48px);
+  height: clamp(36px, 8vw, 48px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  background: #e5e7eb;
+  color: #6b7280;
+  border: 3px solid #e5e7eb;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 3;
+}
+
+.stepper-v15__label {
+  margin-top: 0.5rem;
+  font-size: var(--font-size-sm);
+  color: #6b7280;
+  text-align: center;
+  max-width: 100px;
+  word-wrap: break-word;
+
+  @media (max-width: 480px) {
+    font-size: var(--font-size-xs);
+    max-width: 70px;
+  }
+}
+
+/* Estados del stepper */
+.stepper-v15__step--active .stepper-v15__circle {
+  background: #FFE16F;
+  border-color: #FFE16F;
+  color: #038450;
+}
+
+.stepper-v15__step--completed .stepper-v15__circle {
+  background: #038450;
+  border-color: #038450;
+  color: #ffffff;
+}
+
+.stepper-v15__step--active .stepper-v15__label,
+.stepper-v15__step--completed .stepper-v15__label {
+  color: #038450;
+  font-weight: 600;
+}
+
+/* Línea del stepper */
+.stepper-v15__line {
+  position: absolute;
+  top: calc(var(--spacing-md) + clamp(18px, 4vw, 24px));
+  left: calc(16.66% + clamp(18px, 4vw, 24px));
+  right: calc(16.66% + clamp(18px, 4vw, 24px));
+  height: 3px;
+  background: repeating-linear-gradient(
+    to right,
+    #d1d5db 0,
+    #d1d5db 8px,
+    transparent 8px,
+    transparent 14px
+  );
+  z-index: 1;
+}
+
+/* ============================================
+   7. FORMULARIOS RESPONSIVE - COMPACTOS
+   ============================================ */
+.form-grid,
+.policy-form-grid {
+  display: grid;
+  gap: 1rem;
+  
+  /* 1 columna en móvil */
+  grid-template-columns: 1fr;
+
+  /* 📱 MOBILE: Gap más compacto */
+  @media (max-width: 640px) {
+    gap: 0.75rem;
+  }
+
+  /* 2 columnas en tablet */
+  @media (min-width: 641px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  /* 3 columnas en desktop */
+  @media (min-width: 1025px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* 4 columnas en TV/monitor grande */
+  @media (min-width: 1536px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Formulario del Paso 2 - Layout compacto */
+.step2-form-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  
+  @media (max-width: 640px) {
+    gap: 1rem;
+  }
+}
+
+/* Sección de formulario compacta */
+.form-section-compact {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e5e7eb;
+  
+  @media (max-width: 640px) {
+    padding: 0.875rem 1rem;
+    border-radius: 0.625rem;
+  }
+  
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #038450;
+    
+    @media (max-width: 640px) {
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+    }
+    
+    i {
+      color: #038450;
+      font-size: 1.125rem;
+    }
+    
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0;
+      
+      @media (max-width: 640px) {
+        font-size: 0.9375rem;
+      }
+    }
+  }
+}
+
+/* Campos de formulario responsive */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  width: 100%;
+}
+
+.form-group--full {
+  grid-column: 1 / -1;
+}
+
+.form-group--half {
+  @media (min-width: 641px) {
+    grid-column: span 1;
+  }
+}
+
+/* Inputs responsive - COMPACTOS */
+.sb-ui-input,
+.sb-ui-select,
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 1rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  background-color: #ffffff;
+
+  &:focus {
+    outline: none;
+    border-color: #038450;
+    box-shadow: 0 0 0 3px rgba(3, 132, 80, 0.1);
+  }
+  
+  &::placeholder {
+    color: #9ca3af;
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 640px) {
+    font-size: 16px; /* Evita zoom en iOS */
+    padding: 0.5rem 0.75rem;
+    min-height: 42px;
+  }
+}
+
+/* Select específico */
+.sb-ui-select,
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.25rem;
+  padding-right: 2.5rem;
+}
+
+/* Labels responsive - COMPACTOS */
+.sb-ui-label,
+label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.25rem;
+  display: block;
+  
+  @media (max-width: 640px) {
+    font-size: 0.75rem;
+    margin-bottom: 0.1875rem;
+  }
+}
+
+/* ============================================
+   8. TABLAS RESPONSIVE
+   ============================================ */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: var(--spacing-sm) 0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  /* Indicador de scroll en móvil */
+  @media (max-width: 768px) {
+    &::after {
+      content: '← Desliza para ver más →';
+      display: block;
+      text-align: center;
+      font-size: var(--font-size-xs);
+      color: #6b7280;
+      padding: 0.5rem;
+      background: linear-gradient(to right, rgba(255,255,255,0), rgba(3,132,80,0.1), rgba(255,255,255,0));
+    }
+  }
+}
+
+table {
+  width: 100%;
+  min-width: 600px; /* Fuerza scroll en móvil */
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: clamp(0.5rem, 2vw, 1rem);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+th {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #374151;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Tabla tipo cards en móvil muy pequeño */
+@media (max-width: 480px) {
+  .table-as-cards {
+    min-width: unset;
+
+    thead {
+      display: none;
+    }
+
+    tbody tr {
+      display: block;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    tbody td {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed #e5e7eb;
+
+      &::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #038450;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+/* ============================================
+   9. MODALES RESPONSIVE - CENTRADOS
+   ============================================ */
+.quote-summary-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 9999;
+  box-sizing: border-box;
+}
+
+.quote-summary-container {
+  background: #ffffff;
+  border-radius: 12px;
+  width: calc(100% - 32px);
+  max-width: 480px;
+  max-height: 85vh;
+  overflow: hidden;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.modal-body {
+  padding: var(--spacing-md);
+  overflow-y: auto;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal-footer {
+  padding: var(--spacing-md);
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+}
+
+/* Botón cerrar modal */
+.modal-close {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  z-index: 10;
+
+  &:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+  }
+}
+
+/* ============================================
+   10. BOTONES RESPONSIVE
+   ============================================ */
+.btn-agregar,
+.btn-siguiente,
+.btn-anterior,
+.btn-quiero-emitir,
+.btn-generar-cotizacion,
+.btn-bolivar-primary,
+.btn-bolivar-outline {
+  min-height: 44px; /* Touch-friendly */
+  padding: clamp(0.625rem, 2vw, 0.875rem) clamp(1.25rem, 4vw, 2rem);
+  font-size: var(--font-size-base);
+  white-space: nowrap;
+
+  @media (max-width: 480px) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Grupo de botones responsive */
+.button-group,
+.policy-input__actions .flex {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    width: 100%;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+/* ============================================
+   11. CARDS Y SECCIONES RESPONSIVE
+   ============================================ */
+.section-block,
+.card,
+.policy-section {
+  background: #ffffff;
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid #038450;
+
+  h3, h4 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+  }
+
+  i {
+    color: #038450;
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* ============================================
+   12. GRID LAYOUTS RESPONSIVE
+   ============================================ */
+.grid-responsive {
+  display: grid;
+  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+.grid-2-cols {
+  display: grid;
+  gap: var(--spacing-md);
+  grid-template-columns: 1fr;
+
+  @media (min-width: 641px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.grid-3-cols {
+  display: grid;
+  gap: var(--spacing-md);
+  grid-template-columns: 1fr;
+
+  @media (min-width: 641px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1025px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.grid-4-cols {
+  display: grid;
+  gap: var(--spacing-md);
+  grid-template-columns: 1fr;
+
+  @media (min-width: 481px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 769px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (min-width: 1025px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ============================================
+   13. FILE UPLOAD RESPONSIVE
+   ============================================ */
+.file-upload-area {
+  padding: var(--spacing-lg) var(--spacing-md);
+  min-height: clamp(120px, 20vw, 180px);
+
+  @media (max-width: 640px) {
+    padding: var(--spacing-md);
+  }
+}
+
+.file-upload-area__icon {
+  font-size: clamp(2rem, 6vw, 3rem);
+}
+
+.file-upload-area__text {
+  font-size: var(--font-size-base);
+}
+
+.file-upload-area__hint {
+  font-size: var(--font-size-xs);
+}
+
+/* ============================================
+   14. CALENDARIO RESPONSIVE
+   ============================================ */
+.sb-calendar-popup {
+  min-width: min(320px, 95vw);
+  max-width: 95vw;
+
+  @media (max-width: 480px) {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95vw;
+    max-height: 90vh;
+  }
+}
+
+.sb-calendar-days {
+  @media (max-width: 360px) {
+    gap: 1px;
+  }
+}
+
+.sb-calendar-day {
+  width: clamp(32px, 8vw, 40px);
+  height: clamp(32px, 8vw, 40px);
+  font-size: var(--font-size-sm);
+}
+
+/* ============================================
+   15. UTILIDADES RESPONSIVE
+   ============================================ */
+/* Ocultar en móvil */
+.hide-mobile {
+  @media (max-width: 640px) {
+    display: none !important;
+  }
+}
+
+/* Ocultar en tablet */
+.hide-tablet {
+  @media (min-width: 641px) and (max-width: 1024px) {
+    display: none !important;
+  }
+}
+
+/* Ocultar en desktop */
+.hide-desktop {
+  @media (min-width: 1025px) {
+    display: none !important;
+  }
+}
+
+/* Solo móvil */
+.show-mobile {
+  display: none !important;
+  @media (max-width: 640px) {
+    display: block !important;
+  }
+}
+
+/* Solo tablet */
+.show-tablet {
+  display: none !important;
+  @media (min-width: 641px) and (max-width: 1024px) {
+    display: block !important;
+  }
+}
+
+/* Solo desktop */
+.show-desktop {
+  display: none !important;
+  @media (min-width: 1025px) {
+    display: block !important;
+  }
+}
+
+/* Texto responsive */
+.text-responsive {
+  font-size: var(--font-size-base);
+}
+
+.text-responsive-lg {
+  font-size: var(--font-size-lg);
+}
+
+.text-responsive-xl {
+  font-size: var(--font-size-xl);
+}
+
+/* Padding responsive */
+.p-responsive {
+  padding: var(--spacing-md);
+}
+
+.px-responsive {
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-md);
+}
+
+.py-responsive {
+  padding-top: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+}
+
+/* Margen responsive */
+.m-responsive {
+  margin: var(--spacing-md);
+}
+
+.mx-responsive {
+  margin-left: var(--spacing-md);
+  margin-right: var(--spacing-md);
+}
+
+.my-responsive {
+  margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Gap responsive */
+.gap-responsive {
+  gap: var(--spacing-md);
+}
+
+.gap-responsive-sm {
+  gap: var(--spacing-sm);
+}
+
+.gap-responsive-lg {
+  gap: var(--spacing-lg);
+}
+
+/* ============================================
+   16. ANIMACIONES Y TRANSICIONES
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   17. PRINT STYLES
+   ============================================ */
+@media print {
+  .no-print,
+  .btn-help-float,
+  .menu-toggle,
+  .main-nav {
+    display: none !important;
+  }
+
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+
+  .modal-overlay {
+    position: static;
+    background: none;
+  }
+
+  .modal-content {
+    box-shadow: none;
+    max-height: none;
+  }
+}
+
+/* ============================================
+   18. MEJORAS PARA TV Y MONITORES GRANDES
+   ============================================ */
+@media (min-width: 1920px) {
+  :root {
+    --font-size-base: 1.125rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 3rem;
+  }
+
+  .container,
+  .app-container {
+    max-width: 1600px;
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .stepper-v15 {
+    max-width: 1000px;
+  }
+
+  .stepper-v15__circle {
+    width: 56px;
+    height: 56px;
+    font-size: 1.25rem;
+  }
+}
+
+/* Ultra wide monitors */
+@media (min-width: 2560px) {
+  :root {
+    --font-size-base: 1.25rem;
+    --spacing-md: 2.5rem;
+  }
+
+  .container,
+  .app-container {
+    max-width: 2000px;
+  }
+}
+
+/* ============================================
+   19. SAFE AREAS (notch, etc.)
+   ============================================ */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(var(--container-padding), env(safe-area-inset-left));
+    padding-right: max(var(--container-padding), env(safe-area-inset-right));
+  }
+
+  .modal-overlay {
+    padding-top: max(var(--spacing-sm), env(safe-area-inset-top));
+    padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+  }
+}
+
+/* ============================================
+   20. FOCUS VISIBLE PARA ACCESIBILIDAD
+   ============================================ */
+:focus-visible {
+  outline: 3px solid #038450;
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #038450;
+  outline-offset: 2px;
+}
+
+/* ============================================
+   21. EXPERIENCIA FLUIDA - ADAPTABLE A TODOS LOS DISPOSITIVOS
+   ============================================ */
+
+/* Scroll suave */
+html, body {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Scrollbar delgado */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(3, 132, 80, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+

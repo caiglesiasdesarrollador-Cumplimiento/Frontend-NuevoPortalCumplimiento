@@ -1,0 +1,300 @@
+<!-- ========================================
+     FAKE LOGIN - Simulación de ingreso IDM
+     Diseño profesional Seguros Bolívar
+     ======================================== -->
+
+<div class="fake-login-container">
+  <!-- Fondo con gradiente decorativo -->
+  <div class="fake-login-background">
+    <div class="bg-shape bg-shape-1"></div>
+    <div class="bg-shape bg-shape-2"></div>
+    <div class="bg-shape bg-shape-3"></div>
+  </div>
+
+  <div class="fake-login-content">
+    <!-- Header con logo -->
+    <header class="fake-login-header">
+      <img 
+        src="assets/images/logo_seguros_bolivar.svg" 
+        alt="Seguros Bolívar" 
+        class="fake-login-logo"
+        onerror="this.onerror=null; this.src='https://www.segurosbolivar.com/wps/wcm/connect/seguros-bolivar/2d0f42e0-e2c9-47f1-98e4-3f52d67b2f8e/logo-seguros-bolivar.svg?MOD=AJPERES'"
+      />
+      <div class="fake-login-title">
+        <h1>Fake Login</h1>
+        <p class="subtitle">Simulación de ingreso IDM • Solo Dev/Stage</p>
+      </div>
+    </header>
+
+    <!-- Indicador de tipo de ingreso -->
+    <div class="tipo-ingreso-indicator" [class.administrativo]="tipoIngreso === 'administrativo'">
+      <i class="fa-solid" [ngClass]="tipoIngreso === 'intermediario' ? 'fa-handshake' : 'fa-building'"></i>
+      <span>Ingreso {{ tipoIngreso === 'intermediario' ? 'Intermediarios' : 'Administrativos' }}</span>
+    </div>
+
+    <!-- Card principal del formulario -->
+    <div class="fake-login-card">
+      <!-- Botones de ejemplo rápido -->
+      <div class="quick-examples">
+        <button 
+          class="example-btn example-intermediario" 
+          (click)="cargarEjemploIntermediario()"
+          [class.active]="tipoIngreso === 'intermediario'"
+        >
+          <i class="fa-solid fa-handshake"></i>
+          <span>Ejemplo Intermediario</span>
+        </button>
+        <button 
+          class="example-btn example-administrativo" 
+          (click)="cargarEjemploAdministrativo()"
+          [class.active]="tipoIngreso === 'administrativo'"
+        >
+          <i class="fa-solid fa-building"></i>
+          <span>Ejemplo Administrativo</span>
+        </button>
+      </div>
+
+      <!-- Formulario -->
+      <form class="fake-login-form" (ngSubmit)="onSubmit()">
+        <!-- Fila 1: Tipo documento + Número documento -->
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-text">EMPLOYEE TYPE</span>
+              <span class="label-description">Tipo de documento</span>
+            </label>
+            <select 
+              class="form-select"
+              [(ngModel)]="fakeLoginData.employeeType"
+              name="employeeType"
+            >
+              <option *ngFor="let tipo of tiposDocumento" [value]="tipo.value">
+                {{ tipo.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-text">USER NAME</span>
+              <span class="label-description">Número de documento del usuario</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-input"
+              [(ngModel)]="fakeLoginData.userName"
+              name="userName"
+              placeholder="Ej: 860352541"
+            />
+          </div>
+        </div>
+
+        <!-- Fila 2: Nombre completo -->
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label class="form-label">
+              <span class="label-text">FULL NAME</span>
+              <span class="label-description">Nombre del usuario</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-input"
+              [(ngModel)]="fakeLoginData.fullName"
+              name="fullName"
+              placeholder="Nombre o razón social"
+            />
+          </div>
+        </div>
+
+        <!-- Fila 3: Tipo usuario + Tipo nómina -->
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-text">SB CODE ACT BENEF</span>
+              <span class="label-description">Tipo de usuario</span>
+            </label>
+            <select 
+              class="form-select"
+              [(ngModel)]="fakeLoginData.sbCodeActBenef"
+              name="sbCodeActBenef"
+              (change)="onTipoUsuarioCambio()"
+            >
+              <option *ngFor="let tipo of tiposUsuario" [value]="tipo.value">
+                {{ tipo.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-text">USR SUB TIPO</span>
+              <span class="label-description">Tipo de nómina</span>
+            </label>
+            <select 
+              class="form-select"
+              [(ngModel)]="fakeLoginData.usrSubTipo"
+              name="usrSubTipo"
+            >
+              <option *ngFor="let tipo of tiposNomina" [value]="tipo.value">
+                {{ tipo.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Fila 4: Clave intermediación + Email -->
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-text">WORK FORCE ID</span>
+              <span class="label-description">Clave de intermediación</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-input"
+              [(ngModel)]="fakeLoginData.workForceId"
+              name="workForceId"
+              placeholder="Ej: 54384"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-text">EMAIL</span>
+              <span class="label-description">Correo electrónico</span>
+            </label>
+            <input 
+              type="email" 
+              class="form-input"
+              [(ngModel)]="fakeLoginData.email"
+              name="email"
+              placeholder="correo@segurosbolivar.com"
+            />
+          </div>
+        </div>
+
+        <!-- Fila 5: Localidad + Compañía -->
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-text">USR LOCATION CODE</span>
+              <span class="label-description">Código de la localidad</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-input"
+              [(ngModel)]="fakeLoginData.usrLocationCode"
+              name="usrLocationCode"
+              placeholder="Ej: 1505"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-text">COMPANY</span>
+              <span class="label-description">Código de compañía Seguros Bolívar</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-input"
+              [(ngModel)]="fakeLoginData.company"
+              name="company"
+              placeholder="Ej: 3"
+            />
+          </div>
+        </div>
+
+        <!-- Fila 6: Código cargo + País -->
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-text">JOB_CODE</span>
+              <span class="label-description">Código del cargo</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-input"
+              [(ngModel)]="fakeLoginData.jobCode"
+              name="jobCode"
+              placeholder="Ej: V11200"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-text">COUNTRY</span>
+              <span class="label-description">País</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-input"
+              [(ngModel)]="fakeLoginData.country"
+              name="country"
+              placeholder="Ej: 1"
+            />
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="btn btn-secondary"
+            (click)="onReset()"
+            [disabled]="isLoading"
+          >
+            <i class="fa-solid fa-rotate-left"></i>
+            Restablecer
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            [disabled]="isLoading"
+          >
+            <ng-container *ngIf="!isLoading && !showSuccess">
+              <i class="fa-solid fa-right-to-bracket"></i>
+              Ingresar
+            </ng-container>
+            <ng-container *ngIf="isLoading">
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              Procesando...
+            </ng-container>
+            <ng-container *ngIf="showSuccess">
+              <i class="fa-solid fa-check"></i>
+              ¡Éxito!
+            </ng-container>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer con información -->
+    <footer class="fake-login-footer">
+      <div class="footer-info">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>Este es un acceso de prueba para ambientes de desarrollo. Los datos no se envían a sistemas de producción.</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://www.segurosbolivar.com" target="_blank">
+          <i class="fa-solid fa-globe"></i>
+          Seguros Bolívar
+        </a>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Modal de éxito -->
+<div class="success-overlay" *ngIf="showSuccess">
+  <div class="success-modal">
+    <div class="success-icon">
+      <i class="fa-solid fa-check"></i>
+    </div>
+    <h2>¡Ingreso Exitoso!</h2>
+    <p>Redirigiendo al portal...</p>
+    <div class="success-spinner">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
+  </div>
+</div>
+

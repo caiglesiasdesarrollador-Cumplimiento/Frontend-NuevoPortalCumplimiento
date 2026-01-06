@@ -1,0 +1,182 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+// ✅ APLICANDO PATRÓN CORRECTO: settings
+
+// Bloque principal: policy-generation
+.policy-generation {
+  
+  // ✅ BEM Element: policy-generation__actions (patrón settings)
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+
+  // ✅ BEM Element: policy-generation__action-group (patrón settings)
+  &__action-group {
+    display: flex;
+    gap: 1rem;
+
+    @media (max-width: 640px) {
+      order: 2;
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  // ✅ BEM Element: policy-generation__primary-action (patrón settings)
+  &__primary-action {
+    @media (max-width: 640px) {
+      order: 1;
+      width: 100%;
+    }
+  }
+
+  // ✅ BEM Element: policy-generation__loading-overlay (patrón settings)
+  &__loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  // ✅ BEM Element: policy-generation__loading-content (patrón settings)
+  &__loading-content {
+    background-color: var(--c-lib-tb-grayscaleWhite);
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  // ✅ BEM Element: policy-generation__results (patrón settings adaptado)
+  &__results {
+    animation: fadeInResults 0.3s ease-in-out;
+  }
+
+  // ✅ BEM Element: policy-generation__result-header
+  &__result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+
+  // ✅ BEM Element: policy-generation__policy-number
+  &__policy-number {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    @media (max-width: 640px) {
+      align-items: flex-start;
+    }
+  }
+
+  // ✅ BEM Element: policy-generation__basic-info
+  &__basic-info {
+    margin-bottom: 2rem;
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+
+  // ✅ BEM Element: policy-generation__coverage
+  &__coverage {
+    margin-bottom: 2rem;
+
+    .coverage-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--c-lib-tb-grayscaleL200);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  // ✅ BEM Element: policy-generation__validity
+  &__validity {
+    margin-bottom: 2rem;
+
+    .validity-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+
+  // ✅ BEM Element: policy-generation__summary
+  &__summary {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--c-lib-tb-primaryBase);
+    background-opacity: 0.05;
+    border-radius: 8px;
+    border: 1px solid var(--c-lib-tb-primaryBase);
+    border-opacity: 0.2;
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+
+      &:last-child {
+        margin-bottom: 0;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--c-lib-tb-primaryBase);
+        border-opacity: 0.2;
+        font-weight: 600;
+      }
+    }
+  }
+
+  // ✅ BEM Element: policy-generation__result-actions (patrón settings)
+  &__result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--c-lib-tb-grayscaleL200);
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+}
+
+// ✅ Keyframes para animaciones
+@keyframes fadeInResults {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 

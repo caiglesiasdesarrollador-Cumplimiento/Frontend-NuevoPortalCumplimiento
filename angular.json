@@ -10,79 +10,70 @@
       "prefix": "app",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "standalone": false
         }
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist",
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "browser": "src/main.ts",
+            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "src/tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/vercel.json"
+            ],
             "styles": [
-              "node_modules/primeng/resources/primeng.min.css",
-              "node_modules/@fortawesome/fontawesome-pro/css/all.min.css",
-              "node_modules/tech-block-lib/src/styles/lib-styles.css",
-              "node_modules/tech-block-lib/src/styles/lib-theme.css",
-              "node_modules/tech-block-lib/src/styles/themes/lib-theme-segurosbolivar.css",
-              "node_modules/tech-block-lib/src/styles/lib-grid.css",
-              "node_modules/tech-block-lib/src/styles/lib-typography.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "src/styles.scss"
             ],
             "scripts": []
           },
           "configurations": {
             "production": {
-              "buildOptimizer": true,
               "optimization": true,
-              "vendorChunk": false,
               "extractLicenses": true,
               "sourceMap": false,
-              "namedChunks": false,
               "outputHashing": "none",
-              "aot": true
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "2mb"
+                }
+              ]
             },
             "stage": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true,
-              "outputHashing": "none",
-              "aot": true
+              "outputHashing": "none"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true,
-              "outputHashing": "none",
-              "aot": true
+              "outputHashing": "none"
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "app:build"
-          },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "app:build:production"
             },
             "stage": {
-              "browserTarget": "app:build:stage"
+              "buildTarget": "app:build:stage"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -90,7 +81,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "app:build"
+            "buildTarget": "app:build"
           }
         },
         "lint": {
@@ -102,7 +93,6 @@
       }
     }
   },
-  "defaultProject": "app",
   "schematics": {
     "@angular-eslint/schematics:application": {
       "setParserOptionsProject": true
@@ -110,5 +100,8 @@
     "@angular-eslint/schematics:library": {
       "setParserOptionsProject": true
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

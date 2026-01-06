@@ -1,0 +1,68 @@
+<!-- ✅ APLICANDO PATRÓN CORRECTO: settings (wrapper principal en HTML) -->
+<div class="h-auto bg-grayscaleL400">
+  <div class="max-w-2xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation (patrón settings) -->
+    <div class="mb-4 sm:mb-6">
+      <lib-tb-breadcrumb [custom]="breadcrumbConfig"></lib-tb-breadcrumb>
+    </div>
+
+    <!-- ✅ Alertas dinámicas (patrón settings) -->
+    <div class="mb-4 sm:mb-6" *ngIf="(alerts$ | async)?.length">
+      <lib-tb-alert [custom]="alertConfig"></lib-tb-alert>
+    </div>
+
+    <!-- ✅ Formulario dinámico principal (patrón settings) -->
+    <lib-tb-dynamic-form [custom]="dynamicForm"></lib-tb-dynamic-form>
+
+    <!-- ✅ Botones de acción responsive (patrón settings) -->
+    <div class="third-party-validation__actions mt-4 sm:mt-6" *ngIf="!hasResults">
+      <div class="third-party-validation__action-group">
+        <lib-tb-button [custom]="btnReset"></lib-tb-button>
+      </div>
+      <div class="third-party-validation__primary-action">
+        <lib-tb-button [custom]="btnValidate"></lib-tb-button>
+      </div>
+    </div>
+
+    <!-- ✅ Loading state overlay (patrón settings) -->
+    <div *ngIf="isLoading" class="third-party-validation__loading-overlay">
+      <div class="third-party-validation__loading-content">
+        <lib-tb-progress-spinner [custom]="progressSpinner"></lib-tb-progress-spinner>
+        <p class="lib-tb-body-medium text-grayscaleD200 mt-4">Validando tercero...</p>
+        <div class="bg-grayscaleL400 rounded-full h-2 mt-4">
+          <div
+            class="bg-primaryBase h-2 rounded-full transition-all duration-300"
+            [style.width.%]="validationProgress"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Resultados (patrón settings adaptado) -->
+    <div *ngIf="hasResults" class="third-party-validation__results mt-6">
+      <div class="bg-grayscaleWhite p-6 rounded-lg shadow-sm border border-grayscaleL200">
+        <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-4">
+          <i class="fal fa-shield-check text-successBase mr-2"></i>
+          Validación Completada
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <span class="lib-tb-body-small text-grayscaleD100">Documento:</span>
+            <p class="lib-tb-body-medium text-grayscaleBlack">
+              {{ currentThirdParty.documentType }} {{ currentThirdParty.documentNumber }}
+            </p>
+          </div>
+          <div>
+            <span class="lib-tb-body-small text-grayscaleD100">Estado:</span>
+            <p class="lib-tb-h6-bold text-successBase">Validado Exitosamente</p>
+          </div>
+        </div>
+
+        <div class="third-party-validation__result-actions">
+          <lib-tb-button [custom]="btnReset"></lib-tb-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

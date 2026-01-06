@@ -6,7 +6,7 @@ import { ILibTbModalNotification } from 'tech-block-lib';
   providedIn: 'root',
 })
 export class NotificationService {
-  private notification = new Subject<ILibTbModalNotification | null>();
+  private readonly notification = new Subject<ILibTbModalNotification | null>();
   notificationObserver = this.notification.asObservable();
 
   show(config: ILibTbModalNotification): void {

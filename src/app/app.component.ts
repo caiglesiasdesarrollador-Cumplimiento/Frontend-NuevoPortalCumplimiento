@@ -1,18 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NotificationService } from './shared/components/notification/notification.service';
 import { LoaderService } from './shared/components/loader/loader.service';
 import { ILibTbButton } from 'tech-block-lib';
 import { configNotification } from './shared/components/notification/notification.config';
-import { Router } from '@angular/router';
-import { ApiGatewayService } from './services/api-gateway.service';
-import { ApiResponse } from './models/api-response.model';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
+  standalone: false,
   selector: 'my-app',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
+  // Ocultar header en páginas de error
+  showHeader = true;
   btnNotification: ILibTbButton = {
     label: 'Mostrar modal notificación',
     libTbClick: () => {
@@ -49,40 +51,20 @@ export class AppComponent implements OnInit {
     },
   };
 
-  apiResponse?: ApiResponse;
-  lambdaResponse?: ApiResponse;
-  ecsResponse?: ApiResponse;
-
   constructor(
-    private notificationService: NotificationService,
-    private loaderService: LoaderService,
-    private router: Router,
-    private apiGatewayService: ApiGatewayService
-  ) {}
-  ngOnInit() {
-    // En app.component.ts o donde estés utilizando el servicio
-    this.apiGatewayService.postLambdaData(null).subscribe({
-      next: (response: string) => {
-      console.log('Respuesta de Lambda:', response); // "¡Hola Mundo desde Lambda en Java!"
-      this.lambdaResponse = { statusCode: 200, body: { message: response } }; // Adaptación para UI
-      },
-      error: (error: unknown) => {
-      console.error('Error al obtener datos de Lambda', error);
-      }
-    });
-
-    this.apiGatewayService.getEcsData().subscribe({
-      next: (response: string) => {
-      console.log('Respuesta de ECS:', response); // "Hello World!"
-      this.ecsResponse = { statusCode: 200, body: { message: response } }; // Adaptación para UI
-      },
-      error: (error: unknown) => {
-      console.error('Error al obtener datos de ECS', error);
-      }
+    private readonly notificationService: NotificationService,
+    private readonly loaderService: LoaderService,
+    private readonly router: Router,
+  ) {
+    // Detectar rutas de error para ocultar header
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      this.showHeader = !event.url.includes('/error');
     });
   }
 
-  showLoader() {
+  showLoader(): void {
     this.loaderService.show();
     setTimeout(() => this.loaderService.hide(), 1000);
   }

@@ -1,17 +1,17 @@
-import { defer, of } from 'rxjs';
+import { defer, Observable, of } from 'rxjs';
 
-export function asyncData<T>(data: T) {
+export function asyncData<T>(data: T): Observable<Awaited<T>> {
   return defer(() => Promise.resolve(data));
 }
 
-export function asyncError(error: unknown) {
+export function asyncError(error: unknown): Observable<never> {
   return defer(() => Promise.reject(error));
 }
 
-export function mockObservable<T>(data: T) {
+export function mockObservable<T>(data: T): Observable<T> {
   return of(data);
 }
 
-export function mockPromise<T>(data: T) {
+export function mockPromise<T>(data: T): Promise<Awaited<T>> {
   return Promise.resolve(data);
 }
