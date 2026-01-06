@@ -1,0 +1,13 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File - Bloque form-container
+
+// ✅ Mejoras visuales para containers del formulario (NO para componentes tech-block-lib)
+.form-container {
+  // ✅ BEM Element: form-container__section
+  &__section {
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+}

@@ -1,0 +1,2822 @@
+<!-- ✅ Container principal del policy-input - Mobile responsive -->
+<div class="min-h-screen bg-grayscaleL400">
+  <div class="max-w-6xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation - Igual a versión 15 (se oculta cuando se muestra tabla/detalle) -->
+    <nav *ngIf="!showCotizacionesTable && !showCotizacionDetalle" class="breadcrumb mb-4 sm:mb-6">
+      <ol class="breadcrumb__list">
+        <li class="breadcrumb__item">
+          <a routerLink="/portal" class="breadcrumb__link">
+            <i class="fa-solid fa-house"></i>
+            <span>Portal</span>
+          </a>
+        </li>
+        <li class="breadcrumb__separator">&gt;</li>
+        <li class="breadcrumb__item">
+          <a routerLink="/cotizar-emitir" class="breadcrumb__link">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Cotizar o Emitir</span>
+          </a>
+        </li>
+        <li class="breadcrumb__separator">&gt;</li>
+        <li class="breadcrumb__item breadcrumb__item--active">
+          <i class="fa-solid fa-file-lines"></i>
+          <span>{{ selectedAction === 'cotizar' ? 'Cotizar' : 'Emitir' }} Cumplimiento</span>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- ✅ VISTA: Tabla de Cotizaciones Existentes (como versión 15) - FUERA del contenedor de acciones -->
+    <div *ngIf="showCotizacionesTable" class="mb-6">
+      <!-- Breadcrumb específico -->
+      <nav class="breadcrumb mb-4">
+        <ol class="breadcrumb__list">
+          <li class="breadcrumb__item">
+            <a routerLink="/portal" class="breadcrumb__link">
+              <i class="fa-solid fa-house"></i>
+              <span>Portal</span>
+            </a>
+          </li>
+          <li class="breadcrumb__separator">&gt;</li>
+          <li class="breadcrumb__item breadcrumb__item--active">
+            <i class="fa-solid fa-sync"></i>
+            <span>Emitir póliza desde una cotización existente</span>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Header con título y botón -->
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-grayscaleBlack">Emite cotización existente</h2>
+          <p class="text-grayscaleD200 mt-1">Elige una cotización de la tabla para convertirla en póliza activa.</p>
+        </div>
+        <button 
+          class="flex items-center gap-2 px-4 py-2 border-2 rounded-full font-semibold transition-all hover:bg-grayscaleL400"
+          style="border-color: #038450; color: #038450;"
+          (click)="crearNuevaPolizaDesdeTabla()">
+          <i class="fa-solid fa-plus"></i>
+          Crear una póliza nueva
+        </button>
+      </div>
+
+      <!-- Tabla de cotizaciones - SEGUROS BOLÍVAR UI -->
+      <div class="bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200">
+        <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--bordered w-full">
+          <thead class="bg-grayscaleL300">
+            <tr>
+              <th class="text-center" style="width: 50px;"></th>
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 90px;" (click)="ordenarCotizaciones('tipo')">
+                Tipo <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('tipo')"></i>
+              </th>
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 120px;" (click)="ordenarCotizaciones('numero')">
+                Número <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('numero')"></i>
+              </th>
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" (click)="ordenarCotizaciones('tomador')">
+                Tomador <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('tomador')"></i>
+              </th>
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" (click)="ordenarCotizaciones('producto')">
+                Producto <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('producto')"></i>
+              </th>
+              <th class="text-right cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 130px;" (click)="ordenarCotizaciones('valorAsegurado')">
+                Valor Asegurado <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('valorAsegurado')"></i>
+              </th>
+              <th class="text-center cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 90px;" (click)="ordenarCotizaciones('estado')">
+                Estado <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('estado')"></i>
+              </th>
+              <th class="text-center" style="width: 110px;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cot of cotizacionesExistentes" 
+                [class.selected]="cotizacionSeleccionada?.id === cot.id"
+                class="cursor-pointer">
+              <td class="text-center">
+                <label class="sb-ui-radio">
+                  <input type="radio" 
+                         name="cotizacion" 
+                         [checked]="cotizacionSeleccionada?.id === cot.id"
+                         (change)="seleccionarCotizacion(cot)">
+                  <span class="sb-ui-radio__checkmark"></span>
+                </label>
+              </td>
+              <td>
+                <span class="flex items-center gap-1">
+                  <i class="fa-solid fa-file-lines text-primaryBase text-xs"></i>
+                  {{ cot.tipo }}
+                </span>
+              </td>
+              <td class="font-medium text-sm">{{ cot.numero }}</td>
+              <td>
+                <div class="text-sm truncate" style="max-width: 160px;">{{ cot.tomador.nombre }}</div>
+                <div class="text-xs text-grayscaleD100">{{ cot.tomador.documento }}</div>
+              </td>
+              <td class="text-primaryBase text-sm">{{ cot.producto }}</td>
+              <td class="text-right font-semibold text-sm">{{ formatCurrency(cot.valorAsegurado) }}</td>
+              <td class="text-center">
+                <span [class]="cot.estado === 'Cotizada' ? 'status-badge status-badge--active' : 'status-badge status-badge--pending'">
+                  {{ cot.estado }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button class="action-btn-circle" (click)="verDetalleCotizacion(cot); $event.stopPropagation()" title="Ver detalle">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <button class="action-btn-circle" (click)="modificarCotizacion(cot); $event.stopPropagation()" title="Modificar">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Paginador SEGUROS BOLÍVAR UI - Botones circulares amarillos -->
+        <div class="sb-ui-pagination">
+          <button class="sb-ui-pagination__btn sb-ui-pagination__btn--nav">
+            <i class="fa-solid fa-angles-left text-xs"></i>
+          </button>
+          <button class="sb-ui-pagination__btn sb-ui-pagination__btn--nav">
+            <i class="fa-solid fa-chevron-left text-xs"></i>
+          </button>
+          <button class="sb-ui-pagination__btn sb-ui-pagination__btn--active">1</button>
+          <button class="sb-ui-pagination__btn">2</button>
+          <button class="sb-ui-pagination__btn">3</button>
+          <button class="sb-ui-pagination__btn sb-ui-pagination__btn--nav">
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+          </button>
+          <button class="sb-ui-pagination__btn sb-ui-pagination__btn--nav">
+            <i class="fa-solid fa-angles-right text-xs"></i>
+          </button>
+          <select class="ml-4 px-3 py-1 border border-grayscaleL200 rounded-lg text-sm">
+            <option>10</option>
+            <option>20</option>
+            <option>50</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Botón Emitir póliza -->
+      <div class="mt-6 flex justify-center">
+        <button 
+          class="px-8 py-3 rounded-full font-semibold text-base transition-all"
+          style="background-color: #FFE16F; color: #038450;"
+          [disabled]="!cotizacionSeleccionada"
+          [class.opacity-50]="!cotizacionSeleccionada"
+          (click)="emitirPolizaDesdeTabla()">
+          Emitir póliza
+        </button>
+      </div>
+    </div>
+
+    <!-- ✅ VISTA: Detalle de Cotización -->
+    <div *ngIf="showCotizacionDetalle && cotizacionSeleccionada" class="mb-6">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb mb-4">
+        <ol class="breadcrumb__list">
+          <li class="breadcrumb__item">
+            <a routerLink="/portal" class="breadcrumb__link">
+              <i class="fa-solid fa-house"></i>
+              <span>Portal</span>
+            </a>
+          </li>
+          <li class="breadcrumb__separator">&gt;</li>
+          <li class="breadcrumb__item">
+            <a (click)="volverACotizaciones()" class="breadcrumb__link cursor-pointer">
+              <i class="fa-solid fa-file-lines"></i>
+              <span>Retomar Cotización</span>
+            </a>
+          </li>
+          <li class="breadcrumb__separator">&gt;</li>
+          <li class="breadcrumb__item breadcrumb__item--active">
+            <i class="fa-solid fa-eye"></i>
+            <span>Detalles {{ cotizacionSeleccionada.numero }}</span>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Header -->
+      <div class="text-center mb-6">
+        <h2 class="text-xl font-bold text-grayscaleBlack flex items-center justify-center gap-2">
+          <i class="fa-solid fa-eye text-primaryBase"></i>
+          Resumen de Cotización
+        </h2>
+        <p class="text-grayscaleD200 text-sm mt-1">Revisa todos los detalles de la cotización seleccionada.</p>
+      </div>
+
+      <!-- Card principal -->
+      <div class="bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-6">
+        
+        <!-- Header con código y valor -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div class="border border-grayscaleL200 rounded-lg p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-file-lines text-primaryBase"></i>
+              <span class="font-bold">{{ cotizacionSeleccionada.numero }}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <span class="text-grayscaleD100">Estado:</span>
+              <span class="text-primaryBase font-semibold">{{ cotizacionSeleccionada.estado }}</span>
+              <span class="text-grayscaleD100">Fecha de creación:</span>
+              <span>{{ cotizacionSeleccionada.fechaCreacion }}</span>
+              <span class="text-grayscaleD100">Producto:</span>
+              <span class="text-primaryBase">{{ cotizacionSeleccionada.producto }}</span>
+            </div>
+          </div>
+          <div class="border border-grayscaleL200 rounded-lg p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-dollar-sign text-primaryBase"></i>
+              <span class="font-semibold text-primaryBase">Valor Asegurado</span>
+            </div>
+            <div class="text-2xl font-bold text-primaryBase">{{ formatCurrency(cotizacionSeleccionada.valorAsegurado) }}</div>
+          </div>
+        </div>
+
+        <!-- Cupo Disponible -->
+        <div class="border border-grayscaleL200 rounded-lg p-4 mb-6 flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-credit-card text-primaryBase"></i>
+            <span class="font-semibold">Cupo Disponible del Cliente</span>
+          </div>
+          <span class="text-xl font-bold text-primaryBase">{{ formatCurrency(cotizacionSeleccionada.cupoDisponible) }}</span>
+        </div>
+
+        <!-- Datos Generales Póliza -->
+        <div class="mb-6">
+          <h3 class="flex items-center gap-2 font-semibold mb-4">
+            <i class="fa-solid fa-file-alt text-primaryBase"></i>
+            Datos Generales Póliza
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-primaryBase">Número de contrato</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.datosGenerales.numeroContrato }}</div>
+            </div>
+            <div>
+              <span class="text-primaryBase">Tipo de Documento Tomador</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.datosGenerales.tipoDocTomador }}</div>
+            </div>
+            <div>
+              <span class="text-primaryBase">Nombre del Tomador</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.datosGenerales.nombreTomador }}</div>
+            </div>
+            <div>
+              <span class="text-primaryBase">Número del Documento Tomador</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.datosGenerales.numDocTomador }}</div>
+            </div>
+            <div>
+              <span class="text-primaryBase">Moneda</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.datosGenerales.moneda }}</div>
+            </div>
+            <div>
+              <span class="text-primaryBase">Tipo de Documento Asegurado</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.datosGenerales.tipoDocAsegurado }}</div>
+            </div>
+            <div>
+              <span class="text-primaryBase">Número del Documento Asegurado</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.datosGenerales.numDocAsegurado }}</div>
+            </div>
+            <div>
+              <span class="text-primaryBase">Nombre Asegurado</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.datosGenerales.nombreAsegurado }}</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-6 border-grayscaleL200">
+
+        <!-- Ubicación del Riesgo -->
+        <div class="mb-6">
+          <h3 class="flex items-center gap-2 font-semibold mb-4">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-map-marker-alt"></i>
+            </div>
+            Ubicación del Riesgo
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-primaryBase">Departamento</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.ubicacionRiesgo.departamento }}</div>
+            </div>
+            <div>
+              <span class="text-primaryBase">Localidad / Municipio</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.ubicacionRiesgo.municipio }}</div>
+            </div>
+            <div class="md:col-span-2">
+              <span class="text-primaryBase">Dirección del Riesgo</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.ubicacionRiesgo.direccion }}</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-6 border-grayscaleL200">
+
+        <!-- Detalles del Contrato -->
+        <div class="mb-6">
+          <h3 class="flex items-center gap-2 font-semibold mb-4">
+            <i class="fa-solid fa-file-contract text-primaryBase"></i>
+            Detalles del Contrato
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-primaryBase">Valor del Contrato</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.detallesContrato.valorContrato }}</div>
+            </div>
+            <div>
+              <span class="text-primaryBase">Fecha Inicio Contrato</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.detallesContrato.fechaInicio }}</div>
+            </div>
+            <div>
+              <span class="text-primaryBase">Duración del Contrato</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.detallesContrato.duracion }}</div>
+            </div>
+            <div>
+              <span class="text-primaryBase">Fecha Fin Contrato</span>
+              <div class="font-medium">{{ cotizacionSeleccionada.detallesContrato.fechaFin }}</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-6 border-grayscaleL200">
+
+        <!-- Coberturas Cumplimiento -->
+        <div class="mb-6" *ngIf="cotizacionSeleccionada.coberturasCumplimiento.length > 0">
+          <h3 class="flex items-center gap-2 font-semibold mb-4">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-shield-check"></i>
+            </div>
+            Coberturas Cumplimiento
+          </h3>
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-grayscaleL200">
+                <th class="text-left py-2 text-primaryBase">Cobertura</th>
+                <th class="text-center py-2 text-primaryBase">Porcentaje</th>
+                <th class="text-right py-2 text-primaryBase">Valor Asegurado</th>
+                <th class="text-center py-2 text-primaryBase">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let cob of cotizacionSeleccionada.coberturasCumplimiento" class="border-b border-grayscaleL200">
+                <td class="py-2">{{ cob.cobertura }}</td>
+                <td class="py-2 text-center">{{ cob.porcentaje }}</td>
+                <td class="py-2 text-right text-primaryBase font-semibold">{{ formatCurrency(cob.valorAsegurado) }}</td>
+                <td class="py-2 text-center text-orange-500">{{ cob.estado }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="my-6 border-grayscaleL200" *ngIf="cotizacionSeleccionada.responsabilidadCivil.length > 0">
+
+        <!-- Responsabilidad Civil -->
+        <div class="mb-6" *ngIf="cotizacionSeleccionada.responsabilidadCivil.length > 0">
+          <h3 class="flex items-center gap-2 font-semibold mb-4">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-gavel"></i>
+            </div>
+            Responsabilidad Civil
+          </h3>
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-grayscaleL200">
+                <th class="text-left py-2 text-primaryBase">Cobertura</th>
+                <th class="text-center py-2 text-primaryBase">Porcentaje</th>
+                <th class="text-right py-2 text-primaryBase">Valor Asegurado</th>
+                <th class="text-center py-2 text-primaryBase">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let rc of cotizacionSeleccionada.responsabilidadCivil" class="border-b border-grayscaleL200">
+                <td class="py-2">{{ rc.cobertura }}</td>
+                <td class="py-2 text-center">{{ rc.porcentaje }}</td>
+                <td class="py-2 text-right text-primaryBase font-semibold">{{ formatCurrency(rc.valorAsegurado) }}</td>
+                <td class="py-2 text-center text-orange-500">{{ rc.estado }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="my-6 border-grayscaleL200">
+
+        <!-- Resumen de Costos -->
+        <div class="mb-6">
+          <h3 class="flex items-center gap-2 font-semibold mb-4">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-calculator"></i>
+            </div>
+            Resumen de Costos
+          </h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-primaryBase">Prima Neta:</span>
+              <span class="font-medium">{{ formatCurrency(cotizacionSeleccionada.resumenCostos.primaNeta) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-primaryBase">IVA (19%):</span>
+              <span class="font-medium">{{ formatCurrency(cotizacionSeleccionada.resumenCostos.iva) }}</span>
+            </div>
+            <div class="flex justify-between text-lg font-bold">
+              <span class="text-primaryBase">Prima Total:</span>
+              <span class="text-primaryBase">{{ formatCurrency(cotizacionSeleccionada.resumenCostos.primaTotal) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón Volver -->
+        <div class="flex justify-center mt-8">
+          <button 
+            class="px-6 py-2 rounded-full border-2 font-semibold transition-all flex items-center gap-2"
+            style="border-color: #038450; color: #038450;"
+            (click)="volverACotizaciones()">
+            <i class="fa-solid fa-arrow-left"></i>
+            Volver a Cotizaciones
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Opciones Cotizar y Emitir - Posición superior como en imagen -->
+    <div class="policy-input__action-selection mb-6 sm:mb-8" *ngIf="!showCotizacionesTable && !showCotizacionDetalle">
+      <div class="max-w-6xl mx-auto px-4">
+        <!-- ✅ Título de la sección -->
+        <h2 class="text-2xl font-semibold text-grayscaleBlack text-center mb-6 sm:mb-8">
+          ¿Qué necesitas hacer hoy?
+        </h2>
+
+        <!-- Opciones horizontales como en la imagen -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          <!-- ✅ Opción Cotizar -->
+          <div
+            class="text-center p-6 sm:p-8 cursor-pointer transition-all duration-200 hover:bg-grayscaleL400/50"
+            [ngClass]="{
+              'border-b-4 border-successBase': selectedAction === 'cotizar'
+            }"
+            (click)="selectAction('cotizar')"
+          >
+            <h2
+              class="text-2xl font-bold mb-3"
+              [ngClass]="{
+                  'text-successBase': selectedAction === 'cotizar',
+                  'text-grayscaleBlack': selectedAction !== 'cotizar'
+                }"
+            >
+              Cotizar
+            </h2>
+            <p class="text-base text-grayscaleD200 leading-relaxed">
+              Obtén una cotización personalizada para evaluar costos y coberturas antes de emitir.
+            </p>
+          </div>
+
+          <!-- ✅ Opción Emitir -->
+          <div
+            class="text-center p-6 sm:p-8 cursor-pointer transition-all duration-200 hover:bg-grayscaleL400/50"
+            [ngClass]="{
+              'border-b-4 border-successBase': selectedAction === 'emitir'
+            }"
+            (click)="selectAction('emitir')"
+          >
+            <h2
+              class="text-2xl font-bold mb-3"
+              [ngClass]="{
+                  'text-successBase': selectedAction === 'emitir',
+                  'text-grayscaleBlack': selectedAction !== 'emitir'
+                }"
+            >
+              Emitir
+            </h2>
+            <p class="text-base text-grayscaleD200 leading-relaxed">
+              Convierte tu cotización existente en póliza activa o crea una nueva desde cero.
+            </p>
+          </div>
+        </div>
+
+        <!-- ✅ Opciones para Emitir (solo se muestran cuando Emitir está seleccionado y no se ha elegido crear póliza nueva y no se muestra la tabla) -->
+        <div
+          *ngIf="selectedAction === 'emitir' && selectedEmitirOption !== 'poliza-nueva' && !showCotizacionesTable && !showCotizacionDetalle"
+          class="mt-8 sm:mt-12"
+        >
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+            <!-- ✅ Opción 1: Usar cotización existente -->
+            <div
+              class="bg-grayscaleWhite p-6 sm:p-8 rounded-lg shadow-sm border border-grayscaleL200 hover:shadow-md transition-shadow cursor-pointer"
+              (click)="onElegirCotizacion()"
+            >
+              <!-- Header con ícono -->
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-grayscaleBlack">Usar cotización existente</h3>
+                <div class="w-12 h-12 bg-primaryL100 rounded-lg flex items-center justify-center">
+                  <i class="fa-solid fa-file-search text-primaryBase text-xl"></i>
+                </div>
+              </div>
+
+              <!-- Descripción -->
+              <p class="text-base text-grayscaleD200 mb-6">Con esta opción puedes:</p>
+
+              <!-- Lista de beneficios -->
+              <ul class="space-y-2 mb-6">
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Convertir la <strong>cotización en póliza</strong>.</span
+                  >
+                </li>
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Usar <strong>datos ya validados</strong> y listos.</span
+                  >
+                </li>
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Elegir entre <strong>[#] cotizaciones</strong> disponibles.</span
+                  >
+                </li>
+              </ul>
+
+              <!-- Botón Elegir cotización - Estilo amarillo -->
+              <button 
+                class="w-full py-3 px-6 rounded-full font-semibold text-base flex items-center justify-center transition-all duration-200 hover:opacity-90"
+                style="background-color: #FFE16F; color: #038450;"
+                (click)="onElegirCotizacion()">
+                <i class="fa-solid fa-search mr-2"></i>
+                Elegir cotización
+              </button>
+            </div>
+
+            <!-- ✅ Opción 2: Crear una póliza nueva -->
+            <div
+              class="bg-grayscaleWhite p-6 sm:p-8 rounded-lg shadow-sm border border-grayscaleL200 hover:shadow-md transition-shadow cursor-pointer"
+              (click)="selectEmitirOption('poliza-nueva')"
+            >
+              <!-- Header con ícono -->
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-grayscaleBlack">Crear una póliza nueva</h3>
+                <div class="w-12 h-12 bg-successL100 rounded-lg flex items-center justify-center">
+                  <i class="fa-solid fa-file-plus text-successBase text-xl"></i>
+                </div>
+              </div>
+
+              <!-- Descripción -->
+              <p class="text-base text-grayscaleD200 mb-6">Con esta opción puedes:</p>
+
+              <!-- Lista de beneficios -->
+              <ul class="space-y-2 mb-6">
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Realizar proceso completo <strong>desde cero</strong>.</span
+                  >
+                </li>
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Atender clientes <strong>sin cotización</strong> previa.</span
+                  >
+                </li>
+                <li class="flex items-start">
+                  <span class="text-successBase mr-2 mt-1">•</span>
+                  <span class="text-sm text-grayscaleD100"
+                    >Seguir un <strong>proceso guiado</strong> paso a paso.</span
+                  >
+                </li>
+              </ul>
+
+              <!-- Botón Crear nueva emisión - Estilo amarillo -->
+              <button 
+                class="w-full py-3 px-6 rounded-full font-semibold text-base flex items-center justify-center transition-all duration-200 hover:opacity-90"
+                style="background-color: #FFE16F; color: #038450;"
+                (click)="onCrearNuevaEmision(); $event.stopPropagation();">
+                <i class="fa-solid fa-plus mr-2"></i>
+                Crear nueva emisión
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Línea separadora -->
+        <div class="border-t border-grayscaleL200 mt-6 sm:mt-8"></div>
+      </div>
+    </div>
+
+    <!-- ✅ Formulario principal (se muestra cuando no hay selección, se selecciona Cotizar, o se selecciona Emitir > Crear póliza nueva) -->
+    <div
+      *ngIf="!selectedAction || selectedAction === 'cotizar' || (selectedAction === 'emitir' && selectedEmitirOption === 'poliza-nueva')"
+    >
+      <!-- ✅ Elementos de imagen 2 - ANTES del título "Paso 1: Producto y Contrato para Emisión" - Solo visible cuando se selecciona Emitir -->
+      <div *ngIf="selectedAction === 'emitir'" class="mb-6 sm:mb-8">
+        <!-- ✅ Layout horizontal: mensaje a la izquierda, botón a la derecha -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+          <!-- ✅ Lado izquierdo: Título y descripción -->
+          <div class="text-center lg:text-left">
+            <h2 class="lib-tb-h5-bold text-grayscaleBlack mb-3">Emite una póliza nueva</h2>
+            <p class="lib-tb-body-medium text-grayscaleD200 max-w-xl">
+              Crea una póliza completamente nueva cuando no tienes cotización previa.
+            </p>
+          </div>
+
+          <!-- ✅ Lado derecho: Botón alineado horizontalmente -->
+          <div class="flex justify-center lg:justify-end lg:flex-shrink-0">
+            <button 
+              class="py-3 px-6 rounded-full font-semibold text-base flex items-center justify-center transition-all duration-200 hover:opacity-90 border-2"
+              style="background-color: transparent; color: #038450; border-color: #038450;"
+              (click)="onUsarCotizacionExistente()">
+              <i class="fa-solid fa-file-search mr-2"></i>
+              Usar cotización existente
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Header dinámico según la acción - CENTRADO como versión 15 -->
+      <div *ngIf="selectedAction" class="policy-input__header text-center mb-4 sm:mb-6 md:mb-8 w-full">
+        <h1 class="text-xl sm:text-2xl font-bold text-grayscaleBlack mb-2 px-2">
+          {{ getCurrentStepTitle() }}
+        </h1>
+        <p class="text-sm sm:text-base text-grayscaleD200 max-w-3xl mx-auto px-4">
+          {{ getCurrentStepDescription() }}
+        </p>
+      </div>
+
+      <!-- ✅ Mensaje de validación simple cuando no se ha seleccionado una opción -->
+      <div *ngIf="!selectedAction" class="mt-4">
+        <div class="validation-message">
+          <div class="validation-message__icon">
+            <i class="fa-solid fa-info-circle"></i>
+          </div>
+          <div class="validation-message__content">
+            <p class="validation-message__title">Selecciona una opción para continuar</p>
+            <p class="validation-message__description">
+              Selecciona una de las opciones disponibles para continuar con las actividades de
+              cotización y emisión.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Stepper de navegación - IGUAL A VERSIÓN 15 -->
+      <div *ngIf="isFormEnabled" class="policy-input__stepper mb-6 sm:mb-8 w-full">
+        <div class="stepper-v15">
+          <!-- Paso 1 -->
+          <div class="stepper-v15__step stepper-v15__step--has-line" 
+               [class.stepper-v15__step--active]="currentStep === 0" 
+               [class.stepper-v15__step--completed]="currentStep > 0"
+               (click)="goToStep(0)">
+            <div class="stepper-v15__circle">1</div>
+            <div class="stepper-v15__label">Producto y Contrato</div>
+          </div>
+          <!-- Paso 2 -->
+          <div class="stepper-v15__step stepper-v15__step--has-line" 
+               [class.stepper-v15__step--active]="currentStep === 1" 
+               [class.stepper-v15__step--completed]="currentStep > 1"
+               (click)="goToStep(1)">
+            <div class="stepper-v15__circle">2</div>
+            <div class="stepper-v15__label">Formulario</div>
+          </div>
+          <!-- Paso 3 (sin línea después) -->
+          <div class="stepper-v15__step" 
+               [class.stepper-v15__step--active]="currentStep === 2" 
+               [class.stepper-v15__step--completed]="currentStep > 2"
+               (click)="goToStep(2)">
+            <div class="stepper-v15__circle">3</div>
+            <div class="stepper-v15__label">Confirmación</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ OBLIGATORIO: Contenido de pasos con renderizado condicional - CENTRADO como versión 15 -->
+      <div *ngIf="isFormEnabled" class="policy-input__content max-w-4xl mx-auto">
+        <!-- ✅ Paso 1: Información Básica -->
+        <div
+          *ngIf="currentStep === 0"
+          class="policy-input__step policy-input__step--info bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200"
+        >
+          <!-- ✅ FILA 1: Tipo de producto + Clave del Intermediario -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+            <div class="form-group">
+              <label class="sb-ui-label">Tipo de producto</label>
+              <select class="sb-ui-select" 
+                      [(ngModel)]="tipoProducto" 
+                      (ngModelChange)="onTipoProductoChange($event)">
+                <option value="" disabled selected>Seleccione un producto</option>
+                <option value="grandes-beneficiarios">Grandes Beneficiarios</option>
+                <option value="particulares">Particulares</option>
+                <option value="estatales">Estatales</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="sb-ui-label">Clave del Intermediario</label>
+              <div class="input-with-list">
+                <input type="text"
+                       class="sb-ui-input"
+                       [class.sb-ui-input--error]="!claveIntermediario"
+                       list="clavesIntermediarioList"
+                       placeholder="Ingrese o seleccione una clave"
+                       [(ngModel)]="claveIntermediario"
+                       (ngModelChange)="onClaveIntermediarioChange($event)" />
+                <datalist id="clavesIntermediarioList">
+                  <option *ngFor="let clave of clavesIntermediario" [value]="clave.codigo">
+                    {{ clave.codigo }} - {{ clave.nombre }}
+                  </option>
+                </datalist>
+                <i class="fa-solid fa-chevron-down input-dropdown-icon"></i>
+              </div>
+              <span *ngIf="!claveIntermediario" class="field-error">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                La clave del intermediario es obligatoria
+              </span>
+              <!-- ✅ Mostrar nombre del intermediario si se encuentra -->
+              <div *ngIf="nombreIntermediario && claveIntermediario" class="nombre-resultado">
+                <i class="fa-solid fa-check-circle text-successBase mr-1"></i>
+                <strong>Intermediario:</strong> {{ nombreIntermediario }}
+              </div>
+              <small class="text-grayscaleD100 text-xs mt-1 flex items-center">
+                <i class="fa-solid fa-info-circle mr-1"></i>Seleccione de la lista o ingrese una clave manualmente
+              </small>
+            </div>
+          </div>
+
+          <!-- ✅ CAMPOS ADICIONALES: Solo visibles cuando se selecciona Grandes Beneficiarios -->
+          <div *ngIf="tipoProducto === 'grandes-beneficiarios'" class="campos-adicionales">
+            
+            <!-- FILA 2: Tipo Documento Asegurado + Número Documento Asegurado -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Tipo de Documento del Asegurado</label>
+                <select class="sb-ui-select"
+                        [class.sb-ui-select--error]="!tipoDocumentoAsegurado"
+                        [(ngModel)]="tipoDocumentoAsegurado"
+                        (ngModelChange)="onTipoDocumentoChange('asegurado')">
+                  <option value="" disabled selected>Seleccione el tipo de documento</option>
+                  <option value="NIT">NIT</option>
+                  <option value="CC">Cédula de Ciudadanía</option>
+                  <option value="CE">Cédula de Extranjería</option>
+                  <option value="PA">Pasaporte</option>
+                  <option value="TI">Tarjeta de Identidad</option>
+                </select>
+                <span *ngIf="!tipoDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El tipo de documento del asegurado es obligatorio
+                </span>
+                <!-- ✅ Formato según tipo de documento -->
+                <small *ngIf="tipoDocumentoAsegurado && documentValidationRules[tipoDocumentoAsegurado]" class="text-grayscaleD100 text-xs mt-1 flex items-center">
+                  <i class="fa-solid fa-info-circle mr-1"></i>{{ documentValidationRules[tipoDocumentoAsegurado].formato }}
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label class="sb-ui-label">Número de Documento del Asegurado</label>
+                <input type="text" 
+                       class="sb-ui-input"
+                       [class.sb-ui-input--error]="(formSubmitted && !numeroDocumentoAsegurado) || errorDocumentoAsegurado"
+                       [placeholder]="getPlaceholderDocumento(tipoDocumentoAsegurado)"
+                       [(ngModel)]="numeroDocumentoAsegurado"
+                       (ngModelChange)="validarDocumentoAsegurado()"
+                       [maxlength]="tipoDocumentoAsegurado === 'NIT' ? 11 : (documentValidationRules[tipoDocumentoAsegurado]?.max || 20)"
+                       (keypress)="tipoDocumentoAsegurado === 'PA' ? soloAlfanumerico($event) : soloNumeros($event)" />
+                <span *ngIf="formSubmitted && !numeroDocumentoAsegurado && !errorDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ getNombreDocumento(tipoDocumentoAsegurado) }} es obligatorio
+                </span>
+                <!-- ✅ Error de validación de formato -->
+                <span *ngIf="errorDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ errorDocumentoAsegurado }}
+                </span>
+                <!-- ✅ Mostrar nombre del Asegurado (mientras escribe) -->
+                <div *ngIf="buscandoAsegurado" class="nombre-resultado buscando">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Buscando...
+                </div>
+                <div *ngIf="nombreAsegurado && !buscandoAsegurado" class="nombre-resultado">
+                  <i class="fa-solid fa-check-circle text-successBase mr-1"></i>
+                  <strong>Asegurado:</strong> {{ nombreAsegurado }}
+                </div>
+              </div>
+            </div>
+
+            <!-- FILA 3: Tipo Documento Tomador + Número Documento Tomador -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Tipo de Documento del Tomador</label>
+                <select class="sb-ui-select"
+                        [class.sb-ui-select--error]="!tipoDocumentoTomador"
+                        [(ngModel)]="tipoDocumentoTomador"
+                        (ngModelChange)="onTipoDocumentoChange('tomador')">
+                  <option value="" disabled selected>Seleccione el tipo de documento</option>
+                  <option value="NIT">NIT</option>
+                  <option value="CC">Cédula de Ciudadanía</option>
+                  <option value="CE">Cédula de Extranjería</option>
+                  <option value="PA">Pasaporte</option>
+                  <option value="TI">Tarjeta de Identidad</option>
+                </select>
+                <span *ngIf="!tipoDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El tipo de documento del tomador es obligatorio
+                </span>
+                <!-- ✅ Formato según tipo de documento -->
+                <small *ngIf="tipoDocumentoTomador && documentValidationRules[tipoDocumentoTomador]" class="text-grayscaleD100 text-xs mt-1 flex items-center">
+                  <i class="fa-solid fa-info-circle mr-1"></i>{{ documentValidationRules[tipoDocumentoTomador].formato }}
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label class="sb-ui-label">Número de Documento del Tomador</label>
+                <input type="text" 
+                       class="sb-ui-input"
+                       [class.sb-ui-input--error]="(formSubmitted && !numeroDocumentoTomador) || errorDocumentoTomador"
+                       [placeholder]="getPlaceholderDocumento(tipoDocumentoTomador)"
+                       [(ngModel)]="numeroDocumentoTomador"
+                       (ngModelChange)="validarDocumentoTomador()"
+                       [maxlength]="tipoDocumentoTomador === 'NIT' ? 11 : (documentValidationRules[tipoDocumentoTomador]?.max || 20)"
+                       (keypress)="tipoDocumentoTomador === 'PA' ? soloAlfanumerico($event) : soloNumeros($event)" />
+                <span *ngIf="formSubmitted && !numeroDocumentoTomador && !errorDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ getNombreDocumento(tipoDocumentoTomador) }} es obligatorio
+                </span>
+                <!-- ✅ Error de validación de formato -->
+                <span *ngIf="errorDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ errorDocumentoTomador }}
+                </span>
+                <!-- ✅ Mostrar nombre del Tomador (mientras escribe) -->
+                <div *ngIf="buscandoTomador" class="nombre-resultado buscando">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Buscando...
+                </div>
+                <div *ngIf="nombreTomador && !buscandoTomador" class="nombre-resultado">
+                  <i class="fa-solid fa-check-circle text-successBase mr-1"></i>
+                  <strong>Tomador:</strong> {{ nombreTomador }}
+                </div>
+              </div>
+            </div>
+
+            <!-- FILA 4: Programas parametrizados - Solo se activa cuando hay info del asegurado -->
+            <div class="grid grid-cols-1 gap-6 mb-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Programas parametrizados</label>
+                <select class="sb-ui-select"
+                        [class.sb-ui-select--error]="nombreAsegurado && !programaParametrizado"
+                        [class.sb-ui-select--disabled]="!nombreAsegurado"
+                        [disabled]="!nombreAsegurado"
+                        [(ngModel)]="programaParametrizado">
+                  <option value="" disabled selected>{{ nombreAsegurado ? 'Seleccione un programa' : 'Complete la información del asegurado primero' }}</option>
+                  <option value="programa-a">Programa A - Construcción</option>
+                  <option value="programa-b">Programa B - Servicios</option>
+                  <option value="programa-c">Programa C - Consultoría</option>
+                  <option value="programa-d">Programa D - Tecnología</option>
+                </select>
+                <span *ngIf="nombreAsegurado && !programaParametrizado" class="field-error">
+                  <i class="fa-solid fa-exclamation-circle"></i>
+                  El programa parametrizado es obligatorio
+                </span>
+                <small *ngIf="!nombreAsegurado" class="text-grayscaleD100 text-xs mt-1 flex items-center">
+                  <i class="fa-solid fa-info-circle mr-1"></i>Ingrese la información del asegurado para habilitar este campo
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ CAMPOS ADICIONALES: Solo visibles cuando se selecciona Particulares o Estatales -->
+          <div *ngIf="tipoProducto === 'particulares' || tipoProducto === 'estatales'" class="campos-adicionales-particulares">
+            <!-- FILA: Tipo Documento Tomador + Número Documento Tomador -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Tipo de Documento del Tomador</label>
+                <select class="sb-ui-select"
+                        [class.sb-ui-select--error]="formSubmitted && !tipoDocumentoTomador"
+                        [(ngModel)]="tipoDocumentoTomador"
+                        (ngModelChange)="validarDocumentoTomador()">
+                  <option value="" disabled selected>Seleccione el tipo de documento</option>
+                  <option value="NIT">NIT</option>
+                  <option value="CC">Cédula de Ciudadanía</option>
+                  <option value="CE">Cédula de Extranjería</option>
+                  <option value="PA">Pasaporte</option>
+                  <option value="TI">Tarjeta de Identidad</option>
+                </select>
+                <span *ngIf="formSubmitted && !tipoDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El tipo de documento del tomador es obligatorio
+                </span>
+                <!-- Formato esperado -->
+                <small *ngIf="tipoDocumentoTomador && documentValidationRules[tipoDocumentoTomador]" class="text-grayscaleD100 text-xs mt-1 block">
+                  <i class="fa-solid fa-info-circle mr-1"></i>{{ documentValidationRules[tipoDocumentoTomador].formato }}
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label class="sb-ui-label">Número de Documento del Tomador</label>
+                <input type="text" 
+                       class="sb-ui-input"
+                       [class.sb-ui-input--error]="(formSubmitted && !numeroDocumentoTomador) || errorDocumentoTomador"
+                       [placeholder]="getPlaceholderDocumento(tipoDocumentoTomador)"
+                       [(ngModel)]="numeroDocumentoTomador"
+                       (ngModelChange)="validarDocumentoTomador()"
+                       [maxlength]="tipoDocumentoTomador === 'NIT' ? 11 : (documentValidationRules[tipoDocumentoTomador]?.max || 20)"
+                       (keypress)="tipoDocumentoTomador === 'PA' ? soloAlfanumerico($event) : soloNumeros($event)" />
+                <span *ngIf="formSubmitted && !numeroDocumentoTomador && !errorDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El número de documento del tomador es obligatorio
+                </span>
+                <!-- ✅ Error de validación de formato -->
+                <span *ngIf="errorDocumentoTomador" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ errorDocumentoTomador }}
+                </span>
+                <!-- ✅ Mostrar nombre del Tomador (mientras escribe) -->
+                <div *ngIf="buscandoTomador" class="nombre-resultado buscando">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Buscando...
+                </div>
+                <div *ngIf="nombreTomador && !buscandoTomador" class="nombre-resultado">
+                  <i class="fa-solid fa-check-circle text-successBase mr-1"></i>
+                  <strong>Tomador:</strong> {{ nombreTomador }}
+                </div>
+              </div>
+            </div>
+
+            <!-- FILA: Tipo Documento Asegurado + Número Documento Asegurado -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+              <div class="form-group">
+                <label class="sb-ui-label">Tipo de Documento del Asegurado</label>
+                <select class="sb-ui-select"
+                        [class.sb-ui-select--error]="formSubmitted && !tipoDocumentoAsegurado"
+                        [(ngModel)]="tipoDocumentoAsegurado"
+                        (ngModelChange)="validarDocumentoAsegurado()">
+                  <option value="" disabled selected>Seleccione el tipo de documento</option>
+                  <option value="NIT">NIT</option>
+                  <option value="CC">Cédula de Ciudadanía</option>
+                  <option value="CE">Cédula de Extranjería</option>
+                  <option value="PA">Pasaporte</option>
+                  <option value="TI">Tarjeta de Identidad</option>
+                </select>
+                <span *ngIf="formSubmitted && !tipoDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El tipo de documento del asegurado es obligatorio
+                </span>
+                <!-- Formato esperado -->
+                <small *ngIf="tipoDocumentoAsegurado && documentValidationRules[tipoDocumentoAsegurado]" class="text-grayscaleD100 text-xs mt-1 block">
+                  <i class="fa-solid fa-info-circle mr-1"></i>{{ documentValidationRules[tipoDocumentoAsegurado].formato }}
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label class="sb-ui-label">Número de Documento del Asegurado</label>
+                <input type="text" 
+                       class="sb-ui-input"
+                       [class.sb-ui-input--error]="(formSubmitted && !numeroDocumentoAsegurado) || errorDocumentoAsegurado"
+                       [placeholder]="getPlaceholderDocumento(tipoDocumentoAsegurado)"
+                       [(ngModel)]="numeroDocumentoAsegurado"
+                       (ngModelChange)="validarDocumentoAsegurado()"
+                       [maxlength]="tipoDocumentoAsegurado === 'NIT' ? 11 : (documentValidationRules[tipoDocumentoAsegurado]?.max || 20)"
+                       (keypress)="tipoDocumentoAsegurado === 'PA' ? soloAlfanumerico($event) : soloNumeros($event)" />
+                <span *ngIf="formSubmitted && !numeroDocumentoAsegurado && !errorDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  El número de documento del asegurado es obligatorio
+                </span>
+                <!-- ✅ Error de validación de formato -->
+                <span *ngIf="errorDocumentoAsegurado" class="field-error">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  {{ errorDocumentoAsegurado }}
+                </span>
+                <!-- ✅ Mostrar nombre del Asegurado (mientras escribe) -->
+                <div *ngIf="buscandoAsegurado" class="nombre-resultado buscando">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Buscando...
+                </div>
+                <div *ngIf="nombreAsegurado && !buscandoAsegurado" class="nombre-resultado">
+                  <i class="fa-solid fa-check-circle text-successBase mr-1"></i>
+                  <strong>Asegurado:</strong> {{ nombreAsegurado }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ CARGA DE CONTRATO -->
+          <div class="policy-input__file-upload mt-4">
+            <div class="bg-grayscaleL400 p-6 rounded-lg border border-grayscaleL200">
+              <h4 class="text-base font-semibold text-grayscaleBlack mb-4">
+                <i class="fa-solid fa-cloud-arrow-up text-primaryBase mr-2"></i>
+                Carga de contrato
+              </h4>
+              <p class="text-sm text-grayscaleD200 mb-4 text-center">
+                Peso máximo por cada archivo: 10 MB. Formatos permitidos: PDF, Word, Excel.
+              </p>
+              
+              <!-- Área de carga de archivos -->
+              <div class="file-upload-area" (click)="triggerFileInput()" *ngIf="!isUploading && !selectedFileName">
+                <input type="file" 
+                       #fileInput 
+                       hidden 
+                       accept=".pdf,.doc,.docx,.xls,.xlsx"
+                       (change)="onFileSelected($event)" />
+                <div class="file-upload-area__content">
+                  <i class="fa-solid fa-cloud-arrow-up file-upload-area__icon"></i>
+                  <p class="file-upload-area__text">Seleccionar archivo</p>
+                  <p class="file-upload-area__hint">
+                    Peso máximo por cada archivo: 10 MB. Formatos permitidos: PDF, Word, Excel.
+                  </p>
+                </div>
+              </div>
+
+              <!-- ✅ Estado de subiendo archivo - Estilo Seguros Bolívar UI -->
+              <div *ngIf="isUploading" class="file-uploading-container">
+                <div class="file-uploading-header">
+                  <h3 class="file-uploading-title">
+                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
+                    Subiendo Archivo...
+                  </h3>
+                  <p class="file-uploading-subtitle">Por favor espera mientras se carga tu archivo</p>
+                </div>
+                
+                <div class="file-uploading-card">
+                  <div class="file-uploading-info">
+                    <div class="file-uploading-spinner">
+                      <i class="fa-solid fa-spinner fa-spin"></i>
+                    </div>
+                    <div class="file-uploading-details">
+                      <p class="file-uploading-name">{{ selectedFile?.name || 'documento.pdf' }}</p>
+                      <p class="file-uploading-progress-text">Subiendo... {{ uploadProgress }}%</p>
+                    </div>
+                    <button class="file-uploading-cancel" (click)="cancelUpload()">
+                      <i class="fa-solid fa-times"></i>
+                    </button>
+                  </div>
+                  <div class="file-uploading-progress-bar">
+                    <div class="file-uploading-progress-fill" [style.width.%]="uploadProgress"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ✅ Archivo seleccionado/subido exitosamente -->
+              <div *ngIf="selectedFileName && !isUploading" class="file-uploaded-container">
+                <div class="file-uploaded-card">
+                  <div class="file-uploaded-info">
+                    <div class="file-uploaded-icon">
+                      <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <div class="file-uploaded-details">
+                      <p class="file-uploaded-name">{{ selectedFileName }}</p>
+                      <p class="file-uploaded-status">
+                        <i class="fa-solid fa-check-circle mr-1"></i>
+                        Archivo cargado correctamente
+                      </p>
+                    </div>
+                    <button class="file-uploaded-remove" (click)="removeFile(); $event.stopPropagation()">
+                      <i class="fa-solid fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Mensaje de error -->
+              <div *ngIf="contractFileError && !selectedFileName" class="mt-3 text-center">
+                <span class="text-errorBase text-sm">
+                  El archivo de contrato es obligatorio
+                </span>
+              </div>
+
+              <!-- Botón Agregar - AMARILLO con texto verde como versión 15 -->
+              <div class="mt-4 text-center">
+                <button class="btn-agregar" (click)="addContract()">
+                  Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ Información básica del contrato -->
+          <div class="policy-input__contract-info mt-6">
+            <div class="bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200">
+              <h4 class="text-base font-semibold text-grayscaleBlack mb-2">
+                <i class="fa-solid fa-info-circle text-primaryBase mr-2"></i>
+                Información básica del contrato
+              </h4>
+              <p class="text-sm text-grayscaleD200 leading-relaxed">
+                Elige el producto que necesitas y sube el contrato (PDF o Word). Extraemos los datos
+                automáticamente para agilizar tu gestión.
+              </p>
+            </div>
+          </div>
+
+          <!-- Botón Siguiente - AMARILLO con texto verde como versión 15 -->
+          <div class="policy-input__actions mt-6 sm:mt-8">
+            <div class="flex justify-end">
+              <button class="btn-siguiente"
+                      (click)="nextStep()">
+                Siguiente
+                <i class="fa-solid fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Paso 2: Layout FULL WIDTH con Stepper -->
+        <div *ngIf="currentStep === 1" class="step2-wrapper">
+          
+          <!-- HEADER: Progreso + Cupo -->
+          <div class="step2-header">
+            <div class="step2-progress">
+              <span class="step2-progress__label">Progreso: {{ subPasoActual }}/8</span>
+              <div class="step2-progress__bar">
+                <div class="step2-progress__fill" [style.width.%]="(subPasoActual / 8) * 100"></div>
+              </div>
+            </div>
+            <div class="step2-cupo">
+              <i class="fa-solid fa-credit-card text-primaryBase"></i>
+              <span>Cupo: <strong class="text-primaryBase">$100.000.000</strong></span>
+            </div>
+          </div>
+
+          <!-- LAYOUT: Stepper + Contenido -->
+          <div class="step2-layout">
+            <!-- STEPPER VERTICAL -->
+            <nav class="step2-stepper">
+              <button 
+                *ngFor="let sp of subPasos; let last = last"
+                class="step2-stepper__item"
+                [class.step2-stepper__item--active]="subPasoActual === sp.num"
+                [class.step2-stepper__item--done]="subPasoActual > sp.num"
+                (click)="irASubPaso(sp.num)"
+              >
+                <div class="step2-stepper__circle">
+                  <span *ngIf="subPasoActual <= sp.num">{{ sp.num }}</span>
+                  <i *ngIf="subPasoActual > sp.num" class="fa-solid fa-check"></i>
+                </div>
+                <span class="step2-stepper__name">{{ sp.nombre }}</span>
+                <div class="step2-stepper__line" *ngIf="!last"></div>
+              </button>
+            </nav>
+
+            <!-- CONTENIDO - ANCHO COMPLETO -->
+            <main class="step2-main">
+
+              <!-- ========== SECCIÓN 1: Datos Generales ========== -->
+              <div *ngIf="subPasoActual == 1" class="step2-seccion">
+                <div class="section-block">
+                  <div class="section-block__header">
+                    <div class="icon-ring-bicolor">
+                      <i class="fa-solid fa-file-alt"></i>
+                    </div>
+                    <h3 class="section-block__title">Datos Generales Póliza</h3>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group md:col-span-2">
+                      <label class="sb-ui-label">Tipo de producto</label>
+                      <select class="sb-ui-select">
+                        <option value="">Seleccione</option>
+                        <option value="grandes-beneficiarios">Grandes Beneficiarios</option>
+                        <option value="particulares" selected>Particulares</option>
+                        <option value="estatales">Estatales</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Tipo Documento Tomador</label>
+                      <select class="sb-ui-select">
+                        <option value="NIT" selected>NIT</option>
+                        <option value="CC">Cédula</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Número Documento</label>
+                      <input type="text" class="sb-ui-input" value="900.123.456-7" />
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Nombre Tomador</label>
+                      <input type="text" class="sb-ui-input" value="Empresa Ejemplo S.A.S." />
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Dirección</label>
+                      <input type="text" class="sb-ui-input" value="Calle 123 #45-67" />
+                    </div>
+                  </div>
+                </div>
+                <div class="step2-nav">
+                  <button class="btn-anterior" (click)="previousStep()"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+                  <button class="btn-siguiente" (click)="irASubPaso(2)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+              </div>
+
+              <!-- ========== SECCIÓN 2: Agentes ========== -->
+              <div *ngIf="subPasoActual == 2" class="step2-seccion">
+                <div class="section-block">
+                  <div class="section-block__header">
+                    <div class="icon-ring-bicolor">
+                      <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <h3 class="section-block__title">Agentes</h3>
+                  </div>
+                  
+                  <!-- Datos del Agente Líder -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="form-group">
+                      <label class="sb-ui-label">Líder Clave</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese la líder clave" [(ngModel)]="liderClave" />
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Nombres</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese los nombres del agente" [(ngModel)]="liderNombre" />
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Participación</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese el porcentaje de participación" [(ngModel)]="liderParticipacion" />
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Porc. Comisión Pactada</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese el porcentaje de comisión" [(ngModel)]="liderComisionPactada" />
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Forma Actuación</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese la forma de actuación" [(ngModel)]="liderFormaActuacion" />
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Convenio</label>
+                      <input type="text" class="sb-ui-input" placeholder="Ingrese el convenio" [(ngModel)]="liderConvenio" />
+                    </div>
+                  </div>
+                  
+                  <!-- Botón Adicionar Agente -->
+                  <button class="btn-adicionar-agente mb-4" (click)="abrirModalAgente()">
+                    <i class="fa-solid fa-plus"></i>
+                    Adicionar Agente
+                  </button>
+                  
+                  <!-- Tabla de Agentes Adicionales -->
+                  <div *ngIf="agentesAdicionales.length > 0" class="table-agentes mt-4">
+                    <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--bordered w-full">
+                      <thead class="bg-primaryBase">
+                        <tr>
+                          <th class="text-white font-semibold px-3 py-2 cursor-pointer hover:bg-green-700 transition-colors" (click)="ordenarAgentes('clave')">
+                            Clave <i class="fa-solid ml-1" [ngClass]="getSortIcon('clave')"></i>
+                          </th>
+                          <th class="text-white font-semibold px-3 py-2 cursor-pointer hover:bg-green-700 transition-colors" (click)="ordenarAgentes('formaActuacion')">
+                            Forma Actuación <i class="fa-solid ml-1" [ngClass]="getSortIcon('formaActuacion')"></i>
+                          </th>
+                          <th class="text-white font-semibold px-3 py-2 text-center cursor-pointer hover:bg-green-700 transition-colors" (click)="ordenarAgentes('convenio')">
+                            Convenio <i class="fa-solid ml-1" [ngClass]="getSortIcon('convenio')"></i>
+                          </th>
+                          <th class="text-white font-semibold px-3 py-2 cursor-pointer hover:bg-green-700 transition-colors" (click)="ordenarAgentes('nombre')">
+                            Nombre <i class="fa-solid ml-1" [ngClass]="getSortIcon('nombre')"></i>
+                          </th>
+                          <th class="text-white font-semibold px-3 py-2 text-center cursor-pointer hover:bg-green-700 transition-colors" (click)="ordenarAgentes('participacion')">
+                            %Participación <i class="fa-solid ml-1" [ngClass]="getSortIcon('participacion')"></i>
+                          </th>
+                          <th class="text-white font-semibold px-3 py-2 text-center">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let agente of agentesAdicionales; let i = index">
+                          <td class="px-3 py-2">{{ agente.clave }}</td>
+                          <td class="px-3 py-2">{{ agente.formaActuacion }}</td>
+                          <td class="px-3 py-2 text-center">{{ agente.convenio }}</td>
+                          <td class="px-3 py-2 font-medium">{{ agente.nombre }}</td>
+                          <td class="px-3 py-2 text-center font-semibold">%{{ agente.participacion }}.00</td>
+                          <td class="px-3 py-2 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                              <button class="action-btn-circle action-btn-circle--edit" (click)="editarAgente(i)" title="Editar">
+                                <i class="fa-solid fa-pencil"></i>
+                              </button>
+                              <button class="action-btn-circle action-btn-circle--delete" (click)="eliminarAgente(i)" title="Eliminar">
+                                <i class="fa-solid fa-xmark"></i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="step2-nav">
+                  <button class="btn-anterior" (click)="irASubPaso(1)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+                  <button class="btn-siguiente" (click)="irASubPaso(3)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+              </div>
+
+              <!-- ========== SECCIÓN 3: Ubicación ========== -->
+              <div *ngIf="subPasoActual == 3" class="step2-seccion">
+                <div class="section-block">
+                  <div class="section-block__header">
+                    <div class="icon-ring-bicolor">
+                      <i class="fa-solid fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="section-block__title">Ubicación del Riesgo</h3>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                      <label class="sb-ui-label">Departamento</label>
+                      <select class="sb-ui-select">
+                        <option value="cundinamarca" selected>Cundinamarca</option>
+                        <option value="antioquia">Antioquia</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Ciudad</label>
+                      <select class="sb-ui-select">
+                        <option value="bogota" selected>Bogotá</option>
+                        <option value="medellin">Medellín</option>
+                      </select>
+                    </div>
+                    <div class="form-group md:col-span-2">
+                      <label class="sb-ui-label">Dirección del Riesgo</label>
+                      <input type="text" class="sb-ui-input" placeholder="Dirección completa" />
+                    </div>
+                  </div>
+                </div>
+                <div class="step2-nav">
+                  <button class="btn-anterior" (click)="irASubPaso(2)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+                  <button class="btn-siguiente" (click)="irASubPaso(4)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+              </div>
+
+              <!-- ========== SECCIÓN 4: Datos Adicionales ========== -->
+              <div *ngIf="subPasoActual == 4" class="step2-seccion">
+                <div class="section-block">
+                  <div class="section-block__header">
+                    <div class="icon-ring-bicolor">
+                      <i class="fa-solid fa-file-circle-plus"></i>
+                    </div>
+                    <h3 class="section-block__title">Datos Adicionales</h3>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                      <label class="sb-ui-label">Tipo Contragarantía</label>
+                      <select class="sb-ui-select" [(ngModel)]="tipoContragarantia">
+                        <option value="">Seleccione</option>
+                        <option value="10">10 - CERRADA</option>
+                        <option value="20">20 - ABIERTA</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Número Contragarantía</label>
+                      <input type="text" class="sb-ui-input" [(ngModel)]="numeroContragarantia" />
+                    </div>
+                  </div>
+                </div>
+                <div class="step2-nav">
+                  <button class="btn-anterior" (click)="irASubPaso(3)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+                  <button class="btn-siguiente" (click)="irASubPaso(5)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+              </div>
+
+              <!-- ========== SECCIÓN 5: Coaseguro ========== -->
+              <div *ngIf="subPasoActual == 5" class="step2-seccion">
+                <div class="section-block">
+                  <div class="section-block__header">
+                    <div class="icon-ring-bicolor">
+                      <i class="fa-solid fa-handshake"></i>
+                    </div>
+                    <h3 class="section-block__title">Coaseguro</h3>
+                  </div>
+                  
+                  <!-- Tipo Coaseguro - Radio Buttons -->
+                  <div class="form-group mb-4">
+                    <label class="sb-ui-label"><span class="text-red-500">*</span> Tipo Coaseguro</label>
+                    <div class="flex flex-wrap gap-6 mt-2">
+                      <label class="radio-option">
+                        <input type="radio" name="tipoCoaseguro" value="sin-coaseguro" [(ngModel)]="tipoCoaseguro" (ngModelChange)="onTipoCoaseguroChange()">
+                        <span class="radio-option__checkmark"></span>
+                        <span class="radio-option__label">Sin Coaseguro</span>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="tipoCoaseguro" value="cedido" [(ngModel)]="tipoCoaseguro" (ngModelChange)="onTipoCoaseguroChange()">
+                        <span class="radio-option__checkmark"></span>
+                        <span class="radio-option__label">Cedido</span>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="tipoCoaseguro" value="aceptado" [(ngModel)]="tipoCoaseguro" (ngModelChange)="onTipoCoaseguroChange()">
+                        <span class="radio-option__checkmark"></span>
+                        <span class="radio-option__label">Aceptado</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Coaseguro Cedido -->
+                  <div *ngIf="tipoCoaseguro === 'cedido'" class="coaseguro-subsection mt-4">
+                    <div class="coaseguro-subsection__header">
+                      <span>Coaseguro Cedido</span>
+                    </div>
+                    <div class="coaseguro-subsection__body">
+                      <button class="btn-adicionar-agente mb-4" (click)="abrirModalCoaseguroCedido()">
+                        <i class="fa-solid fa-plus"></i>
+                        Adicionar Coaseguro Cedido
+                      </button>
+                      
+                      <!-- Tabla de Coaseguros Cedidos -->
+                      <div *ngIf="coasegurosCedidos.length > 0" class="coaseguros-table-wrapper mt-4">
+                        <div class="coaseguros-table-scroll">
+                          <table class="coaseguros-table-full">
+                            <thead>
+                              <tr>
+                                <th (click)="sortCoasegurosCedidos('coaseguradora')">
+                                  Coaseguradora <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('coaseguradora')"></i>
+                                </th>
+                                <th class="text-center" (click)="sortCoasegurosCedidos('participacion')">
+                                  %Part. <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('participacion')"></i>
+                                </th>
+                                <th class="text-center" (click)="sortCoasegurosCedidos('numeroPol')">
+                                  N° Póliza <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('numeroPol')"></i>
+                                </th>
+                                <th class="text-center" (click)="sortCoasegurosCedidos('certificado')">
+                                  Certificado <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('certificado')"></i>
+                                </th>
+                                <th class="text-center">Acciones</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let coaseguro of coasegurosCedidosPaginados; let i = index">
+                                <td>{{ coaseguro.coaseguradora }}</td>
+                                <td class="text-center">
+                                  <span *ngIf="coaseguro.participacion">%{{ coaseguro.participacion | number:'1.2-2' }}</span>
+                                </td>
+                                <td class="text-center">{{ coaseguro.numeroPol }}</td>
+                                <td class="text-center">{{ coaseguro.certificado }}</td>
+                                <td class="text-center">
+                                  <div class="action-btns" *ngIf="!coaseguro.esDefecto">
+                                    <button class="btn-edit" (click)="editarCoaseguroCedido(coaseguro.indexOriginal)" title="Editar">
+                                      <i class="fa-solid fa-pencil"></i>
+                                    </button>
+                                    <button class="btn-delete" (click)="eliminarCoaseguroCedido(coaseguro.indexOriginal)" title="Eliminar">
+                                      <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Coaseguro Aceptado -->
+                  <div *ngIf="tipoCoaseguro === 'aceptado'" class="coaseguro-subsection mt-4">
+                    <div class="coaseguro-subsection__header">
+                      <span>Coaseguro Aceptado</span>
+                    </div>
+                    <div class="coaseguro-subsection__body">
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                          <label class="sb-ui-label"><span class="text-red-500">*</span> Coaseguradora</label>
+                          <select class="sb-ui-select" [(ngModel)]="coaseguroAceptadoCoaseguradora">
+                            <option value="" disabled selected>Seleccione una opción</option>
+                            <option *ngFor="let c of listaCoaseguradoras" [value]="c.nombre">{{ c.nombre }}</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label class="sb-ui-label"><span class="text-red-500">*</span> Número Póliza</label>
+                          <input type="text" class="sb-ui-input" placeholder="Ingrese número de póliza" [(ngModel)]="coaseguroAceptadoNumeroPol" />
+                        </div>
+                        <div class="form-group">
+                          <label class="sb-ui-label">Certificado Modifica</label>
+                          <input type="text" class="sb-ui-input" placeholder="Ingrese certificado" [(ngModel)]="coaseguroAceptadoCertificado" />
+                        </div>
+                        <div class="form-group">
+                          <label class="sb-ui-label">Participación Bolívar</label>
+                          <div class="input-with-suffix">
+                            <input type="number" class="sb-ui-input" [(ngModel)]="coaseguroAceptadoParticipacion" />
+                            <span class="input-suffix">%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="step2-nav">
+                  <button class="btn-anterior" (click)="irASubPaso(4)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+                  <button class="btn-siguiente" (click)="irASubPaso(6)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+              </div>
+
+              <!-- ========== SECCIÓN 6: Detalles del Contrato ========== -->
+              <div *ngIf="subPasoActual == 6" class="step2-seccion">
+                <div class="section-block">
+                  <div class="section-block__header">
+                    <div class="icon-ring-bicolor">
+                      <i class="fa-solid fa-file-contract"></i>
+                    </div>
+                    <h3 class="section-block__title">Detalles del Contrato</h3>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                      <label class="sb-ui-label">Tipo de contrato</label>
+                      <select class="sb-ui-select">
+                        <option value="" disabled>Seleccione</option>
+                        <option value="obra" selected>Contrato de Obra</option>
+                        <option value="suministro">Contrato de Suministro</option>
+                        <option value="servicios">Prestación de Servicios</option>
+                        <option value="consultoria">Consultoría</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Número de contrato</label>
+                      <input type="text" class="sb-ui-input bg-grayscaleL400" value="CONTRATO-SIM-789" readonly />
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Moneda</label>
+                      <select class="sb-ui-select">
+                        <option value="COP" selected>COP</option>
+                        <option value="USD">USD</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Valor del Contrato</label>
+                      <div class="flex items-center gap-2">
+                        <input type="text" class="sb-ui-input flex-1" value="150.000.000" />
+                        <button class="btn-minus">−</button>
+                        <button class="btn-plus">+</button>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <app-sb-calendar
+                        label="Fecha Inicio del Contrato"
+                        placeholder="Seleccione fecha de inicio"
+                        icon="fa-solid fa-calendar-alt"
+                        [(ngModel)]="fechaInicioContrato"
+                        (dateChange)="onFechaChange('inicio', $event)">
+                      </app-sb-calendar>
+                    </div>
+                    <div class="form-group">
+                      <app-sb-calendar
+                        label="Fecha Fin del Contrato"
+                        placeholder="Seleccione fecha de fin"
+                        icon="fa-solid fa-calendar-check"
+                        [(ngModel)]="fechaFinContrato"
+                        (dateChange)="onFechaChange('fin', $event)">
+                      </app-sb-calendar>
+                    </div>
+                    <div class="form-group">
+                      <label class="sb-ui-label">Duración del Contrato</label>
+                      <input type="text" class="sb-ui-input bg-grayscaleL400" value="12 meses" readonly />
+                    </div>
+                    <div class="form-group md:col-span-2">
+                      <label class="sb-ui-label">Objeto del contrato</label>
+                      <textarea class="sb-ui-input h-24 resize-none">Prestación de servicios de consultoría en cumplimiento normativo y asesoría legal para la implementación de políticas de cumplimiento empresarial, incluyendo la elaboración de manuales de procedimientos.</textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="step2-nav">
+                  <button class="btn-anterior" (click)="irASubPaso(5)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+                  <button class="btn-siguiente" (click)="irASubPaso(7)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+              </div>
+
+              <!-- ========== SECCIÓN 7: Coberturas ========== -->
+              <div *ngIf="subPasoActual == 7" class="step2-seccion">
+                <div class="mb-4">
+                  <h3 class="section-title-3d">
+                    <i class="fa-solid fa-shield-check text-primaryBase"></i>
+                    Coberturas Cumplimiento
+                  </h3>
+                  <div class="coberturas-header">
+                    <span class="coberturas-count">{{ coberturasCumplimiento.length }} elementos encontrados</span>
+                    <div class="coberturas-actions">
+                      <button class="btn-limpiar" (click)="limpiarSeleccionCoberturas()">
+                        <i class="fa-solid fa-times"></i> Limpiar
+                      </button>
+                      <button class="btn-actualizar" (click)="actualizarCoberturas()">
+                        <i class="fa-solid fa-sync-alt"></i> Actualizar
+                      </button>
+                      <button class="btn-agregar" (click)="guardarCoberturas()">
+                        <i class="fa-solid fa-save"></i> Guardar
+                      </button>
+                    </div>
+                  </div>
+                  <div class="table-container overflow-x-auto">
+                    <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--compact">
+                      <thead>
+                        <tr>
+                          <th class="text-center" style="width: 50px;">
+                            <input type="checkbox" class="sb-ui-checkbox" (change)="toggleTodasCoberturas($event)" />
+                          </th>
+                          <th>Coberturas</th>
+                          <th class="text-center">% Asegurado</th>
+                          <th class="text-right">Valor Asegurado</th>
+                          <th class="text-center">Tasa</th>
+                          <th class="text-center">Fecha Inicio</th>
+                          <th class="text-center">Tiempo Adicional</th>
+                          <th class="text-center">Fecha Vencimiento</th>
+                          <th class="text-right">Prima</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let cob of coberturasCumplimiento" [class.selected]="cob.seleccionada">
+                          <td class="text-center">
+                            <input type="checkbox" class="sb-ui-checkbox" [checked]="cob.seleccionada" (change)="toggleCobertura(cob)" />
+                          </td>
+                          <td class="font-medium">{{ cob.nombre }}</td>
+                          <td class="text-center">{{ cob.porcentaje }}%</td>
+                          <td class="text-right font-semibold">{{ formatCurrency(cob.valorAsegurado) }}</td>
+                          <td class="text-center">%</td>
+                          <td class="text-center">{{ cob.fechaInicio }}</td>
+                          <td class="text-center">{{ cob.tiempoAdicional }}</td>
+                          <td class="text-center">{{ cob.fechaVencimiento }}</td>
+                          <td class="text-right font-semibold" [class.text-primaryBase]="cob.seleccionada">{{ formatCurrency(cob.prima) }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- Total Prima Seleccionada -->
+                  <div class="coberturas-total-section" *ngIf="totalPrimaSeleccionada > 0">
+                    <div class="total-prima-box">
+                      <i class="fa-solid fa-calculator"></i>
+                      <span class="total-prima-label">Total Prima Seleccionada:</span>
+                      <span class="total-prima-value">{{ formatCurrency(totalPrimaSeleccionada) }}</span>
+                    </div>
+                    <span class="coberturas-seleccionadas-count">
+                      ({{ getCoberturasSeleccionadasCount() }} coberturas seleccionadas)
+                    </span>
+                  </div>
+                </div>
+                <div class="step2-nav">
+                  <button class="btn-anterior" (click)="irASubPaso(6)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+                  <button class="btn-siguiente" (click)="irASubPaso(8)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+              </div>
+
+              <!-- ========== SECCIÓN 8: Responsabilidad Civil ========== -->
+              <div *ngIf="subPasoActual == 8" class="step2-seccion">
+                <div class="mb-6">
+                  <div class="flex items-center mb-4">
+                    <input type="checkbox" [checked]="isRcSectionEnabled" (change)="onRcSectionToggle($event)" class="w-5 h-5 mr-3" />
+                    <div class="icon-ring-bicolor">
+                      <i class="fa-solid fa-file-contract"></i>
+                    </div>
+                    <h3 class="flex items-center gap-2 text-lg font-semibold text-grayscaleBlack ml-2">
+                      Habilitar Responsabilidad Civil
+                    </h3>
+                  </div>
+
+                  <!-- Acordeón Detalles RC y Coberturas -->
+                  <div *ngIf="isRcSectionEnabled" class="border border-grayscaleL200 rounded-lg">
+                    <div class="bg-grayscaleL400 p-4 flex items-center justify-between cursor-pointer" (click)="toggleRcAccordion()">
+                      <span class="font-semibold flex items-center gap-2">
+                        <div class="icon-ring-bicolor">
+                          <i class="fa-solid fa-file-alt"></i>
+                        </div>
+                        Detalles RC y Coberturas
+                      </span>
+                      <i class="fa-solid" [class.fa-chevron-up]="rcAccordionOpen" [class.fa-chevron-down]="!rcAccordionOpen"></i>
+                    </div>
+
+                    <div *ngIf="rcAccordionOpen" class="p-4">
+                      <!-- Fechas RC -->
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="form-group">
+                          <app-sb-calendar
+                            label="Fecha Inicio RC"
+                            placeholder="Seleccione fecha de inicio"
+                            icon="fa-solid fa-calendar-alt"
+                            [(ngModel)]="fechaInicioRC"
+                            (dateChange)="onFechaChange('inicioRC', $event)">
+                          </app-sb-calendar>
+                        </div>
+                        <div class="form-group">
+                          <app-sb-calendar
+                            label="Fecha Fin RC"
+                            placeholder="Seleccione fecha de fin"
+                            icon="fa-solid fa-calendar-check"
+                            [(ngModel)]="fechaFinRC"
+                            (dateChange)="onFechaChange('finRC', $event)">
+                          </app-sb-calendar>
+                        </div>
+                      </div>
+
+                      <!-- Objeto del Contrato RC -->
+                      <div class="form-group mb-6">
+                        <label class="sb-ui-label flex items-center gap-2">
+                          <i class="fa-solid fa-file-alt text-primaryBase"></i>
+                          Objeto del Contrato cumplimiento-Para RC
+                        </label>
+                        <textarea class="sb-ui-input h-20 resize-none bg-grayscaleL400" readonly>Objeto del contrato de Responsabilidad Civil predefinido y no editable, basado en las condiciones generales de la póliza.</textarea>
+                      </div>
+
+                      <!-- Actividad económica -->
+                      <div class="form-group mb-6">
+                        <label class="sb-ui-label flex items-center gap-2">
+                          <i class="fa-solid fa-briefcase text-primaryBase"></i>
+                          Actividad económica contrato RC
+                        </label>
+                        <input type="text" class="sb-ui-input bg-grayscaleL400" value="Actividades de consultoría de gestión" readonly />
+                      </div>
+
+                      <!-- Coberturas RC -->
+                      <h4 class="section-title-3d">
+                        <i class="fa-solid fa-shield-check text-primaryBase"></i>
+                        Coberturas RC
+                      </h4>
+                      <div class="coberturas-header">
+                        <span class="coberturas-count">11 elementos encontrados</span>
+                        <div class="coberturas-actions">
+                          <button class="text-primaryBase hover:underline">× Limpiar</button>
+                          <button class="text-primaryBase hover:underline">↻ Actualizar</button>
+                          <button class="btn-agregar">Guardar</button>
+                        </div>
+                      </div>
+                      <div class="overflow-x-auto">
+                        <table class="w-full border-collapse text-sm">
+                          <thead>
+                            <tr class="bg-grayscaleL400">
+                              <th class="p-2 text-center font-semibold">☑</th>
+                              <th class="p-2 text-left font-semibold">Coberturas RC</th>
+                              <th class="p-2 text-center font-semibold">% Aseg.</th>
+                              <th class="p-2 text-right font-semibold">Valor Aseg.</th>
+                              <th class="p-2 text-center font-semibold">Tasa</th>
+                              <th class="p-2 text-right font-semibold">Prima</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr class="border-b border-grayscaleL200">
+                              <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4" /></td>
+                              <td class="p-2">PREDIOS LABOR.Y OPERACIO/PLO</td>
+                              <td class="p-2 text-center">100%</td>
+                              <td class="p-2 text-right">$150,000,000</td>
+                              <td class="p-2 text-center">2%</td>
+                              <td class="p-2 text-right font-semibold">$3,000,000</td>
+                            </tr>
+                            <tr class="border-b border-grayscaleL200">
+                              <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4" /></td>
+                              <td class="p-2">PATRONAL PERSONA</td>
+                              <td class="p-2 text-center">100%</td>
+                              <td class="p-2 text-right">$150,000,000</td>
+                              <td class="p-2 text-center">1.85%</td>
+                              <td class="p-2 text-right font-semibold">$2,775,000</td>
+                            </tr>
+                            <tr class="border-b border-grayscaleL200 bg-yellow-50">
+                              <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4" checked /></td>
+                              <td class="p-2">PATRONAL VIGENCIA</td>
+                              <td class="p-2 text-center">100%</td>
+                              <td class="p-2 text-right">$150,000,000</td>
+                              <td class="p-2 text-center">1.9%</td>
+                              <td class="p-2 text-right font-semibold">$2,925,000</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="step2-nav">
+                  <button class="btn-anterior" (click)="irASubPaso(7)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+                  <button class="btn-siguiente" (click)="nextStep()">Ir al Paso 3 <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+              </div>
+
+            </main>
+          </div>
+        </div>
+
+        <!-- FIN PASO 2 - INICIO PASO 3 -->
+        
+        <!-- ✅ Paso 3: Confirmación - EXACTO como versión 15 -->
+        <div
+          *ngIf="currentStep === 2"
+          class="policy-input__step policy-input__step--confirmation"
+        >
+          <!-- Resumen para Cotizar -->
+          <div class="mb-6 bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200">
+            <h4 class="flex items-center gap-2 font-semibold text-grayscaleBlack mb-4">
+              <i class="fa-solid fa-clipboard-list text-primaryBase"></i>
+              Resumen para Cotizar
+              </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Producto Seleccionado:</span>
+                <span class="font-medium text-grayscaleBlack">grandes-beneficiarios</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Tipo Documento Tomador:</span>
+                <span class="font-medium text-grayscaleBlack">NIT</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Numero Documento Tomador:</span>
+                <span class="font-medium text-grayscaleBlack">900.123.456-7</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Nombre Tomador:</span>
+                <span class="font-medium text-grayscaleBlack">Empresa Tomadora Simulada S.A.S.</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Tipo Documento Asegurado:</span>
+                <span class="font-medium text-grayscaleBlack">NIT</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Numero Documento Asegurado:</span>
+                <span class="font-medium text-grayscaleBlack">800.987.654-3</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Nombre Asegurado:</span>
+                <span class="font-medium text-grayscaleBlack">Asegurado Principal de Ejemplo Ltda.</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Clave Intermediario:</span>
+                <span class="font-medium text-grayscaleBlack">No cargado</span>
+                </div>
+              </div>
+            </div>
+
+          <!-- Detalles de Póliza -->
+          <div class="mb-6 bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200">
+            <h4 class="flex items-center gap-2 font-semibold text-grayscaleBlack mb-4">
+              <i class="fa-solid fa-file-invoice text-primaryBase"></i>
+                Detalles de Póliza
+              </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Numero de Contrato:</span>
+                <span class="font-medium text-grayscaleBlack">CONTRATO-SIM-789</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Valor del Contrato:</span>
+                <span class="font-medium text-grayscaleBlack">$150,000,000</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Moneda:</span>
+                <span class="font-medium text-grayscaleBlack">COP</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Fecha Inicio Contrato:</span>
+                <span class="font-medium text-grayscaleBlack">2024-08-01</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Nombre Tomador:</span>
+                <span class="font-medium text-grayscaleBlack">Empresa Tomadora Simulada S.A.S.</span>
+                  </div>
+              <div class="flex justify-between border-b border-grayscaleL200 pb-2">
+                <span class="text-grayscaleD200 text-sm">Nombre Asegurado:</span>
+                <span class="font-medium text-grayscaleBlack">Asegurado Principal de Ejemplo Ltda.</span>
+                </div>
+              </div>
+            </div>
+
+          <!-- Coberturas Seleccionadas (Cumplimiento) -->
+          <div class="mb-6 bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200">
+            <h4 class="flex items-center gap-2 font-semibold text-grayscaleBlack mb-4">
+              <i class="fa-solid fa-shield-check text-primaryBase"></i>
+                Coberturas Seleccionadas (Cumplimiento)
+              </h4>
+            <div class="overflow-x-auto">
+              <table class="w-full border-collapse text-sm">
+                <thead>
+                  <tr class="bg-grayscaleL400">
+                    <th class="p-3 text-left font-semibold"><i class="fa-solid fa-shield-alt text-primaryBase mr-2"></i>Cobertura</th>
+                    <th class="p-3 text-center font-semibold"><i class="fa-solid fa-percentage text-primaryBase mr-2"></i>% Asegurado</th>
+                    <th class="p-3 text-right font-semibold"><i class="fa-solid fa-dollar-sign text-primaryBase mr-2"></i>Valor Asegurado</th>
+                    <th class="p-3 text-center font-semibold"><i class="fa-solid fa-calendar-alt text-primaryBase mr-2"></i>Fecha Inicio</th>
+                    <th class="p-3 text-center font-semibold"><i class="fa-solid fa-calendar-check text-primaryBase mr-2"></i>Fecha Vencimiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-grayscaleL200">
+                    <td class="p-3 font-medium">CUMPLIMIENTO</td>
+                    <td class="p-3 text-center">20%</td>
+                    <td class="p-3 text-right font-semibold">$30,000,000</td>
+                    <td class="p-3 text-center">2025-05-05</td>
+                    <td class="p-3 text-center">2026-05-04</td>
+                    </tr>
+                </tbody>
+              </table>
+              </div>
+            </div>
+
+          <!-- Coberturas Seleccionadas (RC) -->
+          <div class="mb-6 bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200">
+            <h4 class="flex items-center gap-2 font-semibold text-grayscaleBlack mb-4">
+              <i class="fa-solid fa-shield-check text-primaryBase"></i>
+                Coberturas Seleccionadas (RC)
+              </h4>
+            <div class="overflow-x-auto">
+              <table class="w-full border-collapse text-sm">
+                <thead>
+                  <tr class="bg-grayscaleL400">
+                    <th class="p-3 text-left font-semibold"><i class="fa-solid fa-shield-alt text-primaryBase mr-2"></i>Cobertura</th>
+                    <th class="p-3 text-center font-semibold"><i class="fa-solid fa-percentage text-primaryBase mr-2"></i>% Asegurado</th>
+                    <th class="p-3 text-right font-semibold"><i class="fa-solid fa-dollar-sign text-primaryBase mr-2"></i>Valor Asegurado</th>
+                    <th class="p-3 text-center font-semibold"><i class="fa-solid fa-chart-line text-primaryBase mr-2"></i>Tasa</th>
+                    <th class="p-3 text-center font-semibold"><i class="fa-solid fa-calendar-alt text-primaryBase mr-2"></i>Fecha Inicio</th>
+                    <th class="p-3 text-center font-semibold"><i class="fa-solid fa-calendar-check text-primaryBase mr-2"></i>Fecha Vencimiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-grayscaleL200">
+                    <td class="p-3 font-medium">PATRONAL VIGENCIA</td>
+                    <td class="p-3 text-center">100%</td>
+                    <td class="p-3 text-right font-semibold">$150,000,000</td>
+                    <td class="p-3 text-center">1.95</td>
+                    <td class="p-3 text-center">2024-08-01</td>
+                    <td class="p-3 text-center">2025-08-30</td>
+                    </tr>
+                  <tr class="border-b border-grayscaleL200">
+                    <td class="p-3 font-medium">CONTRATISTA Y SUBCONTRATISTA</td>
+                    <td class="p-3 text-center">100%</td>
+                    <td class="p-3 text-right font-semibold">$150,000,000</td>
+                    <td class="p-3 text-center">2.15</td>
+                    <td class="p-3 text-center">2024-08-01</td>
+                    <td class="p-3 text-center">2025-08-30</td>
+                  </tr>
+                  <tr class="border-b border-grayscaleL200">
+                    <td class="p-3 font-medium">GASTOS MEDICOS PERSONA</td>
+                    <td class="p-3 text-center">100%</td>
+                    <td class="p-3 text-right font-semibold">$150,000,000</td>
+                    <td class="p-3 text-center">1.75</td>
+                    <td class="p-3 text-center">2024-08-01</td>
+                    <td class="p-3 text-center">2025-08-30</td>
+                  </tr>
+                  <tr class="border-b border-grayscaleL200">
+                    <td class="p-3 font-medium">GASTOS MEDICOS VIGENCIA</td>
+                    <td class="p-3 text-center">100%</td>
+                    <td class="p-3 text-right font-semibold">$150,000,000</td>
+                    <td class="p-3 text-center">1.85</td>
+                    <td class="p-3 text-center">2024-08-01</td>
+                    <td class="p-3 text-center">2025-08-30</td>
+                  </tr>
+                  <tr class="border-b border-grayscaleL200">
+                    <td class="p-3 font-medium">CONTAMINACION ACCIDENTAL</td>
+                    <td class="p-3 text-center">100%</td>
+                    <td class="p-3 text-right font-semibold">$150,000,000</td>
+                    <td class="p-3 text-center">2.45</td>
+                    <td class="p-3 text-center">2024-08-01</td>
+                    <td class="p-3 text-center">2025-08-30</td>
+                  </tr>
+                  <tr class="border-b border-grayscaleL200">
+                    <td class="p-3 font-medium">CRUZADA</td>
+                    <td class="p-3 text-center">100%</td>
+                    <td class="p-3 text-right font-semibold">$150,000,000</td>
+                    <td class="p-3 text-center">2.25</td>
+                    <td class="p-3 text-center">2024-08-01</td>
+                    <td class="p-3 text-center">2025-08-30</td>
+                  </tr>
+                  <tr class="border-b border-grayscaleL200">
+                    <td class="p-3 font-medium">BIENES BAJO CUIDADO TENENCIA</td>
+                    <td class="p-3 text-center">100%</td>
+                    <td class="p-3 text-right font-semibold">$150,000,000</td>
+                    <td class="p-3 text-center">1.95</td>
+                    <td class="p-3 text-center">2024-08-01</td>
+                    <td class="p-3 text-center">2025-08-30</td>
+                  </tr>
+                  <tr class="border-b border-grayscaleL200">
+                    <td class="p-3 font-medium">VEHI.PROPIOS Y NO VEHIC.</td>
+                    <td class="p-3 text-center">100%</td>
+                    <td class="p-3 text-right font-semibold">$150,000,000</td>
+                    <td class="p-3 text-center">2.35</td>
+                    <td class="p-3 text-center">2024-08-01</td>
+                    <td class="p-3 text-center">2025-08-30</td>
+                  </tr>
+                  <tr class="border-b border-grayscaleL200">
+                    <td class="p-3 font-medium">VEHI.PROPIOS Y NO VIGEN.</td>
+                    <td class="p-3 text-center">100%</td>
+                    <td class="p-3 text-right font-semibold">$150,000,000</td>
+                    <td class="p-3 text-center">2.45</td>
+                    <td class="p-3 text-center">2024-08-01</td>
+                    <td class="p-3 text-center">2025-08-30</td>
+                  </tr>
+                </tbody>
+              </table>
+              </div>
+            </div>
+
+          <!-- Cupo Disponible del Cliente -->
+          <div class="mb-6 bg-grayscaleL400 p-4 rounded-lg flex items-center gap-3">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-credit-card"></i>
+            </div>
+            <span class="font-semibold">Cupo Disponible del Cliente:</span>
+            <span class="text-grayscaleBlack font-bold">$100.000.000</span>
+          </div>
+
+          <!-- Botones de navegación para paso 3 -->
+          <div class="policy-input__actions mt-6 sm:mt-8">
+            <div class="flex justify-between">
+              <button class="btn-anterior"
+                      (click)="previousStep()">
+                <i class="fa-solid fa-arrow-left"></i>
+                Anterior
+              </button>
+              <div class="flex space-x-3">
+                <button class="btn-quiero-emitir"
+                        (click)="onQuieroEmitir()">
+                  <i class="fa-solid fa-file-alt"></i>
+                  Quiero Emitir
+                </button>
+                <button class="btn-generar-cotizacion"
+                        (click)="onGenerarCotizacion()">
+                  <i class="fa-solid fa-calculator"></i>
+                  Generar Cotización
+                </button>
+              </div>
+            </div>
+          </div>
+            </div>
+          </div>
+        </div>
+    <!-- ✅ Cierre del formulario principal condicional -->
+      </div>
+    </div>
+
+<!-- ✅ Toast de éxito para Generar Cotización -->
+<div *ngIf="showSuccessToast" class="success-toast">
+  <div class="success-toast__content">
+    <i class="fa-solid fa-check-circle text-successBase mr-2"></i>
+    <span>{{ successToastMessage }}</span>
+  </div>
+</div>
+
+<!-- ✅ Vista de Resumen de Cotización - Modal centrado con botones fijos -->
+<div *ngIf="showQuoteSummary" class="quote-summary-overlay" (click)="closeQuoteSummary()">
+  <div class="quote-summary-modal" (click)="$event.stopPropagation()">
+    <!-- Botón cerrar -->
+    <button class="quote-summary-close" (click)="closeQuoteSummary()">
+      <i class="fa-solid fa-times text-2xl"></i>
+    </button>
+    
+    <!-- Header del resumen (fijo arriba) -->
+    <div class="quote-summary-header">
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <i class="fa-solid fa-eye text-2xl text-primaryBase"></i>
+        <h2 class="text-2xl font-bold text-grayscaleBlack">Resumen de Cotización</h2>
+      </div>
+      <p class="text-grayscaleD200 mb-6 text-center">
+        Revisa todos los detalles de la cotización seleccionada.
+      </p>
+    </div>
+
+    <!-- Contenido del resumen - SCROLLABLE -->
+    <div class="quote-summary-body">
+      <!-- ✅ Información básica de la cotización - Layout centrado -->
+      <div class="quote-details__basic-info mb-6 sm:mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 max-w-5xl mx-auto">
+          <!-- ✅ Tarjeta de información de la cotización -->
+          <div class="bg-grayscaleL400 p-4 rounded-lg border border-grayscaleL200">
+            <div class="flex items-center mb-3">
+              <i class="fa-solid fa-file-alt text-primaryBase text-xl mr-3"></i>
+              <h2 class="lib-tb-h6-bold text-grayscaleBlack">
+                {{ quoteSummaryData?.quoteNumber }}
+              </h2>
+            </div>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="lib-tb-body-small text-grayscaleD100">Estado:</span>
+                <span
+                  class="lib-tb-body-medium text-primaryBase font-semibold"
+                  >{{ quoteSummaryData?.status }}</span
+                >
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="lib-tb-body-small text-grayscaleD100">Fecha de creación:</span>
+                <span
+                  class="lib-tb-body-medium text-grayscaleD200"
+                  >{{ quoteSummaryData?.creationDate }}</span
+                >
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="lib-tb-body-small text-grayscaleD100">Producto:</span>
+                <span
+                  class="lib-tb-body-medium text-grayscaleD200"
+                  >{{ quoteSummaryData?.product }}</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ Tarjeta de Valor Asegurado -->
+          <div class="bg-grayscaleL400 p-4 rounded-lg border border-grayscaleL200">
+            <div class="flex items-center mb-3">
+              <i class="fa-solid fa-dollar-sign text-primaryBase text-xl mr-3"></i>
+              <h3 class="lib-tb-h6-bold text-grayscaleBlack">Valor Asegurado</h3>
+            </div>
+            <div class="text-center">
+              <p class="lib-tb-h5-bold text-primaryBase">
+                $ {{ quoteSummaryData?.insuredValue?.toLocaleString() }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Tarjeta de Cupo Disponible del Cliente -->
+        <div
+          class="bg-grayscaleL400 p-4 rounded-lg border border-grayscaleL200 mb-6 max-w-5xl mx-auto"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="icon-ring-bicolor">
+                <i class="fa-solid fa-credit-card"></i>
+              </div>
+              <h3 class="lib-tb-h6-bold text-grayscaleBlack">Cupo Disponible del Cliente</h3>
+            </div>
+            <div class="text-right">
+              <p class="lib-tb-h5-bold text-primaryBase">
+                $ {{ quoteSummaryData?.availableCredit?.toLocaleString() }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Datos Generales Póliza - Layout centrado con 3 columnas -->
+        <div class="quote-details__section mb-6 max-w-6xl mx-auto">
+          <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4 flex items-center justify-center gap-2">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-file-contract"></i>
+            </div>
+            Datos Generales Póliza
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Número de contrato</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.contractNumber }}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Tipo de Documento Tomador</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.documentType }}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Nombre del Tomador</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.clientName }}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100"
+                >Número del Documento Tomador</label
+              >
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.clientDocument }}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Moneda</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">{{ quoteSummaryData?.currency }}</p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100"
+                >Tipo de Documento Asegurado</label
+              >
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.insuredDocumentType }}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100"
+                >Número del Documento Asegurado</label
+              >
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.insuredDocumentNumber }}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Nombre Asegurado</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.insuredName }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Ubicación del Riesgo - Layout centrado -->
+        <div class="quote-details__section mb-6 max-w-6xl mx-auto">
+          <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4 flex items-center justify-center gap-2">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-map-marker-alt"></i>
+            </div>
+            Ubicación del Riesgo
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Departamento</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.department }}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Localidad / Municipio</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.localityMunicipality }}
+              </p>
+            </div>
+            <div class="quote-details__field lg:col-span-2">
+              <label class="lib-tb-body-small text-grayscaleD100">Dirección del Riesgo</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.riskAddress }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Detalles del Contrato - Layout centrado -->
+        <div class="quote-details__section mb-6 max-w-6xl mx-auto">
+          <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4 text-center">
+            <i class="fa-solid fa-handshake text-primaryBase mr-2"></i>
+            Detalles del Contrato
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Valor del Contrato</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                $ {{ quoteSummaryData?.contractValue?.toLocaleString() }}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Fecha Inicio Contrato</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.contractStartDate }}
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Duración del Contrato</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.contractDuration }} meses
+              </p>
+            </div>
+            <div class="quote-details__field">
+              <label class="lib-tb-body-small text-grayscaleD100">Fecha Fin Contrato</label>
+              <p class="lib-tb-body-medium text-grayscaleD200">
+                {{ quoteSummaryData?.contractEndDate }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Coberturas de Cumplimiento (tabla detallada) -->
+        <div class="quote-details__section mb-6 max-w-6xl mx-auto">
+          <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4 flex items-center justify-center gap-2">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-clipboard-check"></i>
+            </div>
+            Coberturas Cumplimiento
+          </h3>
+          <div class="bg-grayscaleL400 p-6 rounded-lg">
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[600px]">
+                <thead>
+                  <tr class="border-b border-grayscaleL200">
+                    <th class="text-left py-2 text-sm font-medium text-grayscaleD200">Cobertura</th>
+                    <th class="text-center py-2 text-sm font-medium text-grayscaleD200">
+                      Porcentaje
+                    </th>
+                    <th class="text-right py-2 text-sm font-medium text-grayscaleD200">
+                      Valor Asegurado
+                    </th>
+                    <th class="text-center py-2 text-sm font-medium text-grayscaleD200">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let coverage of quoteSummaryData?.complianceCoverages"
+                    class="border-b border-grayscaleL200"
+                  >
+                    <td class="py-3 text-sm text-grayscaleBlack">{{ coverage.name }}</td>
+                    <td class="py-3 text-center text-sm font-semibold text-grayscaleBlack">
+                      {{ coverage.percentage }}%
+                    </td>
+                    <td class="py-3 text-right text-sm font-bold text-successBase">
+                      $ {{ coverage.value?.toLocaleString() }}
+                    </td>
+                    <td class="py-3 text-center text-sm font-semibold text-successBase">
+                      {{ coverage.status }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Coberturas RC (tabla detallada) -->
+        <div class="quote-details__section mb-6 max-w-6xl mx-auto">
+          <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4 flex items-center justify-center gap-2">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-shield-alt"></i>
+            </div>
+            Responsabilidad Civil
+          </h3>
+          <div class="bg-grayscaleL400 p-6 rounded-lg">
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[600px]">
+                <thead>
+                  <tr class="border-b border-grayscaleL200">
+                    <th class="text-left py-2 text-sm font-medium text-grayscaleD200">Cobertura</th>
+                    <th class="text-center py-2 text-sm font-medium text-grayscaleD200">
+                      Porcentaje
+                    </th>
+                    <th class="text-right py-2 text-sm font-medium text-grayscaleD200">
+                      Valor Asegurado
+                    </th>
+                    <th class="text-center py-2 text-sm font-medium text-grayscaleD200">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let coverage of quoteSummaryData?.rcCoverages"
+                    class="border-b border-grayscaleL200"
+                  >
+                    <td class="py-3 text-sm text-grayscaleBlack">{{ coverage.name }}</td>
+                    <td class="py-3 text-center text-sm font-semibold text-grayscaleBlack">
+                      {{ coverage.percentage }}%
+                    </td>
+                    <td class="py-3 text-right text-sm font-bold text-successBase">
+                      $ {{ coverage.value?.toLocaleString() }}
+                    </td>
+                    <td class="py-3 text-center text-sm font-semibold text-successBase">
+                      {{ coverage.status }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Resumen de costos - Layout centrado -->
+        <div class="quote-details__summary bg-grayscaleL400 p-6 rounded-lg mb-6 max-w-4xl mx-auto">
+          <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4 flex items-center justify-center gap-2">
+            <div class="icon-ring-bicolor">
+              <i class="fa-solid fa-calculator"></i>
+            </div>
+            Resumen de Costos
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+              <div class="lib-tb-body-small text-grayscaleD200 mb-2">Prima Neta</div>
+              <div class="lib-tb-h6-bold text-grayscaleBlack">{{ getPrimaNeta() }}</div>
+            </div>
+            <div class="text-center">
+              <div class="lib-tb-body-small text-grayscaleD200 mb-2">IVA (19%)</div>
+              <div class="lib-tb-h6-bold text-grayscaleBlack">{{ getIVA() }}</div>
+            </div>
+            <div
+              class="text-center border-t md:border-t-0 md:border-l border-grayscaleL200 pt-4 md:pt-0 md:pl-6"
+            >
+              <div class="lib-tb-body-small text-grayscaleD200 mb-2">Prima Total</div>
+              <div class="lib-tb-h5-bold text-primaryBase">{{ getPrimaTotal() }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Botones de acción - FIJOS en la parte inferior -->
+    <div class="quote-summary-footer">
+      <button class="quote-summary-btn-volver"
+              (click)="closeQuoteSummary()">
+        <i class="fa-solid fa-arrow-left mr-2"></i>
+        Volver
+      </button>
+      <button class="quote-summary-btn-emitir"
+              (click)="onGenerarEmision()">
+        Generar Emisión
+        <i class="fa-solid fa-paper-plane ml-2"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Éxito - Compacto y fluido -->
+<div *ngIf="showSuccessModal" class="modal-overlay" (click)="closeSuccessModal()">
+  <div class="modal-success" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="closeSuccessModal()">
+      <i class="fa-solid fa-times"></i>
+    </button>
+    <div class="modal-success__body">
+      <!-- Icono central estilo Seguros Bolívar -->
+      <div class="success-icon-container">
+        <div class="success-icon-ring">
+          <i class="fa-solid fa-check"></i>
+        </div>
+      </div>
+      <!-- Título -->
+      <h3 class="success-title">¡Procesamiento completado exitosamente!</h3>
+      <!-- Mensaje -->
+      <p class="success-message">La información del contrato ha sido cargada automáticamente en el formulario.</p>
+    </div>
+    <div class="modal-success__footer">
+      <button class="btn-anterior" (click)="closeSuccessModal()">
+        Regresar
+      </button>
+      <button class="btn-continuar-icon" (click)="acceptSuccessModal()">
+        <i class="fa-solid fa-check"></i>
+        Continuar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Botón de ayuda flotante - como versión 15 -->
+<button class="btn-help-float" (click)="openHelp()">
+  <i class="fa-solid fa-circle-question"></i>
+  <span>¿Necesitas ayuda?</span>
+</button>
+
+<!-- ✅ Modal: Tomador no creado -->
+<div *ngIf="showClienteNoCreado" class="modal-overlay" (click)="closeClienteNoCreado()">
+  <div class="modal-cliente" (click)="$event.stopPropagation()">
+    <div class="modal-cliente__header">
+      <h2 class="modal-cliente__title">Tomador no creado</h2>
+      <button class="modal-cliente__close" (click)="closeClienteNoCreado()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-cliente__body">
+      <!-- Icono SIN fondo -->
+      <div class="modal-cliente__icon-row">
+        <i class="fa-solid fa-user-plus modal-cliente__icon--no-bg"></i>
+        <h3 class="modal-cliente__subtitle">Tomador no creado</h3>
+      </div>
+      <p class="modal-cliente__description">
+        Ingresa los datos solicitados para comenzar el registro del tomador.
+      </p>
+      <div class="modal-cliente__form">
+        <div class="form-group">
+          <label class="sb-ui-label">Número celular del tomador</label>
+          <input type="tel" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el número de celular del tomador"
+                 [(ngModel)]="celularCliente" />
+        </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Correo del tomador</label>
+          <input type="email" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el correo electrónico del tomador"
+                 [(ngModel)]="correoTomador" />
+        </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Número celular del asesor</label>
+          <input type="tel" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el número de celular del asesor"
+                 [(ngModel)]="celularAsesor" />
+        </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Correo del asesor</label>
+          <input type="email" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el correo electrónico del asesor"
+                 [(ngModel)]="correoAsesor" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-cliente__footer modal-cliente__footer--2-buttons">
+      <button class="btn-anterior" (click)="regresarPasoUno()">
+        <i class="fa-solid fa-arrow-left"></i>
+        Regresar
+      </button>
+      <button class="btn-agregar" (click)="crearCliente()">
+        <i class="fa-solid fa-user-plus"></i>
+        Crear tomador
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Modal: SARLAFT desactualizado -->
+<div *ngIf="showSarlaftDesactualizado" class="modal-overlay" (click)="closeSarlaftDesactualizado()">
+  <div class="modal-cliente" (click)="$event.stopPropagation()">
+    <div class="modal-cliente__header">
+      <h2 class="modal-cliente__title text-warningBase">El tomador tiene sarlaft desactualizado</h2>
+      <button class="modal-cliente__close" (click)="closeSarlaftDesactualizado()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-cliente__body">
+      <!-- Icono SIN fondo -->
+      <div class="modal-cliente__icon-row">
+        <i class="fa-solid fa-clipboard-list modal-cliente__icon--no-bg modal-cliente__icon--sarlaft-color"></i>
+        <h3 class="modal-cliente__subtitle">El tomador tiene sarlaft desactualizado</h3>
+      </div>
+      <p class="modal-cliente__description">
+        Ingresa la siguiente información para iniciar actualización en línea.
+      </p>
+      <div class="modal-cliente__form">
+        <div class="form-group">
+          <label class="sb-ui-label">Número celular del tomador</label>
+          <input type="tel" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el número de celular del tomador"
+                 [(ngModel)]="celularCliente" />
+        </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Correo del tomador</label>
+          <input type="email" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el correo electrónico del tomador"
+                 [(ngModel)]="correoTomador" />
+        </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Número celular del asesor</label>
+          <input type="tel" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el número de celular del asesor"
+                 [(ngModel)]="celularAsesor" />
+        </div>
+        <div class="form-group">
+          <label class="sb-ui-label">Correo del asesor</label>
+          <input type="email" 
+                 class="sb-ui-input" 
+                 placeholder="Ingresa el correo electrónico del asesor"
+                 [(ngModel)]="correoAsesor" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-cliente__footer modal-cliente__footer--2-buttons">
+      <button class="btn-anterior" (click)="regresarPasoUnoSarlaft()">
+        <i class="fa-solid fa-arrow-left"></i>
+        Regresar
+      </button>
+      <button class="btn-agregar" (click)="continuarActualizacionSarlaft()">
+        Continuar
+        <i class="fa-solid fa-arrow-right ml-2"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Modal: Solicitar Cupo (cuando el tomador no tiene cupo disponible) -->
+<div *ngIf="showSolicitarCupo" class="modal-overlay" (click)="closeSolicitarCupo()">
+  <div class="modal-cliente modal-cliente--large" (click)="$event.stopPropagation()">
+    <div class="modal-cliente__header">
+      <h2 class="modal-cliente__title">Solicitar Cupo</h2>
+      <button class="modal-cliente__close" (click)="closeSolicitarCupo()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-cliente__body">
+      <p class="modal-cliente__description">
+        Por favor, cargue los estados financieros y seleccione la actividad económica del tomador.
+      </p>
+      
+      <div class="modal-cliente__form">
+        <!-- Campo: Cargar Estados Financieros -->
+        <div class="form-group">
+          <label class="sb-ui-label">
+            <i class="fa-solid fa-file-invoice-dollar mr-1"></i>
+            Estados Financieros *
+          </label>
+          
+          <!-- Área de carga de archivo -->
+          <div *ngIf="!estadosFinancierosFileName && !isUploadingEstadosFinancieros" 
+               class="file-upload-area"
+               (click)="inputEstadosFinancieros.click()">
+            <input type="file" 
+                   #inputEstadosFinancieros
+                   accept=".pdf,.xls,.xlsx,.doc,.docx"
+                   (change)="onSelectEstadosFinancieros($event)"
+                   style="display: none;" />
+            <div class="file-upload-content">
+              <i class="fa-solid fa-cloud-arrow-up file-upload-icon"></i>
+              <p class="file-upload-text">Haz clic para cargar estados financieros</p>
+              <small class="file-upload-hint">PDF, Excel o Word. Máximo 10 MB</small>
+            </div>
+          </div>
+
+          <!-- Estado de subiendo archivo -->
+          <div *ngIf="isUploadingEstadosFinancieros" class="file-uploading-container">
+            <div class="file-uploading-card">
+              <div class="file-uploading-info">
+                <div class="file-uploading-spinner">
+                  <i class="fa-solid fa-spinner fa-spin"></i>
+                </div>
+                <div class="file-uploading-details">
+                  <p class="file-uploading-name">{{ estadosFinancierosFileName }}</p>
+                  <p class="file-uploading-progress-text">Subiendo... {{ uploadProgressEstadosFinancieros }}%</p>
+                </div>
+              </div>
+              <div class="file-uploading-progress-bar">
+                <div class="file-uploading-progress-fill" [style.width.%]="uploadProgressEstadosFinancieros"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Archivo cargado exitosamente -->
+          <div *ngIf="estadosFinancierosFileName && !isUploadingEstadosFinancieros" class="file-uploaded-container">
+            <div class="file-uploaded-card">
+              <div class="file-uploaded-info">
+                <div class="file-uploaded-icon">
+                  <i class="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+                <div class="file-uploaded-details">
+                  <p class="file-uploaded-name">{{ estadosFinancierosFileName }}</p>
+                  <p class="file-uploaded-status">
+                    <i class="fa-solid fa-check-circle mr-1"></i>
+                    Archivo cargado correctamente
+                  </p>
+                </div>
+                <button class="file-uploaded-remove" (click)="removeEstadosFinancieros(); $event.stopPropagation()">
+                  <i class="fa-solid fa-trash-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campo: Actividad Económica -->
+        <div class="form-group">
+          <label class="sb-ui-label">
+            <i class="fa-solid fa-industry mr-1"></i>
+            Actividad Económica *
+          </label>
+          <select class="sb-ui-select"
+                  [class.sb-ui-select--error]="!actividadEconomica"
+                  [(ngModel)]="actividadEconomica">
+            <option value="" disabled selected>Seleccione la actividad económica</option>
+            <option *ngFor="let actividad of actividadesEconomicas" [value]="actividad.codigo">
+              {{ actividad.codigo }} - {{ actividad.nombre }}
+            </option>
+          </select>
+          <span *ngIf="!actividadEconomica" class="field-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            La actividad económica es obligatoria
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-cliente__footer modal-cliente__footer--2-buttons">
+      <button class="btn-anterior" (click)="regresarPasoUnoSolicitarCupo()">
+        <i class="fa-solid fa-arrow-left"></i>
+        Regresar
+      </button>
+      <button class="btn-agregar" 
+              [disabled]="!estadosFinancierosFileName || !actividadEconomica"
+              [class.btn-agregar--disabled]="!estadosFinancierosFileName || !actividadEconomica"
+              (click)="solicitarCupo()">
+        <i class="fa-solid fa-paper-plane"></i>
+        Solicitar Cupo
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Modal: Adicionar Agente -->
+<div *ngIf="showModalAgente" class="modal-overlay" (click)="cerrarModalAgente()">
+  <div class="modal-cliente modal-cliente--wide" (click)="$event.stopPropagation()">
+    <div class="modal-cliente__header">
+      <h2 class="modal-cliente__title">Adicionar Agente</h2>
+      <button class="modal-cliente__close" (click)="cerrarModalAgente()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-cliente__body">
+      <div class="modal-cliente__icon-row">
+        <i class="fa-solid fa-user-plus modal-cliente__icon--no-bg"></i>
+        <h3 class="modal-cliente__subtitle">Adicionar Agente</h3>
+      </div>
+      <p class="modal-cliente__description">
+        Ingresa la clave del agente para buscar sus datos y asignar el porcentaje de participación.
+      </p>
+      <div class="modal-cliente__form">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="sb-ui-label">* Clave</label>
+            <input type="text" 
+                   class="sb-ui-input" 
+                   placeholder="Ingrese la clave del agente"
+                   [(ngModel)]="agenteClave"
+                   (ngModelChange)="buscarAgentePorClave()" />
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">Nombres</label>
+            <input type="text" 
+                   class="sb-ui-input bg-grayscaleL400" 
+                   [(ngModel)]="agenteNombre"
+                   readonly />
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">* Participación</label>
+            <div class="flex items-center gap-2">
+              <input type="number" 
+                     class="sb-ui-input" 
+                     [class.sb-ui-input--error]="errorParticipacion"
+                     [(ngModel)]="agenteParticipacion"
+                     (ngModelChange)="validarParticipacion()"
+                     min="0" 
+                     [max]="porcentajeDisponible" 
+                     step="1" />
+              <span class="text-grayscaleD200">%</span>
+            </div>
+            <!-- ✅ Mostrar porcentaje disponible -->
+            <div class="participacion-info">
+              <small class="text-grayscaleD100 text-xs flex items-center">
+                <i class="fa-solid fa-info-circle mr-1 text-primaryBase"></i>
+                Porcentaje disponible: <strong class="ml-1 text-primaryBase">{{ porcentajeDisponible }}%</strong>
+              </small>
+              <small class="text-grayscaleD100 text-xs flex items-center mt-1">
+                <i class="fa-solid fa-user-tie mr-1"></i>
+                Líder: {{ liderParticipacion }}% | Otros agentes: {{ 100 - liderParticipacion - porcentajeDisponible }}%
+              </small>
+            </div>
+            <span *ngIf="errorParticipacion" class="field-error">
+              <i class="fa-solid fa-circle-exclamation"></i>
+              {{ errorParticipacion }}
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">Forma Actuación</label>
+            <input type="text" 
+                   class="sb-ui-input bg-grayscaleL400" 
+                   [(ngModel)]="agenteFormaActuacion"
+                   readonly />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-cliente__footer">
+      <button class="btn-continuar" 
+              (click)="agregarAgente()"
+              [disabled]="!agenteClave || !agenteNombre || errorParticipacion">
+        {{ agenteEditIndex !== null ? 'Actualizar' : 'Agregar' }}
+        <i class="fa-solid fa-arrow-right ml-2"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Modal: Adicionar/Editar Coaseguro Cedido -->
+<div *ngIf="showModalCoaseguroCedido" class="modal-overlay" (click)="cerrarModalCoaseguroCedido()">
+  <div class="modal-cliente modal-cliente--wide" (click)="$event.stopPropagation()">
+    <div class="modal-cliente__header">
+      <h2 class="modal-cliente__title">{{ coaseguroCedidoEditIndex !== null ? 'Editar' : 'Adicionar' }} Coaseguro Cedido</h2>
+      <button class="modal-cliente__close" (click)="cerrarModalCoaseguroCedido()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-cliente__body">
+      <div class="modal-cliente__icon-row">
+        <i class="fa-solid fa-handshake modal-cliente__icon--no-bg"></i>
+        <h3 class="modal-cliente__subtitle">Información del Coaseguro</h3>
+      </div>
+      <div class="modal-cliente__form">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="sb-ui-label">* Coaseguradora</label>
+            <select class="sb-ui-select" [(ngModel)]="coaseguroCedidoCoaseguradora">
+              <option value="" disabled selected>--Seleccione--</option>
+              <option *ngFor="let c of listaCoaseguradoras" [value]="c.nombre">{{ c.nombre }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">* %Participación</label>
+            <div class="flex items-center gap-2">
+              <input type="number" 
+                     class="sb-ui-input" 
+                     [(ngModel)]="coaseguroCedidoParticipacion" 
+                     min="0" 
+                     max="100" 
+                     placeholder="Ej: 50" />
+              <span class="text-grayscaleD200">%</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">Número Póliza</label>
+            <input type="text" 
+                   class="sb-ui-input" 
+                   placeholder="Ingrese número" 
+                   [(ngModel)]="coaseguroCedidoNumeroPol" />
+          </div>
+          <div class="form-group">
+            <label class="sb-ui-label">Certificado Modificación</label>
+            <input type="text" 
+                   class="sb-ui-input" 
+                   placeholder="Ingrese certificado" 
+                   [(ngModel)]="coaseguroCedidoCertificado" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-cliente__footer">
+      <button class="btn-anterior" (click)="cerrarModalCoaseguroCedido()">
+        Cancelar
+      </button>
+      <button class="btn-continuar" 
+              (click)="guardarCoaseguroCedido()"
+              [disabled]="!coaseguroCedidoCoaseguradora || !coaseguroCedidoParticipacion">
+        Aceptar
+        <i class="fa-solid fa-check ml-2"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Alerta: Confirmar Eliminar Coaseguro Cedido -->
+<div *ngIf="showAlertaEliminarCoaseguro" class="modal-overlay" (click)="cancelarEliminarCoaseguro()">
+  <div class="alert-bolivar" (click)="$event.stopPropagation()">
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Confirmar Eliminación</h3>
+        <p class="alert-bolivar__message">¿Está seguro que desea eliminar el Coaseguro Cedido? Esta acción no se puede deshacer.</p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cancelarEliminarCoaseguro()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button class="alert-bolivar__btn alert-bolivar__btn--cancel" (click)="cancelarEliminarCoaseguro()">
+        Cancelar
+      </button>
+      <button class="alert-bolivar__btn alert-bolivar__btn--confirm" (click)="confirmarEliminarCoaseguro()">
+        Eliminar
+      </button>
+    </div>
+  </div>
+</div>

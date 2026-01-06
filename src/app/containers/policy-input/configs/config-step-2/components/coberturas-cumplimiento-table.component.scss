@@ -1,0 +1,57 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+
+// Bloque principal: coberturas-table
+.coberturas-table {
+  // ✅ BEM Element: coberturas-table__container
+  &__container {
+    background: var(--c-lib-tb-grayscaleWhite);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--c-lib-tb-grayscaleL200);
+  }
+
+  // ✅ BEM Element: coberturas-table__controls
+  &__controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  // ✅ BEM Element: coberturas-table__row
+  &__row {
+    &:hover {
+      background-color: var(--c-lib-tb-grayscaleL400);
+    }
+  }
+}
+
+// ✅ Estilos para las filas de la tabla (migrados desde el template inline)
+.coberturas__table-row {
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--c-lib-tb-grayscaleL400);
+  }
+}
+
+// ✅ Mejoras específicas para inputs en tabla (sin tocar estilos de tech-block-lib)
+.coberturas-table input[type='number'],
+.coberturas-table input[type='date'] {
+  transition: all 0.2s ease;
+
+  &:focus {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 2px rgba(var(--c-lib-tb-primaryBase), 0.2);
+  }
+}
+
+// ✅ Botones de controles con espaciado consistente
+.coberturas-table button {
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}

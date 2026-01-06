@@ -1,0 +1,70 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File - Bloque stepper - MOBILE RESPONSIVE
+
+// Bloque: stepper
+.stepper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0.5rem 0; // Mobile: padding reducido
+
+  // ✅ Desktop: más padding
+  @media (min-width: 640px) {
+    padding: 1rem 0;
+  }
+
+  // ✅ BEM Element: stepper__container
+  &__container {
+    margin-bottom: 1rem; // Mobile: reducido
+
+    // ✅ Desktop: más espacio
+    @media (min-width: 640px) {
+      margin-bottom: 2rem;
+    }
+  }
+
+  // ✅ BEM Modifier: stepper--compact
+  &--compact {
+    padding: 0.25rem 0; // Mobile: más compacto
+
+    @media (min-width: 640px) {
+      padding: 0.5rem 0;
+    }
+  }
+}
+
+// ✅ Estilos específicos para tech-block-lib stepper (responsive)
+::ng-deep {
+  lib-tb-stepper {
+    .p-stepper {
+      // ✅ Mobile: espaciado reducido
+      .p-stepper-nav {
+        padding: 0.5rem 0.25rem;
+
+        @media (min-width: 640px) {
+          padding: 1rem 0.5rem;
+        }
+      }
+
+      // ✅ Mobile: títulos más pequeños
+      .p-stepper-title {
+        font-size: 0.875rem; // 14px en mobile
+
+        @media (min-width: 640px) {
+          font-size: 1rem; // 16px en desktop
+        }
+      }
+
+      // ✅ Mobile: números de paso más pequeños
+      .p-stepper-number {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.75rem;
+
+        @media (min-width: 640px) {
+          width: 2.5rem;
+          height: 2.5rem;
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+}

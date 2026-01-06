@@ -1,0 +1,65 @@
+<div class="h-auto bg-grayscaleL400">
+  <div class="max-w-2xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation (patrón settings) -->
+    <div class="mb-4 sm:mb-6">
+      <lib-tb-breadcrumb [custom]="breadcrumbConfig"></lib-tb-breadcrumb>
+    </div>
+
+    <!-- ✅ Alertas dinámicas (patrón settings) -->
+    <div class="mb-4 sm:mb-6" *ngIf="(alerts$ | async)?.length">
+      <lib-tb-alert [custom]="alertConfig"></lib-tb-alert>
+    </div>
+
+    <!-- ✅ Formulario dinámico principal (patrón settings) -->
+    <lib-tb-dynamic-form [custom]="dynamicForm"></lib-tb-dynamic-form>
+
+    <!-- ✅ Botones de acción responsive (patrón settings) -->
+    <div class="credit-limit-validation__actions mt-4 sm:mt-6" *ngIf="!hasResults">
+      <div class="credit-limit-validation__action-group">
+        <lib-tb-button [custom]="btnReset"></lib-tb-button>
+      </div>
+      <div class="credit-limit-validation__primary-action">
+        <lib-tb-button [custom]="btnValidate"></lib-tb-button>
+      </div>
+    </div>
+
+    <!-- ✅ Loading state overlay (patrón settings) -->
+    <div *ngIf="isLoading" class="credit-limit-validation__loading-overlay">
+      <div class="credit-limit-validation__loading-content">
+        <lib-tb-progress-spinner
+          [custom]="{ strokeWidth: 6, infinite: true }"
+        ></lib-tb-progress-spinner>
+        <p class="lib-tb-body-medium text-grayscaleD200 mt-4">Validando límite de crédito...</p>
+      </div>
+    </div>
+
+    <!-- ✅ Resultados (patrón settings adaptado) -->
+    <div *ngIf="hasResults" class="credit-limit-validation__results mt-6">
+      <div class="bg-grayscaleWhite p-6 rounded-lg shadow-sm border border-grayscaleL200">
+        <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-4">
+          <i class="fal fa-shield-check text-successBase mr-2"></i>
+          Validación Completada
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <span class="lib-tb-body-small text-grayscaleD100">Cliente:</span>
+            <p class="lib-tb-body-medium text-grayscaleBlack">
+              {{ validationResult?.customerInfo?.fullName }}
+            </p>
+          </div>
+          <div>
+            <span class="lib-tb-body-small text-grayscaleD100">Límite Aprobado:</span>
+            <p class="lib-tb-h6-bold text-successBase">
+              {{ formatCurrency(validationResult?.approvedLimit || 0) }}
+            </p>
+          </div>
+        </div>
+
+        <div class="credit-limit-validation__result-actions">
+          <lib-tb-button [custom]="btnReset"></lib-tb-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

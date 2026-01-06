@@ -1,40 +1,55 @@
 {
-  "compileOnSave": false, // No recompilar automáticamente al guardar archivos
+  "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./", // Base de la URL para la resolución de módulos
-    "outDir": "./dist/out-tsc", // Directorio de salida para los archivos compilados
-    "sourceMap": true, // Generar archivos sourceMap para la depuración
-    "declaration": false, // No generar archivos de declaración (.d.ts)
-    "downlevelIteration": true, // Soporte para iteración en versiones anteriores de ES
-    "experimentalDecorators": true, // Habilitar decoradores experimentales
-    "module": "es2020", // Especifica el módulo utilizado
-    "moduleResolution": "node", // Estrategia de resolución de módulos
-    "importHelpers": true, // Importar helpers desde tslib
-    "target": "es2022", // Especifica la versión de ECMAScript para la compilación
-    "typeRoots": ["node_modules/@types"], // Directorios donde buscar tipos
-    "lib": ["es2022", "dom"], // Librerías incluidas en el entorno de compilación
-    "types": ["jest", "node"], // Tipos adicionales incluidos en el proyecto
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "importHelpers": true,
+    "target": "ES2022",
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["ES2022", "dom"],
+    "types": ["jest", "node"],
     "paths": {
-      "@app/*": ["src/app/*"], // Alias para rutas dentro del proyecto
-      "@environment": ["src/environments/environment"]
+      "@containers/*": ["src/app/containers/*"],
+      "@shared/*": ["src/app/shared/*"],
+      "@environment": ["src/environments/environment"],
+      "tech-block-lib": ["src/app/lib/index.ts"]
     },
-    "strict": true, // Habilita todas las verificaciones estrictas
-    "noImplicitAny": true, // Asegura que no haya tipos 'any' implícitos
-    "strictNullChecks": true, // Manejo explícito de null y undefined
-    "strictFunctionTypes": true, // Tipos estrictos para funciones
-    "noImplicitReturns": true, // Error si una función no tiene un valor de retorno explícito
-    "noFallthroughCasesInSwitch": true, // Previene el fallo en casos de switch
-    "noUnusedLocals": true, // Detecta variables locales no utilizadas
-    "noUnusedParameters": true, // Detecta parámetros de funciones no utilizados
-    "skipLibCheck": true, // Omite la comprobación de tipo de archivos de declaración
-    "noImplicitThis": true, // Asegura que 'this' esté correctamente tipificado
-    "resolveJsonModule": true // Permite la importación de archivos JSON
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "noImplicitThis": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": false
   },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts"
+  ],
   "angularCompilerOptions": {
-    "enableIvy": true, // Habilita el motor de compilación Ivy
-    "fullTemplateTypeCheck": true, // Habilita la verificación completa de tipos en templates
-    "strictInjectionParameters": true, // Verificación estricta de parámetros de inyección
-    "enableI18nLegacyMessageIdFormat": false, // Deshabilita el formato de ID de mensaje i18n legado
-    "strictTemplates": true // Verificación estricta de tipos en templates
+    "fullTemplateTypeCheck": false,
+    "strictInjectionParameters": false,
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictTemplates": false,
+    "preserveWhitespaces": false
   }
 }

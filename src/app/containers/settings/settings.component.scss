@@ -1,0 +1,115 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+
+// Bloque principal: settings
+.settings {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  // ✅ BEM Element: settings__actions  
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--c-lib-tb-grayscaleL200);
+  }
+
+  // ✅ BEM Element: settings__action-group
+  &__action-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  // ✅ BEM Element: settings__primary-action
+  &__primary-action {
+    flex-shrink: 0;
+  }
+
+  // ✅ BEM Element: settings__loading-overlay
+  &__loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // ✅ BEM Element: settings__loading-content
+  &__loading-content {
+    background-color: var(--c-lib-tb-grayscaleWhite);
+    border-radius: 8px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  // ✅ BEM Modifier: settings--mobile
+  &--mobile {
+    max-width: 100%;
+    padding: 1rem;
+
+    .settings__actions {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .settings__action-group {
+      justify-content: center;
+    }
+
+    .settings__primary-action {
+      align-self: stretch;
+    }
+  }
+}
+
+// ✅ Media query responsive aplicando modifier
+@media (max-width: 768px) {
+  .settings {
+    max-width: 100%;
+    padding: 1rem;
+
+    &__actions {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    &__action-group {
+      justify-content: center;
+    }
+
+    &__primary-action {
+      align-self: stretch;
+    }
+  }
+}
+
+// ✅ Animaciones para transiciones suaves
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settings__loading-overlay {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.settings__loading-content {
+  animation: fadeIn 0.3s ease-in-out 0.1s both;
+} 

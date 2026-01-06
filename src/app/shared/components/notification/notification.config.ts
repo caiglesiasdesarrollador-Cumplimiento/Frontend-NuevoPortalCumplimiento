@@ -1,10 +1,11 @@
 import { ILibTbModalNotification } from 'tech-block-lib';
 
-export interface IConfigNotification {
+interface IConfigNotification {
   title: string;
   message: string;
   img?: string;
   error?: boolean;
+  showClose?: boolean;
   labelBtnAccept?: string;
   labelBtnReject?: string;
   clickAccept?: () => void;
@@ -17,7 +18,8 @@ export const configNotification = ({
   message,
   img,
   error = false,
-  labelBtnAccept = 'Aceptar',
+  showClose = true,
+  labelBtnAccept = 'Entendido',
   labelBtnReject = '',
   clickAccept,
   clickReject,
@@ -30,6 +32,7 @@ export const configNotification = ({
     title,
     message,
     rejectButtonVisible: false,
+    showClose,
     acceptButton: {
       label: labelBtnAccept,
       typeBtn: 'primary',

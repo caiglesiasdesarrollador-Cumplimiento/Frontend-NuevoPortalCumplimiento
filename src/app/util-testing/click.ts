@@ -1,13 +1,13 @@
 import { DebugElement } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
-import { query, queryByUnitTestId } from './finders.test';
+import { query, queryByUnitTestId } from './finders';
 
 export function clickEvent<T>(
   fixture: ComponentFixture<T>,
   selector: string,
   isUnitTestId: boolean = false,
   event: unknown = null,
-) {
+): void {
   let element: DebugElement;
   if (isUnitTestId) {
     element = queryByUnitTestId(fixture, selector);
@@ -22,7 +22,7 @@ export function clickElement<T>(
   fixture: ComponentFixture<T>,
   selector: string,
   isUnitTestId: boolean = false,
-) {
+): void {
   let elementDebug: DebugElement;
   if (isUnitTestId) {
     elementDebug = queryByUnitTestId(fixture, selector);

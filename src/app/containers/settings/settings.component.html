@@ -1,0 +1,37 @@
+<div class="h-auto bg-grayscaleL400">
+  <div class="max-w-2xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation -->
+    <div class="mb-4 sm:mb-6">
+      <lib-tb-breadcrumb [custom]="breadcrumbConfig"></lib-tb-breadcrumb>
+    </div>
+
+    <!-- ✅ Alertas dinámicas -->
+    <div class="mb-4 sm:mb-6" *ngIf="(alerts$ | async)?.length">
+      <lib-tb-alert [custom]="alertConfig"></lib-tb-alert>
+    </div>
+
+    <!-- ✅ Formulario dinámico principal -->
+    <lib-tb-dynamic-form [custom]="dynamicForm"></lib-tb-dynamic-form>
+
+    <!-- ✅ Botones de acción responsive -->
+    <div class="settings__actions mt-4 sm:mt-6">
+      <div class="settings__action-group">
+        <lib-tb-button [custom]="btnLoadDefaults"></lib-tb-button>
+        <lib-tb-button [custom]="btnReset"></lib-tb-button>
+      </div>
+      <div class="settings__primary-action">
+        <lib-tb-button [custom]="btnSave"></lib-tb-button>
+      </div>
+    </div>
+
+    <!-- ✅ Loading state overlay -->
+    <div *ngIf="isLoading" class="settings__loading-overlay">
+      <div class="settings__loading-content">
+        <lib-tb-progress-spinner
+          [custom]="{ strokeWidth: 6, infinite: true }"
+        ></lib-tb-progress-spinner>
+        <p class="lib-tb-body-medium text-grayscaleD200 mt-4">Guardando configuración...</p>
+      </div>
+    </div>
+  </div>
+</div>

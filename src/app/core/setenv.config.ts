@@ -16,31 +16,21 @@ if (!existsSync(envDirectory)) {
   mkdirSync(envDirectory);
 }
 
-// Usar acceso con acceso seguro a variables de entorno
-const apiGatewayId = process.env.NG_APP_API_GATEWAY_ID || 'default-gateway-id';
-const awsRegion = process.env.NG_APP_AWS_REGION || 'us-east-1';
-
+// we have access to our environment variables
+// in the process.env object thanks to dotenv
 const environmentFileContent = `
- export const environment = {
-   production: ${isProduction},
-    apiGateway: {
-      id: "${apiGatewayId}",
-      region: "${awsRegion}",
-      get baseUrl() {
-        return "https://${apiGatewayId}.execute-api.${awsRegion}.amazonaws.com";
-      },
-      stage: 'dev',
-      endpoints: {
-        lambda: '/cumplimientodigital/',
-        ecs: '/cumplimiento/api/hello'
-      }
-    }
- };
- `;
+export const environment = {
+  production: ${isProduction},
+  apiUrl: "${process.env['apiUrl']}",
+  secretKey: "${process.env['secretKey']}",
+  secretIv: "${process.env['secretIv']}",
+};
+`;
 
-writeFile(targetPath, environmentFileContent, (err: any) => {
+// write the content to the respective file
+writeFile(targetPath, environmentFileContent, (err: unknown) => {
   if (err) {
     console.log(err);
   }
-  console.log(`Wrote variables to {targetPath}`);
+  console.log(`Wrote variables to ${targetPath}`);
 });

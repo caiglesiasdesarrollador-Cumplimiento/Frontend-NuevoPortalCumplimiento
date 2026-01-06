@@ -1,0 +1,643 @@
+<!-- ✅ Container principal de modificaciones de pólizas -->
+<div class="min-h-screen bg-grayscaleL400">
+  <div class="max-w-6xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation -->
+    <div class="mb-4 sm:mb-6">
+      <lib-tb-breadcrumb [custom]="breadcrumbConfig"></lib-tb-breadcrumb>
+    </div>
+
+    <!-- ✅ Header principal -->
+    <div
+      class="policy-modification__header bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-6 sm:p-8 mb-6 sm:mb-8"
+    >
+      <div class="text-center max-w-4xl mx-auto">
+        <h1 class="lib-tb-h3-bold text-grayscaleBlack mb-4">Modificación de Pólizas</h1>
+        <p class="lib-tb-h6-medium text-grayscaleD200 mb-6">
+          Modifica pólizas activas existentes. Solo se muestran pólizas vigentes para modificación.
+        </p>
+      </div>
+    </div>
+
+    <!-- ✅ Stepper de navegación -->
+    <div class="policy-modification__stepper mb-6">
+      <lib-tb-stepper [custom]="stepperConfig"></lib-tb-stepper>
+    </div>
+
+    <!-- ✅ Contenido de pasos con renderizado condicional -->
+    <div class="policy-modification__content">
+      <!-- ✅ Paso 1: Seleccionar Póliza y Tipo de Modificación -->
+      <div *ngIf="currentStep === 0" class="policy-modification__step">
+        <!-- ✅ Texto descriptivo del paso -->
+        <div class="text-center max-w-4xl mx-auto mb-6">
+          <h2 class="lib-tb-h4-bold text-grayscaleBlack mb-2">Paso 1: Seleccionar Póliza</h2>
+          <p class="lib-tb-body-medium text-grayscaleD200">
+            Ingresa el número de la póliza existente y selecciona el tipo de modificación a
+            realizar.
+          </p>
+        </div>
+
+        <!-- ✅ Formulario de búsqueda y selección de modificación -->
+        <div class="policy-modification__search-form mb-6">
+          <lib-tb-dynamic-form [custom]="step1Form"></lib-tb-dynamic-form>
+        </div>
+
+        <!-- ✅ Sección: Pólizas Activas Disponibles -->
+        <div class="policy-modification__active-policies mb-6">
+          <div class="bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-6">
+            <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-4">
+              <i class="fal fa-list text-primaryBase mr-2"></i>
+              Pólizas Activas Disponibles
+            </h3>
+            <p class="lib-tb-body-medium text-grayscaleD200 mb-4">
+              Seleccione una póliza de la lista para proceder con la modificación.
+            </p>
+
+            <!-- ✅ Tabla de pólizas activas -->
+            <div class="policy-modification__table-container">
+              <lib-tb-table
+                [custom]="activePoliciesTable"
+                (libTbSelectionChange)="onPolicySelect($event)"
+              >
+                <ng-template libTbTemplate="header">
+                  <tr>
+                    <th class="text-left">
+                      <div class="flex items-center">
+                        <i class="fal fa-file-contract text-primaryBase mr-2"></i>
+                        Número
+                      </div>
+                    </th>
+                    <th class="text-left">
+                      <div class="flex items-center">
+                        <i class="fal fa-user text-primaryBase mr-2"></i>
+                        Tomador
+                      </div>
+                    </th>
+                    <th class="text-left">
+                      <div class="flex items-center">
+                        <i class="fal fa-shield-alt text-primaryBase mr-2"></i>
+                        Producto
+                      </div>
+                    </th>
+                    <th class="text-right">
+                      <div class="flex items-center justify-end">
+                        <i class="fal fa-dollar-sign text-primaryBase mr-2"></i>
+                        Valor Asegurado
+                      </div>
+                    </th>
+                    <th class="text-center">
+                      <div class="flex items-center justify-center">
+                        <i class="fal fa-calendar-alt text-primaryBase mr-2"></i>
+                        Fecha Inicio
+                      </div>
+                    </th>
+                    <th class="text-center">
+                      <div class="flex items-center justify-center">
+                        <i class="fal fa-calendar-check text-primaryBase mr-2"></i>
+                        Fecha Vencimiento
+                      </div>
+                    </th>
+                    <th class="text-center">
+                      <div class="flex items-center justify-center">
+                        <i class="fal fa-check-circle text-primaryBase mr-2"></i>
+                        Estado
+                      </div>
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template libTbTemplate="body" let-policy>
+                  <tr>
+                    <td class="text-left">
+                      <div class="flex items-center">
+                        <lib-tb-checkbox
+                          [custom]="getPolicyCheckboxConfig(policy)"
+                          class="mr-3"
+                        ></lib-tb-checkbox>
+                        <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                          {{ policy.numero }}
+                        </span>
+                      </div>
+                    </td>
+                    <td class="text-left">
+                      <span
+                        class="lib-tb-body-medium text-grayscaleBlack"
+                        >{{ policy.tomador }}</span
+                      >
+                    </td>
+                    <td class="text-left">
+                      <span
+                        class="lib-tb-body-medium text-grayscaleBlack"
+                        >{{ policy.producto }}</span
+                      >
+                    </td>
+                    <td class="text-right">
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-semibold">
+                        {{ policy.valorAsegurado | currency:'COP':'symbol':'1.0-0' }}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <span class="lib-tb-body-small text-grayscaleD200">
+                        {{ policy.fechaInicio | date:'yyyy-MM-dd' }}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <span class="lib-tb-body-small text-grayscaleD200">
+                        {{ policy.fechaVencimiento | date:'yyyy-MM-dd' }}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-successBase text-grayscaleWhite"
+                      >
+                        {{ policy.estado }}
+                      </span>
+                    </td>
+                  </tr>
+                </ng-template>
+              </lib-tb-table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Botones de navegación para paso 1 -->
+        <div class="policy-modification__actions mt-6 sm:mt-8">
+          <div class="flex justify-end">
+            <lib-tb-button [custom]="btnNext"></lib-tb-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Paso 2: Confirmar Modificación -->
+      <div *ngIf="currentStep === 1" class="policy-modification__step">
+        <!-- ✅ Texto descriptivo del paso -->
+        <div class="text-center max-w-4xl mx-auto mb-6">
+          <h2 class="lib-tb-h4-bold text-grayscaleBlack mb-2">Paso 2: Modificar Valor Asegurado</h2>
+          <p class="lib-tb-body-medium text-grayscaleD200">
+            Ajuste el porcentaje y valor asegurado de las coberturas seleccionadas para la póliza.
+          </p>
+        </div>
+
+        <!-- ✅ Formulario dinámico del paso 2 -->
+        <div class="policy-modification__confirmation-form mb-6">
+          <lib-tb-dynamic-form [custom]="step2Form"></lib-tb-dynamic-form>
+        </div>
+
+        <div class="bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-6 sm:p-8">
+          <!-- ✅ Resumen de la modificación -->
+          <div class="policy-modification__summary mb-6">
+            <h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
+              <i class="fal fa-clipboard-list text-primaryBase mr-2"></i>
+              Resumen de la Modificación
+            </h4>
+
+            <div class="bg-grayscaleL400 p-4 rounded-lg">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="summary-item">
+                  <span class="lib-tb-label text-grayscaleD100">Número de Póliza:</span>
+                  <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                    {{ step1Form.form?.value?.numeroPoliza || 'No seleccionada' }}
+                  </span>
+                </div>
+                <div class="summary-item">
+                  <span class="lib-tb-label text-grayscaleD100">Tipos de Modificación:</span>
+                  <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                    {{ step1Form.form?.value?.tiposModificacion?.length || 0 }} seleccionado(s)
+                  </span>
+                </div>
+              </div>
+
+              <!-- ✅ Lista de tipos de modificación seleccionados -->
+              <div *ngIf="step1Form.form?.value?.tiposModificacion?.length > 0" class="mt-4">
+                <h5 class="lib-tb-label text-grayscaleD100 mb-2">Modificaciones a realizar:</h5>
+                <ul class="list-disc list-inside space-y-1">
+                  <li
+                    *ngFor="let tipo of step1Form.form?.value?.tiposModificacion"
+                    class="lib-tb-body-small text-grayscaleBlack"
+                  >
+                    {{ tipo }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ Información completa de la póliza -->
+          <div class="policy-modification__policy-info mb-6">
+            <h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
+              <i class="fal fa-file-contract text-primaryBase mr-2"></i>
+              Información Completa de la Póliza
+            </h4>
+
+            <div class="bg-grayscaleL400 p-4 rounded-lg">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="summary-item">
+                  <span class="lib-tb-label text-grayscaleD100">Número de Póliza:</span>
+                  <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                    {{ selectedPolicy?.numero }}
+                  </span>
+                </div>
+                <div class="summary-item">
+                  <span class="lib-tb-label text-grayscaleD100">Tomador:</span>
+                  <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                    {{ selectedPolicy?.tomador }}
+                  </span>
+                </div>
+                <div class="summary-item">
+                  <span class="lib-tb-label text-grayscaleD100">Producto:</span>
+                  <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                    {{ selectedPolicy?.producto }}
+                  </span>
+                </div>
+                <div class="summary-item">
+                  <span class="lib-tb-label text-grayscaleD100">Valor Asegurado:</span>
+                  <span class="lib-tb-body-medium text-grayscaleBlack font-semibold">
+                    {{ selectedPolicy?.valorAsegurado | currency:'COP':'symbol':'1.0-0' }}
+                  </span>
+                </div>
+                <div class="summary-item">
+                  <span class="lib-tb-label text-grayscaleD100">Fecha de Inicio:</span>
+                  <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                    {{ selectedPolicy?.fechaInicio | date:'dd/MM/yyyy' }}
+                  </span>
+                </div>
+                <div class="summary-item">
+                  <span class="lib-tb-label text-grayscaleD100">Fecha de Vencimiento:</span>
+                  <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                    {{ selectedPolicy?.fechaVencimiento | date:'dd/MM/yyyy' }}
+                  </span>
+                </div>
+                <div class="summary-item">
+                  <span class="lib-tb-label text-grayscaleD100">Estado:</span>
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-successBase text-grayscaleWhite"
+                  >
+                    {{ selectedPolicy?.estado }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ Campos editables según el tipo de modificación -->
+          <div class="policy-modification__editable-fields mb-6">
+            <h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
+              <i class="fal fa-edit text-primaryBase mr-2"></i>
+              Campos a Modificar
+            </h4>
+
+            <div class="bg-grayscaleL400 p-4 rounded-lg">
+              <!-- ✅ Sección específica para Modificaciones de Valor Asegurado -->
+              <div
+                *ngIf="hasModificationType('Aumento de valor asegurado') || hasModificationType('Disminución de valor asegurado')"
+                class="policy-modification__valor-asegurado mb-6"
+              >
+                <!-- ✅ Resumen para Modificar -->
+                <div
+                  class="bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-6 mb-6"
+                >
+                  <h4 class="lib-tb-h5-bold text-grayscaleBlack mb-4">
+                    <i class="fal fa-file-alt text-primaryBase mr-2"></i>
+                    Resumen para Modificar
+                  </h4>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Producto Seleccionado:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                        {{ selectedPolicy?.producto || 'Cumplimiento de Contrato' }}
+                      </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Tipo Documento Tomador:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium"> NIT </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Número Documento Tomador:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                        900.123.456-7
+                      </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Nombre Tomador:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                        {{ selectedPolicy?.tomador || 'Empresa Tomadora Simulada S.A.S.' }}
+                      </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Tipo Documento Asegurado:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium"> NIT </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100"
+                        >Número Documento Asegurado:</span
+                      >
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                        800.987.654-3
+                      </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Nombre Asegurado:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                        Asegurado Principal de Ejemplo Ltda.
+                      </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Clave Intermediario:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                        No cargado
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ✅ Detalles de Póliza -->
+                <div
+                  class="bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-6 mb-6"
+                >
+                  <h4 class="lib-tb-h5-bold text-grayscaleBlack mb-4">
+                    <i class="fal fa-file-contract text-primaryBase mr-2"></i>
+                    Detalles de Póliza
+                  </h4>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Número de Contrato:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                        CONTRATO-SIM-789
+                      </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Valor del Contrato:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                        {{ selectedPolicy?.valorAsegurado | currency:'COP':'symbol':'1.0-0' }}
+                      </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Moneda:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium"> COP </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Fecha Inicio Contrato:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                        {{ selectedPolicy?.fechaInicio | date:'yyyy-MM-dd' }}
+                      </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Nombre Tomador:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                        {{ selectedPolicy?.tomador || 'Empresa Tomadora Simulada S.A.S.' }}
+                      </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="lib-tb-label text-grayscaleD100">Nombre Asegurado:</span>
+                      <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                        Asegurado Principal de Ejemplo Ltda.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ✅ Coberturas Seleccionadas (Cumplimiento) -->
+                <div
+                  class="bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-6 mb-6"
+                >
+                  <h4 class="lib-tb-h5-bold text-grayscaleBlack mb-4">
+                    <i class="fal fa-shield-alt text-primaryBase mr-2"></i>
+                    Coberturas Seleccionadas (Cumplimiento)
+                  </h4>
+
+                  <!-- ✅ Tabla de coberturas con campos editables -->
+                  <div class="overflow-x-auto">
+                    <table class="w-full">
+                      <thead>
+                        <tr class="border-b border-grayscaleL200">
+                          <th class="text-left py-3 px-4">
+                            <div class="flex items-center">
+                              <i class="fal fa-check-square text-primaryBase mr-2"></i>
+                              Sel.
+                            </div>
+                          </th>
+                          <th class="text-left py-3 px-4">
+                            <div class="flex items-center">
+                              <i class="fal fa-shield-alt text-primaryBase mr-2"></i>
+                              Cobertura
+                            </div>
+                          </th>
+                          <th class="text-left py-3 px-4">
+                            <div class="flex items-center">
+                              <i class="fal fa-percentage text-primaryBase mr-2"></i>
+                              % Asegurado
+                            </div>
+                          </th>
+                          <th class="text-left py-3 px-4">
+                            <div class="flex items-center">
+                              <i class="fal fa-dollar-sign text-primaryBase mr-2"></i>
+                              $ Valor Asegurado
+                            </div>
+                          </th>
+                          <th class="text-left py-3 px-4">
+                            <div class="flex items-center">
+                              <i class="fal fa-calendar-alt text-primaryBase mr-2"></i>
+                              Vigencia
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="border-b border-grayscaleL200">
+                          <td class="py-3 px-4">
+                            <input
+                              type="checkbox"
+                              checked
+                              class="rounded border-grayscaleL300 text-primaryBase focus:ring-primaryBase"
+                            />
+                          </td>
+                          <td class="py-3 px-4">
+                            <span class="lib-tb-body-medium text-grayscaleBlack"
+                              >Cumplimiento de Contrato</span
+                            >
+                          </td>
+                          <td class="py-3 px-4">
+                            <input
+                              type="number"
+                              [(ngModel)]="modificationData.porcentajeAsegurado"
+                              class="w-24 px-2 py-1 border border-grayscaleL200 rounded focus:outline-none focus:ring-2 focus:ring-primaryBase"
+                              placeholder="100"
+                              min="0"
+                              max="100"
+                            />
+                            <span class="ml-1 text-sm text-grayscaleD200">%</span>
+                          </td>
+                          <td class="py-3 px-4">
+                            <input
+                              type="number"
+                              [(ngModel)]="modificationData.nuevoValorAsegurado"
+                              class="w-32 px-2 py-1 border border-grayscaleL200 rounded focus:outline-none focus:ring-2 focus:ring-primaryBase"
+                              placeholder="150000000"
+                              min="0"
+                            />
+                            <span class="ml-1 text-sm text-grayscaleD200">COP</span>
+                          </td>
+                          <td class="py-3 px-4">
+                            <span class="lib-tb-body-small text-grayscaleD200">
+                              {{ selectedPolicy?.fechaInicio | date:'dd/MM/yyyy' }}
+                            </span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ✅ Modificaciones de Vigencia -->
+              <div
+                *ngIf="hasModificationType('Prórroga de vigencia') || hasModificationType('Disminución de vigencia') || hasModificationType('Traslado de vigencia')"
+                class="mb-4"
+              >
+                <h5 class="lib-tb-label text-grayscaleD100 mb-2">Vigencia:</h5>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-grayscaleD200 mb-1"
+                      >Fecha Actual de Vencimiento:</label
+                    >
+                    <input
+                      type="text"
+                      [value]="selectedPolicy?.fechaVencimiento | date:'dd/MM/yyyy'"
+                      class="w-full px-3 py-2 bg-grayscaleL200 border border-grayscaleL300 rounded-md text-grayscaleD200"
+                      readonly
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-grayscaleD200 mb-1"
+                      >Nueva Fecha de Vencimiento:</label
+                    >
+                    <input
+                      type="date"
+                      [(ngModel)]="modificationData.nuevaFechaVencimiento"
+                      class="w-full px-3 py-2 border border-grayscaleL200 rounded-md focus:outline-none focus:ring-2 focus:ring-primaryBase"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- ✅ Modificaciones de Coberturas -->
+              <div
+                *ngIf="hasModificationType('Inclusión de coberturas') || hasModificationType('Exclusión de coberturas')"
+                class="mb-4"
+              >
+                <h5 class="lib-tb-label text-grayscaleD100 mb-2">Coberturas:</h5>
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-grayscaleD200 mb-1"
+                    >Coberturas a
+                    {{ hasModificationType('Inclusión de coberturas') ? 'incluir' : 'excluir'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    }}:</label
+                  >
+                  <textarea
+                    [(ngModel)]="modificationData.coberturasModificadas"
+                    class="w-full px-3 py-2 border border-grayscaleL200 rounded-md focus:outline-none focus:ring-2 focus:ring-primaryBase"
+                    rows="3"
+                    placeholder="Describa las coberturas a {{ hasModificationType('Inclusión de coberturas') ? 'incluir' : 'excluir' }}"
+                  ></textarea>
+                </div>
+              </div>
+
+              <!-- ✅ Modificaciones Nominativas -->
+              <div *ngIf="hasModificationType('Modificaciones nominativas')" class="mb-4">
+                <h5 class="lib-tb-label text-grayscaleD100 mb-2">Datos Nominativos:</h5>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-grayscaleD200 mb-1"
+                      >Tomador Actual:</label
+                    >
+                    <input
+                      type="text"
+                      [value]="selectedPolicy?.tomador"
+                      class="w-full px-3 py-2 bg-grayscaleL200 border border-grayscaleL300 rounded-md text-grayscaleD200"
+                      readonly
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-grayscaleD200 mb-1"
+                      >Nuevo Tomador:</label
+                    >
+                    <input
+                      type="text"
+                      [(ngModel)]="modificationData.nuevoTomador"
+                      class="w-full px-3 py-2 border border-grayscaleL200 rounded-md focus:outline-none focus:ring-2 focus:ring-primaryBase"
+                      placeholder="Ingrese el nuevo tomador"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- ✅ Mensaje cuando no hay campos editables -->
+              <div *ngIf="!hasAnyEditableFields()" class="text-center py-4">
+                <p class="lib-tb-body-medium text-grayscaleD200">
+                  No hay campos específicos para modificar con los tipos seleccionados.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Botones de navegación para paso 2 -->
+        <div class="policy-modification__actions mt-6 sm:mt-8">
+          <div class="flex justify-between">
+            <lib-tb-button [custom]="btnPrevious"></lib-tb-button>
+            <lib-tb-button [custom]="btnConfirmModification"></lib-tb-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Modales para reemplazar alerts -->
+  <lib-tb-modal [custom]="successModal">
+    <div class="flex flex-col items-center justify-center p-4">
+      <i class="fal fa-check-circle text-4xl text-successBase mb-4"></i>
+      <p class="text-center text-grayscaleD200">{{ successModal.description }}</p>
+    </div>
+  </lib-tb-modal>
+
+  <lib-tb-modal [custom]="warningModal">
+    <div class="flex flex-col items-center justify-center p-4">
+      <i class="fal fa-exclamation-triangle text-4xl text-warningBase mb-4"></i>
+      <p class="text-center text-grayscaleD200">{{ warningModal.description }}</p>
+    </div>
+  </lib-tb-modal>
+
+  <lib-tb-modal [custom]="errorModal">
+    <div class="flex flex-col items-center justify-center p-4">
+      <i class="fal fa-times-circle text-4xl text-errorBase mb-4"></i>
+      <p class="text-center text-grayscaleD200">{{ errorModal.description }}</p>
+    </div>
+  </lib-tb-modal>
+</div>

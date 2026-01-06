@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DynamicFormComponent } from './dynamic-form.component';
+import { DynamicFormModule } from './dynamic-form.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { environment } from '@environment';
 
 describe('DynamicFormComponent', () => {
   let component: DynamicFormComponent;
@@ -10,7 +10,7 @@ describe('DynamicFormComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DynamicFormComponent],
-      imports: [NoopAnimationsModule],
+      imports: [NoopAnimationsModule, DynamicFormModule],
     }).compileComponents();
   });
 
@@ -21,7 +21,6 @@ describe('DynamicFormComponent', () => {
   });
 
   it('should create', () => {
-    console.log(environment.apiGateway.baseUrl);
     expect(component).toBeTruthy();
   });
 });

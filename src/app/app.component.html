@@ -1,28 +1,7 @@
-<app-header></app-header>
-<app-loader></app-loader>
-<app-notification></app-notification>
-
-<div class="flex justify-center items-center gap-4 p-4">
-  <lib-tb-button [custom]="btnNotification"></lib-tb-button>
-  <lib-tb-button [custom]="btnLoader"></lib-tb-button>
-  <lib-tb-button [custom]="btnForm"></lib-tb-button>
-</div>
-
-<div class="div" @fadeAnimation>
-  <h1 class="text-center lib-tb-h1-bold text-primaryD400">Hola Mundo! "cumplimientodigital-frontend"</h1>
-</div>
-
-<div *ngIf="lambdaResponse" class="bg-blue-100 p-4 m-4 rounded">
-  <h2 class="text-lg font-bold text-blue-800">Respuesta de Lambda</h2>
-  <p>StatusCode: {{ lambdaResponse.statusCode }}</p>
-  <p>Body: {{ lambdaResponse.body.message }}</p>
-</div>
-
-<div *ngIf="ecsResponse" class="bg-green-100 p-4 m-4 rounded">
-  <h2 class="text-lg font-bold text-green-800">Respuesta de ECS</h2>
-  <p>StatusCode: {{ ecsResponse.statusCode }}</p>
-  <p>Body: {{ ecsResponse.body.message }}</p>
-</div>
-
-
+<app-header *ngIf="showHeader"></app-header>
+<!-- ✅ BREADCRUMB NAVIGATION usando tech-block-lib 
+<app-breadcrumb></app-breadcrumb> -->
+<app-loader *ngIf="showHeader"></app-loader>
+<app-notification *ngIf="showHeader"></app-notification>
 <router-outlet></router-outlet>
+<app-help *ngIf="showHeader"></app-help>

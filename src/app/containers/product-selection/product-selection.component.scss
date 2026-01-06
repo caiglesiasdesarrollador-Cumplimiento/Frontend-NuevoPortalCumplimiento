@@ -1,0 +1,96 @@
+// ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
+
+// Bloque principal: product-selection
+.product-selection {
+  // ✅ BEM Element: product-selection__header
+  &__header {
+    transition: all 0.3s ease;
+  }
+
+  // ✅ BEM Element: product-selection__grid
+  &__grid {
+    // Grid ya definido con clases Tailwind en el template
+  }
+
+  // ✅ BEM Element: product-selection__card
+  &__card {
+    // Estilos base ya definidos con clases tech-block-lib en el template
+
+    // ✅ BEM Modifier: product-selection__card--featured
+    &--featured {
+      // Estilos adicionales para la card destacada
+
+      lib-tb-button button {
+        // Sutil diferenciación para el botón del producto destacado
+        box-shadow: 0 2px 8px rgba(var(--c-lib-tb-primaryBase-rgb), 0.15);
+
+        &:hover {
+          box-shadow: 0 4px 12px rgba(var(--c-lib-tb-primaryBase-rgb), 0.2);
+        }
+      }
+    }
+
+    // ✅ Efectos hover para todas las cards
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  // ✅ BEM Modifier: product-selection--mobile
+  &--mobile {
+    .product-selection__card {
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+// ✅ Animaciones para transiciones suaves
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.product-selection__card {
+  animation: fadeInCard 0.4s ease-out;
+
+  // Delay escalonado para las cards
+  &:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  &:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  &:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+}
+
+// ✅ Media query aplicando modifier (sin @extend para evitar problemas)
+@media (max-width: 768px) {
+  .product-selection {
+    .product-selection__card {
+      margin-bottom: 1rem;
+    }
+  }
+
+  // Ajustes responsive para íconos
+  .product-selection__card .bg-primaryL100,
+  .product-selection__card .bg-primaryBase {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+}
+
+// ✅ Botones con diseño limpio siguiendo imagen 2 y lineamientos tech-block-lib
+// ✅ Enfoque minimalista y elegante
+
+// Eliminar clases personalizadas problemáticas y usar estilos tech-block-lib nativos

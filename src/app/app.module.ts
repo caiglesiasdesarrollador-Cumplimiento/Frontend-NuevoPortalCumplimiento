@@ -1,14 +1,16 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HeaderModule } from './shared/components/header/header.module';
 import { AppRoutingModule } from './app-routing.module';
 import { LoaderModule } from './shared/components/loader/loader.module';
-import { HttpClientModule } from '@angular/common/http';
 import { NotificationModule } from './shared/components/notification/notification.module';
-import { LibTbButtonModule } from 'tech-block-lib';
+import { HelpModule } from './shared/components/help/help.module';
+import { BreadcrumbModule } from './shared/components/breadcrumb/breadcrumb.module';
+import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 
 @NgModule({
   imports: [
@@ -16,14 +18,23 @@ import { LibTbButtonModule } from 'tech-block-lib';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpClientModule,
     HeaderModule,
     AppRoutingModule,
     LoaderModule,
     NotificationModule,
-    LibTbButtonModule,
+    BreadcrumbModule,
+    HelpModule,
   ],
   declarations: [AppComponent],
+  providers: [
+    provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

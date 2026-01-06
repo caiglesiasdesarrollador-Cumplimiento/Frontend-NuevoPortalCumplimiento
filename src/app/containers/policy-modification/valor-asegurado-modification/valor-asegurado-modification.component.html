@@ -1,0 +1,355 @@
+<!-- ✅ Container principal usando tech-block-lib -->
+<div class="min-h-screen bg-grayscaleL400">
+  <div class="max-w-7xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation -->
+    <div class="mb-4 sm:mb-6">
+      <lib-tb-breadcrumb [custom]="breadcrumbConfig"></lib-tb-breadcrumb>
+    </div>
+
+    <!-- ✅ Header principal -->
+    <div
+      class="valor-asegurado-modification__header bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-4 sm:p-6 mb-6"
+    >
+      <div class="text-center">
+        <h1 class="lib-tb-h4-bold text-grayscaleBlack mb-2">
+          <i class="fal fa-dollar-sign text-primaryBase mr-2"></i>
+          Modificar Valor Asegurado
+        </h1>
+        <p class="lib-tb-body-medium text-grayscaleD200 mb-4">
+          Ajuste el porcentaje y valor asegurado de las coberturas seleccionadas para la póliza
+          <span
+            class="lib-tb-body-medium text-grayscaleBlack font-semibold"
+            >{{ modificationData.numeroPoliza }}</span
+          >
+        </p>
+        <div
+          class="inline-flex items-center px-3 py-1 rounded-full bg-warningL200 text-warningBase"
+        >
+          <i class="fal fa-info-circle mr-2"></i>
+          <span class="lib-tb-body-small font-medium"
+            >Solo se pueden editar porcentaje y valor asegurado</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Stepper de navegación (Paso 2) -->
+    <div class="valor-asegurado-modification__stepper mb-6">
+      <lib-tb-stepper [custom]="stepperConfig"></lib-tb-stepper>
+    </div>
+
+    <!-- ✅ Resumen para Modificar -->
+    <div class="bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-6 mb-6">
+      <h4 class="lib-tb-h5-bold text-grayscaleBlack mb-4">
+        <i class="fal fa-file-alt text-primaryBase mr-2"></i>
+        Resumen para Modificar
+      </h4>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Producto Seleccionado:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+            {{ modificationData.producto || 'Cumplimiento de Contrato' }}
+          </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Tipo Documento Tomador:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium"> NIT </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Número Documento Tomador:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium"> 900.123.456-7 </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Nombre Tomador:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+            {{ modificationData.tomador || 'Empresa Tomadora Simulada S.A.S.' }}
+          </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Tipo Documento Asegurado:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium"> NIT </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Número Documento Asegurado:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium"> 800.987.654-3 </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Nombre Asegurado:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+            Asegurado Principal de Ejemplo Ltda.
+          </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Clave Intermediario:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium"> No cargado </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Detalles de Póliza -->
+    <div class="bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-6 mb-6">
+      <h4 class="lib-tb-h5-bold text-grayscaleBlack mb-4">
+        <i class="fal fa-file-contract text-primaryBase mr-2"></i>
+        Detalles de Póliza
+      </h4>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Número de Contrato:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium"> CONTRATO-SIM-789 </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Valor del Contrato:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+            {{ formatCurrency(modificationData.valorContrato) }}
+          </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Moneda:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium"> COP </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Fecha Inicio Contrato:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+            {{ modificationData.fechaInicio | date:'yyyy-MM-dd' }}
+          </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Nombre Tomador:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+            {{ modificationData.tomador || 'Empresa Tomadora Simulada S.A.S.' }}
+          </span>
+        </div>
+        <div class="summary-item">
+          <span class="lib-tb-label text-grayscaleD100">Nombre Asegurado:</span>
+          <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+            Asegurado Principal de Ejemplo Ltda.
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Información del cupo disponible -->
+    <div
+      class="valor-asegurado-modification__cupo bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-4 sm:p-6 mb-6"
+    >
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <i class="fal fa-credit-card text-primaryBase text-2xl mr-3"></i>
+          <div>
+            <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-1">Cupo Disponible del Cliente</h3>
+            <p class="lib-tb-body-small text-grayscaleD200">Límite máximo para modificaciones</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="lib-tb-h5-bold text-primaryBase">$100.000.000</span>
+          <p class="lib-tb-body-small text-grayscaleD200">COP</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Tabla de coberturas para modificación -->
+    <div
+      class="valor-asegurado-modification__table bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-4 sm:p-6 mb-6"
+    >
+      <div class="mb-4">
+        <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-2">
+          <i class="fal fa-shield-alt text-primaryBase mr-2"></i>
+          Coberturas de Cumplimiento
+        </h3>
+        <p class="lib-tb-body-medium text-grayscaleD200">
+          Seleccione las coberturas que desea modificar y ajuste sus valores
+        </p>
+      </div>
+
+      <!-- ✅ Tabla personalizada con campos editables -->
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-grayscaleL200">
+              <th class="text-center py-3 px-2 w-16">
+                <div class="flex items-center justify-center">
+                  <i class="fal fa-check-square text-primaryBase mr-1"></i>
+                  <span class="lib-tb-body-small font-semibold text-grayscaleBlack">Sel.</span>
+                </div>
+              </th>
+              <th class="text-left py-3 px-4">
+                <div class="flex items-center">
+                  <i class="fal fa-shield-alt text-primaryBase mr-2"></i>
+                  <span class="lib-tb-body-small font-semibold text-grayscaleBlack">Cobertura</span>
+                </div>
+              </th>
+              <th class="text-center py-3 px-4">
+                <div class="flex items-center justify-center">
+                  <i class="fal fa-percentage text-primaryBase mr-2"></i>
+                  <span class="lib-tb-body-small font-semibold text-grayscaleBlack"
+                    >% Asegurado</span
+                  >
+                </div>
+              </th>
+              <th class="text-center py-3 px-4">
+                <div class="flex items-center justify-center">
+                  <i class="fal fa-dollar-sign text-primaryBase mr-2"></i>
+                  <span class="lib-tb-body-small font-semibold text-grayscaleBlack"
+                    >Valor Asegurado</span
+                  >
+                </div>
+              </th>
+              <th class="text-center py-3 px-4">
+                <div class="flex items-center justify-center">
+                  <i class="fal fa-calendar-alt text-primaryBase mr-2"></i>
+                  <span class="lib-tb-body-small font-semibold text-grayscaleBlack">Vigencia</span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let cobertura of modificationData.coberturas; trackBy: trackByCoberturaId"
+              class="border-b border-grayscaleL100 hover:bg-grayscaleL400 transition-colors"
+            >
+              <!-- Columna Selección -->
+              <td class="text-center py-4 px-2">
+                <div class="flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    [checked]="cobertura.seleccionado"
+                    (change)="onCoberturaCheckboxChange(cobertura, $event)"
+                    class="w-4 h-4 text-primaryBase bg-grayscaleWhite border-grayscaleL300 rounded focus:ring-primaryBase focus:ring-2"
+                  />
+                </div>
+              </td>
+
+              <!-- Columna Cobertura -->
+              <td class="text-left py-4 px-4">
+                <span class="lib-tb-body-medium text-grayscaleBlack font-medium">
+                  {{ cobertura.cobertura }}
+                </span>
+              </td>
+
+              <!-- Columna % Asegurado (Editable si está seleccionado) -->
+              <td class="text-center py-4 px-4">
+                <div *ngIf="!cobertura.seleccionado" class="lib-tb-body-medium text-grayscaleD200">
+                  {{ cobertura.porcentajeAsegurado }}%
+                </div>
+                <div *ngIf="cobertura.seleccionado" class="flex items-center justify-center">
+                  <input
+                    type="number"
+                    [value]="cobertura.porcentajeAsegurado"
+                    (input)="onPorcentajeChange(cobertura, $event)"
+                    class="w-20 text-center lib-tb-body-medium text-grayscaleBlack bg-grayscaleL400 border border-primaryBase rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primaryL100"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                  />
+                  <span class="lib-tb-body-small text-grayscaleD200 ml-1">%</span>
+                </div>
+              </td>
+
+              <!-- Columna Valor Asegurado (Editable si está seleccionado) -->
+              <td class="text-center py-4 px-4">
+                <div *ngIf="!cobertura.seleccionado" class="lib-tb-body-medium text-grayscaleD200">
+                  {{ formatCurrency(cobertura.valorAsegurado) }}
+                </div>
+                <div *ngIf="cobertura.seleccionado">
+                  <input
+                    type="text"
+                    [value]="formatCurrency(cobertura.valorAsegurado)"
+                    (input)="onValorAseguradoChange(cobertura, $event)"
+                    class="w-32 text-center lib-tb-body-medium text-grayscaleBlack bg-grayscaleL400 border border-primaryBase rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primaryL100"
+                  />
+                </div>
+              </td>
+
+              <!-- Columna Vigencia -->
+              <td class="text-center py-4 px-4">
+                <div class="lib-tb-body-small text-grayscaleD200">
+                  <div>{{ cobertura.fechaInicio | date:'dd/MM/yyyy' }}</div>
+                  <div class="text-grayscaleD100">al</div>
+                  <div>{{ cobertura.fechaVencimiento | date:'dd/MM/yyyy' }}</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ✅ Resumen de modificaciones -->
+    <div
+      *ngIf="coberturasSelecionadas.length > 0"
+      class="valor-asegurado-modification__summary bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-4 sm:p-6 mb-6"
+    >
+      <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
+        <i class="fal fa-clipboard-list text-primaryBase mr-2"></i>
+        Resumen de Modificaciones
+      </h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <p class="lib-tb-body-small text-grayscaleD200 mb-1">Coberturas seleccionadas</p>
+          <p class="lib-tb-body-medium text-grayscaleBlack font-semibold">
+            {{ coberturasSelecionadas.length }}
+          </p>
+        </div>
+        <div>
+          <p class="lib-tb-body-small text-grayscaleD200 mb-1">Valor total asegurado</p>
+          <p class="lib-tb-h6-bold text-primaryBase">{{ formatCurrency(totalValorAsegurado) }}</p>
+        </div>
+      </div>
+
+      <div class="bg-grayscaleL400 rounded-lg p-3">
+        <h4 class="lib-tb-body-medium text-grayscaleBlack font-semibold mb-2">
+          Coberturas a modificar:
+        </h4>
+        <ul class="space-y-1">
+          <li
+            *ngFor="let cobertura of coberturasSelecionadas"
+            class="lib-tb-body-small text-grayscaleD200"
+          >
+            • {{ cobertura.cobertura }} - {{ cobertura.porcentajeAsegurado }}% ({{ formatCurrency(cobertura.valorAsegurado)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            }})
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ✅ Botones de acción -->
+    <div
+      class="valor-asegurado-modification__actions flex flex-col sm:flex-row gap-4 justify-between"
+    >
+      <div>
+        <lib-tb-button [custom]="btnVolver"></lib-tb-button>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-4">
+        <lib-tb-button [custom]="btnCancelar"></lib-tb-button>
+        <lib-tb-button [custom]="btnGuardarCambios"></lib-tb-button>
+      </div>
+    </div>
+  </div>
+</div>

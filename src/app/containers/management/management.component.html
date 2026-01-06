@@ -1,0 +1,212 @@
+<!-- ✅ Container principal del management - Mobile responsive -->
+<div class="min-h-screen bg-grayscaleL400">
+  <div class="max-w-7xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation (como settings) -->
+    <div class="mb-4 sm:mb-6">
+      <lib-tb-breadcrumb [custom]="breadcrumbConfig"></lib-tb-breadcrumb>
+    </div>
+
+    <!-- ✅ Header de gestión con botón -->
+    <div class="management__header mb-6 sm:mb-8">
+      <!-- Sección principal con título y botón -->
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4">
+        <!-- Título a la izquierda -->
+        <div class="management__header-content">
+          <h1 class="lib-tb-h4-bold text-grayscaleBlack">Emite cotización existente</h1>
+        </div>
+
+        <!-- Botón a la derecha -->
+        <div class="management__header-actions">
+          <lib-tb-button [custom]="btnCrearPolizaNueva"></lib-tb-button>
+        </div>
+      </div>
+
+      <!-- Descripción centrada -->
+      <p class="lib-tb-body-medium text-grayscaleD200 text-left lg:text-left">
+        Elige una cotización de la tabla para convertirla en póliza activa.
+      </p>
+    </div>
+
+    <!-- ✅ Tabla principal -->
+    <div
+      class="management__table-container bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200"
+    >
+      <lib-tb-table [custom]="tableConfig">
+        <!-- ✅ Header de la tabla -->
+        <ng-template libTbTemplate="header">
+          <tr>
+            <!-- ✅ Nueva columna de selección como primera columna -->
+            <th class="text-center w-16">
+              <div class="flex items-center justify-center h-full py-2">
+                <i class="fal fa-check-circle text-primaryBase text-lg"></i>
+              </div>
+            </th>
+            <th libTbSortableColumn="tipo" class="text-left">
+              <div class="flex items-center">
+                <i class="fal fa-tag text-primaryBase mr-2"></i>
+                Tipo
+                <lib-tb-sort-icon [custom]="{field:'tipo'}"></lib-tb-sort-icon>
+              </div>
+            </th>
+            <th libTbSortableColumn="numero" class="text-left">
+              <div class="flex items-center">
+                <i class="fal fa-hashtag text-primaryBase mr-2"></i>
+                Número
+                <lib-tb-sort-icon [custom]="{field:'numero'}"></lib-tb-sort-icon>
+              </div>
+            </th>
+            <th libTbSortableColumn="tomador" class="text-left hidden sm:table-cell">
+              <div class="flex items-center">
+                <i class="fal fa-building text-primaryBase mr-2"></i>
+                Tomador
+                <lib-tb-sort-icon [custom]="{field:'tomador'}"></lib-tb-sort-icon>
+              </div>
+            </th>
+            <th libTbSortableColumn="producto" class="text-left hidden lg:table-cell">
+              <div class="flex items-center">
+                <i class="fal fa-shield-alt text-primaryBase mr-2"></i>
+                Producto
+                <lib-tb-sort-icon [custom]="{field:'producto'}"></lib-tb-sort-icon>
+              </div>
+            </th>
+            <th libTbSortableColumn="valorAsegurado" class="text-right hidden md:table-cell">
+              <div class="flex items-center justify-end">
+                <i class="fal fa-dollar-sign text-primaryBase mr-2"></i>
+                Valor Asegurado
+                <lib-tb-sort-icon [custom]="{field:'valorAsegurado'}"></lib-tb-sort-icon>
+              </div>
+            </th>
+            <th libTbSortableColumn="estado" class="text-center">
+              <div class="flex items-center justify-center">
+                <i class="fal fa-flag text-primaryBase mr-2"></i>
+                Estado
+                <lib-tb-sort-icon [custom]="{field:'estado'}"></lib-tb-sort-icon>
+              </div>
+            </th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </ng-template>
+
+        <!-- ✅ Body de la tabla -->
+        <ng-template libTbTemplate="body" let-item>
+          <tr class="management__table-row" [attr.data-qa-id]="'row-' + item.id">
+            <!-- ✅ Nueva columna de selección con radio button -->
+            <td class="text-center">
+              <lib-tb-radio-button
+                [custom]="getRadioConfig(item)"
+                [(ngModel)]="selectedQuoteId"
+                (ngModelChange)="onQuoteSelectionChange(item.id)"
+              ></lib-tb-radio-button>
+            </td>
+
+            <!-- Columna Tipo -->
+            <td class="text-left">
+              <div class="flex items-center">
+                <i [class]="getTipoIcon(item.tipo)" class="text-primaryBase mr-2"></i>
+                <span
+                  class="lib-tb-body-medium text-grayscaleBlack"
+                  >{{ getTipoDisplayText(item.tipo) }}</span
+                >
+              </div>
+            </td>
+
+            <!-- Columna Número -->
+            <td class="text-left">
+              <div class="management__number-cell">
+                <span
+                  class="lib-tb-body-medium text-grayscaleBlack font-semibold"
+                  >{{ item.numero }}</span
+                >
+                <span
+                  class="lib-tb-body-small text-grayscaleD100 block sm:hidden"
+                  >{{ item.tomador }}</span
+                >
+              </div>
+            </td>
+
+            <!-- Columna Tomador (hidden on mobile) -->
+            <td class="text-left hidden sm:table-cell">
+              <div class="management__tomador-cell">
+                <span class="lib-tb-body-medium text-grayscaleBlack">{{ item.tomador }}</span>
+                <span
+                  class="lib-tb-body-small text-grayscaleD100 block"
+                  >{{ item.numeroDocumento }}</span
+                >
+              </div>
+            </td>
+
+            <!-- Columna Producto (hidden on tablet and below) -->
+            <td class="text-left hidden lg:table-cell">
+              <span class="lib-tb-body-small text-grayscaleD200">{{ item.producto }}</span>
+            </td>
+
+            <!-- Columna Valor Asegurado (hidden on mobile) -->
+            <td class="text-right hidden md:table-cell">
+              <span class="lib-tb-body-medium text-grayscaleBlack font-semibold">
+                {{ item.valorAsegurado | currency:'COP':'symbol':'1.0-0' }}
+              </span>
+            </td>
+
+            <!-- Columna Estado -->
+            <td class="text-center">
+              <span
+                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
+                [class]="getStatusClass(item.estado)"
+              >
+                {{ item.estado }}
+              </span>
+            </td>
+
+            <!-- Columna Acciones -->
+            <td class="text-center">
+              <div class="flex justify-center gap-1">
+                <!-- Botón Ver Detalles -->
+                <lib-tb-button
+                  [custom]="getBtnViewDetails(item)"
+                  title="Ver Detalles"
+                ></lib-tb-button>
+
+                <!-- Botón Modificar (solo si no está cancelada o vencida) -->
+                <lib-tb-button
+                  *ngIf="item.estado !== 'Cancelada' && item.estado !== 'Vencida'"
+                  [custom]="getBtnEdit(item)"
+                  title="Modificar"
+                ></lib-tb-button>
+
+                <!-- Botón Renovar (solo para pólizas vencidas) -->
+                <lib-tb-button
+                  *ngIf="item.tipo === 'poliza' && item.estado === 'Vencida'"
+                  [custom]="getBtnRenew(item)"
+                  title="Renovar"
+                ></lib-tb-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </lib-tb-table>
+    </div>
+
+    <!-- ✅ Sección de acciones - SIEMPRE VISIBLE en la parte inferior -->
+    <div
+      class="management__actions bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200 mt-6"
+    >
+      <div class="flex justify-center">
+        <!-- Botón de acción - SIEMPRE VISIBLE con estado dinámico centrado -->
+        <lib-tb-button [custom]="getBtnEmitirPoliza()"></lib-tb-button>
+      </div>
+    </div>
+
+    <!-- ✅ Estado vacío -->
+    <div *ngIf="totalItems === 0" class="management__empty-state text-center py-12">
+      <i class="fal fa-search text-6xl text-grayscaleD100 mb-4"></i>
+      <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-2">No se encontraron resultados</h3>
+      <p class="lib-tb-body-medium text-grayscaleD200 mb-6">
+        Ajuste los filtros de búsqueda o cree una nueva cotización.
+      </p>
+      <lib-tb-button [custom]="btnNew"></lib-tb-button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Notificación de éxito -->
+<lib-tb-snackbar *ngIf="snackbarConfig.show" [custom]="snackbarConfig"> </lib-tb-snackbar>

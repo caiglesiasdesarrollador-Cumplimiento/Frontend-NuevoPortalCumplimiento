@@ -1,0 +1,148 @@
+<!-- ✅ Container principal usando tech-block-lib -->
+<div class="min-h-screen bg-grayscaleL400">
+  <div class="max-w-6xl mx-auto px-2 py-4 sm:px-4 sm:py-8">
+    <!-- ✅ Breadcrumb navigation -->
+    <div class="mb-4 sm:mb-6">
+      <lib-tb-breadcrumb [custom]="breadcrumbConfig"></lib-tb-breadcrumb>
+    </div>
+
+    <!-- ✅ Header con título y descripción -->
+    <div class="modification-selection__header text-center mb-6 sm:mb-8">
+      <h1 class="lib-tb-h5-bold sm:lib-tb-h4-bold text-grayscaleBlack mb-2 px-2">
+        {{ modificationData.title }}
+      </h1>
+      <p class="lib-tb-body-small sm:lib-tb-body-medium text-grayscaleD200 max-w-3xl mx-auto px-4">
+        {{ modificationData.subtitle }}
+      </p>
+    </div>
+
+    <!-- ✅ Grid de productos/contenedores -->
+    <div
+      class="modification-selection__grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+    >
+      <!-- ✅ Protección Familiar -->
+      <div class="modification-selection__card">
+        <div
+          class="bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200 hover:shadow-md transition-shadow h-full flex flex-col"
+        >
+          <!-- Ícono -->
+          <div
+            class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-primaryL100 rounded-lg mb-3 sm:mb-4 mx-auto"
+          >
+            <i class="fal fa-home-heart text-primaryBase text-lg sm:text-2xl"></i>
+          </div>
+
+          <!-- Contenido -->
+          <div class="text-center flex-grow">
+            <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-2">
+              {{ modificationData.products[0].title }}
+            </h3>
+            <p class="lib-tb-body-small text-grayscaleD200 mb-4 sm:mb-6">
+              {{ modificationData.products[0].description }}
+            </p>
+          </div>
+
+          <!-- Botón -->
+          <div class="mt-auto">
+            <lib-tb-button [custom]="btnProteccionFamiliar"></lib-tb-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Pymes + Digital -->
+      <div class="modification-selection__card">
+        <div
+          class="bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200 hover:shadow-md transition-shadow h-full flex flex-col"
+        >
+          <!-- Ícono -->
+          <div
+            class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-primaryL100 rounded-lg mb-3 sm:mb-4 mx-auto"
+          >
+            <i class="fal fa-building text-primaryBase text-lg sm:text-2xl"></i>
+          </div>
+
+          <!-- Contenido -->
+          <div class="text-center flex-grow">
+            <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-2">
+              {{ modificationData.products[1].title }}
+            </h3>
+            <p class="lib-tb-body-small text-grayscaleD200 mb-4 sm:mb-6">
+              {{ modificationData.products[1].description }}
+            </p>
+          </div>
+
+          <!-- Botón -->
+          <div class="mt-auto">
+            <lib-tb-button [custom]="btnPymesDigital"></lib-tb-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Protección de Créditos -->
+      <div class="modification-selection__card">
+        <div
+          class="bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200 hover:shadow-md transition-shadow h-full flex flex-col"
+        >
+          <!-- Ícono -->
+          <div
+            class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-primaryL100 rounded-lg mb-3 sm:mb-4 mx-auto"
+          >
+            <i class="fal fa-shield-check text-primaryBase text-lg sm:text-2xl"></i>
+          </div>
+
+          <!-- Contenido -->
+          <div class="text-center flex-grow">
+            <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-2">
+              {{ modificationData.products[2].title }}
+            </h3>
+            <p class="lib-tb-body-small text-grayscaleD200 mb-4 sm:mb-6">
+              {{ modificationData.products[2].description }}
+            </p>
+          </div>
+
+          <!-- Botón -->
+          <div class="mt-auto">
+            <lib-tb-button [custom]="btnProteccionCreditos"></lib-tb-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ Producto de Cumplimiento (Featured) -->
+      <div class="modification-selection__card modification-selection__card--featured">
+        <div
+          class="bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-md border border-primaryBase hover:shadow-lg transition-shadow h-full flex flex-col relative overflow-hidden"
+        >
+          <!-- Gradiente sutil de fondo -->
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-primaryL100/20 to-transparent pointer-events-none"
+          ></div>
+
+          <!-- Contenido con z-index para estar sobre el gradiente -->
+          <div class="relative z-10 h-full flex flex-col">
+            <!-- Ícono -->
+            <div
+              class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-primaryBase rounded-lg mb-3 sm:mb-4 mx-auto"
+            >
+              <i class="fal fa-clipboard-check text-grayscaleWhite text-lg sm:text-2xl"></i>
+            </div>
+
+            <!-- Contenido -->
+            <div class="text-center flex-grow">
+              <h3 class="lib-tb-h6-bold text-grayscaleBlack mb-2">
+                {{ modificationData.products[3].title }}
+              </h3>
+              <p class="lib-tb-body-small text-grayscaleD200 mb-4 sm:mb-6">
+                {{ modificationData.products[3].description }}
+              </p>
+            </div>
+
+            <!-- Botón con estilo destacado -->
+            <div class="mt-auto">
+              <lib-tb-button [custom]="btnProductoCumplimiento"></lib-tb-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
