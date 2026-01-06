@@ -3,6 +3,8 @@ name: frontend Template
 on:
   workflow_dispatch:
   push:
+    branches: [develop, stage, master, GD981-760]
+  pull_request:
     branches: [develop, stage, master]
 
 jobs:
@@ -11,4 +13,4 @@ jobs:
     uses: segurosbolivar/devops-actions-frontend-templates/.github/workflows/template.yml@v1.0.0
     with:
       language_package_manager: 'npm' # npm | pip | gradle
-      language_version: '18.20.7' # specific version of npm | pip | gradle
+      language_version: '22.21.1' # specific version of npm | pip | gradle - Updated for Angular 20
