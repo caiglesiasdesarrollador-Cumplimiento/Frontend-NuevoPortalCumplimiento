@@ -3,6 +3,8 @@ name: frontend Template
 on:
   workflow_dispatch:
   push:
+    branches: [develop, stage, master, GD981-760]
+  pull_request:
     branches: [develop, stage, master]
 
 jobs:
