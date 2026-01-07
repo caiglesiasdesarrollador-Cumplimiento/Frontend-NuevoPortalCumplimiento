@@ -23,9 +23,14 @@ describe('Validators', () => {
     expect(config.message).toEqual('Ha superado el límite de 10 caracteres permitidos.');
   });
 
-  it('validatorMinLength debería retornar la configuración correcta', () => {
+  it('validatorMinLength debería retornar la configuración correcta con mensaje personalizado', () => {
     const config = validatorMinLength(10, 'La longitud máxima debe ser 10');
     expect(config.message).toEqual('La longitud máxima debe ser 10');
+  });
+
+  it('validatorMinLength debería usar mensaje por defecto cuando no se proporciona mensaje', () => {
+    const config = validatorMinLength(5);
+    expect(config.message).toEqual('La longitud mínima debe ser 5');
   });
 
   it('validatorMaxValue debería retornar la configuración correcta', () => {

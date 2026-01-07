@@ -61,14 +61,14 @@ describe('MenuComponent', () => {
 
   describe('onMenuItemClick', () => {
     it('should not navigate if item is disabled', () => {
-      const disabledItem = { label: 'Test', disabled: true, url: '/test' };
+      const disabledItem = { id: 'test', name: 'Test', disabled: true, url: '/test' };
       component.onMenuItemClick(disabledItem);
       expect(routerMock.navigate).not.toHaveBeenCalled();
     });
 
     it('should navigate if item has internal URL', () => {
       const menuCloseEmitSpy = jest.spyOn(component.menuClose, 'emit');
-      const internalItem = { label: 'Test', disabled: false, url: '/portal' };
+      const internalItem = { id: 'test', name: 'Test', disabled: false, url: '/portal' };
       component.onMenuItemClick(internalItem);
       expect(routerMock.navigate).toHaveBeenCalledWith(['/portal']);
       expect(menuCloseEmitSpy).toHaveBeenCalled();
@@ -76,7 +76,7 @@ describe('MenuComponent', () => {
 
     it('should navigate to policy-input', () => {
       const menuCloseEmitSpy = jest.spyOn(component.menuClose, 'emit');
-      const internalItem = { label: 'Test', disabled: false, url: '/policy-input' };
+      const internalItem = { id: 'test', name: 'Test', disabled: false, url: '/policy-input' };
       component.onMenuItemClick(internalItem);
       expect(routerMock.navigate).toHaveBeenCalledWith(['/policy-input']);
       expect(menuCloseEmitSpy).toHaveBeenCalled();
@@ -84,14 +84,14 @@ describe('MenuComponent', () => {
 
     it('should use window.location for external URLs', () => {
       const menuCloseEmitSpy = jest.spyOn(component.menuClose, 'emit');
-      const externalItem = { label: 'Test', disabled: false, url: 'https://example.com' };
+      const externalItem = { id: 'test', name: 'Test', disabled: false, url: 'https://example.com' };
       component.onMenuItemClick(externalItem);
       expect(window.location.href).toBe('https://example.com');
       expect(menuCloseEmitSpy).toHaveBeenCalled();
     });
 
     it('should not navigate if no URL', () => {
-      const itemWithoutUrl = { label: 'Test', disabled: false };
+      const itemWithoutUrl = { id: 'test', name: 'Test', disabled: false };
       component.onMenuItemClick(itemWithoutUrl);
       expect(routerMock.navigate).not.toHaveBeenCalled();
     });

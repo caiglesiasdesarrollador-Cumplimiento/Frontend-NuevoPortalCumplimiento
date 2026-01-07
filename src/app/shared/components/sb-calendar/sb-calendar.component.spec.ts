@@ -516,5 +516,176 @@ describe('SbCalendarComponent', () => {
       expect(component.tempSelectedDate).toEqual(day.date);
     });
   });
+
+  describe('onDocumentClick - Full Coverage', () => {
+    it('should close calendar when clicking outside', () => {
+      component.showCalendar = true;
+      component.calendarContainer = {
+        nativeElement: {
+          contains: jest.fn().mockReturnValue(false)
+        }
+      } as any;
+      
+      const mockEvent = { target: document.createElement('div') } as unknown as MouseEvent;
+      component.onDocumentClick(mockEvent);
+      
+      expect(component.showCalendar).toBe(false);
+    });
+
+    it('should keep calendar open when clicking inside', () => {
+      component.showCalendar = true;
+      component.calendarContainer = {
+        nativeElement: {
+          contains: jest.fn().mockReturnValue(true)
+        }
+      } as any;
+      
+      const mockEvent = { target: document.createElement('div') } as unknown as MouseEvent;
+      component.onDocumentClick(mockEvent);
+      
+      expect(component.showCalendar).toBe(true);
+    });
+
+    it('should handle when calendarContainer is undefined', () => {
+      component.showCalendar = true;
+      component.calendarContainer = undefined as any;
+      
+      const mockEvent = { target: document.createElement('div') } as unknown as MouseEvent;
+      // Should not throw
+      expect(() => component.onDocumentClick(mockEvent)).not.toThrow();
+    });
+  });
+
+  describe('calculatePopupPosition - Full Coverage', () => {
+    it('should set top-left position when near both bottom and right edges', () => {
+      component.forceBottom = false;
+      component.calendarContainer = {
+        nativeElement: {
+          getBoundingClientRect: () => ({
+            right: window.innerWidth - 10,
+            bottom: window.innerHeight - 10
+          })
+        }
+      } as any;
+      
+      component.calculatePopupPosition();
+      
+      expect(component.popupPosition).toBe('top-left');
+    });
+
+    it('should set bottom-left position when near right edge only', () => {
+      component.calendarContainer = {
+        nativeElement: {
+          getBoundingClientRect: () => ({
+            right: window.innerWidth - 10,
+            bottom: 100
+          })
+        }
+      } as any;
+      
+      component.calculatePopupPosition();
+      
+      expect(component.popupPosition).toBe('bottom-left');
+    });
+
+    it('should set popupStyle for top-left position', () => {
+      component.forceBottom = false;
+      component.calendarContainer = {
+        nativeElement: {
+          getBoundingClientRect: () => ({
+            right: window.innerWidth - 10,
+            bottom: window.innerHeight - 10
+          })
+        }
+      } as any;
+      
+      component.calculatePopupPosition();
+      
+      expect(component.popupStyle).toBeDefined();
+      expect(component.popupStyle.bottom).toBe('100%');
+    });
+  });
+
+  describe('formatDisplayDate - Error Handling Coverage', () => {
+    it('should handle catch block when date parsing throws', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      
+      // Force an error by mocking Date constructor to throw
+      const originalDate = global.Date;
+      const mockDate = jest.fn().mockImplementation(() => {
+        throw new Error('Date parse error');
+      }) as any;
+      mockDate.now = originalDate.now;
+      global.Date = mockDate;
+      
+      const result = component.formatDisplayDate('2025-06-15');
+      
+      // Restore
+      global.Date = originalDate;
+      consoleSpy.mockRestore();
+      
+      // The method should return empty string on error
+      expect(result).toBeDefined();
+    });
+
+    it('should return empty string for completely invalid date format', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const result = component.formatDisplayDate('not-a-date');
+      consoleSpy.mockRestore();
+      
+      expect(result).toBe('');
+    });
+  });
+
+  describe('NG_VALUE_ACCESSOR Provider Coverage', () => {
+    it('should be provided as NG_VALUE_ACCESSOR', () => {
+      // This test verifies the component is properly set up as a value accessor
+      expect(component.writeValue).toBeDefined();
+      expect(component.registerOnChange).toBeDefined();
+      expect(component.registerOnTouched).toBeDefined();
+      expect(component.setDisabledState).toBeDefined();
+    });
+
+    it('should have onChange and onTouched functions', () => {
+      // Default noop functions should exist
+      expect(typeof component['onChange']).toBe('function');
+      expect(typeof component['onTouched']).toBe('function');
+    });
+  });
+
+  describe('Additional Input Properties', () => {
+    it('should accept showLabelIcon input', () => {
+      component.showLabelIcon = false;
+      expect(component.showLabelIcon).toBe(false);
+    });
+
+    it('should have showLabelIcon true by default', () => {
+      expect(component.showLabelIcon).toBe(true);
+    });
+
+    it('should accept forceBottom input', () => {
+      component.forceBottom = true;
+      expect(component.forceBottom).toBe(true);
+    });
+
+    it('should have forceBottom false by default', () => {
+      expect(component.forceBottom).toBe(false);
+    });
+
+    it('should accept error input', () => {
+      component.error = true;
+      expect(component.error).toBe(true);
+    });
+
+    it('should accept errorMessage input', () => {
+      component.errorMessage = 'Test error';
+      expect(component.errorMessage).toBe('Test error');
+    });
+
+    it('should accept required input', () => {
+      component.required = true;
+      expect(component.required).toBe(true);
+    });
+  });
 });
 

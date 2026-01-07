@@ -121,11 +121,38 @@ describe('BreadcrumbService', () => {
       });
     });
 
-    it('should have libTbOnItemClick defined', (done) => {
+    it('should have libTbOnItemClick defined and executable', (done) => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      
       service.setBreadcrumb([{ label: 'Test' }]);
 
       service.breadcrumb$.subscribe(config => {
         expect(config.libTbOnItemClick).toBeDefined();
+        
+        // Execute the callback to cover handleBreadcrumbClick (line 91)
+        if (config.libTbOnItemClick) {
+          const mockEvent = { item: { label: 'Test' } };
+          (config.libTbOnItemClick as Function)(mockEvent);
+          expect(consoleSpy).toHaveBeenCalledWith('Breadcrumb clicked:', mockEvent);
+        }
+        
+        consoleSpy.mockRestore();
+        done();
+      });
+    });
+
+    it('should execute libTbOnItemClick callback with event data', (done) => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      
+      service.setBreadcrumb([{ label: 'Page 1' }, { label: 'Page 2' }]);
+
+      service.breadcrumb$.subscribe(config => {
+        if (config.libTbOnItemClick) {
+          const eventData = { originalEvent: new Event('click'), item: { label: 'Page 1' } };
+          (config.libTbOnItemClick as Function)(eventData);
+          expect(consoleSpy).toHaveBeenCalled();
+        }
+        consoleSpy.mockRestore();
         done();
       });
     });
