@@ -16,6 +16,30 @@
     <!-- CSS de @seguros-bolivar/ui-bundle -->
     <link rel="stylesheet" href="assets/lib/sb-ui-seguros-bolivar-light.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/@seguros-bolivar/ui-bundle@latest/dist/sb-ui-seguros-bolivar-light.min.css">
+    
+    <!-- ✅ OCULTAR BOTÓN DE AYUDA GLOBALMENTE -->
+    <style>
+      .help-fab,
+      .sb-help,
+      .sb-ui-help,
+      .fab-help,
+      [class*="help-fab"],
+      [class*="sb-help"],
+      button[class*="help"],
+      div[class*="help-fab"],
+      sb-help,
+      sb-ui-help {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        position: absolute !important;
+        left: -99999px !important;
+        top: -99999px !important;
+      }
+    </style>
   </head>
   <body>
     <my-app></my-app>
