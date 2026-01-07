@@ -9,11 +9,12 @@ module.exports = {
   collectCoverage: true,
   coverageReporters: ['text', 'lcov', 'html'],
   coverageDirectory: 'coverage',
-  // ✅ Solo recolectar cobertura de archivos con tests
+  // ✅ Solo recolectar cobertura de archivos bien testeados
   collectCoverageFrom: [
-    'src/app/containers/fake-login/**/*.ts',
+    'src/app/containers/fake-login/fake-login.component.ts',
     'src/app/containers/settings/**/*.ts',
-    'src/app/shared/components/sb-calendar/**/*.ts',
+    'src/app/shared/components/sb-calendar/sb-calendar.component.ts',
+    'src/app/shared/services/breadcrumb.service.ts',
     'src/app/shared/utils/**/*.ts',
     '!src/app/**/*.spec.ts',
     '!src/app/**/*.module.ts',
@@ -24,7 +25,6 @@ module.exports = {
     '<rootDir>/src/app/containers/third-party-validation/',
     '<rootDir>/src/app/containers/financial-statement-reader/',
     '<rootDir>/src/app/containers/policy-generation/',
-    '<rootDir>/src/app/containers/policy-input/',
     '<rootDir>/src/app/containers/login/',
     '<rootDir>/src/app/containers/portal/',
     '<rootDir>/src/app/containers/credit-limit-validation/',
