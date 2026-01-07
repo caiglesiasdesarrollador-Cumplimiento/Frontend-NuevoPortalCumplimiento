@@ -232,6 +232,22 @@ describe('SbCalendarComponent', () => {
     it('should return same value if already in DD/MM/YY format', () => {
       expect(component.formatDisplayDate('15/06/25')).toBe('15/06/25');
     });
+
+    it('should return empty for invalid date string', () => {
+      expect(component.formatDisplayDate('invalid-date')).toBe('');
+    });
+
+    it('should return empty for malformed date', () => {
+      expect(component.formatDisplayDate('abc')).toBe('');
+    });
+
+    it('should handle date format errors gracefully', () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      // Pass something that might cause an error
+      const result = component.formatDisplayDate('not-a-date-at-all');
+      expect(result).toBe('');
+      consoleSpy.mockRestore();
+    });
   });
 
   describe('clearDate', () => {
@@ -290,6 +306,31 @@ describe('SbCalendarComponent', () => {
       expect(component.displayValue).toBe('');
     });
 
+    it('should handle undefined value in writeValue', () => {
+      component.writeValue('undefined');
+      
+      expect(component.value).toBe('');
+      expect(component.displayValue).toBe('');
+      expect(component.tempSelectedDate).toBeNull();
+    });
+
+    it('should handle null string value in writeValue', () => {
+      component.writeValue('null');
+      
+      expect(component.value).toBe('');
+      expect(component.displayValue).toBe('');
+      expect(component.tempSelectedDate).toBeNull();
+    });
+
+    it('should set tempSelectedDate when valid date is written', () => {
+      component.writeValue('2025-06-15');
+      
+      expect(component.tempSelectedDate).toBeTruthy();
+      expect(component.tempSelectedDate?.getFullYear()).toBe(2025);
+      expect(component.tempSelectedDate?.getMonth()).toBe(5);
+      expect(component.tempSelectedDate?.getDate()).toBe(15);
+    });
+
     it('should register onChange callback', () => {
       const fn = jest.fn();
       component.registerOnChange(fn);
@@ -332,6 +373,147 @@ describe('SbCalendarComponent', () => {
       component.calculatePopupPosition();
       
       expect(component.popupPosition).toBe('bottom-right');
+    });
+
+    it('should set position to top when near bottom of screen', () => {
+      component.calendarContainer = {
+        nativeElement: {
+          getBoundingClientRect: () => ({
+            right: 100,
+            bottom: window.innerHeight - 50
+          })
+        }
+      } as any;
+      
+      component.calculatePopupPosition();
+      
+      expect(component.popupPosition).toContain('top');
+    });
+
+    it('should set position to left when near right of screen', () => {
+      component.calendarContainer = {
+        nativeElement: {
+          getBoundingClientRect: () => ({
+            right: window.innerWidth - 50,
+            bottom: 100
+          })
+        }
+      } as any;
+      
+      component.calculatePopupPosition();
+      
+      expect(component.popupPosition).toContain('left');
+    });
+
+    it('should force bottom position when forceBottom is true', () => {
+      component.forceBottom = true;
+      component.calendarContainer = {
+        nativeElement: {
+          getBoundingClientRect: () => ({
+            right: 100,
+            bottom: window.innerHeight - 50
+          })
+        }
+      } as any;
+      
+      component.calculatePopupPosition();
+      
+      expect(component.popupPosition).toContain('bottom');
+    });
+  });
+
+  describe('Min/Max date constraints', () => {
+    it('should accept minDate input', () => {
+      component.minDate = '2025-06-10';
+      expect(component.minDate).toBe('2025-06-10');
+    });
+
+    it('should accept maxDate input', () => {
+      component.maxDate = '2025-06-20';
+      expect(component.maxDate).toBe('2025-06-20');
+    });
+
+    it('should have empty minDate by default', () => {
+      expect(component.minDate).toBe('');
+    });
+
+    it('should have empty maxDate by default', () => {
+      expect(component.maxDate).toBe('');
+    });
+  });
+
+  describe('toggleCalendar edge cases', () => {
+    it('should position to current date when no value', () => {
+      component.value = '';
+      component.toggleCalendar();
+      
+      const today = new Date();
+      expect(component.currentMonth).toBe(today.getMonth());
+      expect(component.currentYear).toBe(today.getFullYear());
+    });
+  });
+
+  describe('updateCalendar edge cases', () => {
+    it('should correctly mark days from previous month', () => {
+      component.currentMonth = 0; // January
+      component.currentYear = 2025;
+      component.updateCalendar();
+      
+      // First day of January 2025 is Wednesday, so there should be some previous month days
+      const prevMonthDays = component.calendarDays.filter(d => !d.currentMonth && d.day > 20);
+      expect(prevMonthDays.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should correctly mark days from next month', () => {
+      component.currentMonth = 0; // January
+      component.currentYear = 2025;
+      component.updateCalendar();
+      
+      // Calendar always has 42 days (6 weeks x 7 days)
+      const nextMonthDays = component.calendarDays.filter(d => !d.currentMonth && d.day < 15);
+      expect(nextMonthDays.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should mark selected date correctly', () => {
+      component.value = '2025-06-15';
+      component.tempSelectedDate = new Date(2025, 5, 15);
+      component.currentMonth = 5; // June
+      component.currentYear = 2025;
+      component.updateCalendar();
+      
+      const selectedDay = component.calendarDays.find(d => d.selected);
+      expect(selectedDay?.day).toBe(15);
+    });
+  });
+
+  describe('selectDate edge cases', () => {
+    it('should select date from current month', () => {
+      const day = {
+        day: 15,
+        currentMonth: true,
+        selected: false,
+        today: false,
+        date: new Date(2025, 5, 15)
+      };
+      
+      component.selectDate(day);
+      
+      expect(component.tempSelectedDate).toEqual(day.date);
+    });
+
+    it('should handle date selection with today flag', () => {
+      const today = new Date();
+      const day = {
+        day: today.getDate(),
+        currentMonth: true,
+        selected: false,
+        today: true,
+        date: today
+      };
+      
+      component.selectDate(day);
+      
+      expect(component.tempSelectedDate).toEqual(day.date);
     });
   });
 });

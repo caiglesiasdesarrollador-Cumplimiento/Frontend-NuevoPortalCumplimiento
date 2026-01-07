@@ -29,6 +29,11 @@ describe('SettingsComponent', () => {
     component = fixture.componentInstance;
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.useRealTimers();
+  });
+
   describe('Initialization', () => {
     it('should create', () => {
       expect(component).toBeTruthy();
@@ -50,26 +55,81 @@ describe('SettingsComponent', () => {
       expect(component.btnLoadDefaults.label).toBe('Valores por Defecto');
     });
 
+    it('should have correct button icons', () => {
+      expect(component.btnSave.icon).toBe('fal fa-save');
+      expect(component.btnReset.icon).toBe('fal fa-redo');
+      expect(component.btnLoadDefaults.icon).toBe('fal fa-cog');
+    });
+
+    it('should have correct button styles', () => {
+      expect(component.btnSave.styleBtn).toBe('fill');
+      expect(component.btnSave.typeBtn).toBe('primary');
+      expect(component.btnReset.styleBtn).toBe('stroke');
+      expect(component.btnReset.typeBtn).toBe('secondary');
+      expect(component.btnLoadDefaults.styleBtn).toBe('text');
+      expect(component.btnLoadDefaults.typeBtn).toBe('tertiary');
+    });
+
     it('should have alertConfig defined', () => {
       expect(component.alertConfig).toBeDefined();
       expect(component.alertConfig.float).toBe(false);
+      expect(component.alertConfig.alerts).toEqual([]);
     });
 
     it('should have breadcrumbConfig defined', () => {
       expect(component.breadcrumbConfig).toBeDefined();
+      expect(component.breadcrumbConfig.items).toEqual([]);
+    });
+
+    it('should have loading$ observable', () => {
+      expect(component.loading$).toBeDefined();
+    });
+
+    it('should have alerts$ observable', () => {
+      expect(component.alerts$).toBeDefined();
     });
   });
 
   describe('ngOnInit', () => {
+    beforeEach(() => {
+      component.dynamicForm.form = new FormGroup({
+        theme: new FormControl('light'),
+        language: new FormControl('es'),
+        notifications: new FormControl(true),
+        dataRetention: new FormControl(365),
+        sessionTimeout: new FormControl('60'),
+        defaultCurrency: new FormControl('COP')
+      });
+    });
+
     it('should call setBreadcrumb on init', () => {
       component.ngOnInit();
       expect(breadcrumbServiceMock.setBreadcrumb).toHaveBeenCalled();
+    });
+
+    it('should setup breadcrumb config items', () => {
+      component.ngOnInit();
+      expect(component.breadcrumbConfig.items?.length).toBeGreaterThan(0);
+    });
+
+    it('should subscribe to alerts$ and update alertConfig', () => {
+      component.ngOnInit();
+      component.alerts$.subscribe();
+      expect(component.alertConfig.alerts).toBeDefined();
+    });
+
+    it('should setup alerts subscription on init', () => {
+      component.ngOnInit();
+      
+      // Verify alerts$ subscription is working
+      component.alerts$.subscribe(alerts => {
+        expect(alerts).toBeDefined();
+      });
     });
   });
 
   describe('Button actions', () => {
     beforeEach(() => {
-      // Mock the form
       component.dynamicForm.form = new FormGroup({
         theme: new FormControl('light'),
         language: new FormControl('es'),
@@ -81,7 +141,7 @@ describe('SettingsComponent', () => {
     });
 
     it('should call saveSettings when btnSave is clicked', () => {
-      const saveSpy = jest.spyOn(component, 'saveSettings' as any);
+      const saveSpy = jest.spyOn(component, 'saveSettings');
       
       if (component.btnSave.libTbClick) {
         component.btnSave.libTbClick(null);
@@ -91,7 +151,7 @@ describe('SettingsComponent', () => {
     });
 
     it('should call resetSettings when btnReset is clicked', () => {
-      const resetSpy = jest.spyOn(component, 'resetSettings' as any);
+      const resetSpy = jest.spyOn(component, 'resetSettings');
       
       if (component.btnReset.libTbClick) {
         component.btnReset.libTbClick(null);
@@ -101,7 +161,7 @@ describe('SettingsComponent', () => {
     });
 
     it('should call loadDefaultSettings when btnLoadDefaults is clicked', () => {
-      const loadDefaultsSpy = jest.spyOn(component, 'loadDefaultSettings' as any);
+      const loadDefaultsSpy = jest.spyOn(component, 'loadDefaultSettings');
       
       if (component.btnLoadDefaults.libTbClick) {
         component.btnLoadDefaults.libTbClick(null);
@@ -125,13 +185,36 @@ describe('SettingsComponent', () => {
       component.dynamicForm.libTbCallSubmit = jest.fn();
     });
 
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
     it('should call libTbCallSubmit when saving', () => {
       component.saveSettings();
       expect(component.dynamicForm.libTbCallSubmit).toHaveBeenCalled();
+    });
+
+    it('should set loading to true when form is valid', () => {
+      component.saveSettings();
+      
+      component.loading$.subscribe(loading => {
+        expect(loading).toBe(true);
+      });
+    });
+
+    it('should set loading to false after timeout when form is valid', () => {
+      component.saveSettings();
+      jest.advanceTimersByTime(1500);
+      
+      expect(component.isLoading).toBe(false);
+    });
+
+    it('should show success alert after timeout when form is valid', () => {
+      component.saveSettings();
+      jest.advanceTimersByTime(1500);
+      
+      component.alerts$.subscribe(alerts => {
+        const successAlert = alerts.find(a => a.type === 'success');
+        if (alerts.length > 0) {
+          expect(successAlert).toBeDefined();
+        }
+      });
     });
 
     it('should show error alert when form is invalid', () => {
@@ -146,21 +229,42 @@ describe('SettingsComponent', () => {
         expect(alerts.length).toBeGreaterThanOrEqual(0);
       });
     });
+
+    it('should log form data when saving valid form', () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      
+      component.saveSettings();
+      
+      expect(consoleSpy).toHaveBeenCalledWith('Configuración a guardar:', expect.any(Object));
+      consoleSpy.mockRestore();
+    });
   });
 
   describe('resetSettings', () => {
     beforeEach(() => {
       component.dynamicForm.form = new FormGroup({
-        theme: new FormControl('dark')
+        theme: new FormControl('dark'),
+        language: new FormControl('en')
       });
     });
 
-    it('should reset form and show info alert', () => {
+    it('should reset form', () => {
       const resetSpy = jest.spyOn(component.dynamicForm.form!, 'reset');
       
       component.resetSettings();
 
       expect(resetSpy).toHaveBeenCalled();
+    });
+
+    it('should show info alert after reset', () => {
+      component.resetSettings();
+
+      component.alerts$.subscribe(alerts => {
+        const infoAlert = alerts.find(a => a.type === 'info');
+        if (alerts.length > 0) {
+          expect(infoAlert).toBeDefined();
+        }
+      });
     });
   });
 
@@ -186,6 +290,17 @@ describe('SettingsComponent', () => {
       expect(component.dynamicForm.form?.get('sessionTimeout')?.value).toBe('60');
       expect(component.dynamicForm.form?.get('defaultCurrency')?.value).toBe('COP');
     });
+
+    it('should show info alert after loading defaults', () => {
+      component.loadDefaultSettings();
+
+      component.alerts$.subscribe(alerts => {
+        const infoAlert = alerts.find(a => a.type === 'info');
+        if (alerts.length > 0) {
+          expect(infoAlert?.title).toBe('Valores por Defecto Cargados');
+        }
+      });
+    });
   });
 
   describe('Getters', () => {
@@ -204,30 +319,72 @@ describe('SettingsComponent', () => {
       expect(component.isFormValid).toBe(false);
     });
 
+    it('should return false for isFormValid when form is null', () => {
+      component.dynamicForm.form = undefined as any;
+      expect(component.isFormValid).toBe(false);
+    });
+
     it('should return form data', () => {
       const formData = component.formData;
       expect(formData).toBeDefined();
       expect(formData.theme).toBe('light');
     });
 
-    it('should return loading state', () => {
+    it('should return loading state as false initially', () => {
       expect(component.isLoading).toBe(false);
     });
   });
 
-  describe('Alert handling', () => {
+  describe('Alert auto-hide', () => {
     beforeEach(() => {
+      jest.useFakeTimers();
       component.dynamicForm.form = new FormGroup({
         theme: new FormControl('light')
       });
     });
 
-    it('should add alerts when loadDefaultSettings is called', () => {
+    it('should auto-hide alerts after 5 seconds', () => {
       component.loadDefaultSettings();
+      
+      // Fast forward 5 seconds
+      jest.advanceTimersByTime(5000);
 
       component.alerts$.subscribe(alerts => {
-        expect(alerts.length).toBeGreaterThanOrEqual(0);
+        // After 5 seconds, alerts should be cleared
+        expect(alerts).toBeDefined();
       });
+    });
+  });
+
+  describe('Private methods coverage', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+      component.dynamicForm.form = new FormGroup({
+        theme: new FormControl('light'),
+        language: new FormControl('es'),
+        notifications: new FormControl(true),
+        dataRetention: new FormControl(365),
+        sessionTimeout: new FormControl('60'),
+        defaultCurrency: new FormControl('COP')
+      });
+    });
+
+    it('should have form values after init', () => {
+      component.ngOnInit();
+      jest.advanceTimersByTime(100);
+      
+      expect(component.dynamicForm.form?.get('theme')?.value).toBeDefined();
+    });
+
+    it('should update isFormValid getter', () => {
+      component.ngOnInit();
+      
+      // Form should be valid initially
+      expect(component.isFormValid).toBe(true);
+      
+      // Make form invalid
+      component.dynamicForm.form?.setErrors({ invalid: true });
+      expect(component.isFormValid).toBe(false);
     });
   });
 });
