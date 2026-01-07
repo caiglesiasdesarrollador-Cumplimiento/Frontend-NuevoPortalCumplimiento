@@ -1075,7 +1075,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         // ✅ IMPORTANTE: Solo resetear si NO hay datos guardados en sessionStorage
         if (!this.hayDatosGuardados()) {
           console.log('🔄 No hay datos guardados, reseteando formulario');
-          this.resetFormState();
+        this.resetFormState();
         } else {
           console.log('💾 Hay datos guardados, NO se resetea el formulario');
         }
@@ -4082,7 +4082,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = String(date.getFullYear()).slice(-2);
       return `${day}/${month}/${year}`;
-    } catch {
+    } catch (error) {
+      console.warn('Error al formatear fecha:', error);
       return dateString;
     }
   }

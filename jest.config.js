@@ -13,6 +13,7 @@ module.exports = {
     '<rootDir>/src/app/containers/third-party-validation/',
     '<rootDir>/src/app/containers/financial-statement-reader/',
     '<rootDir>/src/app/containers/policy-generation/',
+    '<rootDir>/src/app/containers/policy-input/',
     '<rootDir>/src/app/containers/login/',
     '<rootDir>/src/app/containers/portal/',
     '<rootDir>/src/app/containers/credit-limit-validation/',

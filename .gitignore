@@ -53,3 +53,7 @@ Thumbs.db
 #*environments/
 .eslintcache
 .scannerwork/
+
+# Backup files
+*.backup*
+*.backup-*
