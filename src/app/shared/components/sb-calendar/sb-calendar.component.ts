@@ -284,7 +284,8 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = String(date.getFullYear()).slice(-2); // Solo últimos 2 dígitos del año
       return `${day}/${month}/${year}`;
-    } catch {
+    } catch (error) {
+      console.warn('Error al formatear fecha:', error);
       return '';
     }
   }

@@ -1075,7 +1075,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         // ✅ IMPORTANTE: Solo resetear si NO hay datos guardados en sessionStorage
         if (!this.hayDatosGuardados()) {
           console.log('🔄 No hay datos guardados, reseteando formulario');
-        this.resetFormState();
+          this.resetFormState();
         } else {
           console.log('💾 Hay datos guardados, NO se resetea el formulario');
         }
@@ -1147,19 +1147,17 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       routerLink: item.routerLink?.join('/'),
     }));
 
-    // ✅ Actualizar breadcrumb del header - UX mejorado
+    // ✅ Actualizar breadcrumb del header
     this.breadcrumbService.setHeaderBreadcrumb([
       {
         label: 'Portal',
         icon: 'fa-solid fa-house',
         routerLink: '/portal',
-        isActive: false,
       },
       {
         label: 'Cotizar o Emitir',
         icon: 'fa-solid fa-paper-plane',
         routerLink: '/cotizar-emitir',
-        isActive: false,
       },
       {
         label: this.selectedAction === 'cotizar'
@@ -1591,15 +1589,19 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   toggleCoberturaRC(cob: any): void {
-    // Permite toggle en todas las coberturas RC
-    cob.seleccionada = !cob.seleccionada;
+    // Solo permite toggle si es la cobertura 222
+    if (this.esCobertura222(cob)) {
+      cob.seleccionada = !cob.seleccionada;
+    }
   }
 
   toggleTodasCoberturasRC(event: any): void {
-    // Permite toggle en todas las coberturas RC
+    // Solo permite toggle en la cobertura 222- PREDIOS LABOR Y OPERACIO
     const checked = event.target.checked;
     this.rcCoberturas.forEach(c => {
-      c.seleccionada = checked;
+      if (this.esCobertura222(c)) {
+        c.seleccionada = checked;
+      }
     });
   }
 
@@ -1628,26 +1630,40 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   onCampoRCCambio(cob: any): void {
-    // Calcula prima para todas las coberturas RC
-    const valorAsegurado = Number(cob.valorAsegurado) || 0;
-    const tasa = Number(cob.tasa) || 0;
-    
-    // Fórmula RC: Prima = Valor Asegurado * Tasa / 100
-    cob.prima = Math.round(valorAsegurado * (tasa / 100));
-    console.log('🔥 Prima RC calculada:', cob.nombre, '→', cob.prima);
+    // Solo calcula prima para la cobertura 222- PREDIOS LABOR Y OPERACIO
+    if (cob.nombre === '222- PREDIOS LABOR Y OPERACIO') {
+      const valorAsegurado = Number(cob.valorAsegurado) || 0;
+      const tasa = Number(cob.tasa) || 0;
+      
+      // Fórmula RC: Prima = Valor Asegurado * Tasa / 100
+      cob.prima = Math.round(valorAsegurado * (tasa / 100));
+      console.log('🔥 Prima RC calculada:', cob.nombre, '→', cob.prima);
+    } else {
+      // Las demás coberturas RC no calculan prima
+      cob.prima = 0;
+      console.log('⚠️ Prima RC no calculada (solo 222):', cob.nombre);
+    }
     
     this.cdr.detectChanges();
   }
 
   // ✅ Recalcular Prima RC cuando cambian los valores
+  // Solo para la cobertura 222- PREDIOS LABOR Y OPERACIO
   recalcularPrimaRC(cob: any): void {
-    // Calcula prima para todas las coberturas RC
-    const valorAsegurado = Number(cob.valorAsegurado) || 0;
-    const tasa = Number(cob.tasa) || 0;
+    // Solo calcula prima para la cobertura 222- PREDIOS LABOR Y OPERACIO
+    if (cob.nombre === '222- PREDIOS LABOR Y OPERACIO') {
+      const valorAsegurado = Number(cob.valorAsegurado) || 0;
+      const tasa = Number(cob.tasa) || 0;
 
-    // Fórmula RC: Prima = Valor Asegurado * Tasa / 100
-    cob.prima = Math.round(valorAsegurado * (tasa / 100));
-    console.log(`📊 Prima RC recalculada: ${cob.nombre} → $${this.formatearNumero(cob.prima)}`);
+      // Fórmula RC: Prima = Valor Asegurado * Tasa / 100
+      let prima = valorAsegurado * (tasa / 100);
+
+      cob.prima = Math.round(prima);
+      console.log(`📊 Prima RC recalculada: ${cob.nombre} → $${this.formatearNumero(cob.prima)}`);
+    } else {
+      // Las demás coberturas RC no calculan prima
+      cob.prima = 0;
+    }
   }
 
   // ✅ Liquidar Prima RC - Calcula, muestra el total y detecta cambios
@@ -3336,14 +3352,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.showFormatosPermitidos = mostrarFormatos;
     this.showToast = true;
     
-    // Auto-ocultar después de 8 segundos (tiempo suficiente para leer)
-    // Si muestra formatos, dar 10 segundos para mayor claridad
-    const duracion = mostrarFormatos ? 10000 : 8000;
+    // Auto-ocultar después de 5 segundos (más tiempo para leer)
     setTimeout(() => {
       this.showToast = false;
       this.showFormatosPermitidos = false;
       this.toastTitle = '';
-    }, duracion);
+    }, 5000);
   }
 
   // ✅ Toast específico para archivos no válidos - UX mejorada
@@ -4082,8 +4096,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = String(date.getFullYear()).slice(-2);
       return `${day}/${month}/${year}`;
-    } catch (error) {
-      console.warn('Error al formatear fecha:', error);
+    } catch {
       return dateString;
     }
   }
