@@ -13,7 +13,7 @@
        [class.sb-calendar-input-container--no-icon]="!icon"
        (click)="toggleCalendar()">
     <div class="sb-calendar-input">
-      <i *ngIf="icon" class="fa-solid fa-calendar-alt sb-calendar-icon"></i>
+      <i *ngIf="icon" class="fa-regular fa-calendar sb-calendar-icon"></i>
       <span *ngIf="displayValue" class="sb-calendar-value">{{ displayValue }}</span>
       <span *ngIf="!displayValue" class="sb-calendar-placeholder">{{ placeholder }}</span>
     </div>

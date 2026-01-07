@@ -411,10 +411,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   archivoDocumentoTemp: File | null = null;
   isDraggingDocumento = false;
   
-  // ✅ Toast para mensajes de validación
+  // ✅ Toast mejorado para mensajes de validación
   showToast = false;
   toastMessage = '';
-  toastType: 'warning' | 'error' | 'success' = 'warning';
+  toastTitle = '';
+  toastType: 'warning' | 'error' | 'success' | 'info' = 'warning';
+  showFormatosPermitidos = false;
   documentosSoporte: { tipo: string; nombreArchivo: string; fecha: string; archivo: File }[] = [];
   
   tiposDocumentoSoporte: { [key: string]: string } = {
@@ -1145,17 +1147,19 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       routerLink: item.routerLink?.join('/'),
     }));
 
-    // ✅ Actualizar breadcrumb del header
+    // ✅ Actualizar breadcrumb del header - UX mejorado
     this.breadcrumbService.setHeaderBreadcrumb([
       {
         label: 'Portal',
         icon: 'fa-solid fa-house',
         routerLink: '/portal',
+        isActive: false,
       },
       {
         label: 'Cotizar o Emitir',
         icon: 'fa-solid fa-paper-plane',
         routerLink: '/cotizar-emitir',
+        isActive: false,
       },
       {
         label: this.selectedAction === 'cotizar'
@@ -1587,19 +1591,15 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   toggleCoberturaRC(cob: any): void {
-    // Solo permite toggle si es la cobertura 222
-    if (this.esCobertura222(cob)) {
-      cob.seleccionada = !cob.seleccionada;
-    }
+    // Permite toggle en todas las coberturas RC
+    cob.seleccionada = !cob.seleccionada;
   }
 
   toggleTodasCoberturasRC(event: any): void {
-    // Solo permite toggle en la cobertura 222- PREDIOS LABOR Y OPERACIO
+    // Permite toggle en todas las coberturas RC
     const checked = event.target.checked;
     this.rcCoberturas.forEach(c => {
-      if (this.esCobertura222(c)) {
-        c.seleccionada = checked;
-      }
+      c.seleccionada = checked;
     });
   }
 
@@ -1628,40 +1628,26 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   onCampoRCCambio(cob: any): void {
-    // Solo calcula prima para la cobertura 222- PREDIOS LABOR Y OPERACIO
-    if (cob.nombre === '222- PREDIOS LABOR Y OPERACIO') {
-      const valorAsegurado = Number(cob.valorAsegurado) || 0;
-      const tasa = Number(cob.tasa) || 0;
-      
-      // Fórmula RC: Prima = Valor Asegurado * Tasa / 100
-      cob.prima = Math.round(valorAsegurado * (tasa / 100));
-      console.log('🔥 Prima RC calculada:', cob.nombre, '→', cob.prima);
-    } else {
-      // Las demás coberturas RC no calculan prima
-      cob.prima = 0;
-      console.log('⚠️ Prima RC no calculada (solo 222):', cob.nombre);
-    }
+    // Calcula prima para todas las coberturas RC
+    const valorAsegurado = Number(cob.valorAsegurado) || 0;
+    const tasa = Number(cob.tasa) || 0;
+    
+    // Fórmula RC: Prima = Valor Asegurado * Tasa / 100
+    cob.prima = Math.round(valorAsegurado * (tasa / 100));
+    console.log('🔥 Prima RC calculada:', cob.nombre, '→', cob.prima);
     
     this.cdr.detectChanges();
   }
 
   // ✅ Recalcular Prima RC cuando cambian los valores
-  // Solo para la cobertura 222- PREDIOS LABOR Y OPERACIO
   recalcularPrimaRC(cob: any): void {
-    // Solo calcula prima para la cobertura 222- PREDIOS LABOR Y OPERACIO
-    if (cob.nombre === '222- PREDIOS LABOR Y OPERACIO') {
-      const valorAsegurado = Number(cob.valorAsegurado) || 0;
-      const tasa = Number(cob.tasa) || 0;
+    // Calcula prima para todas las coberturas RC
+    const valorAsegurado = Number(cob.valorAsegurado) || 0;
+    const tasa = Number(cob.tasa) || 0;
 
-      // Fórmula RC: Prima = Valor Asegurado * Tasa / 100
-      let prima = valorAsegurado * (tasa / 100);
-
-      cob.prima = Math.round(prima);
-      console.log(`📊 Prima RC recalculada: ${cob.nombre} → $${this.formatearNumero(cob.prima)}`);
-    } else {
-      // Las demás coberturas RC no calculan prima
-      cob.prima = 0;
-    }
+    // Fórmula RC: Prima = Valor Asegurado * Tasa / 100
+    cob.prima = Math.round(valorAsegurado * (tasa / 100));
+    console.log(`📊 Prima RC recalculada: ${cob.nombre} → $${this.formatearNumero(cob.prima)}`);
   }
 
   // ✅ Liquidar Prima RC - Calcula, muestra el total y detecta cambios
@@ -1904,7 +1890,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
       
       if (!validExtensions.includes(extension)) {
-        this.showErrorNotification('❌ Tu archivo no es compatible. Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX');
+        this.mostrarToastArchivoNoValido(file.name, extension);
         input.value = ''; // Limpiar input
         return;
       }
@@ -2015,7 +2001,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       const validExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
       if (!validExtensions.includes(extension)) {
-        this.showErrorNotification('Formato de archivo no permitido');
+        this.mostrarToastArchivoNoValido(file.name, extension);
         return;
       }
       
@@ -3342,22 +3328,79 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     };
   }
 
-  // ✅ Método para mostrar toast de advertencia
-  mostrarToast(mensaje: string, tipo: 'warning' | 'error' | 'success' = 'warning'): void {
+  // ✅ Método para mostrar toast mejorado
+  mostrarToast(mensaje: string, tipo: 'warning' | 'error' | 'success' | 'info' = 'warning', titulo: string = '', mostrarFormatos: boolean = false): void {
     this.toastMessage = mensaje;
     this.toastType = tipo;
+    this.toastTitle = titulo;
+    this.showFormatosPermitidos = mostrarFormatos;
     this.showToast = true;
     
-    // Auto-ocultar después de 4 segundos
+    // Auto-ocultar después de 8 segundos (tiempo suficiente para leer)
+    // Si muestra formatos, dar 10 segundos para mayor claridad
+    const duracion = mostrarFormatos ? 10000 : 8000;
     setTimeout(() => {
       this.showToast = false;
-    }, 4000);
+      this.showFormatosPermitidos = false;
+      this.toastTitle = '';
+    }, duracion);
+  }
+
+  // ✅ Toast específico para archivos no válidos - UX mejorada
+  mostrarToastArchivoNoValido(nombreArchivo: string, extension: string): void {
+    const tipoArchivo = this.obtenerTipoArchivo(extension);
+    const titulo = '¡Archivo no compatible!';
+    const mensaje = `El archivo "${nombreArchivo}" (${tipoArchivo}) no puede ser procesado. Por favor, selecciona un archivo en los formatos indicados.`;
+    
+    this.mostrarToast(mensaje, 'error', titulo, true);
+  }
+
+  // ✅ Obtener descripción amigable del tipo de archivo
+  private obtenerTipoArchivo(extension: string): string {
+    const tipos: { [key: string]: string } = {
+      '.jpg': 'Imagen JPG',
+      '.jpeg': 'Imagen JPEG',
+      '.png': 'Imagen PNG',
+      '.gif': 'Imagen GIF',
+      '.bmp': 'Imagen BMP',
+      '.webp': 'Imagen WebP',
+      '.svg': 'Imagen SVG',
+      '.ico': 'Icono',
+      '.mp4': 'Video MP4',
+      '.avi': 'Video AVI',
+      '.mov': 'Video MOV',
+      '.mkv': 'Video MKV',
+      '.wmv': 'Video WMV',
+      '.mp3': 'Audio MP3',
+      '.wav': 'Audio WAV',
+      '.ogg': 'Audio OGG',
+      '.zip': 'Archivo comprimido ZIP',
+      '.rar': 'Archivo comprimido RAR',
+      '.7z': 'Archivo comprimido 7Z',
+      '.tar': 'Archivo TAR',
+      '.txt': 'Archivo de texto',
+      '.html': 'Página web HTML',
+      '.css': 'Hoja de estilos CSS',
+      '.js': 'JavaScript',
+      '.ts': 'TypeScript',
+      '.json': 'Archivo JSON',
+      '.xml': 'Archivo XML',
+      '.exe': 'Programa ejecutable',
+      '.msi': 'Instalador Windows',
+      '.dmg': 'Imagen de disco Mac',
+      '.psd': 'Archivo Photoshop',
+      '.ai': 'Archivo Illustrator',
+      '.ppt': 'Presentación PowerPoint',
+      '.pptx': 'Presentación PowerPoint',
+      '.csv': 'Archivo CSV'
+    };
+    return tipos[extension.toLowerCase()] || `Archivo ${extension.toUpperCase().replace('.', '')}`;
   }
 
   // ✅ Método para manejar clic en zona de carga sin tipo seleccionado
   onUploadAreaClick(): void {
     if (!this.tipoDocumentoSoporte) {
-      this.mostrarToast('Selecciona el tipo de documento para poder cargar el archivo', 'warning');
+      this.mostrarToast('Selecciona el tipo de documento para poder cargar el archivo', 'warning', 'Paso requerido');
     } else {
       this.triggerFileInput();
     }
@@ -3366,6 +3409,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Cerrar toast manualmente
   cerrarToast(): void {
     this.showToast = false;
+    this.showFormatosPermitidos = false;
+    this.toastTitle = '';
   }
 
   // ============================================

@@ -31,7 +31,7 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
   @Input() required: boolean = false;
   @Input() error: boolean = false;
   @Input() errorMessage: string = '';
-  @Input() icon: string = 'fa-solid fa-calendar-alt';
+  @Input() icon: string = 'fa-regular fa-calendar';
   @Input() showLabelIcon: boolean = true; // Controla si se muestra el icono en el label
   @Input() forceBottom: boolean = false; // Forzar que el popup se muestre abajo
   

@@ -20,6 +20,19 @@ body {
   background-color: var(--sb-ui-color-grayscale-L400, #fafafa);
 }
 
+/* ✅ OCULTAR BOTÓN DE AYUDA GLOBALMENTE */
+.help-fab,
+app-help,
+[class*="help-fab"],
+[class*="help-btn"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
 /* ============================================
    ESTILOS GLOBALES DE @seguros-bolivar/ui-bundle
    ============================================ */

@@ -8,7 +8,7 @@ import { HeaderModule } from './shared/components/header/header.module';
 import { AppRoutingModule } from './app-routing.module';
 import { LoaderModule } from './shared/components/loader/loader.module';
 import { NotificationModule } from './shared/components/notification/notification.module';
-import { HelpModule } from './shared/components/help/help.module';
+// HelpModule removido por UX - botón de ayuda eliminado
 import { BreadcrumbModule } from './shared/components/breadcrumb/breadcrumb.module';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 
@@ -23,7 +23,7 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
     LoaderModule,
     NotificationModule,
     BreadcrumbModule,
-    HelpModule,
+    // HelpModule removido - botón de ayuda eliminado
   ],
   declarations: [AppComponent],
   providers: [

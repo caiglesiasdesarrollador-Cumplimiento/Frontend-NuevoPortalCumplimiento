@@ -1,7 +1,7 @@
 <!-- ✅ Container principal del policy-input - Mobile responsive -->
 <!-- ✅ Breadcrumb ahora se muestra en el header principal -->
 <div class="min-h-screen bg-grayscaleL400 policy-input-main-container">
-  <div class="max-w-7xl mx-auto px-2 py-2 sm:px-4 sm:py-8 lg:px-8 policy-input-inner-container">
+  <div class="w-full mx-auto px-2 py-2 sm:px-4 sm:py-8 lg:px-8 policy-input-inner-container">
     
     <div *ngIf="showCotizacionesTable" class="mb-6">
       <!-- Header con título y botón -->
@@ -387,12 +387,9 @@
               class="bg-grayscaleWhite p-6 sm:p-8 rounded-lg shadow-sm border border-grayscaleL200 hover:shadow-md transition-shadow cursor-pointer"
               (click)="onElegirCotizacion()"
             >
-              <!-- Header con ícono -->
-              <div class="flex items-center justify-between mb-4">
+              <!-- Header sin ícono - UX simplificado -->
+              <div class="flex items-center mb-4">
                 <h3 class="text-xl font-bold text-grayscaleBlack">Usar cotización existente</h3>
-                <div class="w-12 h-12 bg-primaryL100 rounded-lg flex items-center justify-center">
-                  <i class="fa-solid fa-file-search text-primaryBase text-xl"></i>
-                </div>
               </div>
 
               <!-- Descripción -->
@@ -435,12 +432,9 @@
               class="bg-grayscaleWhite p-6 sm:p-8 rounded-lg shadow-sm border border-grayscaleL200 hover:shadow-md transition-shadow cursor-pointer"
               (click)="selectEmitirOption('poliza-nueva')"
             >
-              <!-- Header con ícono -->
-              <div class="flex items-center justify-between mb-4">
+              <!-- Header sin ícono - UX simplificado -->
+              <div class="flex items-center mb-4">
                 <h3 class="text-xl font-bold text-grayscaleBlack">Crear una póliza nueva</h3>
-                <div class="w-12 h-12 bg-successL100 rounded-lg flex items-center justify-center">
-                  <i class="fa-solid fa-file-plus text-successBase text-xl"></i>
-                </div>
               </div>
 
               <!-- Descripción -->
@@ -577,8 +571,8 @@
         </div>
       </div>
 
-      <!-- ✅ OBLIGATORIO: Contenido de pasos con renderizado condicional - ANCHO COMPLETO -->
-      <div *ngIf="isFormEnabled" class="policy-input__content max-w-6xl mx-auto lg:max-w-7xl">
+      <!-- ✅ OBLIGATORIO: Contenido de pasos con renderizado condicional - MISMO ANCHO QUE TODO -->
+      <div *ngIf="isFormEnabled" class="policy-input__content w-full">
         <!-- ✅ Paso 1: Información Básica -->
         <div *ngIf="currentStep === 0"
           class="policy-input__step policy-input__step--info bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200"
@@ -894,30 +888,36 @@
                 Carga de contrato
               </h4>
               
-              <!-- ✅ DROPDOWN TIPO DE DOCUMENTO -->
+              <!-- ✅ DROPDOWN TIPO DE DOCUMENTO - Se deshabilita cuando ya hay 1 documento -->
               <div class="form-group mb-4">
                 <label class="sb-ui-label">Tipo de documento</label>
-                <select class="sb-ui-select w-full" [(ngModel)]="tipoDocumentoSoporte">
+                <select class="sb-ui-select w-full" 
+                        [(ngModel)]="tipoDocumentoSoporte"
+                        [disabled]="documentosSoporte.length > 0">
                   <option value="">-- Seleccione el tipo de documento --</option>
                   <option value="1">PLIEGO</option>
                   <option value="2">OFERTA MERCANTIL</option>
                   <option value="3">CONTRATO</option>
                 </select>
+                <p *ngIf="documentosSoporte.length > 0" class="text-xs text-grayscaleD300 mt-1">
+                  <i class="fa-regular fa-circle-info mr-1"></i>
+                  Solo se permite 1 documento. Elimina el actual para cargar otro.
+                </p>
               </div>
 
               <p class="text-sm text-grayscaleD200 mb-4 text-center">
                 Peso máximo: 30 MB. Formatos permitidos: PDF, Word, Excel.
               </p>
               
-              <!-- ✅ ÁREA DE CARGA ORIGINAL - Solo visible cuando hay tipo seleccionado y no está subiendo -->
+              <!-- ✅ ÁREA DE CARGA ORIGINAL - Solo visible cuando hay tipo seleccionado, no está subiendo y NO hay documento cargado -->
               <div class="file-upload-area" 
-                   [class.disabled]="!tipoDocumentoSoporte"
+                   [class.disabled]="!tipoDocumentoSoporte || documentosSoporte.length > 0"
                    (click)="onUploadAreaClick()" 
-                   *ngIf="!isUploading && !selectedFileName">
+                   *ngIf="!isUploading && !selectedFileName && documentosSoporte.length === 0">
                 <input type="file" 
                        #fileInput 
                        hidden 
-                       [disabled]="!tipoDocumentoSoporte"
+                       [disabled]="!tipoDocumentoSoporte || documentosSoporte.length > 0"
                        accept=".pdf,.doc,.docx,.xls,.xlsx"
                        (change)="onFileSelected($event)" />
                 <div class="file-upload-area__content">
@@ -928,6 +928,9 @@
                   </p>
                 </div>
               </div>
+              
+              <!-- ✅ Mensaje cuando ya hay documento cargado -->
+              <!-- Mensaje removido por UX - el documento ya se muestra en la lista -->
 
               <!-- ✅ SPINNER Y BARRA DE PROGRESO - Estilo Seguros Bolívar UI -->
               <div *ngIf="isUploading" class="file-uploading-container">
@@ -979,10 +982,10 @@
                 </div>
               </div>
 
-              <!-- Botón Agregar -->
-              <div class="mt-4 text-center">
+              <!-- Botón Agregar - Se deshabilita cuando ya hay 1 documento -->
+              <div class="mt-4 text-center" *ngIf="documentosSoporte.length === 0">
                 <button class="btn-agregar" 
-                        [disabled]="!tipoDocumentoSoporte || !selectedFileName"
+                        [disabled]="!tipoDocumentoSoporte || !selectedFileName || documentosSoporte.length > 0"
                         (click)="agregarDocumentoALista()">
                   Agregar Documento
                 </button>
@@ -1592,21 +1595,21 @@
               </div>
             </div>
                   <div class="table-container table-full-width">
-                    <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--compact coberturas-editable w-full">
+                    <table class="sb-ui-table sb-ui-table--striped sb-ui-table--hover sb-ui-table--compact coberturas-editable">
                 <thead>
                         <tr>
                           <th class="text-center" style="width: 40px;">
                             <input type="checkbox" class="sb-ui-checkbox" (change)="toggleTodasCoberturas($event)" />
                           </th>
-                          <th style="min-width: 250px;">Coberturas</th>
-                          <th class="text-center" style="width: 80px;">% Aseg.</th>
-                          <th class="text-right" style="min-width: 160px;">Valor Aseg.</th>
-                          <th class="text-center" style="width: 100px;">Tasa</th>
-                          <th class="text-center" style="width: 110px;">F. Inicio</th>
-                          <th class="text-center" style="width: 110px;">T. Adic.</th>
-                          <th class="text-center" style="width: 110px;">F. Fin</th>
-                          <th class="text-center" style="width: 110px;">F. Venc.</th>
-                          <th class="text-right" style="width: 140px;">Prima</th>
+                          <th style="width: 160px;">Coberturas</th>
+                          <th class="text-center" style="width: 70px;">% Aseg.</th>
+                          <th class="text-right" style="width: 130px;">Valor Aseg.</th>
+                          <th class="text-center" style="width: 65px;">Tasa</th>
+                          <th class="text-center" style="width: 95px;">F. Inicio</th>
+                          <th class="text-center" style="width: 65px;">T. Adic.</th>
+                          <th class="text-center" style="width: 95px;">F. Fin</th>
+                          <th class="text-center" style="width: 95px;">F. Venc.</th>
+                          <th class="text-right" style="width: 115px;">Prima</th>
                         </tr>
                 </thead>
                 <tbody>
@@ -1869,8 +1872,7 @@ NIT:</textarea>
                                 <input type="checkbox" class="sb-ui-checkbox" 
                                        [checked]="cob.seleccionada" 
                                        (change)="toggleCoberturaRC(cob)"
-                                       [disabled]="!esCobertura222(cob)"
-                                       [title]="esCobertura222(cob) ? 'Seleccionar cobertura' : 'Solo 222-PREDIOS LABOR puede liquidarse'" />
+                                       title="Seleccionar cobertura" />
                               </td>
                               <td class="font-medium cobertura-nombre">{{ cob.nombre }}</td>
                               <td class="text-center">
@@ -3036,20 +3038,51 @@ NIT:</textarea>
   </div>
 </div>
 
-<!-- ✅ TOAST DE NOTIFICACIÓN - Centrado estilo Bolívar -->
+<!-- ✅ TOAST DE NOTIFICACIÓN MEJORADO - Centrado estilo Bolívar -->
 <div class="toast-overlay" *ngIf="showToast" (click)="cerrarToast()">
-  <div class="toast-bolivar" [class.toast-bolivar--warning]="toastType === 'warning'" [class.toast-bolivar--error]="toastType === 'error'" [class.toast-bolivar--success]="toastType === 'success'" (click)="$event.stopPropagation()">
-    <div class="toast-bolivar__icon">
-      <i class="fa-regular" [ngClass]="{
-        'fa-circle-exclamation': toastType === 'warning',
-        'fa-circle-xmark': toastType === 'error',
-        'fa-circle-check': toastType === 'success'
-      }"></i>
+  <div class="toast-bolivar" 
+       [class.toast-bolivar--warning]="toastType === 'warning'" 
+       [class.toast-bolivar--error]="toastType === 'error'" 
+       [class.toast-bolivar--success]="toastType === 'success'"
+       [class.toast-bolivar--info]="toastType === 'info'"
+       (click)="$event.stopPropagation()">
+    
+    <!-- Icono principal - OUTLINE -->
+    <div class="toast-bolivar__icon-container">
+      <div class="toast-bolivar__icon">
+        <i [ngClass]="{
+          'fa-regular fa-triangle-exclamation': toastType === 'warning',
+          'fa-regular fa-file-excel': toastType === 'error',
+          'fa-regular fa-circle-check': toastType === 'success',
+          'fa-regular fa-circle-info': toastType === 'info'
+        }"></i>
+      </div>
     </div>
+    
+    <!-- Contenido -->
     <div class="toast-bolivar__content">
+      <h4 class="toast-bolivar__title" *ngIf="toastTitle">{{ toastTitle }}</h4>
       <p class="toast-bolivar__message">{{ toastMessage }}</p>
+      
+      <!-- Formatos permitidos (cuando aplica) -->
+      <div class="toast-bolivar__formats" *ngIf="showFormatosPermitidos">
+        <span class="toast-bolivar__formats-label">Formatos permitidos:</span>
+        <div class="toast-bolivar__formats-list">
+          <span class="toast-bolivar__format-badge toast-bolivar__format-badge--pdf">
+            <i class="fa-regular fa-file-lines"></i> PDF
+          </span>
+          <span class="toast-bolivar__format-badge toast-bolivar__format-badge--word">
+            <i class="fa-regular fa-file-lines"></i> Word
+          </span>
+          <span class="toast-bolivar__format-badge toast-bolivar__format-badge--excel">
+            <i class="fa-regular fa-file-lines"></i> Excel
+          </span>
+        </div>
+      </div>
     </div>
-    <button class="toast-bolivar__close" (click)="cerrarToast()">
+    
+    <!-- Botón cerrar - OUTLINE -->
+    <button class="toast-bolivar__close" (click)="cerrarToast()" aria-label="Cerrar notificación">
       <i class="fa-regular fa-circle-xmark"></i>
     </button>
   </div>
