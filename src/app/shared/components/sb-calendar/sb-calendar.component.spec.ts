@@ -687,5 +687,110 @@ describe('SbCalendarComponent', () => {
       expect(component.required).toBe(true);
     });
   });
+
+  describe('Complete branch coverage', () => {
+    it('should handle cancelSelection with empty value', () => {
+      component.value = '';
+      component.showCalendar = true;
+      
+      component.cancelSelection();
+      
+      expect(component.tempSelectedDate).toBeNull();
+      expect(component.showCalendar).toBe(false);
+    });
+
+    it('should handle cancelSelection with valid value', () => {
+      component.value = '2025-06-15';
+      component.showCalendar = true;
+      
+      component.cancelSelection();
+      
+      expect(component.tempSelectedDate).toBeTruthy();
+      expect(component.showCalendar).toBe(false);
+    });
+
+    it('should handle acceptSelection without tempSelectedDate', () => {
+      component.tempSelectedDate = null;
+      component.showCalendar = true;
+      
+      component.acceptSelection();
+      
+      expect(component.showCalendar).toBe(false);
+    });
+
+    it('should call onChange when accepting selection', () => {
+      const onChangeSpy = jest.fn();
+      component.registerOnChange(onChangeSpy);
+      component.tempSelectedDate = new Date(2025, 5, 15);
+      
+      component.acceptSelection();
+      
+      expect(onChangeSpy).toHaveBeenCalledWith('2025-06-15');
+    });
+
+    it('should update displayValue when accepting selection', () => {
+      component.tempSelectedDate = new Date(2025, 5, 15);
+      
+      component.acceptSelection();
+      
+      expect(component.displayValue).toBe('15/06/25');
+    });
+
+    it('should handle isSameDate with different year', () => {
+      const date1 = new Date(2025, 5, 15);
+      const date2 = new Date(2024, 5, 15);
+      expect(component.isSameDate(date1, date2)).toBe(false);
+    });
+
+    it('should handle isSameDate with different month', () => {
+      const date1 = new Date(2025, 5, 15);
+      const date2 = new Date(2025, 6, 15);
+      expect(component.isSameDate(date1, date2)).toBe(false);
+    });
+
+    it('should emit dateChange when clearing date', () => {
+      const emitSpy = jest.spyOn(component.dateChange, 'emit');
+      const event = { stopPropagation: jest.fn() } as any;
+      
+      component.clearDate(event);
+      
+      expect(emitSpy).toHaveBeenCalledWith('');
+    });
+
+    it('should call onChange when clearing date', () => {
+      const onChangeSpy = jest.fn();
+      component.registerOnChange(onChangeSpy);
+      const event = { stopPropagation: jest.fn() } as any;
+      
+      component.clearDate(event);
+      
+      expect(onChangeSpy).toHaveBeenCalledWith('');
+    });
+  });
+
+  describe('Calendar year generation', () => {
+    it('should generate years array on init', () => {
+      component.ngOnInit();
+      expect(component.years.length).toBeGreaterThan(0);
+    });
+
+    it('should include current year in years array', () => {
+      component.ngOnInit();
+      const currentYear = new Date().getFullYear();
+      expect(component.years).toContain(currentYear);
+    });
+
+    it('should include past years in years array', () => {
+      component.ngOnInit();
+      const currentYear = new Date().getFullYear();
+      expect(component.years).toContain(currentYear - 10);
+    });
+
+    it('should include future years in years array', () => {
+      component.ngOnInit();
+      const currentYear = new Date().getFullYear();
+      expect(component.years).toContain(currentYear + 10);
+    });
+  });
 });
 
