@@ -1,0 +1,44 @@
+.sb-animated-ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: #038450;
+    animation: spin 1.5s linear infinite;
+
+    &.ring-1 {
+      width: 100%;
+      height: 100%;
+      animation-delay: 0s;
+    }
+
+    &.ring-2 {
+      width: 80%;
+      height: 80%;
+      animation-delay: 0.2s;
+      border-top-color: #FFE16F;
+    }
+
+    &.ring-3 {
+      width: 60%;
+      height: 60%;
+      animation-delay: 0.4s;
+    }
+  }
+
+  .icon-container {
+    position: absolute;
+    font-size: 3rem;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+

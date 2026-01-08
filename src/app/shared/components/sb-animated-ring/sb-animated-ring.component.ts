@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-sb-animated-ring',
+  standalone: false,
   templateUrl: './sb-animated-ring.component.html',
   styleUrls: ['./sb-animated-ring.component.scss']
 })
