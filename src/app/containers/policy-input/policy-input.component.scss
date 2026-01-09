@@ -425,9 +425,17 @@ i[class*="fa-"],
   }
 
   &__hint {
-    font-size: 0.75rem;
-    color: #6b7280;
+    font-size: 0.7rem;
+    color: #9ca3af;
     margin: 0;
+  }
+  
+  // ✅ Texto de formatos permitidos ABAJO dentro del área de carga
+  &__formats-bottom {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    margin: 0.75rem 0 0 0;
+    text-align: center;
   }
 }
 
@@ -5855,7 +5863,7 @@ input[type="checkbox"].sb-ui-checkbox {
     color: #111;
 
     &.green { color: #038450; font-weight: 600; }
-    &.mono { font-family: monospace; color: #038450; }
+    &.mono { color: #038450; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
     &.bold { font-weight: 600; }
   }
 }
@@ -6008,7 +6016,8 @@ input[type="checkbox"].sb-ui-checkbox {
   }
 
   &__code {
-    font-family: monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
     font-size: 1.1rem;
     color: #038450;
     font-weight: 700;
@@ -6060,12 +6069,14 @@ input[type="checkbox"].sb-ui-checkbox {
 
       &.highlight {
         color: #038450;
-        font-family: monospace;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.02em;
         font-size: 1rem;
       }
 
       &.code {
-        font-family: monospace;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.02em;
         background: #f3f4f6;
         padding: 0.2rem 0.5rem;
         border-radius: 4px;
@@ -6325,7 +6336,8 @@ input[type="checkbox"].sb-ui-checkbox {
   &__code {
     color: rgba(255,255,255,0.8);
     font-size: 0.8rem;
-    font-family: monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
   }
 
   &__prima {
@@ -6464,7 +6476,8 @@ input[type="checkbox"].sb-ui-checkbox {
     .val {
       font-weight: 600;
       color: #038450;
-      font-family: monospace;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
       font-size: 0.85rem;
     }
   }
@@ -6533,7 +6546,8 @@ input[type="checkbox"].sb-ui-checkbox {
     margin-top: 0.15rem;
 
     &.code {
-      font-family: monospace;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
       background: #f3f4f6;
       padding: 0.15rem 0.4rem;
       border-radius: 4px;
@@ -7052,11 +7066,13 @@ input[type="checkbox"].sb-ui-checkbox {
     &--highlight {
       color: #038450;
       font-weight: 600;
-      font-family: 'Courier New', monospace;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
     }
 
     &--code {
-      font-family: 'Courier New', monospace;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
       background: #f3f4f6;
       padding: 0.25rem 0.5rem;
       border-radius: 0.25rem;
@@ -8857,6 +8873,16 @@ input[type="checkbox"].sb-ui-checkbox {
       font-size: 1.25rem;
       font-weight: 800;
       color: #2D2D2D;
+    }
+    
+    // Estilo línea (outline) - fondo transparente
+    &--outline {
+      background: transparent;
+      border: 2px solid #2D2D2D;
+      
+      span {
+        font-weight: 700;
+      }
     }
   }
   
