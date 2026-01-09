@@ -41,6 +41,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   
   // ✅ Intervalo para auto-guardado
   private autoSaveInterval: any;
+  // ✅ Intervalos para upload de archivos (para limpiar en ngOnDestroy)
+  private uploadInterval: any;
+  private uploadIntervalEstadosFinancieros: any;
 
   // ✅ Guardar datos cuando el usuario cierra o recarga la página
   @HostListener('window:beforeunload')
@@ -1909,14 +1912,22 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       this.isUploading = true;
       this.uploadProgress = 0;
       
-      const interval = setInterval(() => {
+      // Limpiar intervalo anterior si existe
+      if (this.uploadInterval) {
+        clearInterval(this.uploadInterval);
+      }
+      
+      this.uploadInterval = setInterval(() => {
         this.uploadProgress += 10;
         if (this.uploadProgress >= 100) {
-          clearInterval(interval);
+          clearInterval(this.uploadInterval);
+          this.uploadInterval = null;
           this.isUploading = false;
-          this.selectedFileName = this.selectedFile!.name;
-          this.fileName = this.selectedFile!.name;
-          console.log('✅ Archivo subido:', this.selectedFileName);
+          if (this.selectedFile) {
+            this.selectedFileName = this.selectedFile.name;
+            this.fileName = this.selectedFile.name;
+            console.log('✅ Archivo subido:', this.selectedFileName);
+          }
         }
       }, 150);
     }
@@ -3096,10 +3107,18 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Propiedad para el toast de éxito
   showSuccessToast = false;
   successToastMessage = '';
+  
+  // ✅ Modal de datos restaurados
+  showDatosRestauradosModal = false;
 
   // ✅ Método para ocultar el toast de éxito al hacer clic
   hideSuccessToast(): void {
     this.showSuccessToast = false;
+  }
+  
+  // ✅ Método para cerrar el modal de datos restaurados
+  cerrarDatosRestauradosModal(): void {
+    this.showDatosRestauradosModal = false;
   }
 
   // ✅ Método para generar cotización usando EXCLUSIVAMENTE TechBlock
@@ -3346,55 +3365,23 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     }, duracion);
   }
 
-  // ✅ Toast específico para archivos no válidos - UX mejorada
-  mostrarToastArchivoNoValido(nombreArchivo: string, extension: string): void {
-    const tipoArchivo = this.obtenerTipoArchivo(extension);
-    const titulo = '¡Archivo no compatible!';
-    const mensaje = `El archivo "${nombreArchivo}" (${tipoArchivo}) no puede ser procesado. Por favor, selecciona un archivo en los formatos indicados.`;
-    
-    this.mostrarToast(mensaje, 'error', titulo, true);
+  // ✅ Modal para archivos no válidos - Diseño Bolívar
+  showArchivoNoCompatibleModal = false;
+  archivoNoCompatibleNombre = '';
+
+  mostrarToastArchivoNoValido(nombreArchivo: string, _extension?: string): void {
+    this.archivoNoCompatibleNombre = nombreArchivo;
+    this.showArchivoNoCompatibleModal = true;
   }
 
-  // ✅ Obtener descripción amigable del tipo de archivo
-  private obtenerTipoArchivo(extension: string): string {
-    const tipos: { [key: string]: string } = {
-      '.jpg': 'Imagen JPG',
-      '.jpeg': 'Imagen JPEG',
-      '.png': 'Imagen PNG',
-      '.gif': 'Imagen GIF',
-      '.bmp': 'Imagen BMP',
-      '.webp': 'Imagen WebP',
-      '.svg': 'Imagen SVG',
-      '.ico': 'Icono',
-      '.mp4': 'Video MP4',
-      '.avi': 'Video AVI',
-      '.mov': 'Video MOV',
-      '.mkv': 'Video MKV',
-      '.wmv': 'Video WMV',
-      '.mp3': 'Audio MP3',
-      '.wav': 'Audio WAV',
-      '.ogg': 'Audio OGG',
-      '.zip': 'Archivo comprimido ZIP',
-      '.rar': 'Archivo comprimido RAR',
-      '.7z': 'Archivo comprimido 7Z',
-      '.tar': 'Archivo TAR',
-      '.txt': 'Archivo de texto',
-      '.html': 'Página web HTML',
-      '.css': 'Hoja de estilos CSS',
-      '.js': 'JavaScript',
-      '.ts': 'TypeScript',
-      '.json': 'Archivo JSON',
-      '.xml': 'Archivo XML',
-      '.exe': 'Programa ejecutable',
-      '.msi': 'Instalador Windows',
-      '.dmg': 'Imagen de disco Mac',
-      '.psd': 'Archivo Photoshop',
-      '.ai': 'Archivo Illustrator',
-      '.ppt': 'Presentación PowerPoint',
-      '.pptx': 'Presentación PowerPoint',
-      '.csv': 'Archivo CSV'
-    };
-    return tipos[extension.toLowerCase()] || `Archivo ${extension.toUpperCase().replace('.', '')}`;
+  cerrarArchivoNoCompatibleModal(): void {
+    this.showArchivoNoCompatibleModal = false;
+    this.archivoNoCompatibleNombre = '';
+  }
+
+  aceptarArchivoNoCompatible(): void {
+    this.showArchivoNoCompatibleModal = false;
+    this.archivoNoCompatibleNombre = '';
   }
 
   // ✅ Método para manejar clic en zona de carga sin tipo seleccionado
@@ -3570,7 +3557,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         });
       }, 0);
       
-      this.mostrarToast('Se restauraron los datos del formulario', 'success');
+      // Mostrar modal de datos restaurados
+      this.showDatosRestauradosModal = true;
+      setTimeout(() => {
+        this.showDatosRestauradosModal = false;
+      }, 4000);
       
       return true;
     } catch (error) {
@@ -3609,6 +3600,15 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Limpiar recursos al destruir el componente
   ngOnDestroy(): void {
     this.detenerAutoGuardado();
+    // Limpiar intervalos de upload si están activos
+    if (this.uploadInterval) {
+      clearInterval(this.uploadInterval);
+      this.uploadInterval = null;
+    }
+    if (this.uploadIntervalEstadosFinancieros) {
+      clearInterval(this.uploadIntervalEstadosFinancieros);
+      this.uploadIntervalEstadosFinancieros = null;
+    }
     // Guardar una última vez antes de destruir
     this.guardarDatosFormulario();
   }
@@ -4654,10 +4654,16 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       this.uploadProgressEstadosFinancieros = 0;
 
       // Simular progreso de carga
-      const interval = setInterval(() => {
+      // Limpiar intervalo anterior si existe
+      if (this.uploadIntervalEstadosFinancieros) {
+        clearInterval(this.uploadIntervalEstadosFinancieros);
+      }
+      
+      this.uploadIntervalEstadosFinancieros = setInterval(() => {
         this.uploadProgressEstadosFinancieros += 10;
         if (this.uploadProgressEstadosFinancieros >= 100) {
-          clearInterval(interval);
+          clearInterval(this.uploadIntervalEstadosFinancieros);
+          this.uploadIntervalEstadosFinancieros = null;
           this.isUploadingEstadosFinancieros = false;
           console.log('✅ Estados financieros cargados:', file.name);
         }
