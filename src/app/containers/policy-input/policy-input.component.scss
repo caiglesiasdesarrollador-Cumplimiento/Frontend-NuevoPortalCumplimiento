@@ -8649,3 +8649,338 @@ input[type="checkbox"].sb-ui-checkbox {
   }
 }
 
+// ✅ MODAL DE DATOS RESTAURADOS - Estilo Bolívar
+.datos-restaurados-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.datos-restaurados-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 40px 50px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.4s ease-out;
+  position: relative;
+  min-width: 380px;
+  max-width: 450px;
+  
+  &__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: #038450;
+    transition: all 0.2s ease;
+    
+    i {
+      font-size: 1.25rem;
+    }
+    
+    &:hover {
+      color: #026b40;
+      transform: scale(1.1);
+    }
+  }
+  
+  &__icon {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  &__icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #038450;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    
+    i {
+      font-size: 2.5rem;
+      color: #1f2937;
+    }
+  }
+  
+  &__title {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 12px;
+  }
+  
+  &__message {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1rem;
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// Responsive para móvil
+@media (max-width: 480px) {
+  .datos-restaurados-modal {
+    min-width: auto;
+    max-width: calc(100% - 40px);
+    padding: 30px 25px;
+    margin: 0 20px;
+    
+    &__icon-circle {
+      width: 70px;
+      height: 70px;
+      
+      i {
+        font-size: 2rem;
+      }
+    }
+    
+    &__title {
+      font-size: 1.25rem;
+    }
+    
+    &__message {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// ✅ Modal de Archivo No Compatible - Diseño Bolívar
+.archivo-no-compatible-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-out;
+  padding: 20px;
+}
+
+.archivo-no-compatible-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 40px 50px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.4s ease-out;
+  position: relative;
+  min-width: 400px;
+  max-width: 520px;
+  
+  &__close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: #038450;
+    font-size: 1.5rem;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      color: #026b40;
+      transform: scale(1.1);
+    }
+  }
+  
+  &__icon {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    
+    .documento-icon {
+      width: 80px;
+      height: 90px;
+    }
+  }
+  
+  &__question-circle {
+    position: absolute;
+    top: -5px;
+    right: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #FFE16F;
+    border: 3px solid #2D2D2D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    span {
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #2D2D2D;
+    }
+  }
+  
+  &__title {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 16px;
+  }
+  
+  &__message {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1rem;
+    color: #4b5563;
+    line-height: 1.6;
+    margin-bottom: 8px;
+    
+    strong {
+      color: #1f2937;
+      word-break: break-word;
+    }
+  }
+  
+  &__submessage {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1rem;
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+  
+  &__buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+  }
+  
+  &__btn {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 12px 40px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 140px;
+    
+    &--outline {
+      background: transparent;
+      border: 2px solid #2D2D2D;
+      color: #2D2D2D;
+      
+      &:hover {
+        background: #f3f4f6;
+        border-color: #1f2937;
+      }
+    }
+    
+    &--primary {
+      background: #FFE16F;
+      border: 2px solid #FFE16F;
+      color: #2D2D2D;
+      
+      &:hover {
+        background: #ffd84d;
+        border-color: #ffd84d;
+      }
+    }
+  }
+}
+
+// Responsive para móvil - Archivo No Compatible
+@media (max-width: 480px) {
+  .archivo-no-compatible-modal {
+    min-width: auto;
+    max-width: calc(100% - 40px);
+    padding: 30px 25px;
+    margin: 0;
+    
+    &__close {
+      top: 12px;
+      right: 12px;
+      font-size: 1.25rem;
+    }
+    
+    &__icon {
+      width: 80px;
+      height: 80px;
+      
+      .documento-icon {
+        width: 60px;
+        height: 70px;
+      }
+    }
+    
+    &__question-circle {
+      width: 28px;
+      height: 28px;
+      top: -3px;
+      
+      span {
+        font-size: 1rem;
+      }
+    }
+    
+    &__title {
+      font-size: 1.4rem;
+    }
+    
+    &__message,
+    &__submessage {
+      font-size: 0.9rem;
+    }
+    
+    &__buttons {
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    &__btn {
+      width: 100%;
+      padding: 12px 20px;
+    }
+  }
+}
+

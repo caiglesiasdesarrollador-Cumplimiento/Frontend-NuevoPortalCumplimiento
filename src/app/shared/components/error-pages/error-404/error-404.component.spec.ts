@@ -22,3 +22,4 @@ describe('Error404Component', () => {
   it('should go to home', () => { expect(() => component.goToHome()).not.toThrow(); });
 });
 
+

@@ -24,3 +24,4 @@ describe('FinancialStatementReaderComponent', () => {
   it('should have breadcrumbConfig', () => { expect(component.breadcrumbConfig).toBeDefined(); });
 });
 
+

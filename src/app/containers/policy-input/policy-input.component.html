@@ -329,11 +329,15 @@
           ¿Qué necesitas hacer hoy?
         </h2>
 
-        <!-- Opciones horizontales como en la imagen -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+        <!-- Opciones horizontales como en la imagen - Sistema de diseño Bolívar -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
           <!-- ✅ Opción Cotizar -->
           <div
-            class="text-center p-6 sm:p-8 cursor-pointer transition-all duration-200 hover:bg-grayscaleL400/50"
+            class="text-center p-6 sm:p-8 cursor-pointer transition-all duration-200"
+            [ngClass]="{
+              'bg-[#E5F4EE] border-b-4 border-successBase': selectedAction === 'cotizar',
+              'bg-transparent border-b-4 border-transparent hover:bg-grayscaleL400/30': selectedAction !== 'cotizar'
+            }"
             (click)="selectAction('cotizar')"
           >
             <h2
@@ -352,7 +356,11 @@
 
           <!-- ✅ Opción Emitir -->
           <div
-            class="text-center p-6 sm:p-8 cursor-pointer transition-all duration-200 hover:bg-grayscaleL400/50"
+            class="text-center p-6 sm:p-8 cursor-pointer transition-all duration-200"
+            [ngClass]="{
+              'bg-[#E5F4EE] border-b-4 border-successBase': selectedAction === 'emitir',
+              'bg-transparent border-b-4 border-transparent hover:bg-grayscaleL400/30': selectedAction !== 'emitir'
+            }"
             (click)="selectAction('emitir')"
           >
             <h2
@@ -2265,6 +2273,80 @@ NIT:</textarea>
     </div>
     <!-- Barra de progreso -->
     <div class="toast-centered__progress"></div>
+  </div>
+</div>
+
+<!-- ✅ Modal de Datos Restaurados - Estilo Bolívar -->
+<div *ngIf="showDatosRestauradosModal" class="datos-restaurados-overlay" (click)="cerrarDatosRestauradosModal()">
+  <div class="datos-restaurados-modal" (click)="$event.stopPropagation()">
+    <!-- Botón cerrar -->
+    <button class="datos-restaurados-modal__close" (click)="cerrarDatosRestauradosModal()">
+      <i class="fa-regular fa-xmark"></i>
+    </button>
+    
+    <!-- Icono con círculo verde (solo verde, sin amarillo) - OUTLINE -->
+    <div class="datos-restaurados-modal__icon">
+      <div class="datos-restaurados-modal__icon-circle">
+        <i class="fal fa-check"></i>
+      </div>
+    </div>
+    
+    <!-- Título -->
+    <h3 class="datos-restaurados-modal__title">Datos restaurados</h3>
+    
+    <!-- Mensaje -->
+    <p class="datos-restaurados-modal__message">
+      Puede continuar con el formulario<br>sin volver a empezar.
+    </p>
+  </div>
+</div>
+
+<!-- ✅ Modal de Archivo No Compatible - Diseño Bolívar -->
+<div *ngIf="showArchivoNoCompatibleModal" class="archivo-no-compatible-overlay" (click)="cerrarArchivoNoCompatibleModal()">
+  <div class="archivo-no-compatible-modal" (click)="$event.stopPropagation()">
+    <!-- Botón cerrar X -->
+    <button class="archivo-no-compatible-modal__close" (click)="cerrarArchivoNoCompatibleModal()">
+      <i class="fal fa-times"></i>
+    </button>
+    
+    <!-- Ícono de documento con interrogación -->
+    <div class="archivo-no-compatible-modal__icon">
+      <svg viewBox="0 0 80 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="documento-icon">
+        <!-- Documento base -->
+        <path d="M10 10C10 6.68629 12.6863 4 16 4H50L70 24V80C70 83.3137 67.3137 86 64 86H16C12.6863 86 10 83.3137 10 80V10Z" fill="#FFF9E6" stroke="#2D2D2D" stroke-width="2"/>
+        <!-- Esquina doblada -->
+        <path d="M50 4V20C50 22.2091 51.7909 24 54 24H70" stroke="#2D2D2D" stroke-width="2"/>
+        <!-- Líneas de texto -->
+        <line x1="22" y1="40" x2="58" y2="40" stroke="#2D2D2D" stroke-width="2" stroke-linecap="round"/>
+        <line x1="22" y1="52" x2="58" y2="52" stroke="#2D2D2D" stroke-width="2" stroke-linecap="round"/>
+        <line x1="22" y1="64" x2="45" y2="64" stroke="#2D2D2D" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <!-- Círculo con signo de interrogación -->
+      <div class="archivo-no-compatible-modal__question-circle">
+        <span>?</span>
+      </div>
+    </div>
+    
+    <!-- Título -->
+    <h3 class="archivo-no-compatible-modal__title">¡Archivo no compatible!</h3>
+    
+    <!-- Mensaje -->
+    <p class="archivo-no-compatible-modal__message">
+      El archivo <strong>"{{ archivoNoCompatibleNombre }}"</strong> no se puede procesar.
+    </p>
+    <p class="archivo-no-compatible-modal__submessage">
+      Por favor, selecciona un archivo en uno de los formatos permitidos.
+    </p>
+    
+    <!-- Botones -->
+    <div class="archivo-no-compatible-modal__buttons">
+      <button class="archivo-no-compatible-modal__btn archivo-no-compatible-modal__btn--outline" (click)="cerrarArchivoNoCompatibleModal()">
+        Cerrar
+      </button>
+      <button class="archivo-no-compatible-modal__btn archivo-no-compatible-modal__btn--primary" (click)="aceptarArchivoNoCompatible()">
+        Aceptar
+      </button>
+    </div>
   </div>
 </div>
 

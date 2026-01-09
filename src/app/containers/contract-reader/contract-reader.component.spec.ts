@@ -32,3 +32,4 @@ describe('ContractReaderComponent', () => {
   it('should check isIdle', () => { expect(component.isIdle).toBe(true); });
 });
 
+
