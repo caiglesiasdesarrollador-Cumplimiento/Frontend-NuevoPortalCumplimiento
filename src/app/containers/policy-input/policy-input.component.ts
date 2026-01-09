@@ -1244,17 +1244,17 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     class: 'stepper-responsive', // ✅ Clase personalizada para responsive
     items: [
       {
-        label: 'Producto y Contrato',
+        label: 'producto y contrato',
         icon: 'fa-solid fa-file-contract',
         command: () => this.goToStep(0),
       },
       {
-        label: 'Formulario',
+        label: 'formulario',
         icon: 'fa-solid fa-edit',
         command: () => this.goToStep(1),
       },
       {
-        label: 'Confirmación',
+        label: 'confirmación',
         icon: 'fa-solid fa-check-circle',
         command: () => this.goToStep(2),
       },

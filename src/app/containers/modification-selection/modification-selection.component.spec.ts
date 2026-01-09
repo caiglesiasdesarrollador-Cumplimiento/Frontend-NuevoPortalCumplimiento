@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
 import { ModificationSelectionComponent } from './modification-selection.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BreadcrumbService } from '../../shared/services/breadcrumb.service';
 
 describe('ModificationSelectionComponent', () => {
@@ -11,17 +11,20 @@ describe('ModificationSelectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ModificationSelectionComponent],
-      providers: [
-        { provide: Router, useValue: { navigate: jest.fn() } },
-        { provide: BreadcrumbService, useValue: { setBreadcrumb: jest.fn() } }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+      imports: [RouterTestingModule],
+      providers: [BreadcrumbService],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
+
     fixture = TestBed.createComponent(ModificationSelectionComponent);
     component = fixture.componentInstance;
   });
 
   it('should create', () => { expect(component).toBeTruthy(); });
-  it('should have modifications', () => { expect(component.modifications).toBeDefined(); });
-  it('should select modification', () => { expect(() => component.selectModification({} as any)).not.toThrow(); });
+  it('should have modificationData', () => { expect(component.modificationData).toBeDefined(); });
+  it('should have breadcrumbConfig', () => { expect(component.breadcrumbConfig).toBeDefined(); });
+  it('should navigate to modification', () => { 
+    expect(() => component.navigateToModification('test')).not.toThrow(); 
+  });
 });
+

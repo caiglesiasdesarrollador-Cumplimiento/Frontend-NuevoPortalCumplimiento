@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
 import { PortalComponent } from './portal.component';
-import { BreadcrumbService } from '../../shared/services/breadcrumb.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('PortalComponent', () => {
   let component: PortalComponent;
@@ -11,17 +10,21 @@ describe('PortalComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PortalComponent],
-      providers: [
-        { provide: Router, useValue: { navigate: jest.fn() } },
-        { provide: BreadcrumbService, useValue: { setBreadcrumb: jest.fn() } }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+      imports: [RouterTestingModule],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
+
     fixture = TestBed.createComponent(PortalComponent);
     component = fixture.componentInstance;
   });
 
   it('should create', () => { expect(component).toBeTruthy(); });
-  it('should have menuItems', () => { expect(component.menuItems).toBeDefined(); });
-  it('should navigate', () => { expect(() => component.navigateTo('/test')).not.toThrow(); });
+  it('should have userInfo', () => { expect(component.userInfo).toBeDefined(); });
+  it('should have informacionGeneral', () => { expect(component.informacionGeneral).toBeDefined(); });
+  it('should navigate to url', () => { expect(() => component.navigateToUrl('/test')).not.toThrow(); });
+  it('should handle image error', () => { 
+    const mockEvent = { target: { style: { display: '' }, nextElementSibling: { style: { display: '' } } } } as any;
+    expect(() => component.onImageError(mockEvent)).not.toThrow(); 
+  });
 });
+

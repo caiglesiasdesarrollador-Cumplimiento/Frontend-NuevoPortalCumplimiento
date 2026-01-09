@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
 import { PolicyGenerationComponent } from './policy-generation.component';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BreadcrumbService } from '../../shared/services/breadcrumb.service';
 
 describe('PolicyGenerationComponent', () => {
@@ -11,17 +10,17 @@ describe('PolicyGenerationComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PolicyGenerationComponent],
-      providers: [
-        { provide: Router, useValue: { navigate: jest.fn() } },
-        { provide: BreadcrumbService, useValue: { setBreadcrumb: jest.fn() } }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+      providers: [BreadcrumbService],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
+
     fixture = TestBed.createComponent(PolicyGenerationComponent);
     component = fixture.componentInstance;
   });
 
   it('should create', () => { expect(component).toBeTruthy(); });
-  it('should have dynamicForm', () => { expect(component.dynamicForm).toBeDefined(); });
-  it('should generate policy', () => { expect(() => component.generatePolicy()).not.toThrow(); });
+  it('should have policyRequest', () => { expect(component.policyRequest).toBeDefined(); });
+  it('should have isProcessing', () => { expect(component.isProcessing).toBe(false); });
+  it('should have breadcrumbConfig', () => { expect(component.breadcrumbConfig).toBeDefined(); });
 });
+

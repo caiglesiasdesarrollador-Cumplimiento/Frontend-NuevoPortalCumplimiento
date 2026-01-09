@@ -218,9 +218,8 @@ export const MOCK_EXTRACTED_CONTRACT_DATA: IPolicyStep2Data = {
 // ✅ Labels dinámicos según acción - Desktop
 export const ACTION_LABELS = {
   [PolicyInputAction.EMITIR]: {
-    step1Title: 'Paso 1: Información del Producto y Partes',
-    step1Description:
-      'Selecciona el producto, ingresa los datos del tomador/asegurado, y carga el contrato.',
+    step1Title: 'Paso 1: Información del producto y las partes',
+    step1Description: 'Selecciona el producto, completa los datos del tomador y del asegurado, y adjunta el contrato.',
     step2Title: 'Paso 2: Formulario de Emisión',
     step2Description:
       'Completa o edita los detalles para la emisión de la póliza. Los campos pre-llenados provienen de la información del contrato.',
@@ -231,9 +230,8 @@ export const ACTION_LABELS = {
     successMessage: 'Póliza emitida exitosamente',
   },
   [PolicyInputAction.COTIZAR]: {
-    step1Title: 'Paso 1: Información del Producto y Partes',
-    step1Description:
-      'Selecciona el producto, ingresa los datos del tomador/asegurado, y carga el contrato.',
+    step1Title: 'Paso 1: Información del producto y las partes',
+    step1Description: 'Selecciona el producto, completa los datos del tomador y del asegurado, y adjunta el contrato.',
     step2Title: 'Paso 2: Formulario de cotización',
     step2Description:
       'Completa o edita los detalles para la cotización de la póliza. Los campos pre-llenados provienen de la información identificada del contrato.',
@@ -285,7 +283,7 @@ export const ACTION_LABELS_MOBILE = {
     successMessage: 'Póliza emitida exitosamente',
   },
   [PolicyInputAction.COTIZAR]: {
-    step1Title: 'Producto y Contrato',
+    step1Title: 'producto y contrato',
     step1Description: 'Seleccione el producto, ingrese datos del asegurado y cargue el contrato.',
     step2Title: 'Formulario de Cotización',
     step2Description: 'Complete los detalles para la cotización de la póliza.',

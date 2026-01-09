@@ -334,9 +334,6 @@
           <!-- ✅ Opción Cotizar -->
           <div
             class="text-center p-6 sm:p-8 cursor-pointer transition-all duration-200 hover:bg-grayscaleL400/50"
-            [ngClass]="{
-              'border-b-4 border-successBase': selectedAction === 'cotizar'
-            }"
             (click)="selectAction('cotizar')"
           >
             <h2
@@ -356,9 +353,6 @@
           <!-- ✅ Opción Emitir -->
           <div
             class="text-center p-6 sm:p-8 cursor-pointer transition-all duration-200 hover:bg-grayscaleL400/50"
-            [ngClass]="{
-              'border-b-4 border-successBase': selectedAction === 'emitir'
-            }"
             (click)="selectAction('emitir')"
           >
             <h2
@@ -544,7 +538,7 @@
               <span *ngIf="currentStep <= 0">1</span>
               <i *ngIf="currentStep > 0" class="fa-solid fa-check"></i>
             </div>
-            <div class="stepper-v15__label">Producto y<br>Contrato</div>
+            <div class="stepper-v15__label">producto y<br>contrato</div>
             </div>
             <!-- Paso 2 -->
           <div class="stepper-v15__step stepper-v15__step--has-line" 
@@ -555,7 +549,7 @@
               <span *ngIf="currentStep <= 1">2</span>
               <i *ngIf="currentStep > 1" class="fa-solid fa-check"></i>
             </div>
-            <div class="stepper-v15__label">Formulario</div>
+            <div class="stepper-v15__label">formulario</div>
             </div>
           <!-- Paso 3 (sin línea después) -->
           <div class="stepper-v15__step" 
@@ -566,7 +560,7 @@
               <span *ngIf="currentStep <= 2">3</span>
               <i *ngIf="currentStep > 2" class="fa-solid fa-check"></i>
             </div>
-            <div class="stepper-v15__label">Confirmación</div>
+            <div class="stepper-v15__label">confirmación</div>
           </div>
         </div>
       </div>

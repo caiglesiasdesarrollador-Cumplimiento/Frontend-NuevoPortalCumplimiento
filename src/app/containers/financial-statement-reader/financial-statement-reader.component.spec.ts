@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
 import { FinancialStatementReaderComponent } from './financial-statement-reader.component';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BreadcrumbService } from '../../shared/services/breadcrumb.service';
 
 describe('FinancialStatementReaderComponent', () => {
@@ -11,19 +10,17 @@ describe('FinancialStatementReaderComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [FinancialStatementReaderComponent],
-      providers: [
-        { provide: Router, useValue: { navigate: jest.fn() } },
-        { provide: BreadcrumbService, useValue: { setBreadcrumb: jest.fn(), setFinancialStatementBreadcrumb: jest.fn() } }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+      providers: [BreadcrumbService],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
+
     fixture = TestBed.createComponent(FinancialStatementReaderComponent);
     component = fixture.componentInstance;
   });
 
   it('should create', () => { expect(component).toBeTruthy(); });
-  it('should have currentStep', () => { expect(component.currentStep).toBeDefined(); });
-  it('should navigate next', () => { expect(() => component.nextStep()).not.toThrow(); });
-  it('should navigate prev', () => { expect(() => component.prevStep()).not.toThrow(); });
-  it('should handle file', () => { expect(() => component.onFileSelected({} as any)).not.toThrow(); });
+  it('should have currentFile', () => { expect(component.currentFile).toBeDefined(); });
+  it('should have analysisProgress', () => { expect(component.analysisProgress).toBe(0); });
+  it('should have breadcrumbConfig', () => { expect(component.breadcrumbConfig).toBeDefined(); });
 });
+

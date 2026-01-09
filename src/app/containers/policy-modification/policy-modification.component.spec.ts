@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
 import { PolicyModificationComponent } from './policy-modification.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BreadcrumbService } from '../../shared/services/breadcrumb.service';
 
 describe('PolicyModificationComponent', () => {
@@ -11,19 +11,24 @@ describe('PolicyModificationComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PolicyModificationComponent],
-      providers: [
-        { provide: Router, useValue: { navigate: jest.fn() } },
-        { provide: BreadcrumbService, useValue: { setBreadcrumb: jest.fn() } }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+      imports: [RouterTestingModule],
+      providers: [BreadcrumbService],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
+
     fixture = TestBed.createComponent(PolicyModificationComponent);
     component = fixture.componentInstance;
   });
 
   it('should create', () => { expect(component).toBeTruthy(); });
-  it('should have currentStep', () => { expect(component.currentStep).toBeDefined(); });
-  it('should navigate next', () => { expect(() => component.nextStep()).not.toThrow(); });
-  it('should navigate prev', () => { expect(() => component.prevStep()).not.toThrow(); });
+  it('should have currentStep', () => { expect(component.currentStep).toBe(0); });
+  it('should have stepperConfig', () => { expect(component.stepperConfig).toBeDefined(); });
+  it('should have modificationData', () => { expect(component.modificationData).toBeDefined(); });
+  it('should go to step', () => { 
+    expect(() => component.goToStep(1)).not.toThrow(); 
+  });
+  it('should next step', () => { 
+    expect(() => component.nextStep()).not.toThrow(); 
+  });
 });
 

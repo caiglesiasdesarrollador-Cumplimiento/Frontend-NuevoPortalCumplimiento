@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
 import { ProductSelectionComponent } from './product-selection.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BreadcrumbService } from '../../shared/services/breadcrumb.service';
 
 describe('ProductSelectionComponent', () => {
@@ -11,17 +11,23 @@ describe('ProductSelectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ProductSelectionComponent],
-      providers: [
-        { provide: Router, useValue: { navigate: jest.fn() } },
-        { provide: BreadcrumbService, useValue: { setBreadcrumb: jest.fn() } }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+      imports: [RouterTestingModule],
+      providers: [BreadcrumbService],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
+
     fixture = TestBed.createComponent(ProductSelectionComponent);
     component = fixture.componentInstance;
   });
 
   it('should create', () => { expect(component).toBeTruthy(); });
-  it('should have products', () => { expect(component.products).toBeDefined(); });
-  it('should select product', () => { expect(() => component.selectProduct({} as any)).not.toThrow(); });
+  it('should have productData', () => { expect(component.productData).toBeDefined(); });
+  it('should have breadcrumbConfig', () => { expect(component.breadcrumbConfig).toBeDefined(); });
+  it('should navigate to product', () => { 
+    expect(() => component.navigateToProduct('cumplimiento')).not.toThrow(); 
+  });
+  it('should get featured products', () => { 
+    expect(component.featuredProducts).toBeDefined(); 
+  });
 });
+
