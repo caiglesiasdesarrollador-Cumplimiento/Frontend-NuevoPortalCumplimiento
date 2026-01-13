@@ -71,7 +71,13 @@
     "yargs": "^17.7.2"
   },
   "lint-staged": {
-    "*.ts": "eslint --cache --fix --max-warnings=0",
-    "*.{.ts,html,scss,md,json}": "prettier --write"
+    "*.ts": [
+      "eslint --cache --fix --no-warn-ignored",
+      "prettier --write"
+    ],
+    "*.html": "prettier --write",
+    "*.scss": "prettier --write",
+    "*.md": "prettier --write",
+    "*.json": "prettier --write"
   }
 }
