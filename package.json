@@ -47,6 +47,8 @@
     "@angular-eslint/template-parser": "^19.0.0",
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.39.2",
     "@types/jest": "^29.5.0",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
@@ -69,7 +71,7 @@
     "yargs": "^17.7.2"
   },
   "lint-staged": {
-    "*.ts": "eslint --cache --fix",
+    "*.ts": "eslint --cache --fix --max-warnings=0",
     "*.{.ts,html,scss,md,json}": "prettier --write"
   }
 }
