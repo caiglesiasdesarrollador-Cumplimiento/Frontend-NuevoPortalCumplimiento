@@ -53,13 +53,14 @@
         >
           <thead class="bg-grayscaleL300">
             <tr>
-              <th class="text-center" style="width: 80px;">Seleccione</th>
+              <th class="text-center" style="width: 80px;" scope="col">Seleccione</th>
               <th
                 class="cursor-pointer hover:bg-grayscaleL200 transition-colors"
                 style="width: 90px;"
                 tabindex="0"
                 (click)="ordenarCotizaciones('tipo')"
                 (keydown.enter)="ordenarCotizaciones('tipo')"
+                scope="col"
               >
                 Tipo
                 <i
@@ -73,6 +74,7 @@
                 tabindex="0"
                 (click)="ordenarCotizaciones('numero')"
                 (keydown.enter)="ordenarCotizaciones('numero')"
+                scope="col"
               >
                 Número
                 <i
@@ -85,6 +87,7 @@
                 tabindex="0"
                 (click)="ordenarCotizaciones('tomador')"
                 (keydown.enter)="ordenarCotizaciones('tomador')"
+                scope="col"
               >
                 Tomador
                 <i
@@ -97,6 +100,7 @@
                 tabindex="0"
                 (click)="ordenarCotizaciones('producto')"
                 (keydown.enter)="ordenarCotizaciones('producto')"
+                scope="col"
               >
                 Producto
                 <i
@@ -110,6 +114,7 @@
                 tabindex="0"
                 (click)="ordenarCotizaciones('valorAsegurado')"
                 (keydown.enter)="ordenarCotizaciones('valorAsegurado')"
+                scope="col"
               >
                 Valor Asegurado
                 <i
@@ -123,6 +128,7 @@
                 tabindex="0"
                 (click)="ordenarCotizaciones('estado')"
                 (keydown.enter)="ordenarCotizaciones('estado')"
+                scope="col"
               >
                 Estado
                 <i
@@ -130,7 +136,7 @@
                   [ngClass]="getCotizacionesSortIcon('estado')"
                 ></i>
               </th>
-              <th class="text-center" style="width: 110px;">Acciones</th>
+              <th class="text-center" style="width: 110px;" scope="col">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -406,10 +412,10 @@
             <table class="s3-table s3-table--coberturas">
               <thead>
                 <tr>
-                  <th style="width: 40%; text-align: left;">COBERTURA</th>
-                  <th style="width: 15%; text-align: center;">%</th>
-                  <th style="width: 25%; text-align: right;">VALOR ASEG.</th>
-                  <th style="width: 20%; text-align: center;">ESTADO</th>
+                  <th style="width: 40%; text-align: left;" scope="col">COBERTURA</th>
+                  <th style="width: 15%; text-align: center;" scope="col">%</th>
+                  <th style="width: 25%; text-align: right;" scope="col">VALOR ASEG.</th>
+                  <th style="width: 20%; text-align: center;" scope="col">ESTADO</th>
                 </tr>
               </thead>
               <tbody>
@@ -440,10 +446,10 @@
             <table class="s3-table">
               <thead>
                 <tr>
-                  <th style="text-align: left;">COBERTURA</th>
-                  <th style="text-align: center;">%</th>
-                  <th style="text-align: right;">VALOR ASEG.</th>
-                  <th style="text-align: center;">ESTADO</th>
+                  <th style="text-align: left;" scope="col">COBERTURA</th>
+                  <th style="text-align: center;" scope="col">%</th>
+                  <th style="text-align: right;" scope="col">VALOR ASEG.</th>
+                  <th style="text-align: center;" scope="col">ESTADO</th>
                 </tr>
               </thead>
               <tbody>
@@ -502,6 +508,11 @@
               'bg-transparent hover:bg-grayscaleL400/30': selectedAction !== 'cotizar'
             }"
             (click)="selectAction('cotizar')"
+            (keydown.enter)="selectAction('cotizar')"
+            (keydown.space)="selectAction('cotizar')"
+            tabindex="0"
+            role="button"
+            [attr.aria-pressed]="selectedAction === 'cotizar'"
           >
             <h2
               class="text-2xl font-bold mb-3"
@@ -525,6 +536,11 @@
               'bg-transparent hover:bg-grayscaleL400/30': selectedAction !== 'emitir'
             }"
             (click)="selectAction('emitir')"
+            (keydown.enter)="selectAction('emitir')"
+            (keydown.space)="selectAction('emitir')"
+            tabindex="0"
+            role="button"
+            [attr.aria-pressed]="selectedAction === 'emitir'"
           >
             <h2
               class="text-2xl font-bold mb-3"
@@ -1526,6 +1542,10 @@
                 class="file-upload-area"
                 [class.disabled]="!tipoDocumentoSoporte || documentosSoporte.length > 0"
                 (click)="onUploadAreaClick()"
+                (keydown.enter)="onUploadAreaClick()"
+                (keydown.space)="onUploadAreaClick()"
+                tabindex="0"
+                role="button"
                 *ngIf="!isUploading && !selectedFileName && documentosSoporte.length === 0"
               >
                 <input
@@ -2254,6 +2274,7 @@
                                 tabindex="0"
                                 (click)="sortCoasegurosCedidos('coaseguradora')"
                                 (keydown.enter)="sortCoasegurosCedidos('coaseguradora')"
+                                scope="col"
                               >
                                 Coaseguradora
                                 <i
@@ -2266,6 +2287,7 @@
                                 tabindex="0"
                                 (click)="sortCoasegurosCedidos('participacion')"
                                 (keydown.enter)="sortCoasegurosCedidos('participacion')"
+                                scope="col"
                               >
                                 %Part.
                                 <i
@@ -2278,6 +2300,7 @@
                                 tabindex="0"
                                 (click)="sortCoasegurosCedidos('numeroPol')"
                                 (keydown.enter)="sortCoasegurosCedidos('numeroPol')"
+                                scope="col"
                               >
                                 N° Póliza
                                 <i
@@ -2290,6 +2313,7 @@
                                 tabindex="0"
                                 (click)="sortCoasegurosCedidos('certificado')"
                                 (keydown.enter)="sortCoasegurosCedidos('certificado')"
+                                scope="col"
                               >
                                 Certificado
                                 <i
@@ -2297,7 +2321,7 @@
                                   [ngClass]="getSortIconCoaseguros('certificado')"
                                 ></i>
                               </th>
-                              <th class="text-center">Acciones</th>
+                              <th class="text-center" scope="col">Acciones</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -2662,22 +2686,22 @@ Prestación de servicios de consultoría en cumplimiento normativo y asesoría l
                 >
                   <thead>
                     <tr>
-                      <th class="text-center" style="width: 40px;">
+                      <th class="text-center" style="width: 40px;" scope="col">
                         <input
                           type="checkbox"
                           class="sb-ui-checkbox"
                           (change)="toggleTodasCoberturas($event)"
                         />
                       </th>
-                      <th style="width: 160px;">Coberturas</th>
-                      <th class="text-center" style="width: 70px;">% Aseg.</th>
-                      <th class="text-right" style="width: 130px;">Valor Aseg.</th>
-                      <th class="text-center" style="width: 65px;">Tasa</th>
-                      <th class="text-center" style="width: 95px;">F. Inicio</th>
-                      <th class="text-center" style="width: 65px;">T. Adic.</th>
-                      <th class="text-center" style="width: 95px;">F. Fin</th>
-                      <th class="text-center" style="width: 95px;">F. Venc.</th>
-                      <th class="text-right" style="width: 115px;">Prima</th>
+                      <th style="width: 160px;" scope="col">Coberturas</th>
+                      <th class="text-center" style="width: 70px;" scope="col">% Aseg.</th>
+                      <th class="text-right" style="width: 130px;" scope="col">Valor Aseg.</th>
+                      <th class="text-center" style="width: 65px;" scope="col">Tasa</th>
+                      <th class="text-center" style="width: 95px;" scope="col">F. Inicio</th>
+                      <th class="text-center" style="width: 65px;" scope="col">T. Adic.</th>
+                      <th class="text-center" style="width: 95px;" scope="col">F. Fin</th>
+                      <th class="text-center" style="width: 95px;" scope="col">F. Venc.</th>
+                      <th class="text-right" style="width: 115px;" scope="col">Prima</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -2993,27 +3017,52 @@ NIT:</textarea
                             rowspan="2"
                             class="text-center header-seleccione"
                             style="width: 80px;"
+                            scope="col"
                           >
                             Seleccione
                           </th>
-                          <th rowspan="2" style="min-width: 220px;" class="header-coberturas">
+                          <th
+                            rowspan="2"
+                            style="min-width: 220px;"
+                            class="header-coberturas"
+                            scope="col"
+                          >
                             Coberturas
                           </th>
-                          <th colspan="2" class="text-center header-deducibles">Deducibles</th>
-                          <th rowspan="2" class="text-right header-valor" style="min-width: 160px;">
+                          <th colspan="2" class="text-center header-deducibles" scope="colgroup">
+                            Deducibles
+                          </th>
+                          <th
+                            rowspan="2"
+                            class="text-right header-valor"
+                            style="min-width: 160px;"
+                            scope="col"
+                          >
                             Valor Asegurado
                           </th>
-                          <th rowspan="2" class="text-center header-tasa" style="width: 100px;">
+                          <th
+                            rowspan="2"
+                            class="text-center header-tasa"
+                            style="width: 100px;"
+                            scope="col"
+                          >
                             Tasa
                           </th>
-                          <th rowspan="2" class="text-right header-prima" style="width: 140px;">
+                          <th
+                            rowspan="2"
+                            class="text-right header-prima"
+                            style="width: 140px;"
+                            scope="col"
+                          >
                             Prima
                           </th>
                         </tr>
                         <!-- Fila de subheaders para Deducibles -->
                         <tr class="header-row-sub">
-                          <th class="text-center header-sub" style="width: 120px;">% Deducible</th>
-                          <th class="text-center header-sub" style="width: 180px;">
+                          <th class="text-center header-sub" style="width: 120px;" scope="col">
+                            % Deducible
+                          </th>
+                          <th class="text-center header-sub" style="width: 180px;" scope="col">
                             Deducible Mínimo SMMLV
                           </th>
                         </tr>
@@ -3279,10 +3328,10 @@ NIT:</textarea
               <table class="s3-table">
                 <thead>
                   <tr>
-                    <th style="text-align: left;">Clave</th>
-                    <th style="text-align: left;">Nombre</th>
-                    <th style="text-align: center;">Forma Actuación</th>
-                    <th style="text-align: center;">Participación</th>
+                    <th style="text-align: left;" scope="col">Clave</th>
+                    <th style="text-align: left;" scope="col">Nombre</th>
+                    <th style="text-align: center;" scope="col">Forma Actuación</th>
+                    <th style="text-align: center;" scope="col">Participación</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -3325,8 +3374,8 @@ NIT:</textarea
               <table *ngIf="tipoCoaseguro === 'cedido'" class="s3-table">
                 <thead>
                   <tr>
-                    <th style="text-align: left;">Coaseguradora</th>
-                    <th style="text-align: center;">Participación</th>
+                    <th style="text-align: left;" scope="col">Coaseguradora</th>
+                    <th style="text-align: center;" scope="col">Participación</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -3377,12 +3426,12 @@ NIT:</textarea
               <table class="s3-table s3-table--coberturas">
                 <thead>
                   <tr>
-                    <th style="width: 35%; text-align: left;">COBERTURA</th>
-                    <th style="width: 10%; text-align: center;">%</th>
-                    <th style="width: 18%; text-align: right;">VALOR ASEG.</th>
-                    <th style="width: 12%; text-align: center;">INICIO</th>
-                    <th style="width: 12%; text-align: center;">VENCE</th>
-                    <th style="width: 13%; text-align: right;">PRIMA</th>
+                    <th style="width: 35%; text-align: left;" scope="col">COBERTURA</th>
+                    <th style="width: 10%; text-align: center;" scope="col">%</th>
+                    <th style="width: 18%; text-align: right;" scope="col">VALOR ASEG.</th>
+                    <th style="width: 12%; text-align: center;" scope="col">INICIO</th>
+                    <th style="width: 12%; text-align: center;" scope="col">VENCE</th>
+                    <th style="width: 13%; text-align: right;" scope="col">PRIMA</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -3426,12 +3475,12 @@ NIT:</textarea
               <table class="s3-table">
                 <thead>
                   <tr>
-                    <th class="left">Cobertura</th>
-                    <th class="center">%</th>
-                    <th class="right">Valor</th>
-                    <th class="center">Tasa</th>
-                    <th class="center">Inicio</th>
-                    <th class="center">Vence</th>
+                    <th class="left" scope="col">Cobertura</th>
+                    <th class="center" scope="col">%</th>
+                    <th class="right" scope="col">Valor</th>
+                    <th class="center" scope="col">Tasa</th>
+                    <th class="center" scope="col">Inicio</th>
+                    <th class="center" scope="col">Vence</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -3519,8 +3568,22 @@ NIT:</textarea
 </div>
 
 <!-- ✅ Toast de éxito CENTRADO para Generar Emisión/Cotización -->
-<div *ngIf="showSuccessToast" class="toast-overlay" (click)="hideSuccessToast()">
-  <div class="toast-centered" (click)="$event.stopPropagation()">
+<div
+  *ngIf="showSuccessToast"
+  class="toast-overlay"
+  (click)="hideSuccessToast()"
+  (keydown.escape)="hideSuccessToast()"
+  (keydown.enter)="hideSuccessToast()"
+  tabindex="0"
+  role="alertdialog"
+  aria-live="polite"
+>
+  <div
+    class="toast-centered"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="-1"
+  >
     <!-- Icono animado de éxito - Versión línea (outline) -->
     <div class="toast-centered__icon">
       <div class="toast-centered__icon-ring">
@@ -3690,8 +3753,22 @@ NIT:</textarea
 </div>
 
 <!-- ✅ Vista de Resumen de Cotización - Modal centrado con botones fijos -->
-<div *ngIf="showQuoteSummary" class="quote-summary-overlay" (click)="closeQuoteSummary()">
-  <div class="quote-summary-modal" (click)="$event.stopPropagation()">
+<div
+  *ngIf="showQuoteSummary"
+  class="quote-summary-overlay"
+  (click)="closeQuoteSummary()"
+  (keydown.escape)="closeQuoteSummary()"
+  (keydown.enter)="closeQuoteSummary()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="quote-summary-modal"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="-1"
+  >
     <!-- Botón cerrar -->
     <button class="quote-summary-close" (click)="closeQuoteSummary()">
       <i class="fa-solid fa-times text-2xl"></i>
@@ -3886,10 +3963,10 @@ NIT:</textarea
             <table class="tabla-resumen">
               <thead>
                 <tr>
-                  <th class="text-left">Cobertura</th>
-                  <th class="text-center">%</th>
-                  <th class="text-right">Valor Asegurado</th>
-                  <th class="text-center">Estado</th>
+                  <th class="text-left" scope="col">Cobertura</th>
+                  <th class="text-center" scope="col">%</th>
+                  <th class="text-right" scope="col">Valor Asegurado</th>
+                  <th class="text-center" scope="col">Estado</th>
                 </tr>
               </thead>
               <tbody>
@@ -3922,10 +3999,10 @@ NIT:</textarea
             <table class="tabla-resumen">
               <thead>
                 <tr>
-                  <th class="text-left">Cobertura</th>
-                  <th class="text-center">%</th>
-                  <th class="text-right">Valor Asegurado</th>
-                  <th class="text-center">Estado</th>
+                  <th class="text-left" scope="col">Cobertura</th>
+                  <th class="text-center" scope="col">%</th>
+                  <th class="text-right" scope="col">Valor Asegurado</th>
+                  <th class="text-center" scope="col">Estado</th>
                 </tr>
               </thead>
               <tbody>
@@ -3988,8 +4065,22 @@ NIT:</textarea
 </div>
 
 <!-- Modal de Éxito - Compacto y fluido -->
-<div *ngIf="showSuccessModal" class="modal-overlay" (click)="closeSuccessModal()">
-  <div class="modal-success" (click)="$event.stopPropagation()">
+<div
+  *ngIf="showSuccessModal"
+  class="modal-overlay"
+  (click)="closeSuccessModal()"
+  (keydown.escape)="closeSuccessModal()"
+  (keydown.enter)="closeSuccessModal()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="modal-success"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="-1"
+  >
     <button class="modal-close" (click)="closeSuccessModal()">
       <i class="fa-solid fa-times"></i>
     </button>
@@ -4025,8 +4116,22 @@ NIT:</textarea
 </button>
 
 <!-- ✅ Modal: Tomador no creado -->
-<div *ngIf="showClienteNoCreado" class="modal-overlay" (click)="closeClienteNoCreado()">
-  <div class="modal-cliente" (click)="$event.stopPropagation()">
+<div
+  *ngIf="showClienteNoCreado"
+  class="modal-overlay"
+  (click)="closeClienteNoCreado()"
+  (keydown.escape)="closeClienteNoCreado()"
+  (keydown.enter)="closeClienteNoCreado()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="modal-cliente"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="-1"
+  >
     <div class="modal-cliente__header">
       <h2 class="modal-cliente__title">Tomador no creado</h2>
       <button class="modal-cliente__close" (click)="closeClienteNoCreado()">
@@ -4130,8 +4235,22 @@ NIT:</textarea
 </div>
 
 <!-- ✅ Modal: SARLAFT desactualizado -->
-<div *ngIf="showSarlaftDesactualizado" class="modal-overlay" (click)="closeSarlaftDesactualizado()">
-  <div class="modal-cliente" (click)="$event.stopPropagation()">
+<div
+  *ngIf="showSarlaftDesactualizado"
+  class="modal-overlay"
+  (click)="closeSarlaftDesactualizado()"
+  (keydown.escape)="closeSarlaftDesactualizado()"
+  (keydown.enter)="closeSarlaftDesactualizado()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="modal-cliente"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="-1"
+  >
     <div class="modal-cliente__header">
       <h2 class="modal-cliente__title text-warningBase">El tomador tiene sarlaft desactualizado</h2>
       <button class="modal-cliente__close" (click)="closeSarlaftDesactualizado()">
@@ -4291,8 +4410,22 @@ NIT:</textarea
 </div>
 
 <!-- ✅ Modal: Solicitar Cupo (cuando el tomador no tiene cupo disponible) -->
-<div *ngIf="showSolicitarCupo" class="modal-overlay" (click)="closeSolicitarCupo()">
-  <div class="modal-cliente modal-cliente--large" (click)="$event.stopPropagation()">
+<div
+  *ngIf="showSolicitarCupo"
+  class="modal-overlay"
+  (click)="closeSolicitarCupo()"
+  (keydown.escape)="closeSolicitarCupo()"
+  (keydown.enter)="closeSolicitarCupo()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="modal-cliente modal-cliente--large"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="-1"
+  >
     <div class="modal-cliente__header">
       <h2 class="modal-cliente__title">Solicitar Cupo</h2>
       <button class="modal-cliente__close" (click)="closeSolicitarCupo()">
@@ -4444,8 +4577,22 @@ NIT:</textarea
 </div>
 
 <!-- ✅ Modal: Adicionar Agente -->
-<div *ngIf="showModalAgente" class="modal-overlay" (click)="cerrarModalAgente()">
-  <div class="modal-cliente modal-cliente--wide" (click)="$event.stopPropagation()">
+<div
+  *ngIf="showModalAgente"
+  class="modal-overlay"
+  (click)="cerrarModalAgente()"
+  (keydown.escape)="cerrarModalAgente()"
+  (keydown.enter)="cerrarModalAgente()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="modal-cliente modal-cliente--wide"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="-1"
+  >
     <div class="modal-cliente__header">
       <h2 class="modal-cliente__title">Adicionar Agente</h2>
       <button class="modal-cliente__close" (click)="cerrarModalAgente()">
@@ -4543,8 +4690,22 @@ NIT:</textarea
 </div>
 
 <!-- ✅ Modal: Adicionar/Editar Coaseguro Cedido -->
-<div *ngIf="showModalCoaseguroCedido" class="modal-overlay" (click)="cerrarModalCoaseguroCedido()">
-  <div class="modal-cliente modal-cliente--extra-wide" (click)="$event.stopPropagation()">
+<div
+  *ngIf="showModalCoaseguroCedido"
+  class="modal-overlay"
+  (click)="cerrarModalCoaseguroCedido()"
+  (keydown.escape)="cerrarModalCoaseguroCedido()"
+  (keydown.enter)="cerrarModalCoaseguroCedido()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="modal-cliente modal-cliente--extra-wide"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="-1"
+  >
     <div class="modal-cliente__header">
       <h2 class="modal-cliente__title">
         {{ coaseguroCedidoEditIndex !== null ? 'Editar' : 'Adicionar' }} Coaseguro Cedido
@@ -4643,8 +4804,18 @@ NIT:</textarea
   *ngIf="showAlertaEliminarCoaseguro"
   class="modal-overlay"
   (click)="cancelarEliminarCoaseguro()"
+  (keydown.escape)="cancelarEliminarCoaseguro()"
+  (keydown.enter)="cancelarEliminarCoaseguro()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
 >
-  <div class="alert-bolivar" (click)="$event.stopPropagation()">
+  <div
+    class="alert-bolivar"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="-1"
+  >
     <div class="alert-bolivar__header">
       <div class="alert-bolivar__icon">
         <i class="fa-regular fa-triangle-exclamation"></i>
