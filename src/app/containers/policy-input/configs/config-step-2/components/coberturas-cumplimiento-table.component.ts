@@ -1,11 +1,15 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ILibTbTable } from 'tech-block-lib';
+import { LibTbTableModule } from 'tech-block-lib';
 
 @Component({
-  standalone: false,
+  standalone: true,
   selector: 'app-coberturas-cumplimiento-table',
   templateUrl: './coberturas-cumplimiento-table.component.html',
   styleUrls: ['./coberturas-cumplimiento-table.component.scss'],
+  imports: [CommonModule, LibTbTableModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class CoberturasCumplimientoTableComponent {
   // ✅ Input para recibir la configuración de la tabla
