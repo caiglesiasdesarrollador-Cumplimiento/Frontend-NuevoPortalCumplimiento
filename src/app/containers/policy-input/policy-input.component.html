@@ -47,22 +47,22 @@
           <thead class="bg-grayscaleL300">
             <tr>
               <th class="text-center" style="width: 80px;">Seleccione</th>
-              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 90px;" (click)="ordenarCotizaciones('tipo')">
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 90px;" tabindex="0" (click)="ordenarCotizaciones('tipo')" (keydown.enter)="ordenarCotizaciones('tipo')">
                 Tipo <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('tipo')"></i>
               </th>
-              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 120px;" (click)="ordenarCotizaciones('numero')">
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 120px;" tabindex="0" (click)="ordenarCotizaciones('numero')" (keydown.enter)="ordenarCotizaciones('numero')">
                 Número <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('numero')"></i>
               </th>
-              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" (click)="ordenarCotizaciones('tomador')">
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" tabindex="0" (click)="ordenarCotizaciones('tomador')" (keydown.enter)="ordenarCotizaciones('tomador')">
                 Tomador <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('tomador')"></i>
               </th>
-              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" (click)="ordenarCotizaciones('producto')">
+              <th class="cursor-pointer hover:bg-grayscaleL200 transition-colors" tabindex="0" (click)="ordenarCotizaciones('producto')" (keydown.enter)="ordenarCotizaciones('producto')">
                 Producto <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('producto')"></i>
               </th>
-              <th class="text-right cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 130px;" (click)="ordenarCotizaciones('valorAsegurado')">
+              <th class="text-right cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 130px;" tabindex="0" (click)="ordenarCotizaciones('valorAsegurado')" (keydown.enter)="ordenarCotizaciones('valorAsegurado')">
                 Valor Asegurado <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('valorAsegurado')"></i>
               </th>
-              <th class="text-center cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 90px;" (click)="ordenarCotizaciones('estado')">
+              <th class="text-center cursor-pointer hover:bg-grayscaleL200 transition-colors" style="width: 90px;" tabindex="0" (click)="ordenarCotizaciones('estado')" (keydown.enter)="ordenarCotizaciones('estado')">
                 Estado <i class="fa-solid ml-1 text-grayscaleD100" [ngClass]="getCotizacionesSortIcon('estado')"></i>
               </th>
               <th class="text-center" style="width: 110px;">Acciones</th>
@@ -585,11 +585,11 @@
                 <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoProducto', $event)">
                   <span>{{ tipoProducto === 'grandes-beneficiarios' ? 'Grandes Beneficiarios' : tipoProducto === 'particulares' ? 'Particulares' : tipoProducto === 'estatales' ? 'Estatales' : 'Seleccione un producto' }}</span>
                 </button>
-                <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoProducto')">
+                <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoProducto')" role="listbox">
                   <div class="custom-dropdown__option disabled">Seleccione un producto</div>
-                  <div class="custom-dropdown__option" [class.selected]="tipoProducto === 'grandes-beneficiarios'" (click)="tipoProducto = 'grandes-beneficiarios'; toggleDropdown('tipoProducto'); onTipoProductoChange('grandes-beneficiarios')">Grandes Beneficiarios</div>
-                  <div class="custom-dropdown__option" [class.selected]="tipoProducto === 'particulares'" (click)="tipoProducto = 'particulares'; toggleDropdown('tipoProducto'); onTipoProductoChange('particulares')">Particulares</div>
-                  <div class="custom-dropdown__option" [class.selected]="tipoProducto === 'estatales'" (click)="tipoProducto = 'estatales'; toggleDropdown('tipoProducto'); onTipoProductoChange('estatales')">Estatales</div>
+                  <div class="custom-dropdown__option" [class.selected]="tipoProducto === 'grandes-beneficiarios'" tabindex="0" role="option" (click)="tipoProducto = 'grandes-beneficiarios'; toggleDropdown('tipoProducto'); onTipoProductoChange('grandes-beneficiarios')" (keydown.enter)="tipoProducto = 'grandes-beneficiarios'; toggleDropdown('tipoProducto'); onTipoProductoChange('grandes-beneficiarios')">Grandes Beneficiarios</div>
+                  <div class="custom-dropdown__option" [class.selected]="tipoProducto === 'particulares'" tabindex="0" role="option" (click)="tipoProducto = 'particulares'; toggleDropdown('tipoProducto'); onTipoProductoChange('particulares')" (keydown.enter)="tipoProducto = 'particulares'; toggleDropdown('tipoProducto'); onTipoProductoChange('particulares')">Particulares</div>
+                  <div class="custom-dropdown__option" [class.selected]="tipoProducto === 'estatales'" tabindex="0" role="option" (click)="tipoProducto = 'estatales'; toggleDropdown('tipoProducto'); onTipoProductoChange('estatales')" (keydown.enter)="tipoProducto = 'estatales'; toggleDropdown('tipoProducto'); onTipoProductoChange('estatales')">Estatales</div>
                 </div>
               </div>
             </div>
@@ -600,9 +600,9 @@
                 <button type="button" class="custom-dropdown__trigger" [class.error]="!claveIntermediario" [class.valid]="claveIntermediario && nombreIntermediario" (click)="toggleDropdown('claveIntermediario', $event)">
                   <span>{{ claveIntermediario ? (claveIntermediario + ' - ' + nombreIntermediario) : 'Seleccione una clave' }}</span>
                 </button>
-                <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('claveIntermediario')">
+                <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('claveIntermediario')" role="listbox">
                   <div class="custom-dropdown__option disabled">Seleccione una clave</div>
-                  <div *ngFor="let clave of clavesIntermediario" class="custom-dropdown__option" [class.selected]="claveIntermediario === clave.codigo" (click)="claveIntermediario = clave.codigo; toggleDropdown('claveIntermediario'); onClaveIntermediarioChange(clave.codigo)">{{ clave.codigo }} - {{ clave.nombre }}</div>
+                  <div *ngFor="let clave of clavesIntermediario" class="custom-dropdown__option" [class.selected]="claveIntermediario === clave.codigo" tabindex="0" role="option" (click)="claveIntermediario = clave.codigo; toggleDropdown('claveIntermediario'); onClaveIntermediarioChange(clave.codigo)" (keydown.enter)="claveIntermediario = clave.codigo; toggleDropdown('claveIntermediario'); onClaveIntermediarioChange(clave.codigo)">{{ clave.codigo }} - {{ clave.nombre }}</div>
                 </div>
               </div>
               <span *ngIf="!claveIntermediario" class="field-error">
@@ -626,13 +626,13 @@
                   <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoDocAseguradoGB', $event)">
                     <span>{{ tipoDocumentoAsegurado === 'NIT' ? 'NIT' : tipoDocumentoAsegurado === 'CC' ? 'Cédula de Ciudadanía' : tipoDocumentoAsegurado === 'CE' ? 'Cédula de Extranjería' : tipoDocumentoAsegurado === 'PA' ? 'Pasaporte' : tipoDocumentoAsegurado === 'TI' ? 'Tarjeta de Identidad' : 'Seleccione el tipo de documento' }}</span>
                   </button>
-                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocAseguradoGB')">
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocAseguradoGB')" role="listbox">
                     <div class="custom-dropdown__option disabled">Seleccione el tipo de documento</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'NIT'" (click)="tipoDocumentoAsegurado = 'NIT'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">NIT</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CC'" (click)="tipoDocumentoAsegurado = 'CC'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Cédula de Ciudadanía</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CE'" (click)="tipoDocumentoAsegurado = 'CE'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Cédula de Extranjería</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'PA'" (click)="tipoDocumentoAsegurado = 'PA'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Pasaporte</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'TI'" (click)="tipoDocumentoAsegurado = 'TI'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Tarjeta de Identidad</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'NIT'" tabindex="0" role="option" (click)="tipoDocumentoAsegurado = 'NIT'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')" (keydown.enter)="tipoDocumentoAsegurado = 'NIT'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">NIT</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CC'" tabindex="0" role="option" (click)="tipoDocumentoAsegurado = 'CC'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')" (keydown.enter)="tipoDocumentoAsegurado = 'CC'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Cédula de Ciudadanía</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CE'" tabindex="0" role="option" (click)="tipoDocumentoAsegurado = 'CE'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')" (keydown.enter)="tipoDocumentoAsegurado = 'CE'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Cédula de Extranjería</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'PA'" tabindex="0" role="option" (click)="tipoDocumentoAsegurado = 'PA'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')" (keydown.enter)="tipoDocumentoAsegurado = 'PA'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Pasaporte</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'TI'" tabindex="0" role="option" (click)="tipoDocumentoAsegurado = 'TI'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')" (keydown.enter)="tipoDocumentoAsegurado = 'TI'; toggleDropdown('tipoDocAseguradoGB'); onTipoDocumentoChange('asegurado')">Tarjeta de Identidad</div>
                   </div>
                 </div>
                 <span *ngIf="!tipoDocumentoAsegurado" class="field-error">
@@ -684,13 +684,13 @@
                   <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoDocTomadorGB', $event)">
                     <span>{{ tipoDocumentoTomador === 'NIT' ? 'NIT' : tipoDocumentoTomador === 'CC' ? 'Cédula de Ciudadanía' : tipoDocumentoTomador === 'CE' ? 'Cédula de Extranjería' : tipoDocumentoTomador === 'PA' ? 'Pasaporte' : tipoDocumentoTomador === 'TI' ? 'Tarjeta de Identidad' : 'Seleccione el tipo de documento' }}</span>
                   </button>
-                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocTomadorGB')">
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocTomadorGB')" role="listbox">
                     <div class="custom-dropdown__option disabled">Seleccione el tipo de documento</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'NIT'" (click)="tipoDocumentoTomador = 'NIT'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">NIT</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CC'" (click)="tipoDocumentoTomador = 'CC'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Cédula de Ciudadanía</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CE'" (click)="tipoDocumentoTomador = 'CE'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Cédula de Extranjería</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'PA'" (click)="tipoDocumentoTomador = 'PA'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Pasaporte</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'TI'" (click)="tipoDocumentoTomador = 'TI'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Tarjeta de Identidad</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'NIT'" tabindex="0" role="option" (click)="tipoDocumentoTomador = 'NIT'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')" (keydown.enter)="tipoDocumentoTomador = 'NIT'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">NIT</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CC'" tabindex="0" role="option" (click)="tipoDocumentoTomador = 'CC'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')" (keydown.enter)="tipoDocumentoTomador = 'CC'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Cédula de Ciudadanía</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CE'" tabindex="0" role="option" (click)="tipoDocumentoTomador = 'CE'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')" (keydown.enter)="tipoDocumentoTomador = 'CE'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Cédula de Extranjería</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'PA'" tabindex="0" role="option" (click)="tipoDocumentoTomador = 'PA'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')" (keydown.enter)="tipoDocumentoTomador = 'PA'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Pasaporte</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'TI'" tabindex="0" role="option" (click)="tipoDocumentoTomador = 'TI'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')" (keydown.enter)="tipoDocumentoTomador = 'TI'; toggleDropdown('tipoDocTomadorGB'); onTipoDocumentoChange('tomador')">Tarjeta de Identidad</div>
                   </div>
                 </div>
                 <span *ngIf="!tipoDocumentoTomador" class="field-error">
@@ -742,12 +742,12 @@
                   <button type="button" class="custom-dropdown__trigger" [disabled]="!nombreAsegurado" (click)="nombreAsegurado && toggleDropdown('programas', $event)">
                     <span>{{ programaParametrizado === 'programa-a' ? 'Programa A - Construcción' : programaParametrizado === 'programa-b' ? 'Programa B - Servicios' : programaParametrizado === 'programa-c' ? 'Programa C - Consultoría' : programaParametrizado === 'programa-d' ? 'Programa D - Tecnología' : (nombreAsegurado ? 'Seleccione un programa' : 'Complete la información del asegurado primero') }}</span>
                   </button>
-                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('programas')">
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('programas')" role="listbox">
                     <div class="custom-dropdown__option disabled">Seleccione un programa</div>
-                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-a'" (click)="programaParametrizado = 'programa-a'; toggleDropdown('programas')">Programa A - Construcción</div>
-                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-b'" (click)="programaParametrizado = 'programa-b'; toggleDropdown('programas')">Programa B - Servicios</div>
-                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-c'" (click)="programaParametrizado = 'programa-c'; toggleDropdown('programas')">Programa C - Consultoría</div>
-                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-d'" (click)="programaParametrizado = 'programa-d'; toggleDropdown('programas')">Programa D - Tecnología</div>
+                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-a'" tabindex="0" role="option" (click)="programaParametrizado = 'programa-a'; toggleDropdown('programas')" (keydown.enter)="programaParametrizado = 'programa-a'; toggleDropdown('programas')">Programa A - Construcción</div>
+                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-b'" tabindex="0" role="option" (click)="programaParametrizado = 'programa-b'; toggleDropdown('programas')" (keydown.enter)="programaParametrizado = 'programa-b'; toggleDropdown('programas')">Programa B - Servicios</div>
+                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-c'" tabindex="0" role="option" (click)="programaParametrizado = 'programa-c'; toggleDropdown('programas')" (keydown.enter)="programaParametrizado = 'programa-c'; toggleDropdown('programas')">Programa C - Consultoría</div>
+                    <div class="custom-dropdown__option" [class.selected]="programaParametrizado === 'programa-d'" tabindex="0" role="option" (click)="programaParametrizado = 'programa-d'; toggleDropdown('programas')" (keydown.enter)="programaParametrizado = 'programa-d'; toggleDropdown('programas')">Programa D - Tecnología</div>
                   </div>
                 </div>
                 <span *ngIf="nombreAsegurado && !programaParametrizado" class="field-error">
@@ -771,13 +771,13 @@
                   <button type="button" class="custom-dropdown__trigger" (click)="toggleDropdown('tipoDocTomadorPE', $event)">
                     <span>{{ tipoDocumentoTomador === 'NIT' ? 'NIT' : tipoDocumentoTomador === 'CC' ? 'Cédula de Ciudadanía' : tipoDocumentoTomador === 'CE' ? 'Cédula de Extranjería' : tipoDocumentoTomador === 'PA' ? 'Pasaporte' : tipoDocumentoTomador === 'TI' ? 'Tarjeta de Identidad' : 'Seleccione el tipo de documento' }}</span>
                   </button>
-                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocTomadorPE')">
+                  <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocTomadorPE')" role="listbox">
                     <div class="custom-dropdown__option disabled">Seleccione el tipo de documento</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'NIT'" (click)="tipoDocumentoTomador = 'NIT'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">NIT</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CC'" (click)="tipoDocumentoTomador = 'CC'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Cédula de Ciudadanía</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CE'" (click)="tipoDocumentoTomador = 'CE'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Cédula de Extranjería</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'PA'" (click)="tipoDocumentoTomador = 'PA'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Pasaporte</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'TI'" (click)="tipoDocumentoTomador = 'TI'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Tarjeta de Identidad</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'NIT'" tabindex="0" role="option" (click)="tipoDocumentoTomador = 'NIT'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()" (keydown.enter)="tipoDocumentoTomador = 'NIT'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">NIT</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CC'" tabindex="0" role="option" (click)="tipoDocumentoTomador = 'CC'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()" (keydown.enter)="tipoDocumentoTomador = 'CC'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Cédula de Ciudadanía</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'CE'" tabindex="0" role="option" (click)="tipoDocumentoTomador = 'CE'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()" (keydown.enter)="tipoDocumentoTomador = 'CE'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Cédula de Extranjería</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'PA'" tabindex="0" role="option" (click)="tipoDocumentoTomador = 'PA'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()" (keydown.enter)="tipoDocumentoTomador = 'PA'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Pasaporte</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoTomador === 'TI'" tabindex="0" role="option" (click)="tipoDocumentoTomador = 'TI'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()" (keydown.enter)="tipoDocumentoTomador = 'TI'; toggleDropdown('tipoDocTomadorPE'); validarDocumentoTomador()">Tarjeta de Identidad</div>
                   </div>
                 </div>
                 <span *ngIf="formSubmitted && !tipoDocumentoTomador" class="field-error">
@@ -831,11 +831,11 @@
                   </button>
                   <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocAseguradoPE')">
                     <div class="custom-dropdown__option disabled">Seleccione el tipo de documento</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'NIT'" (click)="tipoDocumentoAsegurado = 'NIT'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">NIT</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CC'" (click)="tipoDocumentoAsegurado = 'CC'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Cédula de Ciudadanía</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CE'" (click)="tipoDocumentoAsegurado = 'CE'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Cédula de Extranjería</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'PA'" (click)="tipoDocumentoAsegurado = 'PA'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Pasaporte</div>
-                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'TI'" (click)="tipoDocumentoAsegurado = 'TI'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Tarjeta de Identidad</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'NIT'" tabindex="0" role="option" (click)="tipoDocumentoAsegurado = 'NIT'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()" (keydown.enter)="tipoDocumentoAsegurado = 'NIT'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">NIT</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CC'" tabindex="0" role="option" (click)="tipoDocumentoAsegurado = 'CC'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()" (keydown.enter)="tipoDocumentoAsegurado = 'CC'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Cédula de Ciudadanía</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'CE'" tabindex="0" role="option" (click)="tipoDocumentoAsegurado = 'CE'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()" (keydown.enter)="tipoDocumentoAsegurado = 'CE'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Cédula de Extranjería</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'PA'" tabindex="0" role="option" (click)="tipoDocumentoAsegurado = 'PA'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()" (keydown.enter)="tipoDocumentoAsegurado = 'PA'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Pasaporte</div>
+                    <div class="custom-dropdown__option" [class.selected]="tipoDocumentoAsegurado === 'TI'" tabindex="0" role="option" (click)="tipoDocumentoAsegurado = 'TI'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()" (keydown.enter)="tipoDocumentoAsegurado = 'TI'; toggleDropdown('tipoDocAseguradoPE'); validarDocumentoAsegurado()">Tarjeta de Identidad</div>
                   </div>
                 </div>
                 <span *ngIf="formSubmitted && !tipoDocumentoAsegurado" class="field-error">
@@ -1084,9 +1084,9 @@
                         </button>
                         <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoProductoP2')">
                           <div class="custom-dropdown__option disabled">Seleccione el tipo de producto</div>
-                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoProductoP2')">Grandes Beneficiarios</div>
-                          <div class="custom-dropdown__option selected" (click)="toggleDropdown('tipoProductoP2')">Particulares</div>
-                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoProductoP2')">Estatales</div>
+                          <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('tipoProductoP2')" (keydown.enter)="toggleDropdown('tipoProductoP2')">Grandes Beneficiarios</div>
+                          <div class="custom-dropdown__option selected" tabindex="0" role="option" (click)="toggleDropdown('tipoProductoP2')" (keydown.enter)="toggleDropdown('tipoProductoP2')">Particulares</div>
+                          <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('tipoProductoP2')" (keydown.enter)="toggleDropdown('tipoProductoP2')">Estatales</div>
                     </div>
                       </div>
                     </div>
@@ -1098,10 +1098,10 @@
                           <span>NIT</span>
                         </button>
                         <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocTomP2')">
-                          <div class="custom-dropdown__option selected" (click)="toggleDropdown('tipoDocTomP2')">NIT</div>
-                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocTomP2')">Cédula de Ciudadanía</div>
-                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocTomP2')">Cédula de Extranjería</div>
-                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocTomP2')">Pasaporte</div>
+                          <div class="custom-dropdown__option selected" tabindex="0" role="option" (click)="toggleDropdown('tipoDocTomP2')" (keydown.enter)="toggleDropdown('tipoDocTomP2')">NIT</div>
+                          <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('tipoDocTomP2')" (keydown.enter)="toggleDropdown('tipoDocTomP2')">Cédula de Ciudadanía</div>
+                          <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('tipoDocTomP2')" (keydown.enter)="toggleDropdown('tipoDocTomP2')">Cédula de Extranjería</div>
+                          <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('tipoDocTomP2')" (keydown.enter)="toggleDropdown('tipoDocTomP2')">Pasaporte</div>
                         </div>
                       </div>
               </div>
@@ -1139,10 +1139,10 @@
                     <span>NIT</span>
                   </button>
                   <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoDocAsegP2')">
-                    <div class="custom-dropdown__option selected" (click)="toggleDropdown('tipoDocAsegP2')">NIT</div>
-                    <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocAsegP2')">Cédula de Ciudadanía</div>
-                    <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocAsegP2')">Cédula de Extranjería</div>
-                    <div class="custom-dropdown__option" (click)="toggleDropdown('tipoDocAsegP2')">Pasaporte</div>
+                    <div class="custom-dropdown__option selected" tabindex="0" role="option" (click)="toggleDropdown('tipoDocAsegP2')" (keydown.enter)="toggleDropdown('tipoDocAsegP2')">NIT</div>
+                    <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('tipoDocAsegP2')" (keydown.enter)="toggleDropdown('tipoDocAsegP2')">Cédula de Ciudadanía</div>
+                    <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('tipoDocAsegP2')" (keydown.enter)="toggleDropdown('tipoDocAsegP2')">Cédula de Extranjería</div>
+                    <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('tipoDocAsegP2')" (keydown.enter)="toggleDropdown('tipoDocAsegP2')">Pasaporte</div>
               </div>
                 </div>
               </div>
@@ -1312,8 +1312,8 @@
                           </button>
                           <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoContragarantia')">
                             <div class="custom-dropdown__option disabled">Seleccione</div>
-                            <div class="custom-dropdown__option" [class.selected]="tipoContragarantia === '10'" (click)="tipoContragarantia = '10'; toggleDropdown('tipoContragarantia')">10 - CERRADA</div>
-                            <div class="custom-dropdown__option" [class.selected]="tipoContragarantia === '20'" (click)="tipoContragarantia = '20'; toggleDropdown('tipoContragarantia')">20 - ABIERTA</div>
+                            <div class="custom-dropdown__option" [class.selected]="tipoContragarantia === '10'" tabindex="0" role="option" (click)="tipoContragarantia = '10'; toggleDropdown('tipoContragarantia')" (keydown.enter)="tipoContragarantia = '10'; toggleDropdown('tipoContragarantia')">10 - CERRADA</div>
+                            <div class="custom-dropdown__option" [class.selected]="tipoContragarantia === '20'" tabindex="0" role="option" (click)="tipoContragarantia = '20'; toggleDropdown('tipoContragarantia')" (keydown.enter)="tipoContragarantia = '20'; toggleDropdown('tipoContragarantia')">20 - ABIERTA</div>
                           </div>
                         </div>
               </div>
@@ -1372,16 +1372,16 @@
                             <table class="coaseguros-table-full">
                               <thead>
                                 <tr>
-                                  <th (click)="sortCoasegurosCedidos('coaseguradora')">
+                                  <th tabindex="0" (click)="sortCoasegurosCedidos('coaseguradora')" (keydown.enter)="sortCoasegurosCedidos('coaseguradora')">
                                     Coaseguradora <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('coaseguradora')"></i>
                                   </th>
-                                  <th class="text-center" (click)="sortCoasegurosCedidos('participacion')">
+                                  <th class="text-center" tabindex="0" (click)="sortCoasegurosCedidos('participacion')" (keydown.enter)="sortCoasegurosCedidos('participacion')">
                                     %Part. <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('participacion')"></i>
                                   </th>
-                                  <th class="text-center" (click)="sortCoasegurosCedidos('numeroPol')">
+                                  <th class="text-center" tabindex="0" (click)="sortCoasegurosCedidos('numeroPol')" (keydown.enter)="sortCoasegurosCedidos('numeroPol')">
                                     N° Póliza <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('numeroPol')"></i>
                                   </th>
-                                  <th class="text-center" (click)="sortCoasegurosCedidos('certificado')">
+                                  <th class="text-center" tabindex="0" (click)="sortCoasegurosCedidos('certificado')" (keydown.enter)="sortCoasegurosCedidos('certificado')">
                                     Certificado <i class="fa-solid ml-1" [ngClass]="getSortIconCoaseguros('certificado')"></i>
                                   </th>
                                   <th class="text-center">Acciones</th>
@@ -1459,7 +1459,7 @@
                               </button>
                               <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('coaseguroAceptado')">
                                 <div class="custom-dropdown__option disabled">Seleccione una opción</div>
-                                <div class="custom-dropdown__option" *ngFor="let c of listaCoaseguradoras" [class.selected]="coaseguroAceptadoCoaseguradora === c.nombre" (click)="coaseguroAceptadoCoaseguradora = c.nombre; toggleDropdown('coaseguroAceptado')">{{ c.nombre }}</div>
+                                <div class="custom-dropdown__option" *ngFor="let c of listaCoaseguradoras" [class.selected]="coaseguroAceptadoCoaseguradora === c.nombre" tabindex="0" role="option" (click)="coaseguroAceptadoCoaseguradora = c.nombre; toggleDropdown('coaseguroAceptado')" (keydown.enter)="coaseguroAceptadoCoaseguradora = c.nombre; toggleDropdown('coaseguroAceptado')">{{ c.nombre }}</div>
                               </div>
                             </div>
               </div>
@@ -1503,10 +1503,10 @@
                         </button>
                         <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('tipoContrato')">
                           <div class="custom-dropdown__option disabled">Seleccione</div>
-                          <div class="custom-dropdown__option selected" (click)="toggleDropdown('tipoContrato')">Contrato de Obra</div>
-                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoContrato')">Contrato de Suministro</div>
-                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoContrato')">Prestación de Servicios</div>
-                          <div class="custom-dropdown__option" (click)="toggleDropdown('tipoContrato')">Consultoría</div>
+                          <div class="custom-dropdown__option selected" tabindex="0" role="option" (click)="toggleDropdown('tipoContrato')" (keydown.enter)="toggleDropdown('tipoContrato')">Contrato de Obra</div>
+                          <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('tipoContrato')" (keydown.enter)="toggleDropdown('tipoContrato')">Contrato de Suministro</div>
+                          <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('tipoContrato')" (keydown.enter)="toggleDropdown('tipoContrato')">Prestación de Servicios</div>
+                          <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('tipoContrato')" (keydown.enter)="toggleDropdown('tipoContrato')">Consultoría</div>
                         </div>
                       </div>
                       </div>
@@ -1521,8 +1521,8 @@
                           <span>COP</span>
                         </button>
                         <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('moneda')">
-                          <div class="custom-dropdown__option selected" (click)="toggleDropdown('moneda')">COP</div>
-                          <div class="custom-dropdown__option" (click)="toggleDropdown('moneda')">USD</div>
+                          <div class="custom-dropdown__option selected" tabindex="0" role="option" (click)="toggleDropdown('moneda')" (keydown.enter)="toggleDropdown('moneda')">COP</div>
+                          <div class="custom-dropdown__option" tabindex="0" role="option" (click)="toggleDropdown('moneda')" (keydown.enter)="toggleDropdown('moneda')">USD</div>
               </div>
                       </div>
                     </div>
@@ -2909,7 +2909,7 @@ NIT:</textarea>
             </button>
             <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('actividadEconomica')">
               <div class="custom-dropdown__option disabled">Seleccione la actividad económica</div>
-              <div class="custom-dropdown__option" *ngFor="let actividad of actividadesEconomicas" [class.selected]="actividadEconomica === actividad.codigo" (click)="actividadEconomica = actividad.codigo; toggleDropdown('actividadEconomica')">{{ actividad.codigo }} - {{ actividad.nombre }}</div>
+              <div class="custom-dropdown__option" *ngFor="let actividad of actividadesEconomicas" [class.selected]="actividadEconomica === actividad.codigo" tabindex="0" role="option" (click)="actividadEconomica = actividad.codigo; toggleDropdown('actividadEconomica')" (keydown.enter)="actividadEconomica = actividad.codigo; toggleDropdown('actividadEconomica')">{{ actividad.codigo }} - {{ actividad.nombre }}</div>
             </div>
           </div>
           <span *ngIf="!actividadEconomica" class="field-error">
@@ -3046,7 +3046,7 @@ NIT:</textarea>
               </button>
               <div class="custom-dropdown__menu" [class.open]="isDropdownOpen('coaseguroCedido')">
                 <div class="custom-dropdown__option disabled">--Seleccione--</div>
-                <div class="custom-dropdown__option" *ngFor="let c of listaCoaseguradoras" [class.selected]="coaseguroCedidoCoaseguradora === c.nombre" (click)="coaseguroCedidoCoaseguradora = c.nombre; toggleDropdown('coaseguroCedido')">{{ c.nombre }}</div>
+                <div class="custom-dropdown__option" *ngFor="let c of listaCoaseguradoras" [class.selected]="coaseguroCedidoCoaseguradora === c.nombre" tabindex="0" role="option" (click)="coaseguroCedidoCoaseguradora = c.nombre; toggleDropdown('coaseguroCedido')" (keydown.enter)="coaseguroCedidoCoaseguradora = c.nombre; toggleDropdown('coaseguroCedido')">{{ c.nombre }}</div>
               </div>
             </div>
           </div>
