@@ -10,7 +10,7 @@ describe('ThirdPartyValidationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ThirdPartyValidationComponent],
+      imports: [ThirdPartyValidationComponent],
       providers: [
         { provide: Router, useValue: { navigate: jest.fn() } },
         { provide: BreadcrumbService, useValue: { setBreadcrumb: jest.fn(), setThirdPartyValidationBreadcrumb: jest.fn() } }
@@ -25,3 +25,4 @@ describe('ThirdPartyValidationComponent', () => {
   it('should have dynamicForm', () => { expect(component.dynamicForm).toBeDefined(); });
   it('should validate', () => { expect(() => component.validateThirdParty()).not.toThrow(); });
 });
+

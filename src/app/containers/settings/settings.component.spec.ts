@@ -18,7 +18,7 @@ describe('SettingsComponent', () => {
     } as any;
 
     await TestBed.configureTestingModule({
-      declarations: [SettingsComponent],
+      imports: [SettingsComponent],
       providers: [
         { provide: BreadcrumbService, useValue: breadcrumbServiceMock }
       ],
@@ -388,3 +388,4 @@ describe('SettingsComponent', () => {
     });
   });
 });
+

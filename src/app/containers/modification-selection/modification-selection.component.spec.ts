@@ -10,8 +10,7 @@ describe('ModificationSelectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ModificationSelectionComponent],
-      imports: [RouterTestingModule],
+      imports: [ModificationSelectionComponent, RouterTestingModule],
       providers: [BreadcrumbService],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
@@ -27,5 +26,7 @@ describe('ModificationSelectionComponent', () => {
     expect(() => component.navigateToModification('test')).not.toThrow(); 
   });
 });
+
+
 
 

@@ -14,7 +14,7 @@ describe('HelpComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HelpComponent],
+      imports: [HelpComponent],
       providers: [
         { provide: NotificationService, useValue: mockNotificationService }
       ],
@@ -41,5 +41,6 @@ describe('HelpComponent', () => {
     expect(mockNotificationService.show).toHaveBeenCalled(); 
   });
 });
+
 
 

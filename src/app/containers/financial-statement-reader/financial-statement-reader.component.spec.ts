@@ -9,7 +9,7 @@ describe('FinancialStatementReaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FinancialStatementReaderComponent],
+      imports: [FinancialStatementReaderComponent],
       providers: [BreadcrumbService],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
@@ -23,5 +23,6 @@ describe('FinancialStatementReaderComponent', () => {
   it('should have analysisProgress', () => { expect(component.analysisProgress).toBe(0); });
   it('should have breadcrumbConfig', () => { expect(component.breadcrumbConfig).toBeDefined(); });
 });
+
 
 

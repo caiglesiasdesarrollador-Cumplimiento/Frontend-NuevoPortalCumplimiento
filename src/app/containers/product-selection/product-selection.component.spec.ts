@@ -10,8 +10,7 @@ describe('ProductSelectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ProductSelectionComponent],
-      imports: [RouterTestingModule],
+      imports: [ProductSelectionComponent, RouterTestingModule],
       providers: [BreadcrumbService],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
@@ -30,5 +29,7 @@ describe('ProductSelectionComponent', () => {
     expect(component.featuredProducts).toBeDefined(); 
   });
 });
+
+
 
 

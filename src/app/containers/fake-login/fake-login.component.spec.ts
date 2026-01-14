@@ -13,8 +13,7 @@ describe('FakeLoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FakeLoginComponent],
-      imports: [FormsModule],
+      imports: [FakeLoginComponent, FormsModule],
       providers: [
         { provide: Router, useValue: mockRouter }
       ]
@@ -191,4 +190,6 @@ describe('FakeLoginComponent', () => {
     });
   });
 });
+
+
 
