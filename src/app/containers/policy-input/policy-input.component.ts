@@ -4801,8 +4801,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
    * Obtiene el tipo de input según el tipo de documento
    */
   getInputType(tipo: string): string {
-    // Solo NIT y PA permiten caracteres especiales/letras
-    return tipo === 'PA' ? 'text' : 'text';
+    // PA (Pasaporte) permite letras, otros tipos solo números
+    return tipo === 'PA' || tipo === 'NIT' ? 'text' : 'tel';
   }
 
   /**
