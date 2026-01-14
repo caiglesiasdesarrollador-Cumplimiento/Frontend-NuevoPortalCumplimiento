@@ -10,8 +10,8 @@ import { PortalComponent } from './portal.component';
 import { PortalRoutingModule } from './portal-routing.module';
 
 @NgModule({
-  declarations: [PortalComponent],
   imports: [
+    PortalComponent,
     CommonModule,
     ReactiveFormsModule,
 
@@ -25,3 +25,4 @@ import { PortalRoutingModule } from './portal-routing.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PortalModule {}
+

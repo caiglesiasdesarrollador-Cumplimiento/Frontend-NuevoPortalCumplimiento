@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 
@@ -5,7 +8,9 @@ import { Location } from '@angular/common';
   selector: 'app-error-connection',
   templateUrl: './error-connection.component.html',
   styleUrls: ['./error-connection.component.scss'],
-  standalone: false
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ErrorConnectionComponent {
   constructor(private location: Location) {}
@@ -18,4 +23,6 @@ export class ErrorConnectionComponent {
     this.location.back();
   }
 }
+
+
 

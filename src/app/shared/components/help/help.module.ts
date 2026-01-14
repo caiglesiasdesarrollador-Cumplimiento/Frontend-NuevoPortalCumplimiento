@@ -4,9 +4,10 @@ import { LibTbButtonModule } from 'tech-block-lib';
 import { HelpComponent } from './help.component';
 
 @NgModule({
-  declarations: [HelpComponent],
-  imports: [CommonModule, LibTbButtonModule],
+  imports: [
+    HelpComponent,CommonModule, LibTbButtonModule],
   exports: [HelpComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class HelpModule {}
+

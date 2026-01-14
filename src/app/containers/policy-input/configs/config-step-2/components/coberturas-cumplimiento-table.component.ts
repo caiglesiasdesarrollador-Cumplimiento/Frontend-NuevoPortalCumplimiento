@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ILibTbTable } from 'tech-block-lib';
-import { LibTbTableModule } from 'tech-block-lib';
+import { ILibTbTable, LibTbTableModule } from 'tech-block-lib';
 
 @Component({
   standalone: true,
@@ -88,3 +87,5 @@ export class CoberturasCumplimientoTableComponent {
     this.saveChanges.emit();
   }
 }
+
+

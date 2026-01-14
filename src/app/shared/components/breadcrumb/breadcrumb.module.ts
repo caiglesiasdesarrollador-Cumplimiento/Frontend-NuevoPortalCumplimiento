@@ -4,8 +4,8 @@ import { LibTbBreadcrumbModule } from 'tech-block-lib';
 import { BreadcrumbComponent } from './breadcrumb.component';
 
 @NgModule({
-  declarations: [BreadcrumbComponent],
   imports: [
+    BreadcrumbComponent,
     CommonModule,
     LibTbBreadcrumbModule, // ✅ OBLIGATORIO para lib-tb-breadcrumb
   ],
@@ -13,3 +13,4 @@ import { BreadcrumbComponent } from './breadcrumb.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class BreadcrumbModule {}
+

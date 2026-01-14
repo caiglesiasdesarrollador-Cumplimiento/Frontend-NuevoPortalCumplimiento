@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { ILibTbButton, ILibTbDynamicForm, ILibTbStepper } from 'tech-block-lib';
 import { step1PersonalInfoForm } from './configs/config-step-1/step1-personal-info.config';
@@ -8,7 +11,9 @@ import { fadeAnimation } from '@shared/utils/animations';
 import { IDynamicFormComponent } from './dynamic-form.interface';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'dynamic-form',
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss'],
@@ -189,3 +194,5 @@ export class DynamicFormComponent implements IDynamicFormComponent {
     return this.currentStep === 1;
   }
 }
+
+

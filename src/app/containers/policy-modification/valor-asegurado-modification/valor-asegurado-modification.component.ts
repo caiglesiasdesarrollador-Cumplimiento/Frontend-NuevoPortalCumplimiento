@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ILibTbTable, ILibTbButton, ILibTbBreadcrumb, ILibTbStepper } from 'tech-block-lib';
@@ -10,7 +13,9 @@ import {
 } from './valor-asegurado-modification.interface';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-valor-asegurado-modification',
   templateUrl: './valor-asegurado-modification.component.html',
   styleUrls: ['./valor-asegurado-modification.component.scss'],
@@ -311,3 +316,5 @@ export class ValorAseguradoModificationComponent implements OnInit {
     return cobertura.id;
   }
 }
+
+

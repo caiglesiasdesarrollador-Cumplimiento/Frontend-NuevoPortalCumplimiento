@@ -9,8 +9,8 @@ import { HeaderComponent } from './header.component';
 import { MenuModule } from '../menu/menu.module';
 
 @NgModule({
-  declarations: [HeaderComponent],
   imports: [
+    HeaderComponent,
     CommonModule,
     RouterModule, // ✅ Para usar routerLink en el breadcrumb
     MenuModule, // ✅ OBLIGATORIO: Importar MenuModule para usar app-shared-menu
@@ -19,3 +19,4 @@ import { MenuModule } from '../menu/menu.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class HeaderModule {}
+

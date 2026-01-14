@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NotificationService } from '@shared/components/notification/notification.service';
@@ -5,7 +8,9 @@ import { configNotification } from '@shared/components/notification/notification
 import { fadeAnimation } from '@shared/utils/animations';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
@@ -67,3 +72,5 @@ export class LoginComponent {
     return validEmails.includes(this.email) && this.password.length >= 6;
   }
 }
+
+

@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -12,7 +15,9 @@ export interface HeaderBreadcrumbItem {
 
 @Component({
   selector: 'app-header',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
@@ -87,3 +92,5 @@ export class HeaderComponent {
     this.isMenuOpen = false;
   }
 }
+
+

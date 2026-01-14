@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
   ILibTbButton,
@@ -20,7 +23,9 @@ import { BreadcrumbService, BreadcrumbItem } from '../../shared/services/breadcr
  * ✅ APLICANDO REGLA: Breadcrumb navigation como settings
  */
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-financial-statement-reader',
   templateUrl: './financial-statement-reader.component.html',
   styleUrls: ['./financial-statement-reader.component.scss'],
@@ -228,3 +233,5 @@ export class FinancialStatementReaderComponent implements OnInit {
       : '0 MB';
   }
 }
+
+

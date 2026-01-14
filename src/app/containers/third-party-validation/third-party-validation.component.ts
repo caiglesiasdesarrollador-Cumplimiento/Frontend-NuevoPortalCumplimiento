@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
   ILibTbButton,
@@ -18,7 +21,9 @@ import { BreadcrumbService, BreadcrumbItem } from '../../shared/services/breadcr
  * ✅ APLICANDO REGLA: Estructura para formularios dinámicos simples
  */
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-third-party-validation',
   templateUrl: './third-party-validation.component.html',
   styleUrls: ['./third-party-validation.component.scss'],
@@ -179,3 +184,5 @@ export class ThirdPartyValidationComponent implements OnInit {
     return this.validationProgress >= 100 && !this.isLoading;
   }
 }
+
+

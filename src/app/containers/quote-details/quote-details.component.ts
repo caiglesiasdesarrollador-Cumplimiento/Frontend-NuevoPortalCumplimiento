@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ILibTbBreadcrumb, ILibTbButton, ILibTbSnackbar } from 'tech-block-lib';
@@ -10,7 +13,9 @@ import {
 } from '../management/management.interface';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-quote-details',
   templateUrl: './quote-details.component.html',
   styleUrls: ['./quote-details.component.scss'],
@@ -429,3 +434,5 @@ export class QuoteDetailsComponent implements OnInit {
     }).format(primaTotal);
   }
 }
+
+

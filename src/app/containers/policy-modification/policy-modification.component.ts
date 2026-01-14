@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -14,7 +17,9 @@ import { step2ConfirmationForm } from './configs/config-step-2/step2-confirmatio
 import { MOCK_ACTIVE_POLICIES } from './policy-modification.interface';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-policy-modification',
   templateUrl: './policy-modification.component.html',
   styleUrls: ['./policy-modification.component.scss'],
@@ -703,3 +708,5 @@ export class PolicyModificationComponent implements OnInit {
     this.errorModal.visible = false;
   }
 }
+
+
