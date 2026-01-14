@@ -16,11 +16,12 @@ export class QuoteService {
    */
   generateQuote(data: any): Observable<any> {
     // Simular llamada HTTP con delay
+    const randomArray = new Uint32Array(1);
+    crypto.getRandomValues(randomArray);
+    const randomSuffix = (randomArray[0] % 1000).toString().padStart(3, '0');
     return of({
       success: true,
-      quoteNumber: `COT-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)
-        .toString()
-        .padStart(3, '0')}`,
+      quoteNumber: `COT-${Date.now().toString().slice(-6)}-${randomSuffix}`,
       product: data.product || 'Producto por defecto',
       contractValue: data.contractValue || 0,
       generatedAt: new Date().toISOString(),

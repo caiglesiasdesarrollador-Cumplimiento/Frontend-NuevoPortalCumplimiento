@@ -3647,9 +3647,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Método para generar número de cotización
   generateQuoteNumber(): string {
     const timestamp = Date.now();
-    const randomSuffix = Math.floor(Math.random() * 1000)
-      .toString()
-      .padStart(3, '0');
+    const randomArray = new Uint32Array(1);
+    crypto.getRandomValues(randomArray);
+    const randomSuffix = (randomArray[0] % 1000).toString().padStart(3, '0');
     return `COT-${timestamp.toString().slice(-6)}-${randomSuffix}`;
   }
 
