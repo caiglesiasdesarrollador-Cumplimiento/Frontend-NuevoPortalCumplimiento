@@ -726,7 +726,9 @@
             class="stepper-v15__step stepper-v15__step--has-line"
             [class.stepper-v15__step--active]="currentStep === 0"
             [class.stepper-v15__step--completed]="currentStep > 0"
+            tabindex="0"
             (click)="goToStep(0)"
+            (keydown.enter)="goToStep(0)"
           >
             <div class="stepper-v15__circle">
               <span *ngIf="currentStep <= 0">1</span>
@@ -739,7 +741,9 @@
             class="stepper-v15__step stepper-v15__step--has-line"
             [class.stepper-v15__step--active]="currentStep === 1"
             [class.stepper-v15__step--completed]="currentStep > 1"
+            tabindex="0"
             (click)="goToStep(1)"
+            (keydown.enter)="goToStep(1)"
           >
             <div class="stepper-v15__circle">
               <span *ngIf="currentStep <= 1">2</span>
@@ -752,7 +756,9 @@
             class="stepper-v15__step"
             [class.stepper-v15__step--active]="currentStep === 2"
             [class.stepper-v15__step--completed]="currentStep > 2"
+            tabindex="0"
             (click)="goToStep(2)"
+            (keydown.enter)="goToStep(2)"
           >
             <div class="stepper-v15__circle">
               <span *ngIf="currentStep <= 2">3</span>
@@ -2122,7 +2128,10 @@
                         class="custom-dropdown__option"
                         *ngFor="let ub of listaUbicacionesRiesgo"
                         [class.selected]="ubicacionRiesgoSeleccionada === ub"
+                        tabindex="0"
+                        role="option"
                         (click)="ubicacionRiesgoSeleccionada = ub; toggleDropdown('ubicacionRiesgo')"
+                        (keydown.enter)="ubicacionRiesgoSeleccionada = ub; toggleDropdown('ubicacionRiesgo')"
                       >
                         {{ ub }}
                       </div>
@@ -2886,7 +2895,9 @@ Prestación de servicios de consultoría en cumplimiento normativo y asesoría l
                 <!-- Título con línea 3D -->
                 <h4
                   class="section-title-3d acordeon-header cursor-pointer"
+                  tabindex="0"
                   (click)="toggleRcAccordion()"
+                  (keydown.enter)="toggleRcAccordion()"
                 >
                   <i class="fa-regular fa-file-lines text-primaryBase text-xl"></i>
                   Detalles RC y Coberturas
