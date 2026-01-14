@@ -14,6 +14,7 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 
 @NgModule({
   imports: [
+    AppComponent,
     BrowserModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
@@ -25,7 +26,6 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
     BreadcrumbModule,
     // HelpModule removido - botón de ayuda eliminado
   ],
-  declarations: [AppComponent],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
     {
@@ -38,3 +38,4 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
   bootstrap: [AppComponent],
 })
 export class AppModule {}
+

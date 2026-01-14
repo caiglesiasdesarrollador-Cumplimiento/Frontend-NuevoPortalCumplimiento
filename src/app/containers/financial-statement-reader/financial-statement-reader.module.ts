@@ -12,8 +12,8 @@ import { FinancialStatementReaderComponent } from './financial-statement-reader.
 import { FinancialStatementReaderRoutingModule } from './financial-statement-reader-routing.module';
 
 @NgModule({
-  declarations: [FinancialStatementReaderComponent],
   imports: [
+    FinancialStatementReaderComponent,
     CommonModule,
     ReactiveFormsModule,
     LibTbBreadcrumbModule,
@@ -26,3 +26,4 @@ import { FinancialStatementReaderRoutingModule } from './financial-statement-rea
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class FinancialStatementReaderModule {}
+

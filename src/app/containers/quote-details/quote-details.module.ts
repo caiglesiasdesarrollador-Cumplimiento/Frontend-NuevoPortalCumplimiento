@@ -8,8 +8,8 @@ import { QuoteDetailsRoutingModule } from './quote-details-routing.module';
 import { QuoteDetailsComponent } from './quote-details.component';
 
 @NgModule({
-  declarations: [QuoteDetailsComponent],
   imports: [
+    QuoteDetailsComponent,
     CommonModule,
     ReactiveFormsModule,
     LibTbBreadcrumbModule, // ✅ OBLIGATORIO para breadcrumb
@@ -20,3 +20,4 @@ import { QuoteDetailsComponent } from './quote-details.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class QuoteDetailsModule {}
+

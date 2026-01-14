@@ -13,8 +13,8 @@ import { CreditLimitValidationComponent } from './credit-limit-validation.compon
 import { CreditLimitValidationRoutingModule } from './credit-limit-validation-routing.module';
 
 @NgModule({
-  declarations: [CreditLimitValidationComponent],
   imports: [
+    CreditLimitValidationComponent,
     CommonModule,
     ReactiveFormsModule,
     LibTbDynamicFormModule, // ✅ OBLIGATORIO para formularios dinámicos
@@ -27,3 +27,4 @@ import { CreditLimitValidationRoutingModule } from './credit-limit-validation-ro
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class CreditLimitValidationModule {}
+

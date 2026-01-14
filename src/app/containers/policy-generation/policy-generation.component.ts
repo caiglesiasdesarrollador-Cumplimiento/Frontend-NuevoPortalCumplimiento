@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
   ILibTbButton,
@@ -19,7 +22,9 @@ import { BreadcrumbService, BreadcrumbItem } from '../../shared/services/breadcr
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-policy-generation',
   templateUrl: './policy-generation.component.html',
   styleUrls: ['./policy-generation.component.scss'],
@@ -381,3 +386,5 @@ export class PolicyGenerationComponent implements OnInit {
     }
   }
 }
+
+

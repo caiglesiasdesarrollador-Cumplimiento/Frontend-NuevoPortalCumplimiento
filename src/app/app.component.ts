@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component } from '@angular/core';
 import { NotificationService } from './shared/components/notification/notification.service';
 import { LoaderService } from './shared/components/loader/loader.service';
@@ -7,7 +10,9 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'my-app',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -69,3 +74,5 @@ export class AppComponent {
     setTimeout(() => this.loaderService.hide(), 1000);
   }
 }
+
+

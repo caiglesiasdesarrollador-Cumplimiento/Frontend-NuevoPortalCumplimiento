@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   Component,
   OnInit,
@@ -5,10 +7,9 @@ import {
   HostListener,
   NgZone,
   ChangeDetectorRef,
+  CUSTOM_ELEMENTS_SCHEMA,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import {
   ILibTbStepper,
   ILibTbDynamicForm,
@@ -77,6 +78,7 @@ import { SbCalendarModule } from '../../shared/components/sb-calendar/sb-calenda
     // Componente hijo
     CoberturasCumplimientoTableComponent,
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Intervalo para auto-guardado
@@ -5688,3 +5690,5 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     }
   }
 }
+
+

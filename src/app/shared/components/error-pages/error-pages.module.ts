@@ -11,11 +11,9 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    ErrorConnectionComponent,
-    Error404Component
-  ],
   imports: [
+    ErrorConnectionComponent,
+    Error404Component,
     CommonModule,
     RouterModule.forChild(routes)
   ],
@@ -25,4 +23,5 @@ const routes: Routes = [
   ]
 })
 export class ErrorPagesModule { }
+
 

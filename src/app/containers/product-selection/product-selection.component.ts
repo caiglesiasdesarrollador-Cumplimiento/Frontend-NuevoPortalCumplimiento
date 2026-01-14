@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ILibTbBreadcrumb, ILibTbButton } from 'tech-block-lib';
@@ -9,7 +12,9 @@ import {
 } from './product-selection.interface';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-product-selection',
   templateUrl: './product-selection.component.html',
   styleUrls: ['./product-selection.component.scss'],
@@ -140,3 +145,5 @@ export class ProductSelectionComponent implements OnInit {
     return this.productData.products.filter(p => !p.featured);
   }
 }
+
+

@@ -4,7 +4,9 @@ import { NotificationService } from '../notification/notification.service';
 
 @Component({
   selector: 'app-help',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './help.component.html',
   styleUrls: ['./help.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -67,3 +69,5 @@ export class HelpComponent {
     this.notificationService.show(config);
   }
 }
+
+

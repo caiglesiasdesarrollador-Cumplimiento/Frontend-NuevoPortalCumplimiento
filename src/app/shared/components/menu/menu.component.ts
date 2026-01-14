@@ -1,10 +1,15 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { IMenuMainItem, LIST_MENU_DATA } from './menu.interface';
 
 @Component({
   selector: 'app-shared-menu',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
 })
@@ -55,3 +60,5 @@ export class MenuComponent {
     this.menuClose.emit();
   }
 }
+
+

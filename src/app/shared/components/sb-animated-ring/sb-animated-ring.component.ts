@@ -1,8 +1,13 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-sb-animated-ring',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './sb-animated-ring.component.html',
   styleUrls: ['./sb-animated-ring.component.scss']
 })
@@ -16,6 +21,8 @@ export class SbAnimatedRingComponent {
   /** Color del icono central (por defecto verde Bolívar) */
   @Input() iconColor: string = '#038450';
 }
+
+
 
 
 

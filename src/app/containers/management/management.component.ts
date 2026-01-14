@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -23,7 +26,9 @@ import {
 } from './management.interface';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-management',
   templateUrl: './management.component.html',
   styleUrls: ['./management.component.scss'],
@@ -579,3 +584,5 @@ export class ManagementComponent implements OnInit {
     );
   }
 }
+
+

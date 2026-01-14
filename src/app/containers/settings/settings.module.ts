@@ -13,8 +13,8 @@ import { SettingsComponent } from './settings.component';
 import { SettingsRoutingModule } from './settings-routing.module';
 
 @NgModule({
-  declarations: [SettingsComponent],
   imports: [
+    SettingsComponent,
     CommonModule,
     ReactiveFormsModule,
     LibTbDynamicFormModule, // ✅ OBLIGATORIO para formularios dinámicos
@@ -27,3 +27,4 @@ import { SettingsRoutingModule } from './settings-routing.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SettingsModule {}
+

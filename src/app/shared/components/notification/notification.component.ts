@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, ViewEncapsulation, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { ILibTbModalNotification } from 'tech-block-lib';
 import { NotificationService } from './notification.service';
@@ -5,7 +8,9 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-notification',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.scss'],
   encapsulation: ViewEncapsulation.None,
@@ -93,3 +98,5 @@ export class NotificationComponent implements OnInit, OnDestroy {
     this.notificacionSub?.unsubscribe();
   }
 }
+
+

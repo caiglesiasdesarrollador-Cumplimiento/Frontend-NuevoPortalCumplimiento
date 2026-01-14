@@ -13,8 +13,8 @@ import { ThirdPartyValidationComponent } from './third-party-validation.componen
 import { ThirdPartyValidationRoutingModule } from './third-party-validation-routing.module';
 
 @NgModule({
-  declarations: [ThirdPartyValidationComponent],
   imports: [
+    ThirdPartyValidationComponent,
     CommonModule,
     ReactiveFormsModule,
     LibTbDynamicFormModule, // ✅ OBLIGATORIO para formularios dinámicos
@@ -27,3 +27,4 @@ import { ThirdPartyValidationRoutingModule } from './third-party-validation-rout
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ThirdPartyValidationModule {}
+
