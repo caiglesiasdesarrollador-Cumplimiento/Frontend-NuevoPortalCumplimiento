@@ -10,8 +10,7 @@ describe('PolicyModificationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PolicyModificationComponent],
-      imports: [RouterTestingModule],
+      imports: [PolicyModificationComponent, RouterTestingModule],
       providers: [BreadcrumbService],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
@@ -31,4 +30,6 @@ describe('PolicyModificationComponent', () => {
     expect(() => component.nextStep()).not.toThrow(); 
   });
 });
+
+
 

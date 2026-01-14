@@ -8,7 +8,7 @@ describe('ManagementComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ManagementComponent],
+      imports: [ManagementComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
     }).compileComponents();
     fixture = TestBed.createComponent(ManagementComponent);
@@ -17,4 +17,5 @@ describe('ManagementComponent', () => {
 
   it('should create', () => { expect(component).toBeTruthy(); });
 });
+
 

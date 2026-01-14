@@ -9,8 +9,7 @@ describe('DashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DashboardComponent],
-      imports: [RouterTestingModule],
+      imports: [DashboardComponent, RouterTestingModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
 
@@ -22,5 +21,7 @@ describe('DashboardComponent', () => {
   it('should have totalStats', () => { expect(component.totalStats).toBe(48); });
   it('should navigate to url', () => { expect(() => component.navigateToUrl('/test')).not.toThrow(); });
 });
+
+
 
 

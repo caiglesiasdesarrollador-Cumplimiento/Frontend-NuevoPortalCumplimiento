@@ -14,7 +14,7 @@ describe('LoaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LoaderComponent],
+      imports: [LoaderComponent],
       providers: [
         { provide: LoaderService, useValue: mockLoaderService }
       ],
@@ -33,5 +33,6 @@ describe('LoaderComponent', () => {
     expect(component.isLoading).toBe(true); 
   });
 });
+
 
 

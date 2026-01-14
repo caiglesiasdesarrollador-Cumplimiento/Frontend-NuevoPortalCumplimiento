@@ -11,7 +11,7 @@ describe('QuoteDetailsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [QuoteDetailsComponent],
+      imports: [QuoteDetailsComponent],
       providers: [
         { provide: Router, useValue: { navigate: jest.fn() } },
         { provide: ActivatedRoute, useValue: { params: of({}), queryParams: of({}) } },
@@ -26,3 +26,4 @@ describe('QuoteDetailsComponent', () => {
   it('should create', () => { expect(component).toBeTruthy(); });
   it('should have quoteData', () => { expect(component.quoteData).toBeDefined(); });
 });
+

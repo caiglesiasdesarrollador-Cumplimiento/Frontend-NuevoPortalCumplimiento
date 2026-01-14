@@ -13,7 +13,7 @@ describe('ErrorConnectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ErrorConnectionComponent],
+      imports: [ErrorConnectionComponent],
       providers: [
         { provide: Location, useValue: mockLocation }
       ],
@@ -30,5 +30,6 @@ describe('ErrorConnectionComponent', () => {
     expect(mockLocation.back).toHaveBeenCalled(); 
   });
 });
+
 
 
