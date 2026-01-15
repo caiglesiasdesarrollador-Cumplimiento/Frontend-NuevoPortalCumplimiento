@@ -2,16 +2,27 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { NotificationService } from './shared/components/notification/notification.service';
 import { LoaderService } from './shared/components/loader/loader.service';
 import { ILibTbButton } from 'tech-block-lib';
 import { configNotification } from './shared/components/notification/notification.config';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { HeaderComponent } from './shared/components/header/header.component';
+import { LoaderComponent } from './shared/components/loader/loader.component';
+import { NotificationComponent } from './shared/components/notification/notification.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterOutlet,
+    HeaderComponent,
+    LoaderComponent,
+    NotificationComponent,
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'my-app',
   templateUrl: './app.component.html',
