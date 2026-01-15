@@ -1636,7 +1636,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     multiple: false,
     dragDropLabel: 'Seleccionar archivo',
     dragDropIcon: 'fa-solid fa-upload', // ✅ Icono de upload como en imagen 1
-    caption: 'Peso máximo por cada archivo: 10 MB. Formatos permitidos: PDF, Word, Excel.',
+    caption: 'Peso máximo por cada archivo: 30 MB. Formatos permitidos: PDF, Word, Excel.',
     avaibleTypes: [
       'application/pdf', // PDF
       'application/msword', // DOC
@@ -1644,10 +1644,10 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       'application/vnd.ms-excel', // XLS
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
     ],
-    maxSize: 10485760, // 10MB en bytes
+    maxSize: 31457280, // 30MB en bytes
     errorText: {
       type: 'Tipo de archivo no válido. Use PDF, Word o Excel.',
-      maxSize: 'El archivo es demasiado grande. Máximo 10MB.',
+      maxSize: 'El archivo es demasiado grande. Máximo 30MB.',
       length: 'Solo se permite un archivo a la vez.',
     },
     customAlert: {
