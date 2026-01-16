@@ -4,6 +4,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { QuoteService } from '../../shared/services/quote.service';
+import { CupoService } from '../../shared/services/cupo.service';
+import { GrupoBolivarService } from '../../shared/services/grupo-bolivar.service';
+import { ProgramaService } from '../../shared/services/programa.service';
 import { of } from 'rxjs';
 
 describe('PolicyInputComponent', () => {
@@ -19,7 +22,12 @@ describe('PolicyInputComponent', () => {
         HttpClientTestingModule,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [QuoteService],
+      providers: [
+        QuoteService,
+        CupoService,
+        GrupoBolivarService,
+        ProgramaService,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PolicyInputComponent);

@@ -1189,12 +1189,13 @@
                   <button
                     type="button"
                     class="custom-dropdown__trigger"
-                    [disabled]="!nombreAsegurado"
-                    (click)="nombreAsegurado && toggleDropdown('programas', $event)"
+                    [disabled]="!nombreAsegurado || estaCargandoProgramas"
+                    (click)="nombreAsegurado && !estaCargandoProgramas && toggleDropdown('programas', $event)"
                   >
-                    <span
-                      >{{ programaParametrizado === 'programa-a' ? 'Programa A - Construcción' : programaParametrizado === 'programa-b' ? 'Programa B - Servicios' : programaParametrizado === 'programa-c' ? 'Programa C - Consultoría' : programaParametrizado === 'programa-d' ? 'Programa D - Tecnología' : (nombreAsegurado ? 'Seleccione un programa' : 'Complete la información del asegurado primero') }}</span
-                    >
+                    <span *ngIf="estaCargandoProgramas">Cargando programas...</span>
+                    <span *ngIf="!estaCargandoProgramas">
+                      {{ getProgramaDropdownText() }}
+                    </span>
                   </button>
                   <div
                     class="custom-dropdown__menu"
@@ -1203,44 +1204,21 @@
                   >
                     <div class="custom-dropdown__option disabled">Seleccione un programa</div>
                     <div
+                      *ngFor="let programa of programasDisponibles"
                       class="custom-dropdown__option"
-                      [class.selected]="programaParametrizado === 'programa-a'"
+                      [class.selected]="programaSeleccionadoId === programa.id"
                       tabindex="0"
                       role="option"
-                      (click)="programaParametrizado = 'programa-a'; toggleDropdown('programas')"
-                      (keydown.enter)="programaParametrizado = 'programa-a'; toggleDropdown('programas')"
+                      (click)="onProgramaSeleccionado(programa.id); toggleDropdown('programas')"
+                      (keydown.enter)="onProgramaSeleccionado(programa.id); toggleDropdown('programas')"
                     >
-                      Programa A - Construcción
+                      {{ programa.nombre }}
                     </div>
                     <div
-                      class="custom-dropdown__option"
-                      [class.selected]="programaParametrizado === 'programa-b'"
-                      tabindex="0"
-                      role="option"
-                      (click)="programaParametrizado = 'programa-b'; toggleDropdown('programas')"
-                      (keydown.enter)="programaParametrizado = 'programa-b'; toggleDropdown('programas')"
+                      *ngIf="programasDisponibles.length === 0 && nombreAsegurado && !estaCargandoProgramas"
+                      class="custom-dropdown__option disabled"
                     >
-                      Programa B - Servicios
-                    </div>
-                    <div
-                      class="custom-dropdown__option"
-                      [class.selected]="programaParametrizado === 'programa-c'"
-                      tabindex="0"
-                      role="option"
-                      (click)="programaParametrizado = 'programa-c'; toggleDropdown('programas')"
-                      (keydown.enter)="programaParametrizado = 'programa-c'; toggleDropdown('programas')"
-                    >
-                      Programa C - Consultoría
-                    </div>
-                    <div
-                      class="custom-dropdown__option"
-                      [class.selected]="programaParametrizado === 'programa-d'"
-                      tabindex="0"
-                      role="option"
-                      (click)="programaParametrizado = 'programa-d'; toggleDropdown('programas')"
-                      (keydown.enter)="programaParametrizado = 'programa-d'; toggleDropdown('programas')"
-                    >
-                      Programa D - Tecnología
+                      No hay programas disponibles
                     </div>
                   </div>
                 </div>
@@ -1740,18 +1718,26 @@
 
         <!-- ✅ Paso 2: Formulario Completo con Scroll Vertical -->
         <div *ngIf="currentStep === 1" class="policy-input__step">
-          <!-- Cupo Disponible del Cliente - Estilo Corporativo Bolívar -->
-          <div class="cupo-disponible-card mb-6">
+          <!-- ✅ RF-007 Regla 7.1: Cupo Disponible del Cliente - Dinámico -->
+          <div class="cupo-disponible-card mb-6" *ngIf="tipoDocumentoTomador && numeroDocumentoTomador">
             <div class="cupo-disponible-card__icon">
-              <i class="fa-solid fa-wallet"></i>
+              <i class="fa-solid fa-wallet" *ngIf="!estaCalculandoCupo"></i>
+              <i class="fa-solid fa-spinner fa-spin" *ngIf="estaCalculandoCupo"></i>
             </div>
             <div class="cupo-disponible-card__content">
               <span class="cupo-disponible-card__label">Cupo Disponible del Cliente:</span>
-              <span class="cupo-disponible-card__value">$100.000.000</span>
+              <span class="cupo-disponible-card__value" *ngIf="!estaCalculandoCupo">
+                {{ formatCurrency(cupoDisponibleVisible) }}
+              </span>
+              <span class="cupo-disponible-card__value" *ngIf="estaCalculandoCupo">
+                Calculando...
+              </span>
             </div>
-            <div class="cupo-disponible-card__badge">
-              <i class="fa-solid fa-check-circle"></i>
-              <span>Activo</span>
+            <div class="cupo-disponible-card__badge" *ngIf="!estaCalculandoCupo">
+              <i class="fa-solid fa-check-circle" *ngIf="cupoDisponible > 0"></i>
+              <i class="fa-solid fa-exclamation-circle" *ngIf="cupoDisponible <= 0"></i>
+              <span *ngIf="cupoDisponible > 0">Activo</span>
+              <span *ngIf="cupoDisponible <= 0">Sin cupo</span>
             </div>
           </div>
 
@@ -4928,6 +4914,126 @@ NIT:</textarea
         (click)="confirmarEliminarArchivo()"
       >
         Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-007 Regla 7.1: Modal Cupo Bloqueado -->
+<div
+  *ngIf="showModalCupoBloqueado"
+  class="modal-overlay"
+  (click)="cerrarModalCupoBloqueado()"
+  (keydown.escape)="cerrarModalCupoBloqueado()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Cupo No Disponible</h3>
+        <p class="alert-bolivar__message">
+          EL TOMADOR O AFINAZADO NO CUENTA CON CUPO DISPONIBLE. POR FAVOR COMUNICATE CON LA UNIDAD DE CUMPLIMIENTO: unidaddecumplimiento@segurosbolivar.com NO OLVIDES ADJUNTAR LOS ESTADOS FINANCIEROS ACTUALIZADOS Y SOLICITAR LA VALIDACIÓN DE UN NUEVO CUPO PARA EL CLIENTE
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalCupoBloqueado()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalCupoBloqueado()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-007 Regla 7.2: Modal Error Grupo Bolívar -->
+<div
+  *ngIf="showModalGrupoBolivar"
+  class="modal-overlay"
+  (click)="cerrarModalGrupoBolivar()"
+  (keydown.escape)="cerrarModalGrupoBolivar()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Validación Grupo Bolívar</h3>
+        <p class="alert-bolivar__message">
+          ESTÁS INGRESANDO A UN TOMADOR O ASEGURADO DE EMPRESAS DEL GRUPO BOLÍVAR, ESTAS EMISIONES DEBEN SER CON CLAVE DIRECTA DE LA COMPAÑÍA.
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalGrupoBolivar()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalGrupoBolivar()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-007 Regla 7.4: Modal Asegurado No En Programa -->
+<div
+  *ngIf="showModalAseguradoNoEnPrograma"
+  class="modal-overlay"
+  (click)="cerrarModalAseguradoNoEnPrograma()"
+  (keydown.escape)="cerrarModalAseguradoNoEnPrograma()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Asegurado No En Programa</h3>
+        <p class="alert-bolivar__message">
+          EL ASEGURADO NO SE ENCUENTRA EN EL PROGRAMA SELECCIONADO, REVISA CON TU DIRECTOR COMERCIAL O COMUNICATE A LA UNIDAD DE SERVICIO DE CUMPLIMIENTO AL BUZÓN: unidaddecumplimiento@segurosbolivar.com
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalAseguradoNoEnPrograma()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalAseguradoNoEnPrograma()"
+      >
+        Entendido
       </button>
     </div>
   </div>
