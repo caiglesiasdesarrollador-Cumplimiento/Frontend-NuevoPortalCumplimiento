@@ -568,6 +568,152 @@ export class ManagementComponent implements OnInit {
     };
   }
 
+  // ✅ Regla 17.3: Botón para imprimir cotización/póliza
+  getBtnPrint(item: IPolicyManagementItem): ILibTbButton {
+    return {
+      icon: 'fal fa-print',
+      styleBtn: 'stroke',
+      typeBtn: 'primary',
+      libTbClick: () => {
+        console.log('🖨️ Imprimir clickeado para:', item.numero);
+        this.imprimirPoliza(item);
+      },
+    };
+  }
+
+  // ✅ Regla 17.3: Método para imprimir póliza/cotización desde management
+  imprimirPoliza(item: IPolicyManagementItem): void {
+    console.log('🖨️ Imprimir póliza/cotización:', item.id);
+    
+    // Abrir ventana de impresión
+    const ventanaImpresion = window.open('', '_blank');
+    if (!ventanaImpresion) {
+      alert('Por favor, permite ventanas emergentes para imprimir');
+      return;
+    }
+
+    const contenido = this.generarContenidoImpresion(item);
+    ventanaImpresion.document.write(contenido);
+    ventanaImpresion.document.close();
+    
+    // Esperar a que se cargue el contenido antes de imprimir
+    ventanaImpresion.onload = () => {
+      setTimeout(() => {
+        ventanaImpresion.print();
+      }, 250);
+    };
+  }
+
+  // ✅ Generar contenido HTML para impresión desde management
+  private generarContenidoImpresion(item: IPolicyManagementItem): string {
+    const tipoDocumento = item.tipo === 'poliza' ? 'PÓLIZA' : 'COTIZACIÓN';
+    
+    return `
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${tipoDocumento} ${item.numero}</title>
+        <style>
+          @media print {
+            @page { margin: 2cm; }
+            body { font-family: Arial, sans-serif; font-size: 12px; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #038450; padding-bottom: 20px; }
+            .header h1 { color: #038450; margin: 0; }
+            .section { margin-bottom: 20px; }
+            .section h2 { color: #038450; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+            .row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+            .label { font-weight: bold; width: 40%; }
+            .value { width: 60%; }
+            .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #666; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            table th { background-color: #038450; color: white; }
+          }
+          body { font-family: Arial, sans-serif; font-size: 12px; padding: 20px; }
+          .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #038450; padding-bottom: 20px; }
+          .header h1 { color: #038450; margin: 0; }
+          .section { margin-bottom: 20px; }
+          .section h2 { color: #038450; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+          .row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+          .label { font-weight: bold; width: 40%; }
+          .value { width: 60%; }
+          .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #666; }
+          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+          table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          table th { background-color: #038450; color: white; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>SEGUROS BOLÍVAR</h1>
+          <h2>${tipoDocumento} ${item.numero}</h2>
+        </div>
+
+        <div class="section">
+          <h2>Información General</h2>
+          <div class="row">
+            <span class="label">Número:</span>
+            <span class="value">${item.numero}</span>
+          </div>
+          <div class="row">
+            <span class="label">Tipo:</span>
+            <span class="value">${item.tipo === 'poliza' ? 'Póliza' : 'Cotización'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Estado:</span>
+            <span class="value">${item.estado}</span>
+          </div>
+          <div class="row">
+            <span class="label">Fecha de Creación:</span>
+            <span class="value">${item.fechaCreacion}</span>
+          </div>
+          <div class="row">
+            <span class="label">Producto:</span>
+            <span class="value">${item.producto}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Datos del Tomador</h2>
+          <div class="row">
+            <span class="label">Número de Documento:</span>
+            <span class="value">${item.numeroDocumento || 'N/A'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Nombre:</span>
+            <span class="value">${item.tomador || 'N/A'}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Valores</h2>
+          <div class="row">
+            <span class="label">Valor Asegurado:</span>
+            <span class="value">${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(item.valorAsegurado)}</span>
+          </div>
+        </div>
+
+        ${item.numeroContrato ? `
+        <div class="section">
+          <h2>Contrato</h2>
+          <div class="row">
+            <span class="label">Número de Contrato:</span>
+            <span class="value">${item.numeroContrato}</span>
+          </div>
+        </div>
+        ` : ''}
+
+        <div class="footer">
+          <p>Documento generado el ${new Date().toLocaleDateString('es-CO')} a las ${new Date().toLocaleTimeString('es-CO')}</p>
+          <p>Seguros Bolívar - Sistema de Cumplimiento Digital</p>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
   // ✅ Getters para el template
   get totalItems(): number {
     return this.filteredData.length;

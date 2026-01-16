@@ -2608,10 +2608,10 @@ select {
 
 // ✅ BOTÓN DE ACCIÓN CIRCULAR (ojo, lápiz, etc.)
 .action-btn-circle {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  min-height: 34px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
   border-radius: 50%;
   border: 2px solid #038450;
   background-color: #ffffff;
@@ -2625,7 +2625,7 @@ select {
   padding: 0;
   
   i {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
   
   &:hover {

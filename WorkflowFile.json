@@ -19,6 +19,7 @@
   },
   "configuration": {
     "develop": "dev",
+    "GD981-760": "dev",
     "stage": "stage",
     "master": "prod"
   },

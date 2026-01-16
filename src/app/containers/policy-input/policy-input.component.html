@@ -136,7 +136,7 @@
                   [ngClass]="getCotizacionesSortIcon('estado')"
                 ></i>
               </th>
-              <th class="text-center" style="width: 110px;" scope="col">Acciones</th>
+              <th class="text-center" style="width: 180px;" scope="col">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -181,13 +181,27 @@
                 </span>
               </td>
               <td class="text-center">
-                <div class="flex items-center justify-center gap-2">
+                <div class="flex items-center justify-center gap-1 flex-wrap">
                   <button
                     class="action-btn-circle"
                     (click)="verDetalleCotizacion(cot); $event.stopPropagation()"
                     title="Ver detalle"
                   >
                     <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <button
+                    class="action-btn-circle"
+                    (click)="imprimirCotizacion(cot); $event.stopPropagation()"
+                    title="Imprimir cotización"
+                  >
+                    <i class="fa-solid fa-print"></i>
+                  </button>
+                  <button
+                    class="action-btn-circle"
+                    (click)="retomarCotizacion(cot); $event.stopPropagation()"
+                    title="Retomar cotización"
+                  >
+                    <i class="fa-solid fa-play"></i>
                   </button>
                   <button
                     class="action-btn-circle"
@@ -478,11 +492,19 @@
           </div>
         </div>
 
-        <!-- Botón Volver -->
-        <div class="flex justify-center mt-6">
+        <!-- Botones de acción -->
+        <div class="flex justify-center gap-4 mt-6">
           <button class="btn-anterior" (click)="volverACotizaciones()">
             <i class="fa-solid fa-arrow-left"></i>
             Volver a Cotizaciones
+          </button>
+          <button
+            class="btn-continuar"
+            (click)="imprimirDetalleCotizacion()"
+            style="background-color: #038450; color: white;"
+          >
+            <i class="fa-solid fa-print"></i>
+            Imprimir Cotización
           </button>
         </div>
       </div>
@@ -4478,7 +4500,7 @@ NIT:</textarea
             <div class="file-upload-content">
               <i class="fa-solid fa-cloud-arrow-up file-upload-icon"></i>
               <p class="file-upload-text">Haz clic para cargar estados financieros</p>
-              <small class="file-upload-hint">PDF, Excel o Word. Máximo 10 MB</small>
+              <small class="file-upload-hint">PDF, Excel o Word. Máximo 30 MB</small>
             </div>
           </div>
 
