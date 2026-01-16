@@ -4563,6 +4563,276 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.updateBreadcrumb();
   }
 
+  // ✅ Regla 17.2: Retomar cotización guardada - Cargar datos completos y continuar proceso
+  retomarCotizacion(cotizacion: any): void {
+    console.log('🔄 Retomar cotización:', cotizacion.id);
+    this.cotizacionSeleccionada = cotizacion;
+
+    // Ocultar vistas de cotizaciones
+    this.showCotizacionesTable = false;
+    this.showCotizacionDetalle = false;
+
+    // Habilitar formulario
+    this.isFormEnabled = true;
+    this.selectedEmitirOption = 'poliza-nueva';
+    this.selectedAction = 'emitir';
+    this.action = PolicyInputAction.EMITIR;
+
+    // ✅ Cargar datos completos desde el servicio si no están disponibles
+    if (!cotizacion.datosGenerales && cotizacion.id) {
+      firstValueFrom(this.quoteService.getSavedQuote(cotizacion.id))
+        .then((quoteData) => {
+          console.log('✅ Datos de cotización cargados desde servicio:', quoteData);
+          this.cargarDatosRetomarCotizacion(quoteData);
+        })
+        .catch((error) => {
+          console.error('❌ Error al cargar cotización:', error);
+          // Si falla, usar los datos disponibles
+          this.cargarDatosRetomarCotizacion(cotizacion);
+        });
+    } else {
+      // Si ya tiene datos, cargarlos directamente
+      this.cargarDatosRetomarCotizacion(cotizacion);
+    }
+  }
+
+  // ✅ Método auxiliar para cargar datos al retomar cotización
+  private cargarDatosRetomarCotizacion(cotizacion: any): void {
+    // ✅ Cargar datos completos de la cotización guardada
+    if (cotizacion.datosGenerales) {
+      // Precargar datos en step1Form (Paso 1) usando patchValue
+      if (this.step1Form?.form) {
+        this.step1Form.form.patchValue({
+          tipoDocumentoAsegurado: cotizacion.datosGenerales.tipoDocAsegurado || 'NIT',
+          numeroDocumentoAsegurado: cotizacion.datosGenerales.numDocAsegurado || '',
+          nombreAsegurado: cotizacion.datosGenerales.nombreAsegurado || '',
+          tipoDocumentoTomador: cotizacion.datosGenerales.tipoDocTomador || 'NIT',
+          numeroDocumentoTomador: cotizacion.datosGenerales.numDocTomador || '',
+          nombreTomador: cotizacion.datosGenerales.nombreTomador || '',
+          producto: cotizacion.producto || '',
+        });
+      }
+
+      // Precargar datos en step2Data (Paso 2)
+      this.step2Data = {
+        ...this.step2Data,
+        numeroContratoGeneral: cotizacion.datosGenerales.numeroContrato || '',
+        numeroContrato: cotizacion.datosGenerales.numeroContrato || '',
+        tipoDocumentoTomadorGeneral: cotizacion.datosGenerales.tipoDocTomador || 'NIT',
+        numeroDocumentoTomadorGeneral: cotizacion.datosGenerales.numDocTomador || '',
+        numeroDocumentoTomador: cotizacion.datosGenerales.numDocTomador || '',
+        nombreTomadorGeneral: cotizacion.datosGenerales.nombreTomador || '',
+        nombreTomador: cotizacion.datosGenerales.nombreTomador || '',
+        tipoDocumentoAseguradoGeneral: cotizacion.datosGenerales.tipoDocAsegurado || 'NIT',
+        numeroDocumentoAseguradoGeneral: cotizacion.datosGenerales.numDocAsegurado || '',
+        nombreAseguradoGeneral: cotizacion.datosGenerales.nombreAsegurado || '',
+        moneda: cotizacion.datosGenerales.moneda || 'COP',
+        departamento: cotizacion.ubicacionRiesgo?.departamento || '',
+        localidadMunicipio: cotizacion.ubicacionRiesgo?.municipio || '',
+        direccionRiesgo: cotizacion.ubicacionRiesgo?.direccion || '',
+        valorContrato: cotizacion.detallesContrato?.valorContrato || cotizacion.valorAsegurado || 0,
+        fechaInicioContrato: cotizacion.detallesContrato?.fechaInicio || '',
+        fechaFinContrato: cotizacion.detallesContrato?.fechaFin || '',
+        duracionContrato: cotizacion.detallesContrato?.duracion || '',
+      };
+
+      // También actualizar step2Form si está disponible
+      if (this.step2Form?.form) {
+        setTimeout(() => {
+          this.step2Form.form.patchValue({
+            numeroContratoGeneral: cotizacion.datosGenerales.numeroContrato || '',
+            numeroContrato: cotizacion.datosGenerales.numeroContrato || '',
+            tipoDocumentoTomadorGeneral: cotizacion.datosGenerales.tipoDocTomador || 'NIT',
+            numeroDocumentoTomadorGeneral: cotizacion.datosGenerales.numDocTomador || '',
+            numeroDocumentoTomador: cotizacion.datosGenerales.numDocTomador || '',
+            nombreTomadorGeneral: cotizacion.datosGenerales.nombreTomador || '',
+            nombreTomador: cotizacion.datosGenerales.nombreTomador || '',
+            tipoDocumentoAseguradoGeneral: cotizacion.datosGenerales.tipoDocAsegurado || 'NIT',
+            numeroDocumentoAseguradoGeneral: cotizacion.datosGenerales.numDocAsegurado || '',
+            nombreAseguradoGeneral: cotizacion.datosGenerales.nombreAsegurado || '',
+            moneda: cotizacion.datosGenerales.moneda || 'COP',
+            departamento: cotizacion.ubicacionRiesgo?.departamento || '',
+            localidadMunicipio: cotizacion.ubicacionRiesgo?.municipio || '',
+            direccionRiesgo: cotizacion.ubicacionRiesgo?.direccion || '',
+            valorContrato: cotizacion.detallesContrato?.valorContrato || cotizacion.valorAsegurado || 0,
+            fechaInicioContrato: cotizacion.detallesContrato?.fechaInicio || '',
+            fechaFinContrato: cotizacion.detallesContrato?.fechaFin || '',
+            duracionContrato: cotizacion.detallesContrato?.duracion || '',
+          });
+        }, 100);
+      }
+    }
+
+    // ✅ Restaurar paso donde se quedó (si está guardado, sino empezar desde paso 1)
+    const pasoGuardado = cotizacion.pasoGuardado || 1;
+    this.currentStep = Math.min(pasoGuardado, 2); // Máximo paso 2 (paso 3 es resumen)
+    this.stepperConfig.activeIndex = this.currentStep;
+
+    // ✅ Restaurar breadcrumb
+    this.updateBreadcrumb();
+
+    console.log('✅ Cotización retomada exitosamente. Paso:', this.currentStep);
+  }
+
+  // ✅ Regla 17.3: Imprimir cotización desde la tabla
+  imprimirCotizacion(cotizacion: any): void {
+    console.log('🖨️ Imprimir cotización:', cotizacion.id);
+    
+    // Abrir ventana de impresión con los datos de la cotización
+    const ventanaImpresion = window.open('', '_blank');
+    if (!ventanaImpresion) {
+      alert('Por favor, permite ventanas emergentes para imprimir');
+      return;
+    }
+
+    const contenido = this.generarContenidoImpresion(cotizacion);
+    ventanaImpresion.document.write(contenido);
+    ventanaImpresion.document.close();
+    
+    // Esperar a que se cargue el contenido antes de imprimir
+    ventanaImpresion.onload = () => {
+      setTimeout(() => {
+        ventanaImpresion.print();
+      }, 250);
+    };
+  }
+
+  // ✅ Regla 17.3: Imprimir desde detalle de cotización
+  imprimirDetalleCotizacion(): void {
+    if (this.cotizacionSeleccionada) {
+      console.log('🖨️ Imprimir detalle de cotización:', this.cotizacionSeleccionada.id);
+      this.imprimirCotizacion(this.cotizacionSeleccionada);
+    }
+  }
+
+  // ✅ Generar contenido HTML para impresión
+  private generarContenidoImpresion(cotizacion: any): string {
+    return `
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cotización ${cotizacion.numero}</title>
+        <style>
+          @media print {
+            @page { margin: 2cm; }
+            body { font-family: Arial, sans-serif; font-size: 12px; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #038450; padding-bottom: 20px; }
+            .header h1 { color: #038450; margin: 0; }
+            .section { margin-bottom: 20px; }
+            .section h2 { color: #038450; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+            .row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+            .label { font-weight: bold; width: 40%; }
+            .value { width: 60%; }
+            .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #666; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            table th { background-color: #038450; color: white; }
+          }
+          body { font-family: Arial, sans-serif; font-size: 12px; padding: 20px; }
+          .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #038450; padding-bottom: 20px; }
+          .header h1 { color: #038450; margin: 0; }
+          .section { margin-bottom: 20px; }
+          .section h2 { color: #038450; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+          .row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+          .label { font-weight: bold; width: 40%; }
+          .value { width: 60%; }
+          .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #666; }
+          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+          table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          table th { background-color: #038450; color: white; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>SEGUROS BOLÍVAR</h1>
+          <h2>COTIZACIÓN ${cotizacion.numero}</h2>
+        </div>
+
+        <div class="section">
+          <h2>Información General</h2>
+          <div class="row">
+            <span class="label">Número de Cotización:</span>
+            <span class="value">${cotizacion.numero}</span>
+          </div>
+          <div class="row">
+            <span class="label">Estado:</span>
+            <span class="value">${cotizacion.estado}</span>
+          </div>
+          <div class="row">
+            <span class="label">Fecha de Creación:</span>
+            <span class="value">${cotizacion.fechaCreacion}</span>
+          </div>
+          <div class="row">
+            <span class="label">Producto:</span>
+            <span class="value">${cotizacion.producto}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Datos del Tomador</h2>
+          <div class="row">
+            <span class="label">Tipo de Documento:</span>
+            <span class="value">${cotizacion.datosGenerales?.tipoDocTomador || 'N/A'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Número de Documento:</span>
+            <span class="value">${cotizacion.datosGenerales?.numDocTomador || 'N/A'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Nombre:</span>
+            <span class="value">${cotizacion.datosGenerales?.nombreTomador || cotizacion.tomador?.nombre || 'N/A'}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Datos del Asegurado</h2>
+          <div class="row">
+            <span class="label">Tipo de Documento:</span>
+            <span class="value">${cotizacion.datosGenerales?.tipoDocAsegurado || 'N/A'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Número de Documento:</span>
+            <span class="value">${cotizacion.datosGenerales?.numDocAsegurado || 'N/A'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Nombre:</span>
+            <span class="value">${cotizacion.datosGenerales?.nombreAsegurado || 'N/A'}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Valores</h2>
+          <div class="row">
+            <span class="label">Valor Asegurado:</span>
+            <span class="value">${this.formatCurrency(cotizacion.valorAsegurado)}</span>
+          </div>
+          ${cotizacion.resumenCostos ? `
+          <div class="row">
+            <span class="label">Prima Neta:</span>
+            <span class="value">${this.formatCurrency(cotizacion.resumenCostos.primaNeta)}</span>
+          </div>
+          <div class="row">
+            <span class="label">IVA:</span>
+            <span class="value">${this.formatCurrency(cotizacion.resumenCostos.iva)}</span>
+          </div>
+          <div class="row">
+            <span class="label">Prima Total:</span>
+            <span class="value"><strong>${this.formatCurrency(cotizacion.resumenCostos.primaTotal)}</strong></span>
+          </div>
+          ` : ''}
+        </div>
+
+        <div class="footer">
+          <p>Documento generado el ${new Date().toLocaleDateString('es-CO')} a las ${new Date().toLocaleTimeString('es-CO')}</p>
+          <p>Seguros Bolívar - Sistema de Cumplimiento Digital</p>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
   // ✅ Formatear valor como moneda
   formatCurrency(value: number): string {
     return new Intl.NumberFormat('es-CO', {

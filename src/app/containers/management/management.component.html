@@ -166,6 +166,12 @@
                   title="Ver Detalles"
                 ></lib-tb-button>
 
+                <!-- Botón Imprimir (Regla 17.3) -->
+                <lib-tb-button
+                  [custom]="getBtnPrint(item)"
+                  title="Imprimir"
+                ></lib-tb-button>
+
                 <!-- Botón Modificar (solo si no está cancelada o vencida) -->
                 <lib-tb-button
                   *ngIf="item.estado !== 'Cancelada' && item.estado !== 'Vencida'"
