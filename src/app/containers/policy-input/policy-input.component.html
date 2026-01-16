@@ -3764,10 +3764,7 @@ NIT:</textarea
 
     <!-- Mensaje -->
     <p class="archivo-no-compatible-modal__message">
-      El archivo <strong>"{{ archivoNoCompatibleNombre }}"</strong> no se puede procesar.
-    </p>
-    <p class="archivo-no-compatible-modal__submessage">
-      Por favor, selecciona un archivo en uno de los formatos permitidos.
+      Las extensiones soportadas son: *.DOCX, XLSX y *.PDF
     </p>
 
     <!-- Botones -->
@@ -4879,6 +4876,56 @@ NIT:</textarea
       <button
         class="alert-bolivar__btn alert-bolivar__btn--confirm"
         (click)="confirmarEliminarCoaseguro()"
+      >
+        Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-008: Alerta: Confirmar Eliminar Archivo del Contrato -->
+<div
+  *ngIf="showAlertaEliminarArchivo"
+  class="modal-overlay"
+  (click)="cancelarEliminarArchivo()"
+  (keydown.escape)="cancelarEliminarArchivo()"
+  (keydown.enter)="cancelarEliminarArchivo()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon alert-bolivar__icon--outline">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 8V12M12 16H12.01M10.29 3.86L1.82 18C1.64538 18.3024 1.55299 18.6453 1.552 19C1.55101 19.3547 1.64145 19.6983 1.81445 20.0019C1.98745 20.3055 2.23675 20.5587 2.53773 20.7357C2.83871 20.9127 3.18082 21.0074 3.53 21.01H20.47C20.8192 21.0074 21.1613 20.9127 21.4623 20.7357C21.7633 20.5587 22.0126 20.3055 22.1856 20.0019C22.3586 19.6983 22.449 19.3547 22.448 19C22.447 18.6453 22.3546 18.3024 22.18 18L13.71 3.86C13.5315 3.56631 13.2806 3.32311 12.9812 3.15447C12.6819 2.98584 12.3438 2.89725 12 2.89725C11.6562 2.89725 11.3181 2.98584 11.0188 3.15447C10.7194 3.32311 10.4685 3.56631 10.29 3.86Z" stroke="#FFE16F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Confirmar Eliminación</h3>
+        <p class="alert-bolivar__message">
+          ¡Estás seguro de que quieres borrar el documento?
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cancelarEliminarArchivo()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--cancel"
+        (click)="cancelarEliminarArchivo()"
+      >
+        Cancelar
+      </button>
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="confirmarEliminarArchivo()"
       >
         Eliminar
       </button>

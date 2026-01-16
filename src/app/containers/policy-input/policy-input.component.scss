@@ -5141,6 +5141,23 @@ input[type="checkbox"].sb-ui-checkbox {
       color: #fff;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
+
+    // ✅ RF-008: Estilo outline para el ícono de eliminación de archivo
+    &--outline {
+      background: transparent;
+      border: 2px solid #FFE16F;
+      box-shadow: none;
+      
+      i {
+        display: none; // Ocultar ícono FontAwesome si existe
+      }
+      
+      svg {
+        width: 24px;
+        height: 24px;
+        display: block;
+      }
+    }
   }
 
   &__text {

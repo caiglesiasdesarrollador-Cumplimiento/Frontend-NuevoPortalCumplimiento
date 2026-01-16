@@ -557,6 +557,10 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   isContractFileRequired = true;
   contractFileError = false;
 
+  // ✅ RF-008: Constantes de validación de archivo
+  readonly MAX_FILE_NAME_LENGTH = 255; // Máximo de caracteres del nombre del archivo (ajustar según requerimiento de arquitectura)
+  showAlertaEliminarArchivo = false; // Flag para mostrar confirmación de eliminación
+
   // ✅ Propiedades para el formulario paso 1
   tipoProducto = '';
   claveIntermediario = '';
@@ -1646,8 +1650,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     ],
     maxSize: 31457280, // 30MB en bytes
     errorText: {
-      type: 'Tipo de archivo no válido. Use PDF, Word o Excel.',
-      maxSize: 'El archivo es demasiado grande. Máximo 30MB.',
+      type: 'Las extensiones soportadas son: *.DOCX, XLSX y *.PDF',
+      maxSize: 'El tamaño máximo del archivo 30 MB',
       length: 'Solo se permite un archivo a la vez.',
     },
     customAlert: {
@@ -2329,20 +2333,27 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // ✅ VALIDAR EXTENSIÓN - Solo PDF, Word, Excel (NO imágenes)
+      // ✅ RF-008: VALIDAR EXTENSIÓN - Solo PDF, Word, Excel (NO imágenes)
       const validExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
 
       if (!validExtensions.includes(extension)) {
-        this.mostrarToastArchivoNoValido(file.name);
+        this.showErrorNotification('Las extensiones soportadas son: *.DOCX, XLSX y *.PDF');
         input.value = ''; // Limpiar input
         return;
       }
 
-      // ✅ VALIDAR TAMAÑO - Máximo 30 MB
+      // ✅ RF-008: VALIDAR TAMAÑO - Máximo 30 MB
       if (file.size > 30 * 1024 * 1024) {
+        this.showErrorNotification('El tamaño máximo del archivo 30 MB');
+        input.value = ''; // Limpiar input
+        return;
+      }
+
+      // ✅ RF-008: VALIDAR LONGITUD DEL NOMBRE DEL ARCHIVO
+      if (file.name.length > this.MAX_FILE_NAME_LENGTH) {
         this.showErrorNotification(
-          '❌ Archivo supera 30 MB. Tu archivo es muy pesado, elige uno más pequeño.',
+          `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
         );
         input.value = ''; // Limpiar input
         return;
@@ -2376,11 +2387,24 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     }
   }
 
+  // ✅ RF-008: Mostrar confirmación antes de eliminar archivo
   removeFile(): void {
+    this.showAlertaEliminarArchivo = true;
+  }
+
+  // ✅ RF-008: Cancelar eliminación de archivo
+  cancelarEliminarArchivo(): void {
+    this.showAlertaEliminarArchivo = false;
+  }
+
+  // ✅ RF-008: Confirmar y ejecutar la eliminación del archivo
+  confirmarEliminarArchivo(): void {
     this.selectedFile = null;
     this.selectedFileName = null;
     this.fileName = null;
     this.uploadProgress = 0;
+    this.contractFileError = true; // Marcar error cuando se elimina el archivo
+    this.showAlertaEliminarArchivo = false;
     console.log('🗑️ Archivo removido');
   }
 
@@ -2414,9 +2438,19 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // Validar tamaño (30 MB)
+      // ✅ RF-008: Validar tamaño (30 MB)
       if (file.size > 30 * 1024 * 1024) {
-        this.showErrorNotification('El archivo excede el tamaño máximo de 30 MB');
+        this.showErrorNotification('El tamaño máximo del archivo 30 MB');
+        input.value = '';
+        return;
+      }
+
+      // ✅ RF-008: Validar longitud del nombre del archivo
+      if (file.name.length > this.MAX_FILE_NAME_LENGTH) {
+        this.showErrorNotification(
+          `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
+        );
+        input.value = '';
         return;
       }
 
@@ -2445,17 +2479,25 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
       const file = event.dataTransfer.files[0];
 
-      // Validar tamaño (30 MB)
-      if (file.size > 30 * 1024 * 1024) {
-        this.showErrorNotification('El archivo excede el tamaño máximo de 30 MB');
-        return;
-      }
-
-      // Validar extensión - Solo PDF, Word, Excel (NO imágenes)
+      // ✅ RF-008: Validar extensión - Solo PDF, Word, Excel (NO imágenes)
       const validExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
       if (!validExtensions.includes(extension)) {
-        this.mostrarToastArchivoNoValido(file.name);
+        this.showErrorNotification('Las extensiones soportadas son: *.DOCX, XLSX y *.PDF');
+        return;
+      }
+
+      // ✅ RF-008: Validar tamaño (30 MB)
+      if (file.size > 30 * 1024 * 1024) {
+        this.showErrorNotification('El tamaño máximo del archivo 30 MB');
+        return;
+      }
+
+      // ✅ RF-008: Validar longitud del nombre del archivo
+      if (file.name.length > this.MAX_FILE_NAME_LENGTH) {
+        this.showErrorNotification(
+          `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
+        );
         return;
       }
 
@@ -3054,18 +3096,28 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   // ✅ Métodos de manejo de archivos usando tech-block-lib
+  // ✅ RF-008: Validar archivo cuando se captura desde la librería tech-block-lib
   onFileCaught(files: File[]): void {
     if (files.length > 0) {
-      this.fileName = files[0].name;
+      const file = files[0];
+
+      // ✅ RF-008: Validar longitud del nombre del archivo
+      if (file.name.length > this.MAX_FILE_NAME_LENGTH) {
+        this.showErrorNotification(
+          `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
+        );
+        return;
+      }
+
+      this.fileName = file.name;
       this.contractFileError = false; // ✅ Limpiar error cuando se carga un archivo
-      console.log('Archivo seleccionado:', files[0]);
+      console.log('Archivo seleccionado:', file);
     }
   }
 
-  onFileDeleted(file: File): void {
-    this.fileName = null;
-    this.contractFileError = true; // ✅ Marcar error cuando se elimina el archivo
-    console.log('Archivo eliminado:', file);
+  // ✅ RF-008: Mostrar confirmación antes de eliminar archivo (cuando se elimina desde la librería)
+  onFileDeleted(_file: File): void {
+    this.showAlertaEliminarArchivo = true;
   }
 
   onFileReload(uploadingFile: any): void {
@@ -5424,7 +5476,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         this.snackbarConfig = {
           ...this.snackbarConfig,
           show: true,
-          message: '❌ El archivo no puede superar los 30 MB',
+          message: 'El tamaño máximo del archivo 30 MB',
           class: 'snackbar-error-theme',
         };
         return;
