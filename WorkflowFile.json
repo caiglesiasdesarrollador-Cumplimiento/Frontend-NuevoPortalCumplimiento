@@ -1,11 +1,11 @@
 {
   "environment": {
     "appDir": ".",
-    "releasePath": "dist"
+    "releasePath": "dist/browser"
   },
   "s3": {
     "dev": {
-      "name": "cumplimientodigital-dev-front",
+      "name": "cumplimiento-dev-front",
       "acl": "public-read"
     },
     "stage": {
@@ -19,6 +19,7 @@
   },
   "configuration": {
     "develop": "dev",
+    "GD981-760": "dev",
     "stage": "stage",
     "master": "prod"
   },

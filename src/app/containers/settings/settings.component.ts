@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {
   ILibTbDynamicForm,
@@ -12,7 +15,9 @@ import { ISettingsFormData } from './settings.interface';
 import { BreadcrumbService, BreadcrumbItem } from '../../shared/services/breadcrumb.service';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
@@ -233,3 +238,5 @@ export class SettingsComponent implements OnInit {
     return this.loadingSubject.value;
   }
 }
+
+

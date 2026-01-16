@@ -13,7 +13,7 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AppComponent],
+      imports: [AppComponent],
       providers: [
         { provide: Router, useValue: { navigate: jest.fn(), events: routerEvents.asObservable() } },
         { provide: NotificationService, useValue: { show: jest.fn() } },
@@ -32,3 +32,4 @@ describe('AppComponent', () => {
     expect(component.showHeader).toBeDefined();
   });
 });
+

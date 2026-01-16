@@ -9,7 +9,7 @@ describe('PolicyGenerationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PolicyGenerationComponent],
+      imports: [PolicyGenerationComponent],
       providers: [BreadcrumbService],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
@@ -23,5 +23,7 @@ describe('PolicyGenerationComponent', () => {
   it('should have isProcessing', () => { expect(component.isProcessing).toBe(false); });
   it('should have breadcrumbConfig', () => { expect(component.breadcrumbConfig).toBeDefined(); });
 });
+
+
 
 

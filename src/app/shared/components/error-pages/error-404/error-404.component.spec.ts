@@ -9,8 +9,7 @@ describe('Error404Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [Error404Component],
-      imports: [RouterTestingModule],
+      imports: [Error404Component, RouterTestingModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
 
@@ -21,5 +20,8 @@ describe('Error404Component', () => {
   it('should create', () => { expect(component).toBeTruthy(); });
   it('should go to home', () => { expect(() => component.goToHome()).not.toThrow(); });
 });
+
+
+
 
 

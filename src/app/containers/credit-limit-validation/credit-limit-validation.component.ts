@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
   ILibTbButton,
@@ -22,7 +25,9 @@ import { BreadcrumbService, BreadcrumbItem } from '../../shared/services/breadcr
  * ✅ APLICANDO REGLA: Estructura para formularios dinámicos simples
  */
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-credit-limit-validation',
   templateUrl: './credit-limit-validation.component.html',
   styleUrls: ['./credit-limit-validation.component.scss'],
@@ -137,9 +142,12 @@ export class CreditLimitValidationComponent implements OnInit {
   }
 
   private generateMockResult(): ICreditLimitResult {
-    const riskScore = Math.floor(Math.random() * 400) + 600;
-    const creditScore = Math.floor(Math.random() * 300) + 650;
-    const debtToIncomeRatio = Math.random() * 0.5;
+    // Usar crypto para generar números aleatorios seguros
+    const randomValues = new Uint32Array(3);
+    crypto.getRandomValues(randomValues);
+    const riskScore = (randomValues[0] % 400) + 600;
+    const creditScore = (randomValues[1] % 300) + 650;
+    const debtToIncomeRatio = (randomValues[2] % 500) / 1000;
 
     let status: ValidationStatus;
     let approvedLimit: number;
@@ -240,3 +248,5 @@ export class CreditLimitValidationComponent implements OnInit {
     }).format(value);
   }
 }
+
+

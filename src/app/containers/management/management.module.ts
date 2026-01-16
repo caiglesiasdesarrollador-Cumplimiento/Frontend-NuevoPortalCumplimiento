@@ -19,8 +19,8 @@ import { ManagementComponent } from './management.component';
 import { ManagementRoutingModule } from './management-routing.module';
 
 @NgModule({
-  declarations: [ManagementComponent],
   imports: [
+    ManagementComponent,
     CommonModule,
     RouterModule,
     FormsModule, // ✅ Para ngModel en filtros
@@ -40,3 +40,4 @@ import { ManagementRoutingModule } from './management-routing.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ManagementModule {}
+

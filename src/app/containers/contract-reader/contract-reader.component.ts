@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -22,7 +25,9 @@ import {
 import { BreadcrumbService, BreadcrumbItem } from '../../shared/services/breadcrumb.service';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-contract-reader',
   templateUrl: './contract-reader.component.html',
   styleUrls: ['./contract-reader.component.scss'],
@@ -333,7 +338,7 @@ export class ContractReaderComponent implements OnInit {
 
   // ✅ Métodos auxiliares
   private generateId(): string {
-    return `file_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `file_${Date.now()}_${crypto.randomUUID().slice(0, 9)}`;
   }
 
   // ✅ Getters para template
@@ -377,3 +382,5 @@ export class ContractReaderComponent implements OnInit {
     }).format(value);
   }
 }
+
+

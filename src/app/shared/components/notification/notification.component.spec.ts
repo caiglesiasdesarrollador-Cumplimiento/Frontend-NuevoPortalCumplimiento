@@ -14,7 +14,7 @@ describe('NotificationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [NotificationComponent],
+      imports: [NotificationComponent],
       providers: [
         { provide: NotificationService, useValue: mockNotificationService }
       ],
@@ -35,5 +35,7 @@ describe('NotificationComponent', () => {
     expect(component.isVisible).toBe(false); 
   });
 });
+
+
 
 

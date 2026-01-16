@@ -7,8 +7,8 @@ import { FakeLoginComponent } from './fake-login.component';
 import { FakeLoginRoutingModule } from './fake-login-routing.module';
 
 @NgModule({
-  declarations: [FakeLoginComponent],
   imports: [
+    FakeLoginComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -19,4 +19,5 @@ import { FakeLoginRoutingModule } from './fake-login-routing.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class FakeLoginModule {}
+
 

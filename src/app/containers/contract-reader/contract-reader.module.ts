@@ -16,8 +16,8 @@ import { ContractReaderComponent } from './contract-reader.component';
 import { ContractReaderRoutingModule } from './contract-reader-routing.module';
 
 @NgModule({
-  declarations: [ContractReaderComponent],
   imports: [
+    ContractReaderComponent,
     CommonModule,
     RouterModule,
 
@@ -34,3 +34,4 @@ import { ContractReaderRoutingModule } from './contract-reader-routing.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ContractReaderModule {}
+

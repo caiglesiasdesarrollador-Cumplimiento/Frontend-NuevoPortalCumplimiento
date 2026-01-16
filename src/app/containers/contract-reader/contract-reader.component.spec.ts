@@ -10,8 +10,7 @@ describe('ContractReaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ContractReaderComponent],
-      imports: [RouterTestingModule],
+      imports: [ContractReaderComponent, RouterTestingModule],
       providers: [BreadcrumbService],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
@@ -31,5 +30,8 @@ describe('ContractReaderComponent', () => {
   it('should get file size', () => { expect(component.fileSize).toBeDefined(); });
   it('should check isIdle', () => { expect(component.isIdle).toBe(true); });
 });
+
+
+
 
 

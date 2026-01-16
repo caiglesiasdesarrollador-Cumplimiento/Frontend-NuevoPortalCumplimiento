@@ -8,8 +8,7 @@ describe('SbCalendarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SbCalendarComponent],
-      imports: [FormsModule]
+      imports: [SbCalendarComponent, FormsModule]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SbCalendarComponent);
@@ -793,4 +792,6 @@ describe('SbCalendarComponent', () => {
     });
   });
 });
+
+
 

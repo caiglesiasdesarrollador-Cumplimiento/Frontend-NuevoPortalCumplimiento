@@ -9,8 +9,7 @@ describe('PortalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PortalComponent],
-      imports: [RouterTestingModule],
+      imports: [PortalComponent, RouterTestingModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
 
@@ -27,5 +26,7 @@ describe('PortalComponent', () => {
     expect(() => component.onImageError(mockEvent)).not.toThrow(); 
   });
 });
+
+
 
 

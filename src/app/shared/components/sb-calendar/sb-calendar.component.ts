@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, Input, Output, EventEmitter, forwardRef, ElementRef, ViewChild, HostListener, OnInit } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -11,7 +14,9 @@ interface CalendarDay {
 
 @Component({
   selector: 'app-sb-calendar',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './sb-calendar.component.html',
   styleUrls: ['./sb-calendar.component.scss'],
   providers: [
@@ -329,3 +334,5 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
     this.disabled = isDisabled;
   }
 }
+
+

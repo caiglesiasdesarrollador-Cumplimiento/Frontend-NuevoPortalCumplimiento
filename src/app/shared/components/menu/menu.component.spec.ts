@@ -9,7 +9,7 @@ describe('MenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MenuComponent],
+      imports: [MenuComponent],
       providers: [{ provide: Router, useValue: { navigate: jest.fn() } }],
       schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
     }).compileComponents();
@@ -24,3 +24,4 @@ describe('MenuComponent', () => {
     expect(() => component.onMenuItemClick(item)).not.toThrow(); 
   });
 });
+

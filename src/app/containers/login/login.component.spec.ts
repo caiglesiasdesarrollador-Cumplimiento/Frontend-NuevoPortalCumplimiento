@@ -15,8 +15,7 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LoginComponent],
-      imports: [RouterTestingModule, BrowserAnimationsModule],
+      imports: [LoginComponent, RouterTestingModule, BrowserAnimationsModule],
       providers: [
         { provide: NotificationService, useValue: mockNotificationService }
       ],
@@ -37,5 +36,6 @@ describe('LoginComponent', () => {
     expect(component.email).toBe(''); 
   });
 });
+
 
 

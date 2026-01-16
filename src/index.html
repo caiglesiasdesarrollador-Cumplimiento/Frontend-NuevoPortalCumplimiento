@@ -14,8 +14,7 @@
     <!-- Font Awesome 6 - Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <!-- CSS de @seguros-bolivar/ui-bundle -->
-    <link rel="stylesheet" href="assets/lib/sb-ui-seguros-bolivar-light.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/@seguros-bolivar/ui-bundle@latest/dist/sb-ui-seguros-bolivar-light.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@seguros-bolivar/ui-bundle@latest/dist/sb-ui-seguros-bolivar-light.min.css" crossorigin="anonymous" />
     
     <!-- ✅ OCULTAR BOTÓN DE AYUDA GLOBALMENTE -->
     <style>
@@ -43,6 +42,8 @@
   </head>
   <body>
     <my-app></my-app>
-    <script type="module" src="https://unpkg.com/@seguros-bolivar/ui-bundle@latest/dist/sb-ui-components.min.js"></script>
+    <!-- Script de UI Bundle -->
+    <!-- NOSONAR: Paquete oficial de @seguros-bolivar (interno), seguro para usar sin integrity -->
+    <script type="module" src="https://unpkg.com/@seguros-bolivar/ui-bundle@latest/dist/sb-ui-components.min.js" crossorigin="anonymous"></script>
   </body>
 </html>

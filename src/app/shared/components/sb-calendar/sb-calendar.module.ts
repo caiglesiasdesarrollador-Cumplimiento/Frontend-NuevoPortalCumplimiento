@@ -4,8 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SbCalendarComponent } from './sb-calendar.component';
 
 @NgModule({
-  declarations: [SbCalendarComponent],
   imports: [
+    SbCalendarComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule
@@ -14,4 +14,5 @@ import { SbCalendarComponent } from './sb-calendar.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SbCalendarModule {}
+
 

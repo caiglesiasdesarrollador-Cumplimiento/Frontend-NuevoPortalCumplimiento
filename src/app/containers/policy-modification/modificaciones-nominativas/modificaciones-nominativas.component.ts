@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ILibTbButton, ILibTbBreadcrumb, ILibTbDynamicForm } from 'tech-block-lib';
@@ -11,7 +14,9 @@ import {
 import { modificacionesNominativasForm } from './configs/datos-generales.config';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-modificaciones-nominativas',
   templateUrl: './modificaciones-nominativas.component.html',
   styleUrls: ['./modificaciones-nominativas.component.scss'],
@@ -340,3 +345,5 @@ export class ModificacionesNominativasComponent implements OnInit {
     );
   }
 }
+
+

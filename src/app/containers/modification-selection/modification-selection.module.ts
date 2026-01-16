@@ -9,8 +9,8 @@ import { ModificationSelectionRoutingModule } from './modification-selection-rou
 import { ModificationSelectionComponent } from './modification-selection.component';
 
 @NgModule({
-  declarations: [ModificationSelectionComponent],
   imports: [
+    ModificationSelectionComponent,
     CommonModule,
     ReactiveFormsModule,
     ModificationSelectionRoutingModule,
@@ -22,3 +22,4 @@ import { ModificationSelectionComponent } from './modification-selection.compone
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ModificationSelectionModule {}
+

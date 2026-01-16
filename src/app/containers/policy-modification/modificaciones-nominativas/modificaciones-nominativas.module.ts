@@ -10,10 +10,8 @@ import { ModificacionesNominativasRoutingModule } from './modificaciones-nominat
 import { ModificacionesNominativasComponent } from './modificaciones-nominativas.component';
 
 @NgModule({
-  declarations: [
-    ModificacionesNominativasComponent, // ✅ Componente principal
-  ],
   imports: [
+    ModificacionesNominativasComponent, // ✅ Componente principal,
     CommonModule,
     ReactiveFormsModule,
 
@@ -29,3 +27,4 @@ import { ModificacionesNominativasComponent } from './modificaciones-nominativas
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ModificacionesNominativasModule {}
+

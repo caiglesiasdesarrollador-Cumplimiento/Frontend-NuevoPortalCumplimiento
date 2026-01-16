@@ -6,8 +6,8 @@ import { LibTbButtonModule, LibTbDynamicFormModule, LibTbStepperModule } from 't
 import { DynamicFormRoutingModule } from './dynamic-form-routing.module';
 
 @NgModule({
-  declarations: [DynamicFormComponent],
   imports: [
+    DynamicFormComponent,
     CommonModule,
     ReactiveFormsModule,
     DynamicFormRoutingModule,
@@ -19,3 +19,4 @@ import { DynamicFormRoutingModule } from './dynamic-form-routing.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class DynamicFormModule {}
+

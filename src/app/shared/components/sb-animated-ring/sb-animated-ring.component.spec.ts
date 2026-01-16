@@ -8,7 +8,7 @@ describe('SbAnimatedRingComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SbAnimatedRingComponent],
+      imports: [SbAnimatedRingComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
 
@@ -51,4 +51,5 @@ describe('SbAnimatedRingComponent', () => {
     });
   });
 });
+
 

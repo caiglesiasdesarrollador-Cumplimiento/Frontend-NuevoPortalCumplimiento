@@ -49,4 +49,73 @@ describe('QuoteService', () => {
       expect(result.contractValue).toBe(0);
     }));
   });
+
+  // ✅ RF017.2: Tests para getSavedQuote
+  describe('getSavedQuote', () => {
+    it('should get saved quote by ID', fakeAsync(() => {
+      const quoteId = 'q001';
+      let result: any;
+      
+      service.getSavedQuote(quoteId).subscribe(res => {
+        result = res;
+      });
+      
+      tick(600); // Wait for delay
+      
+      expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+      expect(result.id).toBe(quoteId);
+      expect(result.numero).toContain('COT-');
+      expect(result.pasoGuardado).toBe(1);
+      expect(result.datosGenerales).toBeDefined();
+      expect(result.datosGenerales.tipoDocTomador).toBe('NIT');
+      expect(result.ubicacionRiesgo).toBeDefined();
+      expect(result.detallesContrato).toBeDefined();
+      expect(result.producto).toBe('Responsabilidad Civil');
+      expect(result.valorAsegurado).toBe(500000000);
+      expect(result.estado).toBe('Borrador');
+    }));
+
+    it('should return quote with correct structure', fakeAsync(() => {
+      const quoteId = 'q002';
+      let result: any;
+      
+      service.getSavedQuote(quoteId).subscribe(res => {
+        result = res;
+      });
+      
+      tick(600);
+      
+      expect(result.datosGenerales).toHaveProperty('tipoDocTomador');
+      expect(result.datosGenerales).toHaveProperty('numDocTomador');
+      expect(result.datosGenerales).toHaveProperty('nombreTomador');
+      expect(result.datosGenerales).toHaveProperty('tipoDocAsegurado');
+      expect(result.datosGenerales).toHaveProperty('numDocAsegurado');
+      expect(result.datosGenerales).toHaveProperty('nombreAsegurado');
+      expect(result.datosGenerales).toHaveProperty('numeroContrato');
+      expect(result.datosGenerales).toHaveProperty('moneda');
+      expect(result.ubicacionRiesgo).toHaveProperty('departamento');
+      expect(result.ubicacionRiesgo).toHaveProperty('municipio');
+      expect(result.ubicacionRiesgo).toHaveProperty('direccion');
+      expect(result.detallesContrato).toHaveProperty('valorContrato');
+      expect(result.detallesContrato).toHaveProperty('fechaInicio');
+      expect(result.detallesContrato).toHaveProperty('fechaFin');
+      expect(result.detallesContrato).toHaveProperty('duracion');
+    }));
+
+    it('should include pasoGuardado in response', fakeAsync(() => {
+      const quoteId = 'q003';
+      let result: any;
+      
+      service.getSavedQuote(quoteId).subscribe(res => {
+        result = res;
+      });
+      
+      tick(600);
+      
+      expect(result.pasoGuardado).toBeDefined();
+      expect(typeof result.pasoGuardado).toBe('number');
+      expect(result.pasoGuardado).toBeGreaterThanOrEqual(1);
+    }));
+  });
 });

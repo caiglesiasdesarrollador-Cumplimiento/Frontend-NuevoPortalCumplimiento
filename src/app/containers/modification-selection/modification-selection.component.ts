@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { ILibTbBreadcrumb, ILibTbButton } from 'tech-block-lib';
@@ -9,7 +12,9 @@ import {
 } from './modification-selection.interface';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-modification-selection',
   templateUrl: './modification-selection.component.html',
   styleUrls: ['./modification-selection.component.scss'],
@@ -110,3 +115,5 @@ export class ModificationSelectionComponent implements OnInit {
     }
   }
 }
+
+

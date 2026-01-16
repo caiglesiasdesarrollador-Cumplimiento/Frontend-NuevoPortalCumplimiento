@@ -8,8 +8,8 @@ import { LibTbAccordionModule, LibTbListModule } from 'tech-block-lib';
 import { MenuComponent } from './menu.component';
 
 @NgModule({
-  declarations: [MenuComponent],
   imports: [
+    MenuComponent,
     CommonModule,
     LibTbAccordionModule, // ✅ Componente lib-tb-accordion para nivel 1
     LibTbListModule, // ✅ Componente lib-tb-list para nivel 2
@@ -18,3 +18,4 @@ import { MenuComponent } from './menu.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MenuModule {}
+

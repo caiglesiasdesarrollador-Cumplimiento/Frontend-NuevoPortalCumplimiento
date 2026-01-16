@@ -10,7 +10,7 @@ describe('CreditLimitValidationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CreditLimitValidationComponent],
+      imports: [CreditLimitValidationComponent],
       providers: [
         { provide: Router, useValue: { navigate: jest.fn() } },
         { provide: BreadcrumbService, useValue: { setBreadcrumb: jest.fn() } }
@@ -26,3 +26,4 @@ describe('CreditLimitValidationComponent', () => {
   it('should have btnValidate', () => { expect(component.btnValidate).toBeDefined(); });
   it('should validate credit limit', () => { expect(() => component.validateCreditLimit()).not.toThrow(); });
 });
+

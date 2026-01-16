@@ -10,7 +10,7 @@ describe('BreadcrumbComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [BreadcrumbComponent],
+      imports: [BreadcrumbComponent],
       providers: [
         { provide: BreadcrumbService, useValue: { breadcrumb$: of({}), breadcrumbItems$: of([]) } }
       ],
@@ -22,3 +22,4 @@ describe('BreadcrumbComponent', () => {
 
   it('should create', () => { expect(component).toBeTruthy(); });
 });
+

@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -8,7 +11,9 @@ import {
 } from './portal.interface';
 
 @Component({
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   selector: 'app-portal',
   templateUrl: './portal.component.html',
   styleUrls: ['./portal.component.scss'],
@@ -36,3 +41,5 @@ export class PortalComponent {
     }
   }
 }
+
+

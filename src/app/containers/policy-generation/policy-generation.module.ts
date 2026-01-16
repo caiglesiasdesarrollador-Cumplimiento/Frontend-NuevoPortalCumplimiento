@@ -13,8 +13,8 @@ import { PolicyGenerationComponent } from './policy-generation.component';
 import { PolicyGenerationRoutingModule } from './policy-generation-routing.module';
 
 @NgModule({
-  declarations: [PolicyGenerationComponent],
   imports: [
+    PolicyGenerationComponent,
     CommonModule,
     ReactiveFormsModule,
     LibTbDynamicFormModule, // ✅ OBLIGATORIO para formularios dinámicos
@@ -27,3 +27,4 @@ import { PolicyGenerationRoutingModule } from './policy-generation-routing.modul
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PolicyGenerationModule {}
+

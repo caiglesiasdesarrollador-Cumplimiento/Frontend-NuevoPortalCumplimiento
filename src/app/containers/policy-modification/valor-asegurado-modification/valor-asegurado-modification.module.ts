@@ -18,8 +18,8 @@ import { ValorAseguradoModificationComponent } from './valor-asegurado-modificat
 import { ValorAseguradoModificationRoutingModule } from './valor-asegurado-modification-routing.module';
 
 @NgModule({
-  declarations: [ValorAseguradoModificationComponent],
   imports: [
+    ValorAseguradoModificationComponent,
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
@@ -36,3 +36,4 @@ import { ValorAseguradoModificationRoutingModule } from './valor-asegurado-modif
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ValorAseguradoModificationModule {}
+

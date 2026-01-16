@@ -12,8 +12,7 @@ describe('DynamicFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DynamicFormComponent],
-      imports: [BrowserAnimationsModule],
+      imports: [DynamicFormComponent, BrowserAnimationsModule],
       providers: [{ provide: NotificationService, useValue: mockNotificationService }],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
@@ -32,4 +31,6 @@ describe('DynamicFormComponent', () => {
     expect(() => component.nextStep()).not.toThrow(); 
   });
 });
+
+
 

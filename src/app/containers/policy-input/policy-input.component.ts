@@ -1,6 +1,15 @@
-import { Component, OnInit, OnDestroy, HostListener, NgZone } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  HostListener,
+  NgZone,
+  ChangeDetectorRef,
+  CUSTOM_ELEMENTS_SCHEMA,
+} from '@angular/core';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import {
   ILibTbStepper,
   ILibTbDynamicForm,
@@ -13,6 +22,16 @@ import {
   ILibTbSnackbar,
   ILibTbModal,
   ILibTbInputNumber,
+  LibTbStepperModule,
+  LibTbDynamicFormModule,
+  LibTbButtonModule,
+  LibTbBreadcrumbModule,
+  LibTbFileUploadFieldModule,
+  LibTbTableModule,
+  LibTbAccordionModule,
+  LibTbSnackbarModule,
+  LibTbModalModule,
+  LibTbInputNumberModule,
 } from 'tech-block-lib';
 import { BreadcrumbService, BreadcrumbItem } from '../../shared/services/breadcrumb.service';
 import { QuoteService } from '../../shared/services/quote.service';
@@ -30,15 +49,38 @@ import { step1PolicyInfoForm } from './configs/config-step-1/step1-policy-info.c
 import { step2ContractInfoForm } from './configs/config-step-2/step2-contract-info.config';
 import { sarlaftModalConfig } from './configs/sarlaft-modal.config';
 import { MOCK_MANAGEMENT_DATA, IPolicyManagementItem } from '../management/management.interface';
+import { CoberturasCumplimientoTableComponent } from './configs/config-step-2/components/coberturas-cumplimiento-table.component';
+import { SbCalendarModule } from '../../shared/components/sb-calendar/sb-calendar.module';
 
 @Component({
-  standalone: false,
+  standalone: true,
   selector: 'app-policy-input',
   templateUrl: './policy-input.component.html',
   styleUrls: ['./policy-input.component.scss'],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    FormsModule,
+    // Tech-block-lib modules
+    LibTbStepperModule,
+    LibTbDynamicFormModule,
+    LibTbButtonModule,
+    LibTbBreadcrumbModule,
+    LibTbFileUploadFieldModule,
+    LibTbTableModule,
+    LibTbAccordionModule,
+    LibTbSnackbarModule,
+    LibTbModalModule,
+    LibTbInputNumberModule,
+    // Calendario Seguros Bolívar UI
+    SbCalendarModule,
+    // Componente hijo
+    CoberturasCumplimientoTableComponent,
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PolicyInputComponent implements OnInit, OnDestroy {
-  
   // ✅ Intervalo para auto-guardado
   private autoSaveInterval: any;
   // ✅ Intervalos para upload de archivos (para limpiar en ngOnDestroy)
@@ -53,16 +95,15 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   currentStep = 0;
   isViewDetailsMode = false; // ✅ Control del paso actual
   isRcSectionEnabled = true; // ✅ Control de habilitación de la sección RC
-  
-  
+
   // ✅ Total de prima de coberturas seleccionadas
   totalPrimaSeleccionada = 0;
-  
+
   // ✅ Variables para Liquidación de Prima
   mostrarTotalPrima = false;
   totalPrimaLiquidada = 0;
   coberturasLiquidadas = 0;
-  
+
   // ✅ Variables para tracking de cambios
   valoresAnteriores: { [id: number]: any } = {};
   coberturasAnterioresIds: number[] = [];
@@ -77,7 +118,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   mostrarTotalPrimaRC = false;
   totalPrimaLiquidadaRC = 0;
   coberturasLiquidadasRC = 0;
-  
+
   // ✅ Variables para tracking de cambios RC
   valoresAnterioresRC: { [id: number]: any } = {};
   coberturasAnterioresIdsRC: number[] = [];
@@ -87,27 +128,147 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   mostrarCambiosRC = false;
   totalPrimaAnteriorRC = 0;
   primeraLiquidacionRC = true;
-  
+
   // ✅ Coberturas Cumplimiento con selección
   coberturasCumplimiento = [
-    { id: 1, nombre: 'SERIEDAD DE LA OFERTA', porcentaje: 10, valorAsegurado: 15000000, tasa: 0, fechaInicio: '2025-05-05', tiempoAdicional: 30, fechaFin: '2025-08-05', fechaVencimiento: '2025-11-05', prima: 150000, seleccionada: false },
-    { id: 2, nombre: 'MANEJO DEL ANTICIPO', porcentaje: 50, valorAsegurado: 75000000, tasa: 0, fechaInicio: '2025-05-05', tiempoAdicional: 60, fechaFin: '2025-12-05', fechaVencimiento: '2026-05-04', prima: 750000, seleccionada: false },
-    { id: 3, nombre: 'CUMPLIMIENTO', porcentaje: 20, valorAsegurado: 30000000, tasa: 0, fechaInicio: '2025-05-05', tiempoAdicional: 45, fechaFin: '2025-10-05', fechaVencimiento: '2026-05-04', prima: 300000, seleccionada: false },
-    { id: 4, nombre: 'SALARIOS Y PRESTACIONES SOCIALES', porcentaje: 20, valorAsegurado: 30000000, tasa: 0, fechaInicio: '2025-05-05', tiempoAdicional: 45, fechaFin: '2025-10-05', fechaVencimiento: '2026-05-04', prima: 300000, seleccionada: false },
-    { id: 5, nombre: 'PAGO ANTICIPADO', porcentaje: 100, valorAsegurado: 150000000, tasa: 0, fechaInicio: '2025-05-05', tiempoAdicional: 120, fechaFin: '2026-01-05', fechaVencimiento: '2026-05-04', prima: 1500000, seleccionada: false },
-    { id: 6, nombre: 'ESTABILIDAD DE LA OBRA', porcentaje: 30, valorAsegurado: 45000000, tasa: 0, fechaInicio: '2026-05-05', tiempoAdicional: 90, fechaFin: '2028-05-05', fechaVencimiento: '2031-05-04', prima: 450000, seleccionada: false },
-    { id: 7, nombre: 'CALIDAD DEL SERVICIO', porcentaje: 25, valorAsegurado: 37500000, tasa: 0, fechaInicio: '2026-05-05', tiempoAdicional: 60, fechaFin: '2026-11-05', fechaVencimiento: '2027-05-04', prima: 375000, seleccionada: false },
-    { id: 8, nombre: 'BUEN FUNCIONAMIENTO DE LOS EQUIPOS', porcentaje: 15, valorAsegurado: 22500000, tasa: 0, fechaInicio: '2026-05-05', tiempoAdicional: 45, fechaFin: '2026-10-05', fechaVencimiento: '2027-05-04', prima: 225000, seleccionada: false },
-    { id: 9, nombre: 'SUMINISTRO DE REPUESTOS', porcentaje: 10, valorAsegurado: 15000000, tasa: 0, fechaInicio: '2026-05-05', tiempoAdicional: 30, fechaFin: '2026-09-05', fechaVencimiento: '2027-05-04', prima: 150000, seleccionada: false },
-    { id: 10, nombre: 'CALIDAD DE LOS BIENES SUMINISTRADOS', porcentaje: 10, valorAsegurado: 15000000, tasa: 0, fechaInicio: '2026-05-05', tiempoAdicional: 30, fechaFin: '2026-09-05', fechaVencimiento: '2027-05-04', prima: 150000, seleccionada: false },
+    {
+      id: 1,
+      nombre: 'SERIEDAD DE LA OFERTA',
+      porcentaje: 10,
+      valorAsegurado: 15000000,
+      tasa: 0,
+      fechaInicio: '2025-05-05',
+      tiempoAdicional: 30,
+      fechaFin: '2025-08-05',
+      fechaVencimiento: '2025-11-05',
+      prima: 150000,
+      seleccionada: false,
+    },
+    {
+      id: 2,
+      nombre: 'MANEJO DEL ANTICIPO',
+      porcentaje: 50,
+      valorAsegurado: 75000000,
+      tasa: 0,
+      fechaInicio: '2025-05-05',
+      tiempoAdicional: 60,
+      fechaFin: '2025-12-05',
+      fechaVencimiento: '2026-05-04',
+      prima: 750000,
+      seleccionada: false,
+    },
+    {
+      id: 3,
+      nombre: 'CUMPLIMIENTO',
+      porcentaje: 20,
+      valorAsegurado: 30000000,
+      tasa: 0,
+      fechaInicio: '2025-05-05',
+      tiempoAdicional: 45,
+      fechaFin: '2025-10-05',
+      fechaVencimiento: '2026-05-04',
+      prima: 300000,
+      seleccionada: false,
+    },
+    {
+      id: 4,
+      nombre: 'SALARIOS Y PRESTACIONES SOCIALES',
+      porcentaje: 20,
+      valorAsegurado: 30000000,
+      tasa: 0,
+      fechaInicio: '2025-05-05',
+      tiempoAdicional: 45,
+      fechaFin: '2025-10-05',
+      fechaVencimiento: '2026-05-04',
+      prima: 300000,
+      seleccionada: false,
+    },
+    {
+      id: 5,
+      nombre: 'PAGO ANTICIPADO',
+      porcentaje: 100,
+      valorAsegurado: 150000000,
+      tasa: 0,
+      fechaInicio: '2025-05-05',
+      tiempoAdicional: 120,
+      fechaFin: '2026-01-05',
+      fechaVencimiento: '2026-05-04',
+      prima: 1500000,
+      seleccionada: false,
+    },
+    {
+      id: 6,
+      nombre: 'ESTABILIDAD DE LA OBRA',
+      porcentaje: 30,
+      valorAsegurado: 45000000,
+      tasa: 0,
+      fechaInicio: '2026-05-05',
+      tiempoAdicional: 90,
+      fechaFin: '2028-05-05',
+      fechaVencimiento: '2031-05-04',
+      prima: 450000,
+      seleccionada: false,
+    },
+    {
+      id: 7,
+      nombre: 'CALIDAD DEL SERVICIO',
+      porcentaje: 25,
+      valorAsegurado: 37500000,
+      tasa: 0,
+      fechaInicio: '2026-05-05',
+      tiempoAdicional: 60,
+      fechaFin: '2026-11-05',
+      fechaVencimiento: '2027-05-04',
+      prima: 375000,
+      seleccionada: false,
+    },
+    {
+      id: 8,
+      nombre: 'BUEN FUNCIONAMIENTO DE LOS EQUIPOS',
+      porcentaje: 15,
+      valorAsegurado: 22500000,
+      tasa: 0,
+      fechaInicio: '2026-05-05',
+      tiempoAdicional: 45,
+      fechaFin: '2026-10-05',
+      fechaVencimiento: '2027-05-04',
+      prima: 225000,
+      seleccionada: false,
+    },
+    {
+      id: 9,
+      nombre: 'SUMINISTRO DE REPUESTOS',
+      porcentaje: 10,
+      valorAsegurado: 15000000,
+      tasa: 0,
+      fechaInicio: '2026-05-05',
+      tiempoAdicional: 30,
+      fechaFin: '2026-09-05',
+      fechaVencimiento: '2027-05-04',
+      prima: 150000,
+      seleccionada: false,
+    },
+    {
+      id: 10,
+      nombre: 'CALIDAD DE LOS BIENES SUMINISTRADOS',
+      porcentaje: 10,
+      valorAsegurado: 15000000,
+      tasa: 0,
+      fechaInicio: '2026-05-05',
+      tiempoAdicional: 30,
+      fechaFin: '2026-09-05',
+      fechaVencimiento: '2027-05-04',
+      prima: 150000,
+      seleccionada: false,
+    },
   ];
-  
+
   // ✅ Método para seleccionar/deseleccionar cobertura
   toggleCobertura(cobertura: any): void {
     cobertura.seleccionada = !cobertura.seleccionada;
     this.calcularTotalPrima();
   }
-  
+
   // ✅ Calcular total de prima seleccionada
   calcularTotalPrima(): void {
     this.totalPrimaSeleccionada = this.coberturasCumplimiento
@@ -141,11 +302,13 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
     // Fórmula: Prima = Valor Asegurado * Porcentaje / 100 * Factor Tasa
     // Si tasa = 0, usar 1% como factor base (0.01)
-    const factorTasa = tasa > 0 ? (tasa / 100) : 0.01;
-    let prima = (valorAsegurado * porcentaje / 100) * factorTasa;
+    const factorTasa = tasa > 0 ? tasa / 100 : 0.01;
+    const prima = ((valorAsegurado * porcentaje) / 100) * factorTasa;
 
     cob.prima = Math.round(prima);
-    console.log(`📊 Prima Cumplimiento recalculada: ${cob.nombre} → $${this.formatearNumero(cob.prima)}`);
+    console.log(
+      `📊 Prima Cumplimiento recalculada: ${cob.nombre} → $${this.formatearNumero(cob.prima)}`,
+    );
   }
 
   // ✅ Método para llamar cuando cambia cualquier campo que afecta la prima
@@ -153,16 +316,15 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     const porcentaje = Number(cob.porcentaje) || 0;
     const valorAsegurado = Number(cob.valorAsegurado) || 0;
     const tasa = Number(cob.tasa) || 0;
-    
+
     // Fórmula: Prima = Valor Asegurado * Porcentaje / 100 * Factor Tasa
-    const factorTasa = tasa > 0 ? (tasa / 100) : 0.01;
-    cob.prima = Math.round((valorAsegurado * porcentaje / 100) * factorTasa);
-    
+    const factorTasa = tasa > 0 ? tasa / 100 : 0.01;
+    cob.prima = Math.round(((valorAsegurado * porcentaje) / 100) * factorTasa);
+
     console.log('🔥 Prima Cumplimiento:', cob.nombre, '→', cob.prima);
     this.cdr.detectChanges();
   }
-  
-  
+
   // ✅ Obtener Total Prima de coberturas seleccionadas (en tiempo real)
   getTotalPrimaSeleccionadas(): number {
     return this.coberturasCumplimiento
@@ -184,32 +346,38 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   // ✅ Obtener total participación de agentes adicionales (para Paso 3)
   getTotalParticipacionAgentes(): number {
-    return this.agentesAdicionales.reduce((total, agente) => total + (Number(agente.participacion) || 0), 0);
+    return this.agentesAdicionales.reduce(
+      (total, agente) => total + (Number(agente.participacion) || 0),
+      0,
+    );
   }
 
   // ✅ Obtener total participación de coaseguros cedidos (para Paso 3)
   getTotalParticipacionCoaseguro(): number {
-    return this.coasegurosCedidos.reduce((total, coa) => total + (Number(coa.participacion) || 0), 0);
+    return this.coasegurosCedidos.reduce(
+      (total, coa) => total + (Number(coa.participacion) || 0),
+      0,
+    );
   }
-  
+
   // ✅ Liquidar Prima - Calcula, muestra el total y detecta cambios
   liquidarPrima(): void {
     const coberturasSeleccionadas = this.coberturasCumplimiento.filter(c => c.seleccionada);
-    
+
     if (coberturasSeleccionadas.length === 0) {
       this.showErrorNotification('Debe seleccionar al menos una cobertura para liquidar');
       this.mostrarTotalPrima = false;
       this.mostrarCambios = false;
       return;
     }
-    
+
     const idsActuales = coberturasSeleccionadas.map(c => c.id);
-    
+
     // Resetear cambios
     this.cambiosDetectados = [];
     this.coberturasNuevas = [];
     this.coberturasRemovidas = [];
-    
+
     // Detectar cambios si ya se había liquidado antes
     if (!this.primeraLiquidacion) {
       // Detectar coberturas NUEVAS (no estaban antes)
@@ -217,11 +385,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         if (!this.coberturasAnterioresIds.includes(cob.id)) {
           this.coberturasNuevas.push({
             nombre: cob.nombre,
-            prima: cob.prima
+            prima: cob.prima,
           });
         }
       });
-      
+
       // Detectar coberturas REMOVIDAS (estaban antes pero ya no)
       this.coberturasAnterioresIds.forEach(id => {
         if (!idsActuales.includes(id)) {
@@ -229,23 +397,25 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           if (cob) {
             this.coberturasRemovidas.push({
               nombre: cob.nombre,
-              prima: this.valoresAnteriores[id]?.prima || 0
+              prima: this.valoresAnteriores[id]?.prima || 0,
             });
           }
         }
       });
-      
+
       // Detectar MODIFICACIONES en coberturas que ya estaban
       coberturasSeleccionadas.forEach(cob => {
         const anterior = this.valoresAnteriores[cob.id];
         if (anterior && this.coberturasAnterioresIds.includes(cob.id)) {
           const cambios: string[] = [];
-          
+
           if (Number(anterior.porcentaje) !== Number(cob.porcentaje)) {
             cambios.push(`% Aseg: ${anterior.porcentaje}% → ${cob.porcentaje}%`);
           }
           if (Number(anterior.valorAsegurado) !== Number(cob.valorAsegurado)) {
-            cambios.push(`Valor Aseg: ${this.formatCurrency(anterior.valorAsegurado)} → ${this.formatCurrency(cob.valorAsegurado)}`);
+            cambios.push(
+              `Valor Aseg: ${this.formatCurrency(anterior.valorAsegurado)} → ${this.formatCurrency(cob.valorAsegurado)}`,
+            );
           }
           if (Number(anterior.tasa) !== Number(cob.tasa)) {
             cambios.push(`Tasa: ${anterior.tasa}% → ${cob.tasa}%`);
@@ -254,19 +424,21 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
             cambios.push(`T. Adic: ${anterior.tiempoAdicional} → ${cob.tiempoAdicional}`);
           }
           if (Number(anterior.prima) !== Number(cob.prima)) {
-            cambios.push(`Prima: ${this.formatCurrency(anterior.prima)} → ${this.formatCurrency(cob.prima)}`);
+            cambios.push(
+              `Prima: ${this.formatCurrency(anterior.prima)} → ${this.formatCurrency(cob.prima)}`,
+            );
           }
-          
+
           if (cambios.length > 0) {
             this.cambiosDetectados.push({
               nombre: cob.nombre,
-              cambios: cambios
+              cambios: cambios,
             });
           }
         }
       });
     }
-    
+
     // Guardar valores actuales para la próxima comparación
     this.totalPrimaAnterior = this.totalPrimaLiquidada;
     this.coberturasAnterioresIds = [...idsActuales];
@@ -276,48 +448,53 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         valorAsegurado: cob.valorAsegurado,
         tasa: cob.tasa,
         tiempoAdicional: cob.tiempoAdicional,
-        prima: cob.prima
+        prima: cob.prima,
       };
     });
-    
+
     this.totalPrimaLiquidada = this.getTotalPrimaSeleccionadas();
     this.coberturasLiquidadas = coberturasSeleccionadas.length;
     this.mostrarTotalPrima = true;
-    this.mostrarCambios = this.cambiosDetectados.length > 0 || this.coberturasNuevas.length > 0 || this.coberturasRemovidas.length > 0;
+    this.mostrarCambios =
+      this.cambiosDetectados.length > 0 ||
+      this.coberturasNuevas.length > 0 ||
+      this.coberturasRemovidas.length > 0;
     this.primeraLiquidacion = false;
-    
+
     // ✅ Ocultar cambios después de 5 segundos
     if (this.mostrarCambios) {
       setTimeout(() => {
         this.mostrarCambios = false;
       }, 5000);
     }
-    
+
     console.log(`💰 Total Prima Liquidada: ${this.totalPrimaLiquidada}`);
-    this.showSuccessNotification(`Prima liquidada: ${this.formatCurrency(this.totalPrimaLiquidada)}`);
+    this.showSuccessNotification(
+      `Prima liquidada: ${this.formatCurrency(this.totalPrimaLiquidada)}`,
+    );
   }
-  
+
   // ✅ Seleccionar/deseleccionar todas
   toggleTodasCoberturas(event: any): void {
     const seleccionar = event.target.checked;
-    this.coberturasCumplimiento.forEach(c => c.seleccionada = seleccionar);
+    this.coberturasCumplimiento.forEach(c => (c.seleccionada = seleccionar));
     this.calcularTotalPrima();
   }
-  
+
   // ✅ Limpiar selección de coberturas y todo el estado
   limpiarSeleccionCoberturas(): void {
     // Limpiar selección
-    this.coberturasCumplimiento.forEach(c => c.seleccionada = false);
-    
+    this.coberturasCumplimiento.forEach(c => (c.seleccionada = false));
+
     // Limpiar totales
     this.totalPrimaSeleccionada = 0;
     this.totalPrimaLiquidada = 0;
     this.coberturasLiquidadas = 0;
-    
+
     // Ocultar secciones
     this.mostrarTotalPrima = false;
     this.mostrarCambios = false;
-    
+
     // Limpiar tracking de cambios
     this.valoresAnteriores = {};
     this.coberturasAnterioresIds = [];
@@ -326,21 +503,21 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.coberturasRemovidas = [];
     this.primeraLiquidacion = true;
     this.totalPrimaAnterior = 0;
-    
+
     // Mostrar notificación
     this.showSuccessNotification('✅ Selección y datos limpiados');
   }
-  
+
   // ✅ Actualizar coberturas
   actualizarCoberturas(): void {
     this.snackbarConfig = {
       ...this.snackbarConfig,
       show: true,
       message: '✅ Coberturas actualizadas',
-      class: 'snackbar-success-theme'
+      class: 'snackbar-success-theme',
     };
   }
-  
+
   // ✅ Guardar coberturas seleccionadas
   guardarCoberturas(): void {
     const seleccionadas = this.coberturasCumplimiento.filter(c => c.seleccionada);
@@ -349,7 +526,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         ...this.snackbarConfig,
         show: true,
         message: '⚠️ Debe seleccionar al menos una cobertura',
-        class: 'snackbar-warning-theme'
+        class: 'snackbar-warning-theme',
       };
       return;
     }
@@ -358,7 +535,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       ...this.snackbarConfig,
       show: true,
       message: `✅ ${seleccionadas.length} coberturas guardadas correctamente`,
-      class: 'snackbar-success-theme'
+      class: 'snackbar-success-theme',
     };
   }
   rcAccordionOpen = true; // ✅ Control del acordeón RC
@@ -383,15 +560,15 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Propiedades para el formulario paso 1
   tipoProducto = '';
   claveIntermediario = '';
-  
+
   // ✅ Valor del Contrato (con incremento/decremento)
   valorContrato = 150000000; // Valor inicial: $150.000.000
   incrementoContrato = 10000000; // Incremento de $10.000.000
-  
+
   // ✅ DROPDOWNS PERSONALIZADOS - Control de apertura
   dropdownsOpen: { [key: string]: boolean } = {};
   claveIntermediarioError = false;
-  
+
   // ✅ Lista de claves del intermediario (un intermediario puede tener múltiples claves)
   clavesIntermediario: { codigo: string; nombre: string }[] = [
     { codigo: '53940', nombre: 'Agente Principal - Zona Norte' },
@@ -413,7 +590,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   tipoDocumentoSoporte = '';
   archivoDocumentoTemp: File | null = null;
   isDraggingDocumento = false;
-  
+
   // ✅ Toast mejorado para mensajes de validación
   showToast = false;
   toastMessage = '';
@@ -421,13 +598,13 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   toastType: 'warning' | 'error' | 'success' | 'info' = 'warning';
   showFormatosPermitidos = false;
   documentosSoporte: { tipo: string; nombreArchivo: string; fecha: string; archivo: File }[] = [];
-  
+
   tiposDocumentoSoporte: { [key: string]: string } = {
     '1': 'PLIEGO',
     '2': 'OFERTA MERCANTIL',
-    '3': 'CONTRATO'
+    '3': 'CONTRATO',
   };
-  
+
   // Campos adicionales para Grandes Beneficiarios
   tipoDocumentoAsegurado = '';
   numeroDocumentoAsegurado = '';
@@ -453,42 +630,44 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   errorDocumentoAsegurado = '';
 
   // ✅ Reglas de validación de documentos Colombia
-  documentValidationRules: { [key: string]: { min: number; max: number; pattern: RegExp; message: string; formato: string } } = {
+  documentValidationRules: {
+    [key: string]: { min: number; max: number; pattern: RegExp; message: string; formato: string };
+  } = {
     'CC': {
       min: 6,
       max: 10,
       pattern: /^[0-9]+$/,
       message: 'Cédula de Ciudadanía debe tener entre 6 y 10 dígitos numéricos',
-      formato: 'Solo números (6-10 dígitos)'
+      formato: 'Solo números (6-10 dígitos)',
     },
     'CE': {
       min: 6,
       max: 7,
       pattern: /^[0-9]+$/,
       message: 'Cédula de Extranjería debe tener entre 6 y 7 dígitos numéricos',
-      formato: 'Solo números (6-7 dígitos)'
+      formato: 'Solo números (6-7 dígitos)',
     },
     'NIT': {
       min: 9,
       max: 11,
       pattern: /^[0-9]{9}(-[0-9])?$/,
       message: 'NIT debe tener 9 dígitos, opcionalmente con dígito verificador (ej: 900123456-7)',
-      formato: '9 dígitos o 9 dígitos-DV'
+      formato: '9 dígitos o 9 dígitos-DV',
     },
     'PA': {
       min: 5,
       max: 17,
       pattern: /^[A-Za-z0-9]+$/,
       message: 'Pasaporte debe tener entre 5 y 17 caracteres alfanuméricos',
-      formato: 'Alfanumérico (5-17 caracteres)'
+      formato: 'Alfanumérico (5-17 caracteres)',
     },
     'TI': {
       min: 10,
       max: 11,
       pattern: /^[0-9]+$/,
       message: 'Tarjeta de Identidad debe tener entre 10 y 11 dígitos numéricos',
-      formato: 'Solo números (10-11 dígitos)'
-    }
+      formato: 'Solo números (10-11 dígitos)',
+    },
   };
 
   // ✅ Modales Cliente no creado y SARLAFT
@@ -580,12 +759,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     'MITÚ - VAUPÉS',
     'PUERTO CARREÑO - VICHADA',
     'INÍRIDA - GUAINÍA',
-    'SAN ANDRÉS - SAN ANDRÉS Y PROVIDENCIA'
+    'SAN ANDRÉS - SAN ANDRÉS Y PROVIDENCIA',
   ];
 
   // ✅ Coaseguro
   tipoCoaseguro = 'sin-coaseguro'; // 'sin-coaseguro' | 'cedido' | 'aceptado'
-  
+
   // Coaseguro Cedido
   coasegurosCedidos: any[] = [];
   showModalCoaseguroCedido = false;
@@ -595,23 +774,23 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   coaseguroCedidoNumeroPol = '';
   coaseguroCedidoCertificado = '';
   coaseguroCedidoEditIndex: number | null = null; // Para edición
-  
+
   // Alerta de confirmación para eliminar coaseguro
   showAlertaEliminarCoaseguro = false;
   coaseguroAEliminarIndex: number | null = null;
-  
+
   // Ordenamiento y Paginación Coaseguros Cedidos
   coasegurosCedidosSortColumn = '';
   coasegurosCedidosSortDirection: 'asc' | 'desc' = 'asc';
   coasegurosCedidosPage = 1;
   coasegurosCedidosPageSize = 5;
-  
+
   // Coaseguro Aceptado
   coaseguroAceptadoCoaseguradora = '';
   coaseguroAceptadoNumeroPol = '';
   coaseguroAceptadoCertificado = '';
   coaseguroAceptadoParticipacion = 20;
-  
+
   // Lista de coaseguradoras (para adicionar - NO incluye Bolívar porque es fijo)
   listaCoaseguradoras = [
     { codigo: '1', nombre: '1 - ALLIANZ SEGUROS S.A.' },
@@ -628,9 +807,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     { codigo: '26', nombre: '26 - SEGUROS DEL ESTADO S.A.' },
     { codigo: '28', nombre: '28 - MAPFRE SEGUROS GENERALES DE COLOMBIA S.A.' },
     { codigo: '29', nombre: '29 - SEGUROS ALFA S.A.' },
-    { codigo: '33', nombre: '33 - LA EQUIDAD SEGUROS GENERALES' }
+    { codigo: '33', nombre: '33 - LA EQUIDAD SEGUROS GENERALES' },
   ];
-  
+
   // Coaseguradora Bolívar (siempre fija cuando es Cedido)
   readonly COASEGURADORA_BOLIVAR = '999 - SEGUROS COMERCIALES BOLIVAR S.A.';
 
@@ -644,11 +823,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   agenteConvenio = '';
   errorParticipacion = '';
   agenteEditIndex: number | null = null;
-  
+
   // ✅ Ordenamiento de tabla de agentes
   agentesSortColumn: string = '';
   agentesSortDirection: 'asc' | 'desc' = 'asc';
-  
+
   // ✅ Ordenamiento de tabla de cotizaciones
   cotizacionesSortColumn: string = '';
   cotizacionesSortDirection: 'asc' | 'desc' = 'asc';
@@ -776,7 +955,6 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   filtroBusquedaCotizacion = '';
   cotizacionesFiltradas: any[] = [];
 
-
   // ✅ Datos mock de cotizaciones existentes
   cotizacionesExistentes = [
     {
@@ -797,34 +975,64 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         moneda: 'COP',
         tipoDocAsegurado: 'NIT',
         numDocAsegurado: '900654321-2',
-        nombreAsegurado: 'Empresa XYZ Ltda'
+        nombreAsegurado: 'Empresa XYZ Ltda',
       },
       ubicacionRiesgo: {
         departamento: 'Antioquia',
         municipio: 'Medellín',
-        direccion: 'Calle 50 # 25-30, Centro'
+        direccion: 'Calle 50 # 25-30, Centro',
       },
       detallesContrato: {
         valorContrato: 300000000,
         fechaInicio: '2024-02-15',
         duracion: '12 meses',
-        fechaFin: '2025-02-15'
+        fechaFin: '2025-02-15',
       },
       coberturasCumplimiento: [
-        { cobertura: 'Seriedad De La Oferta', porcentaje: '5%', valorAsegurado: 150000000, estado: 'Activa' },
-        { cobertura: 'Cumplimiento', porcentaje: '10%', valorAsegurado: 300000000, estado: 'Activa' },
-        { cobertura: 'Calidad Del Servicio', porcentaje: '7%', valorAsegurado: 200000000, estado: 'Activa' }
+        {
+          cobertura: 'Seriedad De La Oferta',
+          porcentaje: '5%',
+          valorAsegurado: 150000000,
+          estado: 'Activa',
+        },
+        {
+          cobertura: 'Cumplimiento',
+          porcentaje: '10%',
+          valorAsegurado: 300000000,
+          estado: 'Activa',
+        },
+        {
+          cobertura: 'Calidad Del Servicio',
+          porcentaje: '7%',
+          valorAsegurado: 200000000,
+          estado: 'Activa',
+        },
       ],
       responsabilidadCivil: [
-        { cobertura: 'Contratista Y Subcontratista', porcentaje: '15%', valorAsegurado: 500000000, estado: 'Activa' },
-        { cobertura: 'Gastos Medicos Persona', porcentaje: '3%', valorAsegurado: 100000000, estado: 'Activa' },
-        { cobertura: 'Contaminación Accidental', porcentaje: '6%', valorAsegurado: 200000000, estado: 'Activa' }
+        {
+          cobertura: 'Contratista Y Subcontratista',
+          porcentaje: '15%',
+          valorAsegurado: 500000000,
+          estado: 'Activa',
+        },
+        {
+          cobertura: 'Gastos Medicos Persona',
+          porcentaje: '3%',
+          valorAsegurado: 100000000,
+          estado: 'Activa',
+        },
+        {
+          cobertura: 'Contaminación Accidental',
+          porcentaje: '6%',
+          valorAsegurado: 200000000,
+          estado: 'Activa',
+        },
       ],
       resumenCostos: {
         primaNeta: 2100000,
         iva: 399000,
-        primaTotal: 2499000
-      }
+        primaTotal: 2499000,
+      },
     },
     {
       id: 'COT-2024-002',
@@ -844,28 +1052,33 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         moneda: 'COP',
         tipoDocAsegurado: 'NIT',
         numDocAsegurado: '900987654-3',
-        nombreAsegurado: 'Servicios DEF S.A.S'
+        nombreAsegurado: 'Servicios DEF S.A.S',
       },
       ubicacionRiesgo: {
         departamento: 'Cundinamarca',
         municipio: 'Bogotá',
-        direccion: 'Carrera 15 # 100-20'
+        direccion: 'Carrera 15 # 100-20',
       },
       detallesContrato: {
         valorContrato: 750000000,
         fechaInicio: '2024-03-01',
         duracion: '18 meses',
-        fechaFin: '2025-09-01'
+        fechaFin: '2025-09-01',
       },
       coberturasCumplimiento: [
-        { cobertura: 'Buen Manejo', porcentaje: '10%', valorAsegurado: 750000000, estado: 'Activa' }
+        {
+          cobertura: 'Buen Manejo',
+          porcentaje: '10%',
+          valorAsegurado: 750000000,
+          estado: 'Activa',
+        },
       ],
       responsabilidadCivil: [],
       resumenCostos: {
         primaNeta: 3500000,
         iva: 665000,
-        primaTotal: 4165000
-      }
+        primaTotal: 4165000,
+      },
     },
     {
       id: 'COT-2024-003',
@@ -885,28 +1098,33 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         moneda: 'COP',
         tipoDocAsegurado: 'NIT',
         numDocAsegurado: '900444555-8',
-        nombreAsegurado: 'Constructora Integral Moderna S.A.S'
+        nombreAsegurado: 'Constructora Integral Moderna S.A.S',
       },
       ubicacionRiesgo: {
         departamento: 'Valle del Cauca',
         municipio: 'Cali',
-        direccion: 'Avenida 6N # 35-25'
+        direccion: 'Avenida 6N # 35-25',
       },
       detallesContrato: {
         valorContrato: 850000000,
         fechaInicio: '2024-01-15',
         duracion: '24 meses',
-        fechaFin: '2026-01-15'
+        fechaFin: '2026-01-15',
       },
       coberturasCumplimiento: [
-        { cobertura: 'Cumplimiento', porcentaje: '15%', valorAsegurado: 850000000, estado: 'Activa' }
+        {
+          cobertura: 'Cumplimiento',
+          porcentaje: '15%',
+          valorAsegurado: 850000000,
+          estado: 'Activa',
+        },
       ],
       responsabilidadCivil: [],
       resumenCostos: {
         primaNeta: 4200000,
         iva: 798000,
-        primaTotal: 4998000
-      }
+        primaTotal: 4998000,
+      },
     },
     {
       id: 'COT-2024-004',
@@ -926,28 +1144,33 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         moneda: 'COP',
         tipoDocAsegurado: 'NIT',
         numDocAsegurado: '900777888-5',
-        nombreAsegurado: 'Telecomunicaciones PQR S.A'
+        nombreAsegurado: 'Telecomunicaciones PQR S.A',
       },
       ubicacionRiesgo: {
         departamento: 'Atlántico',
         municipio: 'Barranquilla',
-        direccion: 'Calle 72 # 50-10'
+        direccion: 'Calle 72 # 50-10',
       },
       detallesContrato: {
         valorContrato: 450000000,
         fechaInicio: '2024-02-01',
         duracion: '6 meses',
-        fechaFin: '2024-08-01'
+        fechaFin: '2024-08-01',
       },
       coberturasCumplimiento: [
-        { cobertura: 'Seriedad de Oferta', porcentaje: '5%', valorAsegurado: 450000000, estado: 'Activa' }
+        {
+          cobertura: 'Seriedad de Oferta',
+          porcentaje: '5%',
+          valorAsegurado: 450000000,
+          estado: 'Activa',
+        },
       ],
       responsabilidadCivil: [],
       resumenCostos: {
         primaNeta: 1800000,
         iva: 342000,
-        primaTotal: 2142000
-      }
+        primaTotal: 2142000,
+      },
     },
     {
       id: 'COT-2024-005',
@@ -967,29 +1190,34 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         moneda: 'COP',
         tipoDocAsegurado: 'NIT',
         numDocAsegurado: '900333444-6',
-        nombreAsegurado: 'Servicios Hospitalarios del Norte S.A.S'
+        nombreAsegurado: 'Servicios Hospitalarios del Norte S.A.S',
       },
       ubicacionRiesgo: {
         departamento: 'Santander',
         municipio: 'Bucaramanga',
-        direccion: 'Carrera 27 # 36-45'
+        direccion: 'Carrera 27 # 36-45',
       },
       detallesContrato: {
         valorContrato: 620000000,
         fechaInicio: '2024-03-15',
         duracion: '12 meses',
-        fechaFin: '2025-03-15'
+        fechaFin: '2025-03-15',
       },
       coberturasCumplimiento: [
-        { cobertura: 'Calidad del Servicio', porcentaje: '8%', valorAsegurado: 620000000, estado: 'Activa' }
+        {
+          cobertura: 'Calidad del Servicio',
+          porcentaje: '8%',
+          valorAsegurado: 620000000,
+          estado: 'Activa',
+        },
       ],
       responsabilidadCivil: [],
       resumenCostos: {
         primaNeta: 2480000,
         iva: 471200,
-        primaTotal: 2951200
-      }
-    }
+        primaTotal: 2951200,
+      },
+    },
   ];
 
   constructor(
@@ -1008,26 +1236,26 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       isViewDetailsMode: this.isViewDetailsMode,
       selectedAction: this.selectedAction,
     });
-    
+
     // ✅ CARGAR DATOS GUARDADOS si existen (persistencia al recargar)
     this.cargarDatosFormulario();
-    
+
     // ✅ Iniciar auto-guardado periódico
     this.iniciarAutoGuardado();
-    
+
     // ✅ Inicializar cache del actionLabel
     this.updateCachedActionLabel();
-    
+
     // ✅ Inicializar cotizaciones filtradas
     this.cotizacionesFiltradas = [...this.cotizacionesExistentes];
-    
+
     this.setupBreadcrumb();
 
     // ✅ Obtener parámetros desde query parameters
     this.route.queryParams.subscribe(params => {
       console.log('🔍 POLICY-INPUT: Query params recibidos:', params);
       this.action = (params['action'] as PolicyInputAction) || PolicyInputAction.COTIZAR;
-      
+
       // ✅ Actualizar cache del actionLabel cuando cambia la acción
       this.updateCachedActionLabel();
 
@@ -1078,7 +1306,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         // ✅ IMPORTANTE: Solo resetear si NO hay datos guardados en sessionStorage
         if (!this.hayDatosGuardados()) {
           console.log('🔄 No hay datos guardados, reseteando formulario');
-        this.resetFormState();
+          this.resetFormState();
         } else {
           console.log('💾 Hay datos guardados, NO se resetea el formulario');
         }
@@ -1165,11 +1393,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         isActive: false,
       },
       {
-        label: this.selectedAction === 'cotizar'
-          ? 'Cotizar Cumplimiento'
-          : this.selectedAction === 'emitir'
-            ? 'Emitir Cumplimiento'
-            : 'Emisión de Pólizas',
+        label:
+          this.selectedAction === 'cotizar'
+            ? 'Cotizar Cumplimiento'
+            : this.selectedAction === 'emitir'
+              ? 'Emitir Cumplimiento'
+              : 'Emisión de Pólizas',
         icon: 'fa-solid fa-file-lines',
         isActive: true,
       },
@@ -1309,7 +1538,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     );
     return {
       label: this.selectedAction === 'cotizar' ? 'Generar Cotización' : 'Confirmar y Emitir Póliza',
-      icon: this.selectedAction === 'cotizar' ? 'fa-solid fa-calculator' : 'fa-solid fa-check-circle',
+      icon:
+        this.selectedAction === 'cotizar' ? 'fa-solid fa-calculator' : 'fa-solid fa-check-circle',
       iconPosition: 'left',
       styleBtn: 'fill',
       typeBtn: 'primary',
@@ -1406,7 +1636,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     multiple: false,
     dragDropLabel: 'Seleccionar archivo',
     dragDropIcon: 'fa-solid fa-upload', // ✅ Icono de upload como en imagen 1
-    caption: 'Peso máximo por cada archivo: 10 MB. Formatos permitidos: PDF, Word, Excel.',
+    caption: 'Peso máximo por cada archivo: 30 MB. Formatos permitidos: PDF, Word, Excel.',
     avaibleTypes: [
       'application/pdf', // PDF
       'application/msword', // DOC
@@ -1414,10 +1644,10 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       'application/vnd.ms-excel', // XLS
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
     ],
-    maxSize: 10485760, // 10MB en bytes
+    maxSize: 31457280, // 30MB en bytes
     errorText: {
       type: 'Tipo de archivo no válido. Use PDF, Word o Excel.',
-      maxSize: 'El archivo es demasiado grande. Máximo 10MB.',
+      maxSize: 'El archivo es demasiado grande. Máximo 30MB.',
       length: 'Solo se permite un archivo a la vez.',
     },
     customAlert: {
@@ -1557,37 +1787,235 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   // ✅ Datos originales de coberturas RC (para restaurar valores)
   private readonly rcCoberturasOriginales = [
-    { id: 1, seleccionado: false, cobertura: '224-Patronal Persona', porcentajeAsegurado: 100, valorAsegurado: 150000000, tasa: 1.85, fechaInicio: '2024-08-01', fechaVencimiento: '2025-07-31' },
-    { id: 2, seleccionado: true, cobertura: '225-Patronal Vigencia', porcentajeAsegurado: 100, valorAsegurado: 150000000, tasa: 1.95, fechaInicio: '2024-08-01', fechaVencimiento: '2025-07-31' },
-    { id: 3, seleccionado: true, cobertura: '226-Contratista Y Subcontratista', porcentajeAsegurado: 100, valorAsegurado: 150000000, tasa: 2.15, fechaInicio: '2024-08-01', fechaVencimiento: '2025-07-31' },
-    { id: 4, seleccionado: true, cobertura: '227-Gastos Medicos Persona', porcentajeAsegurado: 100, valorAsegurado: 150000000, tasa: 1.75, fechaInicio: '2024-08-01', fechaVencimiento: '2025-07-31' },
-    { id: 5, seleccionado: true, cobertura: '228-Gastos Médicos Vigencia', porcentajeAsegurado: 100, valorAsegurado: 150000000, tasa: 1.85, fechaInicio: '2024-08-01', fechaVencimiento: '2025-07-31' },
-    { id: 6, seleccionado: true, cobertura: '232-Contaminación Accidental', porcentajeAsegurado: 100, valorAsegurado: 150000000, tasa: 2.45, fechaInicio: '2024-08-01', fechaVencimiento: '2025-07-31' },
-    { id: 7, seleccionado: true, cobertura: '237-Cruzada', porcentajeAsegurado: 100, valorAsegurado: 150000000, tasa: 2.25, fechaInicio: '2024-08-01', fechaVencimiento: '2025-07-31' },
-    { id: 8, seleccionado: true, cobertura: '238-Bienes Bajo Cuidado Tene', porcentajeAsegurado: 100, valorAsegurado: 150000000, tasa: 1.95, fechaInicio: '2024-08-01', fechaVencimiento: '2025-07-31' },
-    { id: 9, seleccionado: true, cobertura: '244-Vehí.Propios Y No Vehic.', porcentajeAsegurado: 100, valorAsegurado: 150000000, tasa: 2.35, fechaInicio: '2024-08-01', fechaVencimiento: '2025-07-31' },
-    { id: 10, seleccionado: true, cobertura: '245-Vehi.Propios Y No Vigen.', porcentajeAsegurado: 100, valorAsegurado: 150000000, tasa: 2.45, fechaInicio: '2024-08-01', fechaVencimiento: '2025-07-31' },
-    { id: 11, seleccionado: false, cobertura: '250-Predios Labor.Y Operacio/PLO', porcentajeAsegurado: 100, valorAsegurado: 150000000, tasa: 2.0, fechaInicio: '2024-08-01', fechaVencimiento: '2025-07-31' },
+    {
+      id: 1,
+      seleccionado: false,
+      cobertura: '224-Patronal Persona',
+      porcentajeAsegurado: 100,
+      valorAsegurado: 150000000,
+      tasa: 1.85,
+      fechaInicio: '2024-08-01',
+      fechaVencimiento: '2025-07-31',
+    },
+    {
+      id: 2,
+      seleccionado: true,
+      cobertura: '225-Patronal Vigencia',
+      porcentajeAsegurado: 100,
+      valorAsegurado: 150000000,
+      tasa: 1.95,
+      fechaInicio: '2024-08-01',
+      fechaVencimiento: '2025-07-31',
+    },
+    {
+      id: 3,
+      seleccionado: true,
+      cobertura: '226-Contratista Y Subcontratista',
+      porcentajeAsegurado: 100,
+      valorAsegurado: 150000000,
+      tasa: 2.15,
+      fechaInicio: '2024-08-01',
+      fechaVencimiento: '2025-07-31',
+    },
+    {
+      id: 4,
+      seleccionado: true,
+      cobertura: '227-Gastos Medicos Persona',
+      porcentajeAsegurado: 100,
+      valorAsegurado: 150000000,
+      tasa: 1.75,
+      fechaInicio: '2024-08-01',
+      fechaVencimiento: '2025-07-31',
+    },
+    {
+      id: 5,
+      seleccionado: true,
+      cobertura: '228-Gastos Médicos Vigencia',
+      porcentajeAsegurado: 100,
+      valorAsegurado: 150000000,
+      tasa: 1.85,
+      fechaInicio: '2024-08-01',
+      fechaVencimiento: '2025-07-31',
+    },
+    {
+      id: 6,
+      seleccionado: true,
+      cobertura: '232-Contaminación Accidental',
+      porcentajeAsegurado: 100,
+      valorAsegurado: 150000000,
+      tasa: 2.45,
+      fechaInicio: '2024-08-01',
+      fechaVencimiento: '2025-07-31',
+    },
+    {
+      id: 7,
+      seleccionado: true,
+      cobertura: '237-Cruzada',
+      porcentajeAsegurado: 100,
+      valorAsegurado: 150000000,
+      tasa: 2.25,
+      fechaInicio: '2024-08-01',
+      fechaVencimiento: '2025-07-31',
+    },
+    {
+      id: 8,
+      seleccionado: true,
+      cobertura: '238-Bienes Bajo Cuidado Tene',
+      porcentajeAsegurado: 100,
+      valorAsegurado: 150000000,
+      tasa: 1.95,
+      fechaInicio: '2024-08-01',
+      fechaVencimiento: '2025-07-31',
+    },
+    {
+      id: 9,
+      seleccionado: true,
+      cobertura: '244-Vehí.Propios Y No Vehic.',
+      porcentajeAsegurado: 100,
+      valorAsegurado: 150000000,
+      tasa: 2.35,
+      fechaInicio: '2024-08-01',
+      fechaVencimiento: '2025-07-31',
+    },
+    {
+      id: 10,
+      seleccionado: true,
+      cobertura: '245-Vehi.Propios Y No Vigen.',
+      porcentajeAsegurado: 100,
+      valorAsegurado: 150000000,
+      tasa: 2.45,
+      fechaInicio: '2024-08-01',
+      fechaVencimiento: '2025-07-31',
+    },
+    {
+      id: 11,
+      seleccionado: false,
+      cobertura: '250-Predios Labor.Y Operacio/PLO',
+      porcentajeAsegurado: 100,
+      valorAsegurado: 150000000,
+      tasa: 2.0,
+      fechaInicio: '2024-08-01',
+      fechaVencimiento: '2025-07-31',
+    },
   ];
 
   // ✅ Coberturas RC con columnas: Seleccione, Coberturas, Deducibles (% Deducible, Deducible Mínimo SMMLV), Valor Asegurado, Tasa, Prima, Líquida
   // NOTA: Solo "222- PREDIOS LABOR Y OPERACIO" puede ser líquida
   rcCoberturas = [
-    { id: 1, nombre: '222- PREDIOS LABOR Y OPERACIO', porcentajeDeducible: 10, deducibleMinimoSMMLV: 2, valorAsegurado: 120000000, tasa: 0.2, prima: 482581, seleccionada: true },
-    { id: 2, nombre: '224- PATRONAL PERSONA', porcentajeDeducible: 10, deducibleMinimoSMMLV: 2, valorAsegurado: 360000000000, tasa: 0, prima: 0, seleccionada: false },
-    { id: 3, nombre: '225-PATRONAL VIGENCIA', porcentajeDeducible: 10, deducibleMinimoSMMLV: 2, valorAsegurado: 1200000000000, tasa: 0, prima: 0, seleccionada: false },
-    { id: 4, nombre: '226- CONTRATISTA Y SUBCONTRAT', porcentajeDeducible: 10, deducibleMinimoSMMLV: 2, valorAsegurado: 1200000000000, tasa: 0, prima: 0, seleccionada: false },
-    { id: 5, nombre: '227- GASTOS MEDICOS PERSONA', porcentajeDeducible: 0, deducibleMinimoSMMLV: 0, valorAsegurado: 6000000, tasa: 0, prima: 0, seleccionada: false },
-    { id: 6, nombre: '228-GASTOS MEDICOS VIGENCIA', porcentajeDeducible: 0, deducibleMinimoSMMLV: 0, valorAsegurado: 12000000, tasa: 0, prima: 0, seleccionada: false },
-    { id: 7, nombre: '232- CONTAMINACION ACCIDENTAL', porcentajeDeducible: 10, deducibleMinimoSMMLV: 5, valorAsegurado: 1200000000000, tasa: 0, prima: 0, seleccionada: false },
-    { id: 8, nombre: '237- CRUZADA', porcentajeDeducible: 10, deducibleMinimoSMMLV: 2, valorAsegurado: 1200000000000, tasa: 0, prima: 0, seleccionada: false },
-    { id: 9, nombre: '238- BIENES BAJO CUIDADO TENE', porcentajeDeducible: 10, deducibleMinimoSMMLV: 2, valorAsegurado: 1200000000000, tasa: 0, prima: 0, seleccionada: false },
-    { id: 10, nombre: '244- VEHI.PROPIOS Y NO VEHIC.', porcentajeDeducible: 0, deducibleMinimoSMMLV: 0, valorAsegurado: 360000000000, tasa: 0, prima: 0, seleccionada: false },
-    { id: 11, nombre: '245- VEHI.PROPIOS Y NO VIGEN.', porcentajeDeducible: 0, deducibleMinimoSMMLV: 0, valorAsegurado: 1200000000000, tasa: 0, prima: 0, seleccionada: false },
+    {
+      id: 1,
+      nombre: '222- PREDIOS LABOR Y OPERACIO',
+      porcentajeDeducible: 10,
+      deducibleMinimoSMMLV: 2,
+      valorAsegurado: 120000000,
+      tasa: 0.2,
+      prima: 482581,
+      seleccionada: true,
+    },
+    {
+      id: 2,
+      nombre: '224- PATRONAL PERSONA',
+      porcentajeDeducible: 10,
+      deducibleMinimoSMMLV: 2,
+      valorAsegurado: 360000000000,
+      tasa: 0,
+      prima: 0,
+      seleccionada: false,
+    },
+    {
+      id: 3,
+      nombre: '225-PATRONAL VIGENCIA',
+      porcentajeDeducible: 10,
+      deducibleMinimoSMMLV: 2,
+      valorAsegurado: 1200000000000,
+      tasa: 0,
+      prima: 0,
+      seleccionada: false,
+    },
+    {
+      id: 4,
+      nombre: '226- CONTRATISTA Y SUBCONTRAT',
+      porcentajeDeducible: 10,
+      deducibleMinimoSMMLV: 2,
+      valorAsegurado: 1200000000000,
+      tasa: 0,
+      prima: 0,
+      seleccionada: false,
+    },
+    {
+      id: 5,
+      nombre: '227- GASTOS MEDICOS PERSONA',
+      porcentajeDeducible: 0,
+      deducibleMinimoSMMLV: 0,
+      valorAsegurado: 6000000,
+      tasa: 0,
+      prima: 0,
+      seleccionada: false,
+    },
+    {
+      id: 6,
+      nombre: '228-GASTOS MEDICOS VIGENCIA',
+      porcentajeDeducible: 0,
+      deducibleMinimoSMMLV: 0,
+      valorAsegurado: 12000000,
+      tasa: 0,
+      prima: 0,
+      seleccionada: false,
+    },
+    {
+      id: 7,
+      nombre: '232- CONTAMINACION ACCIDENTAL',
+      porcentajeDeducible: 10,
+      deducibleMinimoSMMLV: 5,
+      valorAsegurado: 1200000000000,
+      tasa: 0,
+      prima: 0,
+      seleccionada: false,
+    },
+    {
+      id: 8,
+      nombre: '237- CRUZADA',
+      porcentajeDeducible: 10,
+      deducibleMinimoSMMLV: 2,
+      valorAsegurado: 1200000000000,
+      tasa: 0,
+      prima: 0,
+      seleccionada: false,
+    },
+    {
+      id: 9,
+      nombre: '238- BIENES BAJO CUIDADO TENE',
+      porcentajeDeducible: 10,
+      deducibleMinimoSMMLV: 2,
+      valorAsegurado: 1200000000000,
+      tasa: 0,
+      prima: 0,
+      seleccionada: false,
+    },
+    {
+      id: 10,
+      nombre: '244- VEHI.PROPIOS Y NO VEHIC.',
+      porcentajeDeducible: 0,
+      deducibleMinimoSMMLV: 0,
+      valorAsegurado: 360000000000,
+      tasa: 0,
+      prima: 0,
+      seleccionada: false,
+    },
+    {
+      id: 11,
+      nombre: '245- VEHI.PROPIOS Y NO VIGEN.',
+      porcentajeDeducible: 0,
+      deducibleMinimoSMMLV: 0,
+      valorAsegurado: 1200000000000,
+      tasa: 0,
+      prima: 0,
+      seleccionada: false,
+    },
   ];
 
   // ✅ Métodos para tabla RC
-  
+
   // Solo la cobertura 222- PREDIOS LABOR Y OPERACIO puede seleccionarse para liquidación
   esCobertura222(cob: any): boolean {
     return cob.nombre === '222- PREDIOS LABOR Y OPERACIO';
@@ -1607,7 +2035,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   limpiarSeleccionRC(): void {
-    this.rcCoberturas.forEach(c => c.seleccionada = false);
+    this.rcCoberturas.forEach(c => (c.seleccionada = false));
     // Limpiar también las variables de liquidación RC
     this.mostrarTotalPrimaRC = false;
     this.mostrarCambiosRC = false;
@@ -1634,11 +2062,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     // Calcula prima para todas las coberturas RC
     const valorAsegurado = Number(cob.valorAsegurado) || 0;
     const tasa = Number(cob.tasa) || 0;
-    
+
     // Fórmula RC: Prima = Valor Asegurado * Tasa / 100
     cob.prima = Math.round(valorAsegurado * (tasa / 100));
     console.log('🔥 Prima RC calculada:', cob.nombre, '→', cob.prima);
-    
+
     this.cdr.detectChanges();
   }
 
@@ -1656,7 +2084,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Liquidar Prima RC - Calcula, muestra el total y detecta cambios
   liquidarPrimaRC(): void {
     const coberturasSeleccionadas = this.rcCoberturas.filter(c => c.seleccionada);
-    
+
     if (coberturasSeleccionadas.length === 0) {
       this.showErrorNotification('⚠️ Seleccione al menos una cobertura RC para liquidar');
       this.mostrarTotalPrimaRC = false;
@@ -1670,13 +2098,13 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.coberturasRemovidasRC = [];
 
     const idsSeleccionadosActuales = coberturasSeleccionadas.map(c => c.id);
-    
+
     // Detectar NUEVAS coberturas RC (no estaban antes)
     for (const cob of coberturasSeleccionadas) {
       if (!this.coberturasAnterioresIdsRC.includes(cob.id)) {
         this.coberturasNuevasRC.push({
           nombre: cob.nombre,
-          prima: cob.prima
+          prima: cob.prima,
         });
       }
     }
@@ -1688,7 +2116,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         if (cob) {
           this.coberturasRemovidasRC.push({
             nombre: cob.nombre,
-            prima: this.valoresAnterioresRC[idAnterior]?.prima || cob.prima
+            prima: this.valoresAnterioresRC[idAnterior]?.prima || cob.prima,
           });
         }
       }
@@ -1701,25 +2129,33 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         const cambios: string[] = [];
 
         if (anterior.porcentajeDeducible !== cob.porcentajeDeducible) {
-          cambios.push(`% Deducible: ${anterior.porcentajeDeducible}% → ${cob.porcentajeDeducible}%`);
+          cambios.push(
+            `% Deducible: ${anterior.porcentajeDeducible}% → ${cob.porcentajeDeducible}%`,
+          );
         }
         if (anterior.deducibleMinimoSMMLV !== cob.deducibleMinimoSMMLV) {
-          cambios.push(`Deducible Mín. SMMLV: ${anterior.deducibleMinimoSMMLV} → ${cob.deducibleMinimoSMMLV}`);
+          cambios.push(
+            `Deducible Mín. SMMLV: ${anterior.deducibleMinimoSMMLV} → ${cob.deducibleMinimoSMMLV}`,
+          );
         }
         if (anterior.valorAsegurado !== cob.valorAsegurado) {
-          cambios.push(`Valor Aseg.: ${this.formatCurrency(anterior.valorAsegurado)} → ${this.formatCurrency(cob.valorAsegurado)}`);
+          cambios.push(
+            `Valor Aseg.: ${this.formatCurrency(anterior.valorAsegurado)} → ${this.formatCurrency(cob.valorAsegurado)}`,
+          );
         }
         if (anterior.tasa !== cob.tasa) {
           cambios.push(`Tasa: ${anterior.tasa}% → ${cob.tasa}%`);
         }
         if (anterior.prima !== cob.prima) {
-          cambios.push(`Prima: ${this.formatCurrency(anterior.prima)} → ${this.formatCurrency(cob.prima)}`);
+          cambios.push(
+            `Prima: ${this.formatCurrency(anterior.prima)} → ${this.formatCurrency(cob.prima)}`,
+          );
         }
 
         if (cambios.length > 0) {
           this.cambiosDetectadosRC.push({
             nombre: cob.nombre,
-            cambios: cambios
+            cambios: cambios,
           });
         }
       }
@@ -1735,7 +2171,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         deducibleMinimoSMMLV: cob.deducibleMinimoSMMLV,
         valorAsegurado: cob.valorAsegurado,
         tasa: cob.tasa,
-        prima: cob.prima
+        prima: cob.prima,
       };
     }
 
@@ -1743,7 +2179,10 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.totalPrimaLiquidadaRC = this.getTotalPrimaRC();
     this.coberturasLiquidadasRC = coberturasSeleccionadas.length;
     this.mostrarTotalPrimaRC = true;
-    this.mostrarCambiosRC = this.cambiosDetectadosRC.length > 0 || this.coberturasNuevasRC.length > 0 || this.coberturasRemovidasRC.length > 0;
+    this.mostrarCambiosRC =
+      this.cambiosDetectadosRC.length > 0 ||
+      this.coberturasNuevasRC.length > 0 ||
+      this.coberturasRemovidasRC.length > 0;
 
     // ✅ Ocultar cambios RC después de 5 segundos
     if (this.mostrarCambiosRC) {
@@ -1754,7 +2193,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
     this.primeraLiquidacionRC = false;
     console.log(`💰 Total Prima RC Liquidada: ${this.totalPrimaLiquidadaRC}`);
-    this.showSuccessNotification(`Prima RC liquidada: ${this.formatCurrency(this.totalPrimaLiquidadaRC)}`);
+    this.showSuccessNotification(
+      `Prima RC liquidada: ${this.formatCurrency(this.totalPrimaLiquidadaRC)}`,
+    );
   }
 
   // ✅ Obtener total prima RC seleccionadas
@@ -1852,7 +2293,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   goToStep(step: number): void {
     // ✅ GUARDAR DATOS antes de cambiar de paso
     this.guardarDatosFormulario();
-    
+
     if (step > this.currentStep && !this.validateCurrentStep()) {
       return; // No permitir avanzar sin validar
     }
@@ -1887,36 +2328,38 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      
+
       // ✅ VALIDAR EXTENSIÓN - Solo PDF, Word, Excel (NO imágenes)
       const validExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
-      
+
       if (!validExtensions.includes(extension)) {
-        this.mostrarToastArchivoNoValido(file.name, extension);
+        this.mostrarToastArchivoNoValido(file.name);
         input.value = ''; // Limpiar input
         return;
       }
-      
+
       // ✅ VALIDAR TAMAÑO - Máximo 30 MB
       if (file.size > 30 * 1024 * 1024) {
-        this.showErrorNotification('❌ Archivo supera 30 MB. Tu archivo es muy pesado, elige uno más pequeño.');
+        this.showErrorNotification(
+          '❌ Archivo supera 30 MB. Tu archivo es muy pesado, elige uno más pequeño.',
+        );
         input.value = ''; // Limpiar input
         return;
       }
-      
+
       this.selectedFile = file;
       this.contractFileError = false;
-      
+
       // Simular upload con progreso
       this.isUploading = true;
       this.uploadProgress = 0;
-      
+
       // Limpiar intervalo anterior si existe
       if (this.uploadInterval) {
         clearInterval(this.uploadInterval);
       }
-      
+
       this.uploadInterval = setInterval(() => {
         this.uploadProgress += 10;
         if (this.uploadProgress >= 100) {
@@ -1970,13 +2413,13 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      
+
       // Validar tamaño (30 MB)
       if (file.size > 30 * 1024 * 1024) {
         this.showErrorNotification('El archivo excede el tamaño máximo de 30 MB');
         return;
       }
-      
+
       this.archivoDocumentoTemp = file;
       console.log('📄 Archivo seleccionado:', file.name);
     }
@@ -2001,21 +2444,21 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
       const file = event.dataTransfer.files[0];
-      
+
       // Validar tamaño (30 MB)
       if (file.size > 30 * 1024 * 1024) {
         this.showErrorNotification('El archivo excede el tamaño máximo de 30 MB');
         return;
       }
-      
+
       // Validar extensión - Solo PDF, Word, Excel (NO imágenes)
       const validExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
       if (!validExtensions.includes(extension)) {
-        this.mostrarToastArchivoNoValido(file.name, extension);
+        this.mostrarToastArchivoNoValido(file.name);
         return;
       }
-      
+
       this.archivoDocumentoTemp = file;
       console.log('📄 Archivo arrastrado:', file.name);
     }
@@ -2031,15 +2474,15 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       tipo: this.tipoDocumentoSoporte,
       nombreArchivo: this.archivoDocumentoTemp.name,
       fecha: new Date().toLocaleDateString('es-CO'),
-      archivo: this.archivoDocumentoTemp
+      archivo: this.archivoDocumentoTemp,
     };
 
     this.documentosSoporte.push(nuevoDoc);
-    
+
     // Limpiar selección
     this.tipoDocumentoSoporte = '';
     this.archivoDocumentoTemp = null;
-    
+
     this.showSuccessNotification(`✅ Documento "${nuevoDoc.nombreArchivo}" agregado`);
     console.log('📁 Documentos soporte:', this.documentosSoporte);
   }
@@ -2055,17 +2498,17 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       tipo: this.tipoDocumentoSoporte,
       nombreArchivo: this.selectedFileName,
       fecha: new Date().toLocaleDateString('es-CO'),
-      archivo: this.selectedFile
+      archivo: this.selectedFile,
     };
 
     this.documentosSoporte.push(nuevoDoc);
-    
+
     // Limpiar para cargar otro
     this.tipoDocumentoSoporte = '';
     this.selectedFile = null;
     this.selectedFileName = null;
     this.fileName = null;
-    
+
     this.showSuccessNotification(`✅ Documento "${nuevoDoc.nombreArchivo}" agregado a la lista`);
     console.log('📁 Documentos soporte:', this.documentosSoporte);
   }
@@ -2084,13 +2527,13 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   addContract(): void {
     this.formSubmitted = true;
-    
+
     // Validar campos obligatorios
     let isValid = true;
-    
+
     if (!this.tipoProducto) isValid = false;
     if (!this.claveIntermediario) isValid = false;
-    
+
     // Si es Grandes Beneficiarios, validar campos adicionales (sin programaSeleccionado)
     if (this.tipoProducto === 'grandes-beneficiarios') {
       if (!this.programaParametrizado) isValid = false;
@@ -2099,17 +2542,17 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       if (!this.tipoDocumentoAsegurado) isValid = false;
       if (!this.numeroDocumentoAsegurado) isValid = false;
     }
-    
+
     if (!this.selectedFileName) {
       this.contractFileError = true;
       isValid = false;
     }
-    
+
     if (!isValid) {
       console.log('❌ Formulario inválido - campos obligatorios faltantes');
       return;
     }
-    
+
     console.log('📄 Contrato agregado:', {
       tipoProducto: this.tipoProducto,
       claveIntermediario: this.claveIntermediario,
@@ -2117,7 +2560,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       tipoDocumentoAsegurado: this.tipoDocumentoAsegurado,
       numeroDocumentoAsegurado: this.numeroDocumentoAsegurado,
       tipoDocumentoTomador: this.tipoDocumentoTomador,
-      numeroDocumentoTomador: this.numeroDocumentoTomador
+      numeroDocumentoTomador: this.numeroDocumentoTomador,
     });
   }
 
@@ -2134,7 +2577,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   // ✅ DROPDOWN GENÉRICO - Seleccionar opción
-  selectDropdownOption(dropdownName: string, value: string, callback?: (val: string) => void): void {
+  selectDropdownOption(
+    dropdownName: string,
+    value: string,
+    callback?: (val: string) => void,
+  ): void {
     this.dropdownsOpen[dropdownName] = false;
     if (callback) {
       callback(value);
@@ -2162,7 +2609,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   decrementarValorContrato(): void {
     if (this.valorContrato > this.incrementoContrato) {
       this.valorContrato -= this.incrementoContrato;
-      console.log(`➖ Valor del Contrato decrementado: ${this.formatearNumero(this.valorContrato)}`);
+      console.log(
+        `➖ Valor del Contrato decrementado: ${this.formatearNumero(this.valorContrato)}`,
+      );
     } else if (this.valorContrato > 0) {
       this.valorContrato = 0;
       console.log(`➖ Valor del Contrato: 0`);
@@ -2217,7 +2666,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Método para manejar cambio de fecha en calendario
   onFechaChange(tipo: string, fecha: string): void {
     console.log(`📅 Fecha ${tipo} cambiada a:`, fecha);
-    switch(tipo) {
+    switch (tipo) {
       case 'inicio':
         this.fechaInicioContrato = fecha;
         break;
@@ -2265,27 +2714,32 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         console.log('❌ Archivo de contrato requerido (o agregar a la lista)');
         return;
       }
-      
+
       // Si es Grandes Beneficiarios, validar campos adicionales
       if (this.tipoProducto === 'grandes-beneficiarios') {
-        if (!this.claveIntermediario || !this.programaParametrizado || 
-            !this.tipoDocumentoTomador || !this.numeroDocumentoTomador || 
-            !this.tipoDocumentoAsegurado || !this.numeroDocumentoAsegurado) {
+        if (
+          !this.claveIntermediario ||
+          !this.programaParametrizado ||
+          !this.tipoDocumentoTomador ||
+          !this.numeroDocumentoTomador ||
+          !this.tipoDocumentoAsegurado ||
+          !this.numeroDocumentoAsegurado
+        ) {
           console.log('❌ Campos obligatorios faltantes para Grandes Beneficiarios:', {
             claveIntermediario: this.claveIntermediario,
             programaParametrizado: this.programaParametrizado,
             tipoDocumentoTomador: this.tipoDocumentoTomador,
             numeroDocumentoTomador: this.numeroDocumentoTomador,
             tipoDocumentoAsegurado: this.tipoDocumentoAsegurado,
-            numeroDocumentoAsegurado: this.numeroDocumentoAsegurado
+            numeroDocumentoAsegurado: this.numeroDocumentoAsegurado,
           });
           return;
         }
       }
-      
+
       // Mostrar modal de éxito al pasar al paso 2
       this.showSuccessModal = true;
-      
+
       // Simular procesamiento automático
       this.simulateContractProcessing();
     }
@@ -2454,17 +2908,30 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (this.tipoProducto === 'grandes-beneficiarios') {
       fieldsToCheck.push(
         { condition: !this.tipoDocumentoAsegurado, selector: '[class*="tipoDocAseguradoGB"]' },
-        { condition: !this.numeroDocumentoAsegurado || !this.nombreAsegurado, selector: 'input[placeholder*="asegurado"], input[ng-reflect-model="numeroDocumentoAsegurado"]' },
+        {
+          condition: !this.numeroDocumentoAsegurado || !this.nombreAsegurado,
+          selector:
+            'input[placeholder*="asegurado"], input[ng-reflect-model="numeroDocumentoAsegurado"]',
+        },
         { condition: !this.tipoDocumentoTomador, selector: '[class*="tipoDocTomadorGB"]' },
-        { condition: !this.numeroDocumentoTomador || !this.nombreTomador, selector: 'input[ng-reflect-model="numeroDocumentoTomador"]' },
-        { condition: !this.programaParametrizado, selector: '[class*="programas"]' }
+        {
+          condition: !this.numeroDocumentoTomador || !this.nombreTomador,
+          selector: 'input[ng-reflect-model="numeroDocumentoTomador"]',
+        },
+        { condition: !this.programaParametrizado, selector: '[class*="programas"]' },
       );
     } else if (this.tipoProducto === 'particulares' || this.tipoProducto === 'estatales') {
       fieldsToCheck.push(
         { condition: !this.tipoDocumentoTomador, selector: '[class*="tipoDocTomadorPE"]' },
-        { condition: !this.numeroDocumentoTomador || !this.nombreTomador, selector: '.campos-adicionales-particulares input' },
+        {
+          condition: !this.numeroDocumentoTomador || !this.nombreTomador,
+          selector: '.campos-adicionales-particulares input',
+        },
         { condition: !this.tipoDocumentoAsegurado, selector: '[class*="tipoDocAseguradoPE"]' },
-        { condition: !this.numeroDocumentoAsegurado || !this.nombreAsegurado, selector: '.campos-adicionales-particulares input:last-of-type' }
+        {
+          condition: !this.numeroDocumentoAsegurado || !this.nombreAsegurado,
+          selector: '.campos-adicionales-particulares input:last-of-type',
+        },
       );
     }
 
@@ -2499,7 +2966,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Método privado para actualizar el cache del actionLabel
   private updateCachedActionLabel(): void {
     this._cachedIsMobile = window.innerWidth <= 768;
-    this._cachedActionLabel = this._cachedIsMobile ? ACTION_LABELS_MOBILE[this.action] : ACTION_LABELS[this.action];
+    this._cachedActionLabel = this._cachedIsMobile
+      ? ACTION_LABELS_MOBILE[this.action]
+      : ACTION_LABELS[this.action];
   }
 
   // ✅ Método que retorna labels optimizados según el tamaño de pantalla (usa cache)
@@ -3062,30 +3531,50 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       contractDuration: '12 meses',
       contractEndDate: '31/12/2024',
       coberturasCumplimiento: [
-        { cobertura: 'Seriedad De La Oferta', porcentaje: '5%', valorAsegurado: 150000000, estado: 'Activa' },
-        { cobertura: 'Cumplimiento', porcentaje: '10%', valorAsegurado: 300000000, estado: 'Activa' },
-        { cobertura: 'Calidad Del Servicio', porcentaje: '7%', valorAsegurado: 200000000, estado: 'Activa' },
+        {
+          cobertura: 'Seriedad De La Oferta',
+          porcentaje: '5%',
+          valorAsegurado: 150000000,
+          estado: 'Activa',
+        },
+        {
+          cobertura: 'Cumplimiento',
+          porcentaje: '10%',
+          valorAsegurado: 300000000,
+          estado: 'Activa',
+        },
+        {
+          cobertura: 'Calidad Del Servicio',
+          porcentaje: '7%',
+          valorAsegurado: 200000000,
+          estado: 'Activa',
+        },
       ],
       rcCoverages: [
-        { name: 'Contratista Y Subcontratista', percentage: 15, value: 500000000, status: 'Activa' },
+        {
+          name: 'Contratista Y Subcontratista',
+          percentage: 15,
+          value: 500000000,
+          status: 'Activa',
+        },
         { name: 'Gastos Medicos Persona', percentage: 3, value: 100000000, status: 'Activa' },
         { name: 'Contaminación Accidental', percentage: 6, value: 200000000, status: 'Activa' },
       ],
     };
   }
-  
+
   // ✅ Método para cerrar el modal de Resumen de Cotización
   closeQuoteSummary(): void {
     this.showQuoteSummary = false;
   }
-  
+
   // ✅ Método para "Generar Emisión" desde el modal
   onGenerarEmision(): void {
     console.log('🚀 Generar Emisión clicked');
     this.showQuoteSummary = false;
     this.showSuccessToast = true;
     this.successToastMessage = '¡Emisión generada exitosamente! Póliza COT-311551 emitida.';
-    
+
     // Ocultar el toast después de 5 segundos
     setTimeout(() => {
       this.showSuccessToast = false;
@@ -3097,17 +3586,17 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     console.log('📊 Generar Cotización clicked - Mostrando toast de éxito');
     this.showSuccessToast = true;
     this.successToastMessage = 'Su cotización quedó generada correctamente';
-    
+
     // Ocultar el toast después de 5 segundos
     setTimeout(() => {
       this.showSuccessToast = false;
     }, 5000);
   }
-  
+
   // ✅ Propiedad para el toast de éxito
   showSuccessToast = false;
   successToastMessage = '';
-  
+
   // ✅ Modal de datos restaurados
   showDatosRestauradosModal = false;
 
@@ -3115,7 +3604,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   hideSuccessToast(): void {
     this.showSuccessToast = false;
   }
-  
+
   // ✅ Método para cerrar el modal de datos restaurados
   cerrarDatosRestauradosModal(): void {
     this.showDatosRestauradosModal = false;
@@ -3158,9 +3647,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Método para generar número de cotización
   generateQuoteNumber(): string {
     const timestamp = Date.now();
-    const randomSuffix = Math.floor(Math.random() * 1000)
-      .toString()
-      .padStart(3, '0');
+    const randomArray = new Uint32Array(1);
+    crypto.getRandomValues(randomArray);
+    const randomSuffix = (randomArray[0] % 1000).toString().padStart(3, '0');
     return `COT-${timestamp.toString().slice(-6)}-${randomSuffix}`;
   }
 
@@ -3348,13 +3837,18 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   // ✅ Método para mostrar toast mejorado
-  mostrarToast(mensaje: string, tipo: 'warning' | 'error' | 'success' | 'info' = 'warning', titulo: string = '', mostrarFormatos: boolean = false): void {
+  mostrarToast(
+    mensaje: string,
+    tipo: 'warning' | 'error' | 'success' | 'info' = 'warning',
+    titulo: string = '',
+    mostrarFormatos: boolean = false,
+  ): void {
     this.toastMessage = mensaje;
     this.toastType = tipo;
     this.toastTitle = titulo;
     this.showFormatosPermitidos = mostrarFormatos;
     this.showToast = true;
-    
+
     // Auto-ocultar después de 8 segundos (tiempo suficiente para leer)
     // Si muestra formatos, dar 10 segundos para mayor claridad
     const duracion = mostrarFormatos ? 10000 : 8000;
@@ -3369,7 +3863,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   showArchivoNoCompatibleModal = false;
   archivoNoCompatibleNombre = '';
 
-  mostrarToastArchivoNoValido(nombreArchivo: string, _extension?: string): void {
+  mostrarToastArchivoNoValido(nombreArchivo: string): void {
     this.archivoNoCompatibleNombre = nombreArchivo;
     this.showArchivoNoCompatibleModal = true;
   }
@@ -3387,7 +3881,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Método para manejar clic en zona de carga sin tipo seleccionado
   onUploadAreaClick(): void {
     if (!this.tipoDocumentoSoporte) {
-      this.mostrarToast('Selecciona el tipo de documento para poder cargar el archivo', 'warning', 'Paso requerido');
+      this.mostrarToast(
+        'Selecciona el tipo de documento para poder cargar el archivo',
+        'warning',
+        'Paso requerido',
+      );
     } else {
       this.triggerFileInput();
     }
@@ -3403,7 +3901,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ============================================
   // ✅ PERSISTENCIA DE DATOS - SessionStorage
   // ============================================
-  
+
   private readonly STORAGE_KEY = 'cumplimiento_form_data';
 
   // ✅ Guardar datos del formulario en sessionStorage
@@ -3412,13 +3910,13 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       const datosFormulario = {
         // Paso actual
         currentStep: this.currentStep,
-        
+
         // ========== PASO 1 ==========
         // Tipo de producto e intermediario
         tipoProducto: this.tipoProducto,
         claveIntermediario: this.claveIntermediario,
         nombreIntermediario: this.nombreIntermediario,
-        
+
         // Datos de Tomador y Asegurado
         tipoDocumentoTomador: this.tipoDocumentoTomador,
         numeroDocumentoTomador: this.numeroDocumentoTomador,
@@ -3426,18 +3924,18 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         tipoDocumentoAsegurado: this.tipoDocumentoAsegurado,
         numeroDocumentoAsegurado: this.numeroDocumentoAsegurado,
         nombreAsegurado: this.nombreAsegurado,
-        
+
         // Programa (Grandes Beneficiarios)
         programaParametrizado: this.programaParametrizado,
-        
+
         // Documentos soporte (sin el archivo binario)
         tipoDocumentoSoporte: this.tipoDocumentoSoporte,
         documentosSoporte: this.documentosSoporte.map(doc => ({
           tipo: doc.tipo,
           nombreArchivo: doc.nombreArchivo,
-          fecha: doc.fecha
+          fecha: doc.fecha,
         })),
-        
+
         // ========== PASO 2 ==========
         // Fechas
         fechaInicioContrato: this.fechaInicioContrato,
@@ -3446,27 +3944,27 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         fechaFinRC: this.fechaFinRC,
         valorContrato: this.valorContrato,
         objetoContratoValue: this.objetoContratoValue,
-        
+
         // Ubicación
         ubicacionRiesgoSeleccionada: this.ubicacionRiesgoSeleccionada,
         direccionRiesgo: this.direccionRiesgo,
-        
+
         // ========== PASO 3 ==========
         // Coberturas
         coberturasCumplimiento: this.coberturasCumplimiento,
         rcCoberturas: this.rcCoberturas,
-        
+
         // Coaseguros
         tipoCoaseguro: this.tipoCoaseguro,
         coasegurosCedidos: this.coasegurosCedidos,
-        
+
         // Agentes
         agentesAdicionales: this.agentesAdicionales,
-        
+
         // Timestamp
-        ultimaActualizacion: new Date().toISOString()
+        ultimaActualizacion: new Date().toISOString(),
       };
-      
+
       sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(datosFormulario));
       console.log('💾 Datos del formulario guardados en sessionStorage:', datosFormulario);
     } catch (error) {
@@ -3478,44 +3976,45 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   cargarDatosFormulario(): boolean {
     try {
       const datosGuardados = sessionStorage.getItem(this.STORAGE_KEY);
-      
+
       if (!datosGuardados) {
         console.log('📭 No hay datos guardados en sessionStorage');
         return false;
       }
-      
+
       const datos = JSON.parse(datosGuardados);
       console.log('📂 Cargando datos guardados:', datos);
-      
+
       // Restaurar paso actual
       if (datos.currentStep !== undefined) {
         this.currentStep = datos.currentStep;
         this.stepperConfig.activeIndex = datos.currentStep;
       }
-      
+
       // ========== PASO 1 ==========
       // Tipo de producto e intermediario
       if (datos.tipoProducto) this.tipoProducto = datos.tipoProducto;
       if (datos.claveIntermediario) this.claveIntermediario = datos.claveIntermediario;
       if (datos.nombreIntermediario) this.nombreIntermediario = datos.nombreIntermediario;
-      
+
       // Datos de Tomador y Asegurado
       if (datos.tipoDocumentoTomador) this.tipoDocumentoTomador = datos.tipoDocumentoTomador;
       if (datos.numeroDocumentoTomador) this.numeroDocumentoTomador = datos.numeroDocumentoTomador;
       if (datos.nombreTomador) this.nombreTomador = datos.nombreTomador;
       if (datos.tipoDocumentoAsegurado) this.tipoDocumentoAsegurado = datos.tipoDocumentoAsegurado;
-      if (datos.numeroDocumentoAsegurado) this.numeroDocumentoAsegurado = datos.numeroDocumentoAsegurado;
+      if (datos.numeroDocumentoAsegurado)
+        this.numeroDocumentoAsegurado = datos.numeroDocumentoAsegurado;
       if (datos.nombreAsegurado) this.nombreAsegurado = datos.nombreAsegurado;
-      
+
       // Programa (Grandes Beneficiarios)
       if (datos.programaParametrizado) this.programaParametrizado = datos.programaParametrizado;
-      
+
       // Documentos (sin archivo porque no se puede serializar)
       if (datos.tipoDocumentoSoporte) this.tipoDocumentoSoporte = datos.tipoDocumentoSoporte;
       if (datos.documentosSoporte && datos.documentosSoporte.length > 0) {
         this.documentosSoporte = datos.documentosSoporte;
       }
-      
+
       // ========== PASO 2 ==========
       // Fechas
       if (datos.fechaInicioContrato) this.fechaInicioContrato = datos.fechaInicioContrato;
@@ -3524,45 +4023,46 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       if (datos.fechaFinRC) this.fechaFinRC = datos.fechaFinRC;
       if (datos.valorContrato) this.valorContrato = datos.valorContrato;
       if (datos.objetoContratoValue) this.objetoContratoValue = datos.objetoContratoValue;
-      
+
       // Ubicación
-      if (datos.ubicacionRiesgoSeleccionada) this.ubicacionRiesgoSeleccionada = datos.ubicacionRiesgoSeleccionada;
+      if (datos.ubicacionRiesgoSeleccionada)
+        this.ubicacionRiesgoSeleccionada = datos.ubicacionRiesgoSeleccionada;
       if (datos.direccionRiesgo) this.direccionRiesgo = datos.direccionRiesgo;
-      
+
       // ========== PASO 3 ==========
       // Coberturas
       if (datos.coberturasCumplimiento) this.coberturasCumplimiento = datos.coberturasCumplimiento;
       if (datos.rcCoberturas) this.rcCoberturas = datos.rcCoberturas;
-      
+
       // Coaseguros
       if (datos.tipoCoaseguro) this.tipoCoaseguro = datos.tipoCoaseguro;
       if (datos.coasegurosCedidos) this.coasegurosCedidos = datos.coasegurosCedidos;
-      
+
       // Agentes
       if (datos.agentesAdicionales) this.agentesAdicionales = datos.agentesAdicionales;
-      
+
       console.log('✅ Datos del formulario restaurados correctamente');
-      
+
       // ✅ FORZAR actualización del UI después de restaurar datos
       setTimeout(() => {
         this.cdr.detectChanges();
         console.log('🔄 UI actualizado con detectChanges()');
-        
+
         // Verificar valores restaurados
         console.log('📋 Valores restaurados:', {
           tipoProducto: this.tipoProducto,
           claveIntermediario: this.claveIntermediario,
           numeroDocumentoTomador: this.numeroDocumentoTomador,
-          nombreTomador: this.nombreTomador
+          nombreTomador: this.nombreTomador,
         });
       }, 0);
-      
+
       // Mostrar modal de datos restaurados
       this.showDatosRestauradosModal = true;
       setTimeout(() => {
         this.showDatosRestauradosModal = false;
       }, 4000);
-      
+
       return true;
     } catch (error) {
       console.error('❌ Error al cargar datos:', error);
@@ -3797,7 +4297,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     } else {
       this.action = PolicyInputAction.EMITIR;
     }
-    
+
     // ✅ Actualizar cache del actionLabel cuando cambia la acción
     this.updateCachedActionLabel();
 
@@ -3814,50 +4314,50 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ NUEVO: Limpiar formulario completo al cambiar de Cotizar a Emitir o viceversa
   limpiarFormularioCompleto(): void {
     console.log('🧹 Limpiando formulario completo...');
-    
+
     // Paso 1 - Errores y archivo
     this.contractFileError = false;
     this.fileName = null;
     this.selectedFile = null;
     this.selectedFileName = null;
-    
+
     // Documentos soporte
     this.tipoDocumentoSoporte = '';
     this.documentosSoporte = [];
-    
+
     // Tipo de producto e intermediario
     this.tipoProducto = '';
     this.claveIntermediario = '';
     this.nombreIntermediario = '';
-    
+
     // Datos del Tomador
     this.tipoDocumentoTomador = '';
     this.numeroDocumentoTomador = '';
     this.nombreTomador = '';
-    
+
     // Datos del Asegurado
     this.tipoDocumentoAsegurado = '';
     this.numeroDocumentoAsegurado = '';
     this.nombreAsegurado = '';
-    
+
     // Datos del modal SARLAFT
     this.celularCliente = '';
     this.correoTomador = '';
     this.celularAsesor = '';
     this.correoAsesor = '';
-    
+
     // Programa parametrizado
     this.programaParametrizado = '';
-    
+
     // Cerrar modales abiertos
     this.showSarlaftDesactualizado = false;
     this.showClienteNoCreado = false;
     this.showSolicitarCupo = false;
-    
+
     // Resetear paso
     this.currentStep = 0;
     this.stepperConfig.activeIndex = 0;
-    
+
     console.log('✅ Formulario limpiado completamente');
   }
 
@@ -3903,7 +4403,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
       // Actualizar la acción para que los labels sean de emisión
       this.action = PolicyInputAction.EMITIR;
-      
+
       // ✅ Actualizar cache del actionLabel cuando cambia la acción
       this.updateCachedActionLabel();
 
@@ -3929,25 +4429,25 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     console.log('🔍 Estado ANTES:', {
       showCotizacionesTable: this.showCotizacionesTable,
       showCotizacionDetalle: this.showCotizacionDetalle,
-      selectedEmitirOption: this.selectedEmitirOption
+      selectedEmitirOption: this.selectedEmitirOption,
     });
-    
+
     // Establecer valores directamente
     this.showCotizacionesTable = true;
     this.showCotizacionDetalle = false;
     this.cotizacionSeleccionada = null;
     this.selectedEmitirOption = 'cotizacion-existente';
-    
+
     console.log('🔍 Estado DESPUÉS:', {
       showCotizacionesTable: this.showCotizacionesTable,
       showCotizacionDetalle: this.showCotizacionDetalle,
-      selectedEmitirOption: this.selectedEmitirOption
+      selectedEmitirOption: this.selectedEmitirOption,
     });
-    
+
     // Forzar actualización
     this.cdr.markForCheck();
     this.cdr.detectChanges();
-    
+
     console.log('✅ Vista de cotizaciones DEBERÍA estar activada');
   }
 
@@ -3984,15 +4484,15 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   modificarCotizacion(cotizacion: any): void {
     console.log('✏️ Modificar cotización:', cotizacion.id);
     this.cotizacionSeleccionada = cotizacion;
-    
+
     // Ocultar vistas de cotizaciones
     this.showCotizacionesTable = false;
     this.showCotizacionDetalle = false;
-    
+
     // Habilitar formulario y precargar datos
     this.isFormEnabled = true;
     this.selectedEmitirOption = 'poliza-nueva';
-    
+
     // Precargar datos en step2Data usando las propiedades correctas de IPolicyStep2Data
     this.step2Data = {
       ...this.step2Data,
@@ -4013,16 +4513,16 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       valorContrato: cotizacion.detallesContrato.valorContrato,
       fechaInicioContrato: cotizacion.detallesContrato.fechaInicio,
       fechaFinContrato: cotizacion.detallesContrato.fechaFin,
-      duracionContrato: cotizacion.detallesContrato.duracion
+      duracionContrato: cotizacion.detallesContrato.duracion,
     };
-    
+
     // Ir al paso 2 (Formulario)
     this.currentStep = 1;
     this.stepperConfig.activeIndex = 1;
-    
+
     // ✅ Restaurar breadcrumb del formulario principal
     this.updateBreadcrumb();
-    
+
     console.log('✅ Datos precargados para modificación:', this.step2Data);
   }
 
@@ -4063,13 +4563,283 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.updateBreadcrumb();
   }
 
+  // ✅ Regla 17.2: Retomar cotización guardada - Cargar datos completos y continuar proceso
+  retomarCotizacion(cotizacion: any): void {
+    console.log('🔄 Retomar cotización:', cotizacion.id);
+    this.cotizacionSeleccionada = cotizacion;
+
+    // Ocultar vistas de cotizaciones
+    this.showCotizacionesTable = false;
+    this.showCotizacionDetalle = false;
+
+    // Habilitar formulario
+    this.isFormEnabled = true;
+    this.selectedEmitirOption = 'poliza-nueva';
+    this.selectedAction = 'emitir';
+    this.action = PolicyInputAction.EMITIR;
+
+    // ✅ Cargar datos completos desde el servicio si no están disponibles
+    if (!cotizacion.datosGenerales && cotizacion.id) {
+      firstValueFrom(this.quoteService.getSavedQuote(cotizacion.id))
+        .then((quoteData) => {
+          console.log('✅ Datos de cotización cargados desde servicio:', quoteData);
+          this.cargarDatosRetomarCotizacion(quoteData);
+        })
+        .catch((error) => {
+          console.error('❌ Error al cargar cotización:', error);
+          // Si falla, usar los datos disponibles
+          this.cargarDatosRetomarCotizacion(cotizacion);
+        });
+    } else {
+      // Si ya tiene datos, cargarlos directamente
+      this.cargarDatosRetomarCotizacion(cotizacion);
+    }
+  }
+
+  // ✅ Método auxiliar para cargar datos al retomar cotización
+  private cargarDatosRetomarCotizacion(cotizacion: any): void {
+    // ✅ Cargar datos completos de la cotización guardada
+    if (cotizacion.datosGenerales) {
+      // Precargar datos en step1Form (Paso 1) usando patchValue
+      if (this.step1Form?.form) {
+        this.step1Form.form.patchValue({
+          tipoDocumentoAsegurado: cotizacion.datosGenerales.tipoDocAsegurado || 'NIT',
+          numeroDocumentoAsegurado: cotizacion.datosGenerales.numDocAsegurado || '',
+          nombreAsegurado: cotizacion.datosGenerales.nombreAsegurado || '',
+          tipoDocumentoTomador: cotizacion.datosGenerales.tipoDocTomador || 'NIT',
+          numeroDocumentoTomador: cotizacion.datosGenerales.numDocTomador || '',
+          nombreTomador: cotizacion.datosGenerales.nombreTomador || '',
+          producto: cotizacion.producto || '',
+        });
+      }
+
+      // Precargar datos en step2Data (Paso 2)
+      this.step2Data = {
+        ...this.step2Data,
+        numeroContratoGeneral: cotizacion.datosGenerales.numeroContrato || '',
+        numeroContrato: cotizacion.datosGenerales.numeroContrato || '',
+        tipoDocumentoTomadorGeneral: cotizacion.datosGenerales.tipoDocTomador || 'NIT',
+        numeroDocumentoTomadorGeneral: cotizacion.datosGenerales.numDocTomador || '',
+        numeroDocumentoTomador: cotizacion.datosGenerales.numDocTomador || '',
+        nombreTomadorGeneral: cotizacion.datosGenerales.nombreTomador || '',
+        nombreTomador: cotizacion.datosGenerales.nombreTomador || '',
+        tipoDocumentoAseguradoGeneral: cotizacion.datosGenerales.tipoDocAsegurado || 'NIT',
+        numeroDocumentoAseguradoGeneral: cotizacion.datosGenerales.numDocAsegurado || '',
+        nombreAseguradoGeneral: cotizacion.datosGenerales.nombreAsegurado || '',
+        moneda: cotizacion.datosGenerales.moneda || 'COP',
+        departamento: cotizacion.ubicacionRiesgo?.departamento || '',
+        localidadMunicipio: cotizacion.ubicacionRiesgo?.municipio || '',
+        direccionRiesgo: cotizacion.ubicacionRiesgo?.direccion || '',
+        valorContrato: cotizacion.detallesContrato?.valorContrato || cotizacion.valorAsegurado || 0,
+        fechaInicioContrato: cotizacion.detallesContrato?.fechaInicio || '',
+        fechaFinContrato: cotizacion.detallesContrato?.fechaFin || '',
+        duracionContrato: cotizacion.detallesContrato?.duracion || '',
+      };
+
+      // También actualizar step2Form si está disponible
+      if (this.step2Form?.form) {
+        setTimeout(() => {
+          this.step2Form.form.patchValue({
+            numeroContratoGeneral: cotizacion.datosGenerales.numeroContrato || '',
+            numeroContrato: cotizacion.datosGenerales.numeroContrato || '',
+            tipoDocumentoTomadorGeneral: cotizacion.datosGenerales.tipoDocTomador || 'NIT',
+            numeroDocumentoTomadorGeneral: cotizacion.datosGenerales.numDocTomador || '',
+            numeroDocumentoTomador: cotizacion.datosGenerales.numDocTomador || '',
+            nombreTomadorGeneral: cotizacion.datosGenerales.nombreTomador || '',
+            nombreTomador: cotizacion.datosGenerales.nombreTomador || '',
+            tipoDocumentoAseguradoGeneral: cotizacion.datosGenerales.tipoDocAsegurado || 'NIT',
+            numeroDocumentoAseguradoGeneral: cotizacion.datosGenerales.numDocAsegurado || '',
+            nombreAseguradoGeneral: cotizacion.datosGenerales.nombreAsegurado || '',
+            moneda: cotizacion.datosGenerales.moneda || 'COP',
+            departamento: cotizacion.ubicacionRiesgo?.departamento || '',
+            localidadMunicipio: cotizacion.ubicacionRiesgo?.municipio || '',
+            direccionRiesgo: cotizacion.ubicacionRiesgo?.direccion || '',
+            valorContrato: cotizacion.detallesContrato?.valorContrato || cotizacion.valorAsegurado || 0,
+            fechaInicioContrato: cotizacion.detallesContrato?.fechaInicio || '',
+            fechaFinContrato: cotizacion.detallesContrato?.fechaFin || '',
+            duracionContrato: cotizacion.detallesContrato?.duracion || '',
+          });
+        }, 100);
+      }
+    }
+
+    // ✅ Restaurar paso donde se quedó (si está guardado, sino empezar desde paso 1)
+    const pasoGuardado = cotizacion.pasoGuardado || 1;
+    this.currentStep = Math.min(pasoGuardado, 2); // Máximo paso 2 (paso 3 es resumen)
+    this.stepperConfig.activeIndex = this.currentStep;
+
+    // ✅ Restaurar breadcrumb
+    this.updateBreadcrumb();
+
+    console.log('✅ Cotización retomada exitosamente. Paso:', this.currentStep);
+  }
+
+  // ✅ Regla 17.3: Imprimir cotización desde la tabla
+  imprimirCotizacion(cotizacion: any): void {
+    console.log('🖨️ Imprimir cotización:', cotizacion.id);
+    
+    // Abrir ventana de impresión con los datos de la cotización
+    const ventanaImpresion = window.open('', '_blank');
+    if (!ventanaImpresion) {
+      alert('Por favor, permite ventanas emergentes para imprimir');
+      return;
+    }
+
+    const contenido = this.generarContenidoImpresion(cotizacion);
+    ventanaImpresion.document.write(contenido);
+    ventanaImpresion.document.close();
+    
+    // Esperar a que se cargue el contenido antes de imprimir
+    ventanaImpresion.onload = () => {
+      setTimeout(() => {
+        ventanaImpresion.print();
+      }, 250);
+    };
+  }
+
+  // ✅ Regla 17.3: Imprimir desde detalle de cotización
+  imprimirDetalleCotizacion(): void {
+    if (this.cotizacionSeleccionada) {
+      console.log('🖨️ Imprimir detalle de cotización:', this.cotizacionSeleccionada.id);
+      this.imprimirCotizacion(this.cotizacionSeleccionada);
+    }
+  }
+
+  // ✅ Generar contenido HTML para impresión
+  private generarContenidoImpresion(cotizacion: any): string {
+    return `
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cotización ${cotizacion.numero}</title>
+        <style>
+          @media print {
+            @page { margin: 2cm; }
+            body { font-family: Arial, sans-serif; font-size: 12px; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #038450; padding-bottom: 20px; }
+            .header h1 { color: #038450; margin: 0; }
+            .section { margin-bottom: 20px; }
+            .section h2 { color: #038450; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+            .row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+            .label { font-weight: bold; width: 40%; }
+            .value { width: 60%; }
+            .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #666; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            table th { background-color: #038450; color: white; }
+          }
+          body { font-family: Arial, sans-serif; font-size: 12px; padding: 20px; }
+          .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #038450; padding-bottom: 20px; }
+          .header h1 { color: #038450; margin: 0; }
+          .section { margin-bottom: 20px; }
+          .section h2 { color: #038450; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+          .row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+          .label { font-weight: bold; width: 40%; }
+          .value { width: 60%; }
+          .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #666; }
+          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+          table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          table th { background-color: #038450; color: white; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>SEGUROS BOLÍVAR</h1>
+          <h2>COTIZACIÓN ${cotizacion.numero}</h2>
+        </div>
+
+        <div class="section">
+          <h2>Información General</h2>
+          <div class="row">
+            <span class="label">Número de Cotización:</span>
+            <span class="value">${cotizacion.numero}</span>
+          </div>
+          <div class="row">
+            <span class="label">Estado:</span>
+            <span class="value">${cotizacion.estado}</span>
+          </div>
+          <div class="row">
+            <span class="label">Fecha de Creación:</span>
+            <span class="value">${cotizacion.fechaCreacion}</span>
+          </div>
+          <div class="row">
+            <span class="label">Producto:</span>
+            <span class="value">${cotizacion.producto}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Datos del Tomador</h2>
+          <div class="row">
+            <span class="label">Tipo de Documento:</span>
+            <span class="value">${cotizacion.datosGenerales?.tipoDocTomador || 'N/A'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Número de Documento:</span>
+            <span class="value">${cotizacion.datosGenerales?.numDocTomador || 'N/A'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Nombre:</span>
+            <span class="value">${cotizacion.datosGenerales?.nombreTomador || cotizacion.tomador?.nombre || 'N/A'}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Datos del Asegurado</h2>
+          <div class="row">
+            <span class="label">Tipo de Documento:</span>
+            <span class="value">${cotizacion.datosGenerales?.tipoDocAsegurado || 'N/A'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Número de Documento:</span>
+            <span class="value">${cotizacion.datosGenerales?.numDocAsegurado || 'N/A'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Nombre:</span>
+            <span class="value">${cotizacion.datosGenerales?.nombreAsegurado || 'N/A'}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Valores</h2>
+          <div class="row">
+            <span class="label">Valor Asegurado:</span>
+            <span class="value">${this.formatCurrency(cotizacion.valorAsegurado)}</span>
+          </div>
+          ${cotizacion.resumenCostos ? `
+          <div class="row">
+            <span class="label">Prima Neta:</span>
+            <span class="value">${this.formatCurrency(cotizacion.resumenCostos.primaNeta)}</span>
+          </div>
+          <div class="row">
+            <span class="label">IVA:</span>
+            <span class="value">${this.formatCurrency(cotizacion.resumenCostos.iva)}</span>
+          </div>
+          <div class="row">
+            <span class="label">Prima Total:</span>
+            <span class="value"><strong>${this.formatCurrency(cotizacion.resumenCostos.primaTotal)}</strong></span>
+          </div>
+          ` : ''}
+        </div>
+
+        <div class="footer">
+          <p>Documento generado el ${new Date().toLocaleDateString('es-CO')} a las ${new Date().toLocaleTimeString('es-CO')}</p>
+          <p>Seguros Bolívar - Sistema de Cumplimiento Digital</p>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
   // ✅ Formatear valor como moneda
   formatCurrency(value: number): string {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(value);
   }
 
@@ -4167,15 +4937,15 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       'CE': 'la Cédula de Extranjería',
       'NIT': 'el NIT',
       'PA': 'el Pasaporte',
-      'TI': 'la Tarjeta de Identidad'
+      'TI': 'la Tarjeta de Identidad',
     };
 
     if (!tipo) {
       return { valido: false, error: 'Seleccione un tipo de documento' };
     }
-    
+
     const nombreDoc = nombresDocumento[tipo] || 'el documento';
-    
+
     if (!numero) {
       return { valido: false, error: `Ingrese ${nombreDoc}` };
     }
@@ -4187,31 +4957,31 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
     // Limpiar el número para validación (excepto para NIT que puede tener guión)
     const numeroLimpio = tipo === 'NIT' ? numero : numero.replace(/[^A-Za-z0-9]/g, '');
-    
+
     // Validar longitud mínima
     if (numeroLimpio.length < reglas.min) {
-      return { 
-        valido: false, 
-        error: `${nombreDoc} debe tener mínimo ${reglas.min} dígitos` 
+      return {
+        valido: false,
+        error: `${nombreDoc} debe tener mínimo ${reglas.min} dígitos`,
       };
     }
-    
+
     // Validar longitud máxima
     if (numeroLimpio.length > reglas.max) {
-      return { 
-        valido: false, 
-        error: `${nombreDoc} debe tener máximo ${reglas.max} dígitos` 
+      return {
+        valido: false,
+        error: `${nombreDoc} debe tener máximo ${reglas.max} dígitos`,
       };
     }
-    
+
     // Validar patrón
     if (!reglas.pattern.test(numeroLimpio)) {
-      return { 
-        valido: false, 
-        error: reglas.message 
+      return {
+        valido: false,
+        error: reglas.message,
       };
     }
-    
+
     return { valido: true, error: '' };
   }
 
@@ -4221,7 +4991,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   validarDocumentoTomador(): void {
     const resultado = this.validarDocumento(this.tipoDocumentoTomador, this.numeroDocumentoTomador);
     this.errorDocumentoTomador = resultado.error;
-    
+
     // Buscar nombre mientras escribe (mínimo 5 caracteres)
     // Incluso si no es completamente válido, intentamos buscar
     if (this.numeroDocumentoTomador && this.numeroDocumentoTomador.length >= 5) {
@@ -4236,9 +5006,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
    * Valida el documento del Asegurado al cambiar
    */
   validarDocumentoAsegurado(): void {
-    const resultado = this.validarDocumento(this.tipoDocumentoAsegurado, this.numeroDocumentoAsegurado);
+    const resultado = this.validarDocumento(
+      this.tipoDocumentoAsegurado,
+      this.numeroDocumentoAsegurado,
+    );
     this.errorDocumentoAsegurado = resultado.error;
-    
+
     // Buscar nombre mientras escribe (mínimo 5 caracteres)
     // Incluso si no es completamente válido, intentamos buscar
     if (this.numeroDocumentoAsegurado && this.numeroDocumentoAsegurado.length >= 5) {
@@ -4258,7 +5031,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       'CE': 'Ej: 1234567',
       'NIT': 'Ej: 900123456-7',
       'PA': 'Ej: AB1234567',
-      'TI': 'Ej: 12345678901'
+      'TI': 'Ej: 12345678901',
     };
     return placeholders[tipo] || 'Ingrese número de documento';
   }
@@ -4272,7 +5045,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       'CE': 'La Cédula de Extranjería',
       'NIT': 'El NIT',
       'PA': 'El Pasaporte',
-      'TI': 'La Tarjeta de Identidad'
+      'TI': 'La Tarjeta de Identidad',
     };
     return nombres[tipo] || 'El número de documento';
   }
@@ -4298,8 +5071,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
    * Obtiene el tipo de input según el tipo de documento
    */
   getInputType(tipo: string): string {
-    // Solo NIT y PA permiten caracteres especiales/letras
-    return (tipo === 'PA') ? 'text' : 'text';
+    // PA (Pasaporte) permite letras, otros tipos solo números
+    return tipo === 'PA' || tipo === 'NIT' ? 'text' : 'tel';
   }
 
   /**
@@ -4308,12 +5081,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   formatearNIT(event: Event): void {
     const input = event.target as HTMLInputElement;
     let valor = input.value.replace(/[^0-9]/g, '');
-    
+
     // Si tiene más de 9 dígitos, agregar guión antes del dígito verificador
     if (valor.length > 9) {
       valor = valor.substring(0, 9) + '-' + valor.substring(9, 10);
     }
-    
+
     input.value = valor;
     this.numeroDocumentoTomador = valor;
   }
@@ -4353,9 +5126,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       return true;
     }
     // Permitir números (48-57) y letras (65-90, 97-122)
-    if ((charCode >= 48 && charCode <= 57) || 
-        (charCode >= 65 && charCode <= 90) || 
-        (charCode >= 97 && charCode <= 122)) {
+    if (
+      (charCode >= 48 && charCode <= 57) ||
+      (charCode >= 65 && charCode <= 90) ||
+      (charCode >= 97 && charCode <= 122)
+    ) {
       return true;
     }
     event.preventDefault();
@@ -4364,12 +5139,16 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   // ✅ MÉTODOS PARA BÚSQUEDA DE NOMBRES
   // ============================================
-  
+
   buscarNombreTomador(): void {
-    if (this.numeroDocumentoTomador && this.numeroDocumentoTomador.length >= 5 && !this.errorDocumentoTomador) {
+    if (
+      this.numeroDocumentoTomador &&
+      this.numeroDocumentoTomador.length >= 5 &&
+      !this.errorDocumentoTomador
+    ) {
       this.buscandoTomador = true;
       this.nombreTomador = '';
-      
+
       // Simular búsqueda con timeout
       setTimeout(() => {
         // Datos de prueba - simular respuesta del servidor
@@ -4381,16 +5160,16 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           '33333333': '', // Trigger modal Solicitar Cupo (sin cupo disponible)
           '12345678': 'COMERCIALIZADORA NACIONAL S.A.',
         };
-        
+
         const docNum = this.numeroDocumentoTomador.replace(/[^0-9]/g, '');
-        
+
         // Escenario 1: Tomador no creado
         if (docNum === '11111111') {
           this.buscandoTomador = false;
           this.showClienteNoCreado = true;
           return;
         }
-        
+
         // Escenario 2: SARLAFT desactualizado
         if (docNum === '22222222') {
           this.buscandoTomador = false;
@@ -4405,7 +5184,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           this.showSolicitarCupo = true;
           return;
         }
-        
+
         this.nombreTomador = mockData[docNum] || 'CLIENTE ENCONTRADO - ' + docNum;
         this.buscandoTomador = false;
       }, 1000);
@@ -4413,17 +5192,21 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   buscarNombreAsegurado(): void {
-    if (this.numeroDocumentoAsegurado && this.numeroDocumentoAsegurado.length >= 5 && !this.errorDocumentoAsegurado) {
+    if (
+      this.numeroDocumentoAsegurado &&
+      this.numeroDocumentoAsegurado.length >= 5 &&
+      !this.errorDocumentoAsegurado
+    ) {
       this.buscandoAsegurado = true;
       this.nombreAsegurado = '';
-      
+
       setTimeout(() => {
         const mockData: { [key: string]: string } = {
           '900111222': 'ASEGURADO PRINCIPAL S.A.',
           '800333444': 'BENEFICIARIO EJEMPLO LTDA',
           '12345678': 'ASEGURADO COMERCIAL S.A.S.',
         };
-        
+
         const docNum = this.numeroDocumentoAsegurado.replace(/[^0-9]/g, '');
         this.nombreAsegurado = mockData[docNum] || 'ASEGURADO ENCONTRADO - ' + docNum;
         this.buscandoAsegurado = false;
@@ -4444,7 +5227,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   continuarRegistroCliente(): void {
     console.log('✅ Continuando registro de cliente:', {
       celularCliente: this.celularCliente,
-      celularAsesor: this.celularAsesor
+      celularAsesor: this.celularAsesor,
     });
     this.showClienteNoCreado = false;
     // Mostrar notificación
@@ -4452,7 +5235,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       ...this.snackbarConfig,
       show: true,
       message: '✅ Registro de cliente iniciado',
-      class: 'snackbar-success-theme'
+      class: 'snackbar-success-theme',
     };
   }
 
@@ -4476,7 +5259,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       celularCliente: this.celularCliente,
       celularAsesor: this.celularAsesor,
       correoTomador: this.correoTomador,
-      correoAsesor: this.correoAsesor
+      correoAsesor: this.correoAsesor,
     });
     this.showClienteNoCreado = false;
     // Mostrar notificación de éxito
@@ -4484,7 +5267,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       ...this.snackbarConfig,
       show: true,
       message: '✅ Cliente creado exitosamente',
-      class: 'snackbar-success-theme'
+      class: 'snackbar-success-theme',
     };
     // Limpiar campos
     this.celularCliente = '';
@@ -4522,7 +5305,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   continuarActualizacionSarlaft(): void {
     console.log('✅ Continuando actualización SARLAFT:', {
       celularCliente: this.celularCliente,
-      celularAsesor: this.celularAsesor
+      celularAsesor: this.celularAsesor,
     });
     this.showSarlaftDesactualizado = false;
     // Mostrar notificación
@@ -4530,7 +5313,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       ...this.snackbarConfig,
       show: true,
       message: '✅ Actualización SARLAFT iniciada',
-      class: 'snackbar-success-theme'
+      class: 'snackbar-success-theme',
     };
   }
 
@@ -4540,24 +5323,25 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       celularCliente: this.celularCliente,
       correoTomador: this.correoTomador,
       celularAsesor: this.celularAsesor,
-      correoAsesor: this.correoAsesor
+      correoAsesor: this.correoAsesor,
     });
-    
+
     // Cerrar modal
     this.showSarlaftDesactualizado = false;
-    
+
     // Limpiar datos del tomador porque NO puede continuar
     this.nombreTomador = '';
     this.numeroDocumentoTomador = '';
-    
+
     // Mostrar notificación informando que debe actualizar SARLAFT
     this.snackbarConfig = {
       ...this.snackbarConfig,
       show: true,
-      message: '⚠️ Se ha enviado solicitud de actualización SARLAFT. No puede continuar hasta que el tomador actualice su información.',
-      class: 'snackbar-warning-theme'
+      message:
+        '⚠️ Se ha enviado solicitud de actualización SARLAFT. No puede continuar hasta que el tomador actualice su información.',
+      class: 'snackbar-warning-theme',
     };
-    
+
     // NO avanza al paso 2 - se queda en paso 1
   }
 
@@ -4590,7 +5374,6 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.stepperConfig.activeIndex = 0;
   }
 
-
   // ✅ Sub-pasos del Paso 2
   subPasoActual = 1; // Siempre empieza en 1
   subPasos = [
@@ -4601,7 +5384,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     { num: 5, nombre: 'Coaseguro' },
     { num: 6, nombre: 'Detalles' },
     { num: 7, nombre: 'Coberturas' },
-    { num: 8, nombre: 'Resp. Civil' }
+    { num: 8, nombre: 'Resp. Civil' },
   ];
 
   irASubPaso(num: number): void {
@@ -4635,14 +5418,14 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       console.log('📄 Archivo de estados financieros seleccionado:', file.name);
-      
+
       // Validar tamaño (máximo 30MB)
       if (file.size > 30 * 1024 * 1024) {
         this.snackbarConfig = {
           ...this.snackbarConfig,
           show: true,
           message: '❌ El archivo no puede superar los 30 MB',
-          class: 'snackbar-error-theme'
+          class: 'snackbar-error-theme',
         };
         return;
       }
@@ -4658,7 +5441,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       if (this.uploadIntervalEstadosFinancieros) {
         clearInterval(this.uploadIntervalEstadosFinancieros);
       }
-      
+
       this.uploadIntervalEstadosFinancieros = setInterval(() => {
         this.uploadProgressEstadosFinancieros += 10;
         if (this.uploadProgressEstadosFinancieros >= 100) {
@@ -4688,7 +5471,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         ...this.snackbarConfig,
         show: true,
         message: '❌ Debe cargar los estados financieros',
-        class: 'snackbar-error-theme'
+        class: 'snackbar-error-theme',
       };
       return;
     }
@@ -4698,14 +5481,14 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         ...this.snackbarConfig,
         show: true,
         message: '❌ Debe seleccionar una actividad económica',
-        class: 'snackbar-error-theme'
+        class: 'snackbar-error-theme',
       };
       return;
     }
 
     console.log('✅ Solicitando cupo:', {
       estadosFinancieros: this.estadosFinancierosFileName,
-      actividadEconomica: this.actividadEconomica
+      actividadEconomica: this.actividadEconomica,
     });
 
     // Cerrar modal y mostrar notificación de éxito
@@ -4714,7 +5497,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       ...this.snackbarConfig,
       show: true,
       message: '✅ Solicitud de cupo enviada exitosamente. Será procesada en breve.',
-      class: 'snackbar-success-theme'
+      class: 'snackbar-success-theme',
     };
   }
 
@@ -4742,8 +5525,16 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (this.agenteClave && this.agenteClave.length >= 4) {
       // Simular búsqueda de agente
       const mockAgentes: { [key: string]: any } = {
-        '53940': { nombre: 'JUAN CARLOS MARTINEZ', formaActuacion: 'Directa', convenio: 'Conv-001' },
-        '33074': { nombre: 'MARIA FERNANDA LOPEZ', formaActuacion: 'Indirecta', convenio: 'Conv-002' },
+        '53940': {
+          nombre: 'JUAN CARLOS MARTINEZ',
+          formaActuacion: 'Directa',
+          convenio: 'Conv-001',
+        },
+        '33074': {
+          nombre: 'MARIA FERNANDA LOPEZ',
+          formaActuacion: 'Indirecta',
+          convenio: 'Conv-002',
+        },
         '78236': { nombre: 'CARLOS ANDRES GOMEZ', formaActuacion: 'Directa', convenio: 'Conv-003' },
         '38361': { nombre: 'ANA PATRICIA RUIZ', formaActuacion: 'Mixta', convenio: 'Conv-004' },
       };
@@ -4763,7 +5554,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   validarParticipacion(): void {
     const disponible = this.porcentajeDisponible;
-    
+
     if (this.agenteParticipacion < 0) {
       this.errorParticipacion = 'El porcentaje no puede ser negativo';
     } else if (this.agenteParticipacion > disponible) {
@@ -4804,7 +5595,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       ...this.snackbarConfig,
       show: true,
       message: this.agenteEditIndex !== null ? '✅ Agente actualizado' : '✅ Agente agregado',
-      class: 'snackbar-success-theme'
+      class: 'snackbar-success-theme',
     };
   }
 
@@ -4827,7 +5618,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       ...this.snackbarConfig,
       show: true,
       message: '✅ Agente eliminado',
-      class: 'snackbar-success-theme'
+      class: 'snackbar-success-theme',
     };
   }
 
@@ -4836,7 +5627,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     // Solo validamos que la suma total no exceda 100%
     const totalOtros = this.agentesAdicionales.reduce((sum, a) => sum + a.participacion, 0);
     const totalGeneral = this.liderParticipacion + totalOtros;
-    
+
     console.log('📊 Distribución de participación:');
     console.log(`   - Líder: ${this.liderParticipacion}%`);
     console.log(`   - Otros agentes: ${totalOtros}%`);
@@ -4940,7 +5731,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       // Buscar en número
       const coincideNumero = cot.numero.toLowerCase().includes(busqueda);
       // Buscar en tomador (nombre o documento)
-      const coincideTomador = cot.tomador.nombre.toLowerCase().includes(busqueda) ||
+      const coincideTomador =
+        cot.tomador.nombre.toLowerCase().includes(busqueda) ||
         cot.tomador.documento.toLowerCase().includes(busqueda);
       // Buscar en producto
       const coincideProducto = cot.producto.toLowerCase().includes(busqueda);
@@ -4986,8 +5778,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           gastosAdmin: 0,
           numeroPol: '',
           certificado: '',
-          esDefecto: true // Marca para saber que es la fila fija de Bolívar (sin acciones)
-        }
+          esDefecto: true, // Marca para saber que es la fila fija de Bolívar (sin acciones)
+        },
       ];
     } else if (this.tipoCoaseguro === 'sin-coaseguro') {
       // Limpiar coaseguros cuando se selecciona "Sin Coaseguro"
@@ -5005,34 +5797,34 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   guardarCoaseguroCedido(): void {
     if (!this.coaseguroCedidoCoaseguradora || !this.coaseguroCedidoParticipacion) return;
-    
+
     const coaseguroData = {
       coaseguradora: this.coaseguroCedidoCoaseguradora,
       participacion: this.coaseguroCedidoParticipacion,
       gastosAdmin: this.coaseguroCedidoGastosAdmin || 0,
       numeroPol: this.coaseguroCedidoNumeroPol,
       certificado: this.coaseguroCedidoCertificado,
-      esDefecto: false
+      esDefecto: false,
     };
-    
+
     if (this.coaseguroCedidoEditIndex !== null) {
       // Editar existente (preservar esDefecto si es Bolívar)
       const esDefectoOriginal = this.coasegurosCedidos[this.coaseguroCedidoEditIndex].esDefecto;
       this.coasegurosCedidos[this.coaseguroCedidoEditIndex] = {
         ...coaseguroData,
-        esDefecto: esDefectoOriginal
+        esDefecto: esDefectoOriginal,
       };
     } else {
       // Agregar nuevo
       this.coasegurosCedidos.push(coaseguroData);
     }
-    
+
     // Calcular automáticamente el porcentaje de Bolívar (fila por defecto)
     this.actualizarParticipacionBolivar();
-    
+
     this.cerrarModalCoaseguroCedido();
   }
-  
+
   // ✅ Actualizar automáticamente el porcentaje de Bolívar
   actualizarParticipacionBolivar(): void {
     // Sumar participación de todas las filas que NO son Bolívar
@@ -5042,14 +5834,15 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         sumaOtros += Number(c.participacion) || 0;
       }
     });
-    
+
     // Bolívar recibe el resto (100 - suma de otros)
     const participacionBolivar = 100 - sumaOtros;
-    
+
     // Actualizar la fila de Bolívar
     const bolivarIndex = this.coasegurosCedidos.findIndex(c => c.esDefecto);
     if (bolivarIndex !== -1) {
-      this.coasegurosCedidos[bolivarIndex].participacion = participacionBolivar > 0 ? participacionBolivar : 0;
+      this.coasegurosCedidos[bolivarIndex].participacion =
+        participacionBolivar > 0 ? participacionBolivar : 0;
     }
   }
 
@@ -5059,33 +5852,33 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (this.coasegurosCedidos[index]?.esDefecto) {
       return;
     }
-    
+
     // Guardar el índice y mostrar la alerta de confirmación
     this.coaseguroAEliminarIndex = index;
     this.showAlertaEliminarCoaseguro = true;
   }
-  
+
   // ✅ Cancelar eliminación
   cancelarEliminarCoaseguro(): void {
     this.showAlertaEliminarCoaseguro = false;
     this.coaseguroAEliminarIndex = null;
   }
-  
+
   // ✅ Confirmar y ejecutar la eliminación
   confirmarEliminarCoaseguro(): void {
     if (this.coaseguroAEliminarIndex !== null) {
       this.coasegurosCedidos.splice(this.coaseguroAEliminarIndex, 1);
-      
+
       // Recalcular el porcentaje de Bolívar después de eliminar
       this.actualizarParticipacionBolivar();
-      
+
       // Recalcular paginación si es necesario
       const totalPages = Math.ceil(this.coasegurosCedidos.length / this.coasegurosCedidosPageSize);
       if (this.coasegurosCedidosPage > totalPages && totalPages > 0) {
         this.coasegurosCedidosPage = totalPages;
       }
     }
-    
+
     // Cerrar la alerta
     this.showAlertaEliminarCoaseguro = false;
     this.coaseguroAEliminarIndex = null;
@@ -5108,7 +5901,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Ordenamiento Coaseguros Cedidos
   sortCoasegurosCedidos(column: string): void {
     if (this.coasegurosCedidosSortColumn === column) {
-      this.coasegurosCedidosSortDirection = this.coasegurosCedidosSortDirection === 'asc' ? 'desc' : 'asc';
+      this.coasegurosCedidosSortDirection =
+        this.coasegurosCedidosSortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       this.coasegurosCedidosSortColumn = column;
       this.coasegurosCedidosSortDirection = 'asc';
@@ -5117,12 +5911,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.coasegurosCedidos.sort((a, b) => {
       let valA = a[column];
       let valB = b[column];
-      
+
       if (typeof valA === 'string') {
         valA = valA.toLowerCase();
         valB = valB.toLowerCase();
       }
-      
+
       if (valA < valB) return this.coasegurosCedidosSortDirection === 'asc' ? -1 : 1;
       if (valA > valB) return this.coasegurosCedidosSortDirection === 'asc' ? 1 : -1;
       return 0;
@@ -5142,7 +5936,10 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   get coasegurosCedidosPageEnd(): number {
-    return Math.min(this.coasegurosCedidosPageStart + this.coasegurosCedidosPageSize, this.coasegurosCedidos.length);
+    return Math.min(
+      this.coasegurosCedidosPageStart + this.coasegurosCedidosPageSize,
+      this.coasegurosCedidos.length,
+    );
   }
 
   get coasegurosCedidosPaginados(): any[] {
@@ -5163,3 +5960,5 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     }
   }
 }
+
+

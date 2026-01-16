@@ -15,8 +15,7 @@ describe('HeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HeaderComponent],
-      imports: [RouterTestingModule],
+      imports: [HeaderComponent, RouterTestingModule],
       providers: [
         { provide: BreadcrumbService, useValue: mockBreadcrumbService }
       ],
@@ -42,5 +41,8 @@ describe('HeaderComponent', () => {
     expect(component.isMenuOpen).toBe(false); 
   });
 });
+
+
+
 
 

@@ -21,8 +21,8 @@ import { PolicyModificationComponent } from './policy-modification.component';
 import { PolicyModificationRoutingModule } from './policy-modification-routing.module';
 
 @NgModule({
-  declarations: [PolicyModificationComponent],
   imports: [
+    PolicyModificationComponent,
     CommonModule,
     ReactiveFormsModule,
     FormsModule, // ✅ Para ngModel en los campos editables
@@ -43,3 +43,4 @@ import { PolicyModificationRoutingModule } from './policy-modification-routing.m
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PolicyModificationModule {}
+
