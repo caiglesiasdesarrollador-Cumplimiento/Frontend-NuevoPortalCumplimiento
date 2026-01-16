@@ -1,7 +1,7 @@
 {
   "environment": {
     "appDir": ".",
-    "releasePath": "dist"
+    "releasePath": "dist/browser"
   },
   "s3": {
     "dev": {
