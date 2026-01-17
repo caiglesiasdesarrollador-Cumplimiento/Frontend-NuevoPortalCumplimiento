@@ -3750,7 +3750,12 @@ NIT:</textarea
 
     <!-- Mensaje -->
     <p class="archivo-no-compatible-modal__message">
-      Las extensiones soportadas son: *.DOCX, XLSX y *.PDF
+      <span *ngIf="archivoNoCompatibleNombre">
+        El archivo "{{ archivoNoCompatibleNombre }}" no se puede procesar. Por favor, selecciona un archivo en uno de los formatos permitidos.
+      </span>
+      <span *ngIf="!archivoNoCompatibleNombre">
+        Las extensiones soportadas son: *.DOCX, XLSX y *.PDF
+      </span>
     </p>
 
     <!-- Botones -->

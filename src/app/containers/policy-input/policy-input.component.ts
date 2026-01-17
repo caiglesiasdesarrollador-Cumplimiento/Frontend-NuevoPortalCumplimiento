@@ -2383,7 +2383,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
 
       if (!validExtensions.includes(extension)) {
-        this.showErrorNotification('Las extensiones soportadas son: *.DOCX, XLSX y *.PDF');
+        // ✅ RF-008: Mostrar modal de archivo no compatible
+        this.mostrarToastArchivoNoValido(file.name);
         input.value = ''; // Limpiar input
         return;
       }
@@ -2528,7 +2529,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       const validExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
       if (!validExtensions.includes(extension)) {
-        this.showErrorNotification('Las extensiones soportadas son: *.DOCX, XLSX y *.PDF');
+        // ✅ RF-008: Mostrar modal de archivo no compatible
+        this.mostrarToastArchivoNoValido(file.name);
         return;
       }
 
