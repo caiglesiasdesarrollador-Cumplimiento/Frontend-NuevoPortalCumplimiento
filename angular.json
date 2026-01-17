@@ -40,7 +40,7 @@
               "extractLicenses": true,
               "sourceMap": false,
               "outputHashing": "none",
-              "baseHref": "/browser/",
+              "baseHref": "/",
               "budgets": [
                 {
                   "type": "initial",
