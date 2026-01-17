@@ -5039,6 +5039,254 @@ NIT:</textarea
   </div>
 </div>
 
+<!-- ✅ RF-005 Regla 5.3: Modal Error Producto vs Tipo Cliente -->
+<div
+  *ngIf="showModalProductoNoCorresponde"
+  class="modal-overlay"
+  (click)="cerrarModalProductoNoCorresponde()"
+  (keydown.escape)="cerrarModalProductoNoCorresponde()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Error de Validación</h3>
+        <p class="alert-bolivar__message">
+          EL PRODUCTO SELECCIONADO NO CORRESPONDE A LA ENTIDAD QUE ESTÁS SELECCIONANDO COMO TOMADOR/AFIANZADO.
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalProductoNoCorresponde()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalProductoNoCorresponde()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-005 Regla 5.4: Modal Error Combinación de Clientes -->
+<div
+  *ngIf="showModalCombinacionClientes"
+  class="modal-overlay"
+  (click)="cerrarModalCombinacionClientes()"
+  (keydown.escape)="cerrarModalCombinacionClientes()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Error de Validación</h3>
+        <p class="alert-bolivar__message">
+          NO ES POSIBLE AVANZAR: AL MENOS UNO ENTRE TOMADOR Y ASEGURADO DEBE SER UNA PERSONA JURÍDICA.
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalCombinacionClientes()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalCombinacionClientes()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-005 Regla 5.5: Popup Cliente Consultable (Restringido) -->
+<div
+  *ngIf="showModalClienteConsultable"
+  class="modal-overlay"
+  (click)="cerrarModalClienteConsultable()"
+  (keydown.escape)="cerrarModalClienteConsultable()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="popup-cliente-restringido"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <button class="popup-cliente-restringido__close" (click)="cerrarModalClienteConsultable()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="popup-cliente-restringido__icon">
+      <div class="popup-cliente-restringido__icon-circle">
+        <i class="fa-solid fa-exclamation"></i>
+      </div>
+    </div>
+    <h3 class="popup-cliente-restringido__title">No es posible activar el seguro para el cliente</h3>
+    <p class="popup-cliente-restringido__message">
+      Para más información, escríbanos a WhatsApp o comuníquese al #773.
+    </p>
+    <div class="popup-cliente-restringido__actions">
+      <button
+        class="popup-cliente-restringido__btn-llamar"
+        (click)="llamar773()"
+      >
+        Marcar al #773
+      </button>
+      <button
+        class="popup-cliente-restringido__btn-whatsapp"
+        (click)="irAWhatsApp()"
+      >
+        Ir al WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-005 Regla 5.6: Popup Reputación Negativa -->
+<div
+  *ngIf="showModalReputacionNegativa"
+  class="modal-overlay"
+  (click)="cerrarModalReputacionNegativa()"
+  (keydown.escape)="cerrarModalReputacionNegativa()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="popup-cliente-restringido"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <button class="popup-cliente-restringido__close" (click)="cerrarModalReputacionNegativa()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="popup-cliente-restringido__icon">
+      <div class="popup-cliente-restringido__icon-circle">
+        <i class="fa-solid fa-exclamation"></i>
+      </div>
+    </div>
+    <h3 class="popup-cliente-restringido__title">No es posible activar el seguro para el cliente</h3>
+    <p class="popup-cliente-restringido__message">
+      Para más información, escríbanos a WhatsApp o comuníquese al #773.
+    </p>
+    <div class="popup-cliente-restringido__actions">
+      <button
+        class="popup-cliente-restringido__btn-llamar"
+        (click)="llamar773()"
+      >
+        Marcar al #773
+      </button>
+      <button
+        class="popup-cliente-restringido__btn-whatsapp"
+        (click)="irAWhatsApp()"
+      >
+        Ir al WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-005 Regla 5.7: Modal Consorcio/Uniones Temporales -->
+<div
+  *ngIf="showModalConsorcioUnionTemporal"
+  class="modal-overlay"
+  (click)="cerrarModalConsorcioUnionTemporal()"
+  (keydown.escape)="cerrarModalConsorcioUnionTemporal()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-info"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Información Importante</h3>
+        <p class="alert-bolivar__message">
+          EL TOMADOR HACE PARTE DE UN CONSORCIO O UNIÓN TEMPORAL, ESTO IMPACTA EL CUPO DEL GRUPO.
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalConsorcioUnionTemporal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalConsorcioUnionTemporal()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-005 Regla 5.10: Modal Cliente Enfoque - NITs Autorizados -->
+<div
+  *ngIf="showModalClienteEnfoque"
+  class="modal-overlay"
+  (click)="cerrarModalClienteEnfoque()"
+  (keydown.escape)="cerrarModalClienteEnfoque()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Error de Validación</h3>
+        <p class="alert-bolivar__message">
+          EL NIT DEL TOMADOR NO ESTÁ AUTORIZADO PARA ESTE USUARIO INTERMEDIARIO.
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalClienteEnfoque()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalClienteEnfoque()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ✅ TOAST DE NOTIFICACIÓN MEJORADO - Centrado estilo Bolívar -->
 <div
   class="toast-overlay"

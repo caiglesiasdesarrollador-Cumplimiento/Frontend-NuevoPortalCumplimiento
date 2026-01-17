@@ -38,6 +38,9 @@ import { QuoteService } from '../../shared/services/quote.service';
 import { CupoService } from '../../shared/services/cupo.service';
 import { GrupoBolivarService } from '../../shared/services/grupo-bolivar.service';
 import { ProgramaService } from '../../shared/services/programa.service';
+import { ClienteValidacionService } from '../../shared/services/cliente-validacion.service';
+import { ProductoValidacionService } from '../../shared/services/producto-validacion.service';
+import { ClienteEnfoqueService } from '../../shared/services/cliente-enfoque.service';
 import { firstValueFrom } from 'rxjs';
 import {
   TipoCliente,
@@ -719,6 +722,14 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   isUploadingEstadosFinancieros = false;
   uploadProgressEstadosFinancieros = 0;
 
+  // ✅ RF-005: Propiedades para modales de validación
+  showModalProductoNoCorresponde = false; // Regla 5.3: Modal error producto vs tipo cliente
+  showModalCombinacionClientes = false; // Regla 5.4: Modal error combinación de clientes
+  showModalClienteConsultable = false; // Regla 5.5: Popup cliente consultable/restringido
+  showModalReputacionNegativa = false; // Regla 5.6: Popup reputación negativa
+  showModalConsorcioUnionTemporal = false; // Regla 5.7: Modal informativo consorcio/uniones temporales
+  showModalClienteEnfoque = false; // Regla 5.10: Modal error cliente Enfoque - NITs autorizados
+
   // ✅ Lista de actividades económicas CIIU
   actividadesEconomicas = [
     { codigo: 'A', nombre: 'Agricultura, ganadería, caza, silvicultura y pesca' },
@@ -1260,6 +1271,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     private readonly cupoService: CupoService,
     private readonly grupoBolivarService: GrupoBolivarService,
     private readonly programaService: ProgramaService,
+    private readonly clienteValidacionService: ClienteValidacionService, // ✅ RF-005
+    private readonly productoValidacionService: ProductoValidacionService, // ✅ RF-005
+    private readonly clienteEnfoqueService: ClienteEnfoqueService, // ✅ RF-005
     private readonly ngZone: NgZone,
     private readonly cdr: ChangeDetectorRef,
   ) {}
@@ -2717,6 +2731,21 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     }
     // ✅ GUARDAR INMEDIATAMENTE al cambiar campo
     this.guardarDatosFormulario();
+
+    // ✅ RF-005 Regla 5.3: Validar producto vs tipo de cliente cuando cambia el producto
+    if (this.tipoDocumentoTomador && this.numeroDocumentoTomador && this.nombreTomador) {
+      this.validarProductoVsTipoCliente();
+    }
+
+    // ✅ RF-005 Regla 5.4: Validar combinación de clientes cuando cambia el producto
+    if (
+      this.tipoDocumentoTomador &&
+      this.numeroDocumentoTomador &&
+      this.tipoDocumentoAsegurado &&
+      this.numeroDocumentoAsegurado
+    ) {
+      this.validarCombinacionClientes();
+    }
   }
 
   // ✅ Método para manejar cambio de clave del intermediario
@@ -2801,6 +2830,18 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     // ✅ RF-007 Regla 7.4: Bloquear si asegurado no está en programa (producto 440)
     if (this.showModalAseguradoNoEnPrograma) {
       console.log('❌ No se puede avanzar: Asegurado no está en programa');
+      return;
+    }
+
+    // ✅ RF-005: Bloquear si hay modales de validación RF-005 activos
+    if (
+      this.showModalProductoNoCorresponde ||
+      this.showModalCombinacionClientes ||
+      this.showModalClienteConsultable ||
+      this.showModalReputacionNegativa ||
+      this.showModalClienteEnfoque
+    ) {
+      console.log('❌ No se puede avanzar: Validaciones RF-005 bloqueantes activas');
       return;
     }
 
@@ -5316,6 +5357,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         if (this.tipoCliente === 'ocasional' && this.claveIntermediario) {
           this.validarGrupoBolivar();
         }
+
+        // ✅ RF-005: Validar todas las reglas RF-005 después de encontrar tomador
+        if (this.tipoDocumentoTomador && this.numeroDocumentoTomador) {
+          this.validarReglasRF005Tomador();
+        }
       }, 1000);
     }
   }
@@ -5349,6 +5395,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         // ✅ RF-007 Regla 7.2: Validar Grupo Bolívar (solo para cliente ocasional)
         if (this.tipoCliente === 'ocasional' && this.claveIntermediario) {
           this.validarGrupoBolivar();
+        }
+
+        // ✅ RF-005 Regla 5.4: Validar combinación de clientes cuando se encuentra asegurado
+        if (this.tipoDocumentoTomador && this.numeroDocumentoTomador && this.nombreTomador) {
+          this.validarCombinacionClientes();
         }
       }, 1000);
     }
@@ -6037,6 +6088,261 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
    */
   cerrarModalAseguradoNoEnPrograma(): void {
     this.showModalAseguradoNoEnPrograma = false;
+  }
+
+  // ============================================
+  // ✅ RF-005: MÉTODOS PARA MODALES DE VALIDACIÓN
+  // ============================================
+
+  /**
+   * ✅ RF-005 Regla 5.3: Cerrar modal de error producto vs tipo cliente
+   */
+  cerrarModalProductoNoCorresponde(): void {
+    this.showModalProductoNoCorresponde = false;
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.4: Cerrar modal de error combinación de clientes
+   */
+  cerrarModalCombinacionClientes(): void {
+    this.showModalCombinacionClientes = false;
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.5: Cerrar popup cliente consultable
+   */
+  cerrarModalClienteConsultable(): void {
+    this.showModalClienteConsultable = false;
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.5: Llamar al #773 (mobile: direcciona al teclado)
+   */
+  llamar773(): void {
+    // En mobile, esto direccionará al teclado del teléfono con #773 precargado
+    window.location.href = 'tel:#773';
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.5: Ir a WhatsApp (mobile: direcciona a WhatsApp)
+   */
+  irAWhatsApp(): void {
+    // En mobile, esto direccionará a WhatsApp para comunicarse con la línea
+    const whatsappUrl = 'https://wa.me/573001234567?text=Hola,%20necesito%20información%20sobre%20el%20cliente%20restringido';
+    window.open(whatsappUrl, '_blank');
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.6: Cerrar popup reputación negativa
+   */
+  cerrarModalReputacionNegativa(): void {
+    this.showModalReputacionNegativa = false;
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.7: Cerrar modal consorcio/uniones temporales
+   */
+  cerrarModalConsorcioUnionTemporal(): void {
+    this.showModalConsorcioUnionTemporal = false;
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.10: Cerrar modal cliente Enfoque
+   */
+  cerrarModalClienteEnfoque(): void {
+    this.showModalClienteEnfoque = false;
+  }
+
+  // ============================================
+  // ✅ RF-005: MÉTODOS DE VALIDACIÓN
+  // ============================================
+
+  /**
+   * ✅ RF-005: Validar todas las reglas RF-005 para el tomador
+   * Se invoca después de encontrar el tomador
+   */
+  private validarReglasRF005Tomador(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    // Validar en paralelo todas las reglas RF-005
+    this.validarProductoVsTipoCliente();
+    this.validarClienteConsultable();
+    this.validarReputacionNegativa();
+    this.validarConsorcioUnionTemporal();
+    this.validarClienteEnfoque();
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.3: Validar producto vs tipo de cliente
+   */
+  private validarProductoVsTipoCliente(): void {
+    if (!this.tipoProducto || !this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    const esEntidadPublica = this.productoValidacionService.esEntidadJuridicaPublica(
+      this.tipoDocumentoTomador,
+      this.numeroDocumentoTomador,
+    );
+
+    if (esEntidadPublica) {
+      const productoValido = this.productoValidacionService.validarProductoVsTipoEntidad(
+        this.tipoProducto,
+        esEntidadPublica,
+      );
+
+      if (!productoValido) {
+        this.showModalProductoNoCorresponde = true;
+        console.log('❌ RF-005 Regla 5.3: Producto no corresponde a entidad pública');
+      }
+    }
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.4: Validar combinación de clientes
+   */
+  private validarCombinacionClientes(): void {
+    if (
+      !this.tipoProducto ||
+      !this.tipoDocumentoTomador ||
+      !this.tipoDocumentoAsegurado
+    ) {
+      return;
+    }
+
+    const combinacionValida = this.productoValidacionService.validarCombinacionClientes(
+      this.tipoProducto,
+      this.tipoDocumentoTomador,
+      this.tipoDocumentoAsegurado,
+    );
+
+    if (!combinacionValida) {
+      this.showModalCombinacionClientes = true;
+      console.log('❌ RF-005 Regla 5.4: Combinación de clientes inválida');
+    }
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.5: Validar cliente consultable
+   */
+  private validarClienteConsultable(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.clienteValidacionService
+      .validarClienteConsultable(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
+      .subscribe({
+        next: (response) => {
+          if (response.esConsultable) {
+            this.showModalClienteConsultable = true;
+            console.log('❌ RF-005 Regla 5.5: Cliente es consultable (restringido)');
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al validar cliente consultable:', error);
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.6: Validar reputación negativa
+   */
+  private validarReputacionNegativa(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.clienteValidacionService
+      .validarReputacionNegativa(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
+      .subscribe({
+        next: (response) => {
+          if (response.tieneReputacionNegativa) {
+            this.showModalReputacionNegativa = true;
+            console.log('❌ RF-005 Regla 5.6: Cliente tiene reputación negativa');
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al validar reputación negativa:', error);
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.7: Validar consorcio/uniones temporales
+   */
+  private validarConsorcioUnionTemporal(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.clienteValidacionService
+      .validarConsorcioUnionTemporal(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
+      .subscribe({
+        next: (response) => {
+          // ✅ RF-005 Regla 5.7: Mostrar modal si pertenece a consorcio/uniones temporales
+          if (response.perteneceConsorcio || response.perteneceUnionTemporal) {
+            this.showModalConsorcioUnionTemporal = true;
+            console.log('⚠️ RF-005 Regla 5.7: Tomador pertenece a consorcio/uniones temporales');
+          }
+
+          // ✅ RF-005 Regla 5.7: Si pertenece a grupo empresarial, usar cupo del grupo
+          // Esto puede ocurrir independientemente de si es consorcio/uniones temporales
+          if (response.perteneceGrupoEmpresarial && response.cupoGrupo) {
+            this.cupoDisponible = response.cupoGrupo;
+            this.cupoDisponibleVisible = this.cupoService.obtenerCupoVisible(
+              this.cupoDisponible,
+              this.tipoCliente,
+              this.tipoUsuario,
+            );
+            this.actualizarCupoEnTronador();
+            console.log('💰 Usando cupo del grupo empresarial:', response.cupoGrupo);
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al validar consorcio/uniones temporales:', error);
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.10: Validar cliente Enfoque - NITs autorizados
+   */
+  private validarClienteEnfoque(): void {
+    // Solo aplica para intermediarios
+    if (this.tipoUsuario !== 'intermediario') {
+      return;
+    }
+
+    // Solo aplica si el tomador es tipo Enfoque
+    if (this.tipoCliente !== 'enfoque') {
+      return;
+    }
+
+    // Solo aplica si el documento es NIT
+    if (this.tipoDocumentoTomador !== 'NIT' && this.tipoDocumentoTomador !== 'NT') {
+      return;
+    }
+
+    if (!this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.clienteEnfoqueService
+      .validarNITAutorizado(this.numeroDocumentoTomador, this.tipoUsuario)
+      .subscribe({
+        next: (response) => {
+          if (!response.nitAutorizado) {
+            this.showModalClienteEnfoque = true;
+            console.log('❌ RF-005 Regla 5.10: NIT no autorizado para usuario intermediario');
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al validar NIT autorizado:', error);
+        },
+      });
   }
 
   /**

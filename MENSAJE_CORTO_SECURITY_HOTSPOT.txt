@@ -1,0 +1,31 @@
+═══════════════════════════════════════════════════════════════════════════════
+MENSAJE CORTO (Para Slack/Teams/Email rápido)
+═══════════════════════════════════════════════════════════════════════════════
+
+Hola equipo,
+
+Necesito ayuda para marcar un Security Hotspot como "Safe" en SonarCloud que está bloqueando el Quality Gate del proyecto.
+
+📋 Detalles:
+- Proyecto: cumplimientodigital-frontend
+- Rama: GD981-760
+- Archivo: src/index.html línea 47
+- URL: https://sonarcloud.io/security_hotspots?id=segurosbolivar_cumplimientodigital-frontend&branch=GD981-760
+
+🔍 Justificación:
+El hotspot detecta que falta el atributo `integrity` en un script tag que carga el paquete oficial interno `@seguros-bolivar/ui-bundle` desde unpkg.com. 
+
+✅ Razones para marcarlo como "Safe":
+1. Es un paquete oficial interno de Seguros Bolívar (no es tercero)
+2. El uso de `@latest` es intencional para mantener actualizaciones automáticas
+3. Riesgo de seguridad mínimo dado que es un paquete interno controlado por la organización
+4. Ya existe documentación en código explicando la decisión
+
+📄 Documentación completa disponible en: JUSTIFICACION_SECURITY_HOTSPOT.md
+
+¿Alguien con permisos de admin en SonarCloud puede marcarlo como "Safe"? Esto desbloqueará el Quality Gate.
+
+Gracias!
+
+═══════════════════════════════════════════════════════════════════════════════
+
