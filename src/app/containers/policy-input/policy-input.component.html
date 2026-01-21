@@ -988,7 +988,7 @@
                   *ngIf="tipoDocumentoAsegurado && documentValidationRules[tipoDocumentoAsegurado]"
                   class="text-grayscaleD100 text-xs mt-1 flex items-center"
                 >
-                  <i class="fa-solid fa-info-circle mr-1"></i
+                  <i class="fa-regular fa-circle-info mr-1"></i
                   >{{ documentValidationRules[tipoDocumentoAsegurado].formato }}
                 </small>
               </div>
@@ -1125,7 +1125,7 @@
                   *ngIf="tipoDocumentoTomador && documentValidationRules[tipoDocumentoTomador]"
                   class="text-grayscaleD100 text-xs mt-1 flex items-center"
                 >
-                  <i class="fa-solid fa-info-circle mr-1"></i
+                  <i class="fa-regular fa-circle-info mr-1"></i
                   >{{ documentValidationRules[tipoDocumentoTomador].formato }}
                 </small>
               </div>
@@ -1230,7 +1230,7 @@
                   *ngIf="!nombreAsegurado"
                   class="text-grayscaleD100 text-xs mt-1 flex items-center"
                 >
-                  <i class="fa-solid fa-info-circle mr-1"></i>Ingrese la información del asegurado
+                  <i class="fa-regular fa-circle-info mr-1"></i>Ingrese la información del asegurado
                   para habilitar este campo
                 </small>
               </div>
@@ -1328,7 +1328,7 @@
                   *ngIf="tipoDocumentoTomador && documentValidationRules[tipoDocumentoTomador]"
                   class="text-grayscaleD100 text-xs mt-1 block"
                 >
-                  <i class="fa-solid fa-info-circle mr-1"></i
+                  <i class="fa-regular fa-circle-info mr-1"></i
                   >{{ documentValidationRules[tipoDocumentoTomador].formato }}
                 </small>
               </div>
@@ -1464,7 +1464,7 @@
                   *ngIf="tipoDocumentoAsegurado && documentValidationRules[tipoDocumentoAsegurado]"
                   class="text-grayscaleD100 text-xs mt-1 block"
                 >
-                  <i class="fa-solid fa-info-circle mr-1"></i
+                  <i class="fa-regular fa-circle-info mr-1"></i
                   >{{ documentValidationRules[tipoDocumentoAsegurado].formato }}
                 </small>
               </div>
@@ -1520,7 +1520,7 @@
           <div class="policy-input__file-upload mt-4">
             <div class="bg-grayscaleL400 p-6 rounded-lg border border-grayscaleL200">
               <h4 class="text-base font-semibold text-grayscaleBlack mb-4">
-                <i class="fa-solid fa-cloud-arrow-up text-primaryBase mr-2"></i>
+                <i class="fa-regular fa-cloud-arrow-up text-primaryBase mr-2"></i>
                 Carga de contrato
               </h4>
 
@@ -1563,7 +1563,7 @@
                   (change)="onFileSelected($event)"
                 />
                 <div class="file-upload-area__content">
-                  <i class="fa-solid fa-cloud-arrow-up file-upload-area__icon"></i>
+                  <i class="fa-regular fa-cloud-arrow-up file-upload-area__icon"></i>
                   <p class="file-upload-area__text">
                     {{ tipoDocumentoSoporte ? 'Seleccionar archivo' : 'Primero selecciona el tipo de documento' }}
                   </p>
@@ -1584,7 +1584,7 @@
               <div *ngIf="isUploading" class="file-uploading-container">
                 <div class="file-uploading-header">
                   <h3 class="file-uploading-title">
-                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
+                    <i class="fa-regular fa-cloud-arrow-up mr-2"></i>
                     Subiendo Archivo...
                   </h3>
                   <p class="file-uploading-subtitle">
@@ -1690,7 +1690,7 @@
               class="bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200"
             >
               <h4 class="text-base font-semibold text-grayscaleBlack mb-2">
-                <i class="fa-solid fa-info-circle text-primaryBase mr-2"></i>
+                <i class="fa-regular fa-circle-info text-primaryBase mr-2"></i>
                 Información básica del contrato
               </h4>
               <p class="text-sm text-grayscaleD200 leading-relaxed">
@@ -2217,12 +2217,16 @@
               </div>
 
               <!-- Coaseguro (dentro de Ubicación del Riesgo) -->
-              <div class="mt-6">
+              <!-- ✅ AJUSTE LÍNEA: Bloqueado para intermediarios -->
+              <div class="mt-6" [class.disabled-section]="tipoUsuario === 'intermediario'">
                 <div class="section-block__header">
                   <div class="icon-ring-bicolor">
                     <i class="fa-solid fa-handshake"></i>
                   </div>
                   <h3 class="section-block__title">Coaseguro</h3>
+                  <span *ngIf="tipoUsuario === 'intermediario'" class="text-xs text-grayscaleD300 ml-2">
+                    (No autorizado para intermediarios)
+                  </span>
                 </div>
 
                 <!-- Tipo Coaseguro - Radio Buttons -->
@@ -2238,6 +2242,7 @@
                         value="sin-coaseguro"
                         [(ngModel)]="tipoCoaseguro"
                         (ngModelChange)="onTipoCoaseguroChange()"
+                        [disabled]="tipoUsuario === 'intermediario'"
                       />
                       <span class="radio-option__checkmark"></span>
                       <span class="radio-option__label">Sin Coaseguro</span>
@@ -2249,6 +2254,7 @@
                         value="cedido"
                         [(ngModel)]="tipoCoaseguro"
                         (ngModelChange)="onTipoCoaseguroChange()"
+                        [disabled]="tipoUsuario === 'intermediario'"
                       />
                       <span class="radio-option__checkmark"></span>
                       <span class="radio-option__label">Cedido</span>
@@ -2260,6 +2266,7 @@
                         value="aceptado"
                         [(ngModel)]="tipoCoaseguro"
                         (ngModelChange)="onTipoCoaseguroChange()"
+                        [disabled]="tipoUsuario === 'intermediario'"
                       />
                       <span class="radio-option__checkmark"></span>
                       <span class="radio-option__label">Aceptado</span>
@@ -2268,7 +2275,7 @@
                 </div>
 
                 <!-- Coaseguro Cedido -->
-                <div *ngIf="tipoCoaseguro === 'cedido'" class="coaseguro-subsection mt-4">
+                <div *ngIf="tipoCoaseguro === 'cedido' && tipoUsuario !== 'intermediario'" class="coaseguro-subsection mt-4">
                   <div class="coaseguro-subsection__header">
                     <span>Coaseguro Cedido</span>
                   </div>
@@ -2429,7 +2436,7 @@
                 </div>
 
                 <!-- Coaseguro Aceptado -->
-                <div *ngIf="tipoCoaseguro === 'aceptado'" class="coaseguro-subsection mt-4">
+                <div *ngIf="tipoCoaseguro === 'aceptado' && tipoUsuario !== 'intermediario'" class="coaseguro-subsection mt-4">
                   <div class="coaseguro-subsection__header">
                     <span>Coaseguro Aceptado</span>
                   </div>
@@ -3011,7 +3018,7 @@ NIT:</textarea
                   </h4>
                   <div class="coberturas-header">
                     <span class="coberturas-count"
-                      >{{ rcCoberturas.length }} elementos encontrados</span
+                      >{{ rcCoberturasContratadas.length }} elementos encontrados</span
                     >
                     <div class="coberturas-actions">
                       <button class="btn-limpiar" (click)="limpiarSeleccionRC()">
@@ -3090,7 +3097,8 @@ NIT:</textarea
                         </tr>
                       </thead>
                       <tbody>
-                        <tr *ngFor="let cob of rcCoberturas" [class.selected]="cob.seleccionada">
+                        <!-- ✅ AJUSTE LÍNEA: Solo mostrar coberturas RC contratadas (valorAsegurado > 0) -->
+                        <tr *ngFor="let cob of rcCoberturasContratadas" [class.selected]="cob.seleccionada">
                           <td class="text-center">
                             <input
                               type="checkbox"
@@ -3264,17 +3272,7 @@ NIT:</textarea
                 </div>
               </div>
             </div>
-            <div class="s3-card">
-              <div class="s3-card__header">
-                <div class="icon-ring-bicolor">
-                  <i class="fa-regular fa-circle-dollar-to-slot"></i>
-                </div>
-                <h3>Valor del Contrato</h3>
-              </div>
-              <div class="s3-card__body s3-card__body--center">
-                <span class="s3-big-number">{{ formatCurrency(valorContrato) }}</span>
-              </div>
-            </div>
+            <!-- ✅ AJUSTE LÍNEA: Valor del Contrato removido del paso 3 (ya está en paso 2) -->
           </div>
 
           <!-- FILA: Tomador + Asegurado -->
@@ -4361,8 +4359,8 @@ NIT:</textarea
           />
         </svg>
       </div>
-      <h3 class="modal-cliente__subtitle text-center">El tomador tiene sarlaft desactualizado</h3>
-      <p class="modal-cliente__description">
+      <h3 class="modal-cliente__subtitle modal-cliente__subtitle--centered">El tomador tiene sarlaft desactualizado</h3>
+      <p class="modal-cliente__description modal-cliente__description--centered">
         Ingresa la siguiente información para iniciar actualización en línea.
       </p>
       <div class="modal-cliente__form">
@@ -4486,7 +4484,7 @@ NIT:</textarea
               style="display: none;"
             />
             <div class="file-upload-content">
-              <i class="fa-solid fa-cloud-arrow-up file-upload-icon"></i>
+              <i class="fa-regular fa-cloud-arrow-up file-upload-icon"></i>
               <p class="file-upload-text">Haz clic para cargar estados financieros</p>
               <small class="file-upload-hint">PDF, Excel o Word. Máximo 30 MB</small>
             </div>
@@ -4676,7 +4674,7 @@ NIT:</textarea
             <!-- ✅ Mostrar porcentaje disponible -->
             <div class="participacion-info">
               <small class="text-grayscaleD100 text-xs flex items-center">
-                <i class="fa-solid fa-info-circle mr-1 text-primaryBase"></i>
+                <i class="fa-regular fa-circle-info mr-1 text-primaryBase"></i>
                 Porcentaje disponible:
                 <strong class="ml-1 text-primaryBase">{{ porcentajeDisponible }}%</strong>
               </small>

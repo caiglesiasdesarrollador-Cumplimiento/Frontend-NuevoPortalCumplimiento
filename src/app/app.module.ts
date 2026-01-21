@@ -11,6 +11,9 @@ import { NotificationModule } from './shared/components/notification/notificatio
 // HelpModule removido por UX - botón de ayuda eliminado
 import { BreadcrumbModule } from './shared/components/breadcrumb/breadcrumb.module';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
+import { CumplimientoHeadersInterceptor } from './shared/interceptors/cumplimiento-headers.interceptor';
+import { ApiKeyInterceptor } from './shared/interceptors/api-key.interceptor';
+import { GCPAccessTokenInterceptor } from './shared/interceptors/gcp-access-token.interceptor';
 
 @NgModule({
   imports: [
@@ -28,6 +31,22 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
+    // ✅ Orden importante: primero headers de proceso, luego API keys, luego access tokens, finalmente auth
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CumplimientoHeadersInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ApiKeyInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: GCPAccessTokenInterceptor,
+      multi: true,
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

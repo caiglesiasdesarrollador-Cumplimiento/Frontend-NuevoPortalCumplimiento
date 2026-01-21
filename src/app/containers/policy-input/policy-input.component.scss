@@ -1,5 +1,25 @@
 // ✅ APLICANDO REGLAS BEM: One Block per File + BEM Naming Convention + Limit Nesting
 
+// ✅ AJUSTE LÍNEA: Estilos para sección deshabilitada (coaseguro bloqueado para intermediarios)
+.disabled-section {
+  opacity: 0.6;
+  pointer-events: none;
+  
+  input[type="radio"],
+  button {
+    cursor: not-allowed !important;
+  }
+  
+  .section-block__title {
+    color: #9ca3af !important;
+  }
+  
+  .radio-option {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
 // ✅ OCULTAR BOTÓN DE AYUDA GLOBALMENTE
 :host ::ng-deep .help-fab,
 :host ::ng-deep app-help,
@@ -3423,7 +3443,7 @@ input[type="checkbox"].sb-ui-checkbox {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
     
     svg {
       width: 80px;
@@ -3467,6 +3487,12 @@ input[type="checkbox"].sb-ui-checkbox {
     font-weight: 600;
     color: #1f2937;
     margin: 0;
+    
+    // ✅ Alineación centrada para modal SARLAFT
+    &--centered {
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
   }
 
   &__description {
@@ -3474,6 +3500,12 @@ input[type="checkbox"].sb-ui-checkbox {
     color: #6b7280;
     margin-bottom: 1rem;
     line-height: 1.4;
+    
+    // ✅ Alineación centrada para modal SARLAFT
+    &--centered {
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
   }
 
   &__form {

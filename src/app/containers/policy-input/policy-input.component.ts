@@ -60,7 +60,8 @@ import { step1PolicyInfoForm } from './configs/config-step-1/step1-policy-info.c
 import { step2ContractInfoForm } from './configs/config-step-2/step2-contract-info.config';
 import { sarlaftModalConfig } from './configs/sarlaft-modal.config';
 import { MOCK_MANAGEMENT_DATA, IPolicyManagementItem } from '../management/management.interface';
-import { CoberturasCumplimientoTableComponent } from './configs/config-step-2/components/coberturas-cumplimiento-table.component';
+// NOSONAR: Componente usado dinámicamente en configs, no directamente en template
+// import { CoberturasCumplimientoTableComponent } from './configs/config-step-2/components/coberturas-cumplimiento-table.component';
 import { SbCalendarModule } from '../../shared/components/sb-calendar/sb-calendar.module';
 
 @Component({
@@ -86,8 +87,8 @@ import { SbCalendarModule } from '../../shared/components/sb-calendar/sb-calenda
     LibTbInputNumberModule,
     // Calendario Seguros Bolívar UI
     SbCalendarModule,
-    // Componente hijo
-    CoberturasCumplimientoTableComponent,
+    // Componente hijo (usado dinámicamente, no directamente en template)
+    // CoberturasCumplimientoTableComponent, // NOSONAR: Se usa dinámicamente en configs
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -141,135 +142,136 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   primeraLiquidacionRC = true;
 
   // ✅ Coberturas Cumplimiento con selección
+  // ✅ AJUSTE LÍNEA: Coberturas Cumplimiento inician en $0 (usuario puede ajustar si IA no leyó bien)
   coberturasCumplimiento = [
     {
       id: 1,
       nombre: 'SERIEDAD DE LA OFERTA',
       porcentaje: 10,
-      valorAsegurado: 15000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2025-05-05',
       tiempoAdicional: 30,
       fechaFin: '2025-08-05',
       fechaVencimiento: '2025-11-05',
-      prima: 150000,
+      prima: 0, // Prima también en 0 cuando valorAsegurado es 0
       seleccionada: false,
     },
     {
       id: 2,
       nombre: 'MANEJO DEL ANTICIPO',
       porcentaje: 50,
-      valorAsegurado: 75000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2025-05-05',
       tiempoAdicional: 60,
       fechaFin: '2025-12-05',
       fechaVencimiento: '2026-05-04',
-      prima: 750000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 3,
       nombre: 'CUMPLIMIENTO',
       porcentaje: 20,
-      valorAsegurado: 30000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2025-05-05',
       tiempoAdicional: 45,
       fechaFin: '2025-10-05',
       fechaVencimiento: '2026-05-04',
-      prima: 300000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 4,
       nombre: 'SALARIOS Y PRESTACIONES SOCIALES',
       porcentaje: 20,
-      valorAsegurado: 30000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2025-05-05',
       tiempoAdicional: 45,
       fechaFin: '2025-10-05',
       fechaVencimiento: '2026-05-04',
-      prima: 300000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 5,
       nombre: 'PAGO ANTICIPADO',
       porcentaje: 100,
-      valorAsegurado: 150000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2025-05-05',
       tiempoAdicional: 120,
       fechaFin: '2026-01-05',
       fechaVencimiento: '2026-05-04',
-      prima: 1500000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 6,
       nombre: 'ESTABILIDAD DE LA OBRA',
       porcentaje: 30,
-      valorAsegurado: 45000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2026-05-05',
       tiempoAdicional: 90,
       fechaFin: '2028-05-05',
       fechaVencimiento: '2031-05-04',
-      prima: 450000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 7,
       nombre: 'CALIDAD DEL SERVICIO',
       porcentaje: 25,
-      valorAsegurado: 37500000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2026-05-05',
       tiempoAdicional: 60,
       fechaFin: '2026-11-05',
       fechaVencimiento: '2027-05-04',
-      prima: 375000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 8,
       nombre: 'BUEN FUNCIONAMIENTO DE LOS EQUIPOS',
       porcentaje: 15,
-      valorAsegurado: 22500000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2026-05-05',
       tiempoAdicional: 45,
       fechaFin: '2026-10-05',
       fechaVencimiento: '2027-05-04',
-      prima: 225000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 9,
       nombre: 'SUMINISTRO DE REPUESTOS',
       porcentaje: 10,
-      valorAsegurado: 15000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2026-05-05',
       tiempoAdicional: 30,
       fechaFin: '2026-09-05',
       fechaVencimiento: '2027-05-04',
-      prima: 150000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 10,
       nombre: 'CALIDAD DE LOS BIENES SUMINISTRADOS',
       porcentaje: 10,
-      valorAsegurado: 15000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2026-05-05',
       tiempoAdicional: 30,
       fechaFin: '2026-09-05',
       fechaVencimiento: '2027-05-04',
-      prima: 150000,
+      prima: 0,
       seleccionada: false,
     },
   ];
@@ -1684,7 +1686,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     dataQaId: 'contract-file-upload',
     multiple: false,
     dragDropLabel: 'Seleccionar archivo',
-    dragDropIcon: 'fa-solid fa-upload', // ✅ Icono de upload como en imagen 1
+    dragDropIcon: 'fa-regular fa-upload', // ✅ Icono de upload en línea (outline) según Sistema de Diseño
     caption: 'Peso máximo por cada archivo: 30 MB. Formatos permitidos: PDF, Word, Excel.',
     avaibleTypes: [
       'application/pdf', // PDF
@@ -2076,15 +2078,16 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   toggleTodasCoberturasRC(event: any): void {
-    // Permite toggle en todas las coberturas RC
+    // ✅ AJUSTE LÍNEA: Toggle solo en coberturas RC contratadas (valorAsegurado > 0)
     const checked = event.target.checked;
-    this.rcCoberturas.forEach(c => {
+    this.rcCoberturasContratadas.forEach(c => {
       c.seleccionada = checked;
     });
   }
 
   limpiarSeleccionRC(): void {
-    this.rcCoberturas.forEach(c => (c.seleccionada = false));
+    // ✅ AJUSTE LÍNEA: Limpiar solo coberturas RC contratadas
+    this.rcCoberturasContratadas.forEach(c => (c.seleccionada = false));
     // Limpiar también las variables de liquidación RC
     this.mostrarTotalPrimaRC = false;
     this.mostrarCambiosRC = false;
@@ -2103,7 +2106,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   guardarCoberturasRC(): void {
-    const seleccionadas = this.rcCoberturas.filter(c => c.seleccionada);
+    // ✅ AJUSTE LÍNEA: Guardar solo coberturas RC contratadas y seleccionadas
+    const seleccionadas = this.rcCoberturasContratadas.filter(c => c.seleccionada);
     console.log('Guardando coberturas RC:', seleccionadas);
   }
 
@@ -2132,7 +2136,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   // ✅ Liquidar Prima RC - Calcula, muestra el total y detecta cambios
   liquidarPrimaRC(): void {
-    const coberturasSeleccionadas = this.rcCoberturas.filter(c => c.seleccionada);
+    // ✅ AJUSTE LÍNEA: Liquidar solo coberturas RC contratadas y seleccionadas
+    const coberturasSeleccionadas = this.rcCoberturasContratadas.filter(c => c.seleccionada);
 
     if (coberturasSeleccionadas.length === 0) {
       this.showErrorNotification('⚠️ Seleccione al menos una cobertura RC para liquidar');
@@ -2255,8 +2260,14 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   // ✅ Obtener cantidad de coberturas RC seleccionadas
+  // ✅ AJUSTE LÍNEA: Getter para filtrar coberturas RC - Solo mostrar las contratadas (valorAsegurado > 0)
+  get rcCoberturasContratadas(): any[] {
+    return this.rcCoberturas.filter(cob => cob.valorAsegurado > 0);
+  }
+
   getCoberturasRCSeleccionadasCount(): number {
-    return this.rcCoberturas.filter(c => c.seleccionada).length;
+    // ✅ AJUSTE LÍNEA: Contar solo coberturas RC contratadas y seleccionadas
+    return this.rcCoberturasContratadas.filter(c => c.seleccionada).length;
   }
 
   actualizarValorAseguradoRC(cob: any, event: any): void {
@@ -2574,6 +2585,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
     this.showSuccessNotification(`✅ Documento "${nuevoDoc.nombreArchivo}" agregado`);
     console.log('📁 Documentos soporte:', this.documentosSoporte);
+    
+    // ✅ AJUSTE LÍNEA: Mock - Simular extracción de IA del valor del contrato cuando se carga archivo
+    // TODO: Reemplazar con llamada real al servicio de IA cuando esté disponible
+    setTimeout(() => {
+      this.simularExtraccionIAValorContrato();
+    }, 1000); // Simular delay de procesamiento de IA
   }
 
   // ✅ Método para agregar documento usando el diseño original con spinner
@@ -2714,6 +2731,51 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     const numero = parseInt(valorLimpio, 10) || 0;
     this.valorContrato = numero;
     console.log(`💰 Valor del Contrato actualizado: ${this.formatearNumero(this.valorContrato)}`);
+    
+    // ✅ AJUSTE LÍNEA: Recalcular automáticamente valorAsegurado de coberturas seleccionadas
+    this.recalcularValoresAseguradosDesdeContrato();
+  }
+
+  // ✅ AJUSTE LÍNEA: Mock - Simular extracción de IA del valor del contrato
+  // TODO: Reemplazar con llamada real al servicio de IA cuando esté disponible
+  simularExtraccionIAValorContrato(): void {
+    // Mock: Simular que la IA extrajo un valor del contrato
+    // En producción, esto vendría del servicio de lectura de contratos
+    const valorExtraidoPorIA = 150000000; // Mock: Valor extraído por IA
+    
+    if (this.valorContrato === 0 || !this.valorContrato) {
+      this.valorContrato = valorExtraidoPorIA;
+      console.log(`🤖 IA extrajo valor del contrato: ${this.formatearNumero(this.valorContrato)}`);
+      
+      // Recalcular valores asegurados automáticamente
+      this.recalcularValoresAseguradosDesdeContrato();
+    } else {
+      console.log(`ℹ️ Valor del contrato ya ingresado manualmente: ${this.formatearNumero(this.valorContrato)}`);
+    }
+  }
+
+  // ✅ AJUSTE LÍNEA: Recalcular automáticamente valorAsegurado desde valorContrato y porcentajes
+  recalcularValoresAseguradosDesdeContrato(): void {
+    if (!this.valorContrato || this.valorContrato === 0) {
+      console.log('⚠️ No se puede recalcular: valor del contrato es 0');
+      return;
+    }
+
+    // Recalcular solo para coberturas seleccionadas
+    this.coberturasCumplimiento.forEach(cob => {
+      if (cob.seleccionada && cob.porcentaje > 0) {
+        const nuevoValorAsegurado = Math.round((this.valorContrato * cob.porcentaje) / 100);
+        cob.valorAsegurado = nuevoValorAsegurado;
+        
+        // Recalcular prima también (simplificado - se calculará cuando se liquide)
+        // cob.prima = this.recalcularPrimaCobertura(cob);
+        
+        console.log(`🔄 ${cob.nombre}: ${cob.porcentaje}% de ${this.formatearNumero(this.valorContrato)} = ${this.formatearNumero(nuevoValorAsegurado)}`);
+      }
+    });
+
+    // Recalcular total de prima
+    this.calcularTotalPrima();
   }
 
   // ✅ Método para manejar cambio de tipo de producto

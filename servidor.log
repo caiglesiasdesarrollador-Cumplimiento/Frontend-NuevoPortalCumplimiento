@@ -1,0 +1,176 @@
+npm warn Unknown project config "npm email". This will stop working in the next major version of npm.
+npm warn Unknown project config "always-auth". This will stop working in the next major version of npm.
+
+Warning: This is a simple server for use in testing or debugging Angular applications
+locally. It hasn't been reviewed for security issues.
+
+Binding this server to an open connection can result in compromising your application or
+computer. Using a different host than the one passed to the "--host" flag might result in
+websocket connection issues. You might need to use "--disable-host-check" if that's the
+case.
+    
+> Building...
+ÔêÜ Building...
+Application bundle generation failed. [31.156 seconds] - 2026-01-21T23:32:17.583Z
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    src/app/containers/dynamic-form/dynamic-form.component.scss:75:8:
+      75 Ôöé @import './styles/stepper';
+         ÔòÁ         ^
+
+
+  Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    src/app/containers/dynamic-form/dynamic-form.component.scss:76:8:
+      76 Ôöé @import './styles/form-containers';
+         ÔòÁ         ^
+
+
+  Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    src/app/containers/policy-input/policy-input.component.scss:615:4:
+      615 Ôöé     color: #038450;
+          ÔòÁ     ^
+
+
+  Sass's behavior for declarations that appear after nested
+  rules will be changing to match the behavior specified by CSS in an upcoming
+  version. To keep the existing behavior, move the declaration above the nested
+  rule. To opt into the new behavior, wrap the declaration in `& {}`.
+  
+  More info: https://sass-lang.com/d/mixed-decls
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    src/app/containers/policy-input/policy-input.component.scss:3899:8:
+      3899 Ôöé @import './styles/sarlaft-modal';
+           ÔòÁ         ^
+
+
+  Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    src/styles.scss:10:8:
+      10 Ôöé @import './styles-responsive.scss';
+         ÔòÁ         ^
+
+
+  Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:2:8:
+      2 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysEspecificas' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:88:27:
+      88 Ôöé ...    return environment.apiKeysEspecificas.catalogos[ambiente] |...
+         ÔòÁ                           ~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysEspecificas' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:93:27:
+      93 Ôöé ...    return environment.apiKeysEspecificas.multiclaves[ambiente]...
+         ÔòÁ                           ~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysEspecificas' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:98:27:
+      98 Ôöé ...    return environment.apiKeysEspecificas.recuperarAgente[ambie...
+         ÔòÁ                           ~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysEspecificas' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:103:27:
+      103 Ôöé ...   return environment.apiKeysEspecificas.notificador[ambiente]...
+          ÔòÁ                          ~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysEspecificas' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:108:27:
+      108 Ôöé ...   return environment.apiKeysEspecificas.generarPdfCotizacionR...
+          ÔòÁ                          ~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysEspecificas' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:113:27:
+      113 Ôöé ...   return environment.apiKeysEspecificas.generarPdfPoliza[ambi...
+          ÔòÁ                          ~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysEspecificas' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:118:27:
+      118 Ôöé ...   return environment.apiKeysEspecificas.generarQR[ambiente] |...
+          ÔòÁ                          ~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysComunes' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:122:25:
+      122 Ôöé       return environment.apiKeysComunes[ambiente] || null;
+          ÔòÁ                          ~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysGCP' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:127:25:
+      127 Ôöé       return environment.apiKeysGCP[ambiente] || null;
+          ÔòÁ                          ~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysAWSActuaria' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:132:25:
+      132 Ôöé       return environment.apiKeysAWSActuaria[ambiente] || null;
+          ÔòÁ                          ~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysOpenL' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:137:25:
+      137 Ôöé       return environment.apiKeysOpenL[ambiente] || null;
+          ÔòÁ                          ~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'apiKeysCumplimiento' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/api-key.interceptor.ts:142:25:
+      142 Ôöé       return environment.apiKeysCumplimiento[ambiente] || null;
+          ÔòÁ                          ~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'gcpAccessTokens' does not exist on type '{ production: boolean; apiUrl: string; secretKey: string; secretIv: string; }'. [plugin angular-compiler]
+
+    src/app/shared/interceptors/gcp-access-token.interceptor.ts:28:36:
+      28 Ôöé ...cessToken = environment.gcpAccessTokens.dev; // TODO: Usar ambi...
+         ÔòÁ                            ~~~~~~~~~~~~~~~
+
+
+Watch mode enabled. Watching for file changes...
