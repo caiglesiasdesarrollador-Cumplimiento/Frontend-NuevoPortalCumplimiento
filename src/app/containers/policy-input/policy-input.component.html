@@ -988,7 +988,7 @@
                   *ngIf="tipoDocumentoAsegurado && documentValidationRules[tipoDocumentoAsegurado]"
                   class="text-grayscaleD100 text-xs mt-1 flex items-center"
                 >
-                  <i class="fa-solid fa-info-circle mr-1"></i
+                  <i class="fa-regular fa-circle-info mr-1"></i
                   >{{ documentValidationRules[tipoDocumentoAsegurado].formato }}
                 </small>
               </div>
@@ -1125,7 +1125,7 @@
                   *ngIf="tipoDocumentoTomador && documentValidationRules[tipoDocumentoTomador]"
                   class="text-grayscaleD100 text-xs mt-1 flex items-center"
                 >
-                  <i class="fa-solid fa-info-circle mr-1"></i
+                  <i class="fa-regular fa-circle-info mr-1"></i
                   >{{ documentValidationRules[tipoDocumentoTomador].formato }}
                 </small>
               </div>
@@ -1189,12 +1189,13 @@
                   <button
                     type="button"
                     class="custom-dropdown__trigger"
-                    [disabled]="!nombreAsegurado"
-                    (click)="nombreAsegurado && toggleDropdown('programas', $event)"
+                    [disabled]="!nombreAsegurado || estaCargandoProgramas"
+                    (click)="nombreAsegurado && !estaCargandoProgramas && toggleDropdown('programas', $event)"
                   >
-                    <span
-                      >{{ programaParametrizado === 'programa-a' ? 'Programa A - Construcción' : programaParametrizado === 'programa-b' ? 'Programa B - Servicios' : programaParametrizado === 'programa-c' ? 'Programa C - Consultoría' : programaParametrizado === 'programa-d' ? 'Programa D - Tecnología' : (nombreAsegurado ? 'Seleccione un programa' : 'Complete la información del asegurado primero') }}</span
-                    >
+                    <span *ngIf="estaCargandoProgramas">Cargando programas...</span>
+                    <span *ngIf="!estaCargandoProgramas">
+                      {{ getProgramaDropdownText() }}
+                    </span>
                   </button>
                   <div
                     class="custom-dropdown__menu"
@@ -1203,44 +1204,21 @@
                   >
                     <div class="custom-dropdown__option disabled">Seleccione un programa</div>
                     <div
+                      *ngFor="let programa of programasDisponibles"
                       class="custom-dropdown__option"
-                      [class.selected]="programaParametrizado === 'programa-a'"
+                      [class.selected]="programaSeleccionadoId === programa.id"
                       tabindex="0"
                       role="option"
-                      (click)="programaParametrizado = 'programa-a'; toggleDropdown('programas')"
-                      (keydown.enter)="programaParametrizado = 'programa-a'; toggleDropdown('programas')"
+                      (click)="onProgramaSeleccionado(programa.id); toggleDropdown('programas')"
+                      (keydown.enter)="onProgramaSeleccionado(programa.id); toggleDropdown('programas')"
                     >
-                      Programa A - Construcción
+                      {{ programa.nombre }}
                     </div>
                     <div
-                      class="custom-dropdown__option"
-                      [class.selected]="programaParametrizado === 'programa-b'"
-                      tabindex="0"
-                      role="option"
-                      (click)="programaParametrizado = 'programa-b'; toggleDropdown('programas')"
-                      (keydown.enter)="programaParametrizado = 'programa-b'; toggleDropdown('programas')"
+                      *ngIf="programasDisponibles.length === 0 && nombreAsegurado && !estaCargandoProgramas"
+                      class="custom-dropdown__option disabled"
                     >
-                      Programa B - Servicios
-                    </div>
-                    <div
-                      class="custom-dropdown__option"
-                      [class.selected]="programaParametrizado === 'programa-c'"
-                      tabindex="0"
-                      role="option"
-                      (click)="programaParametrizado = 'programa-c'; toggleDropdown('programas')"
-                      (keydown.enter)="programaParametrizado = 'programa-c'; toggleDropdown('programas')"
-                    >
-                      Programa C - Consultoría
-                    </div>
-                    <div
-                      class="custom-dropdown__option"
-                      [class.selected]="programaParametrizado === 'programa-d'"
-                      tabindex="0"
-                      role="option"
-                      (click)="programaParametrizado = 'programa-d'; toggleDropdown('programas')"
-                      (keydown.enter)="programaParametrizado = 'programa-d'; toggleDropdown('programas')"
-                    >
-                      Programa D - Tecnología
+                      No hay programas disponibles
                     </div>
                   </div>
                 </div>
@@ -1252,7 +1230,7 @@
                   *ngIf="!nombreAsegurado"
                   class="text-grayscaleD100 text-xs mt-1 flex items-center"
                 >
-                  <i class="fa-solid fa-info-circle mr-1"></i>Ingrese la información del asegurado
+                  <i class="fa-regular fa-circle-info mr-1"></i>Ingrese la información del asegurado
                   para habilitar este campo
                 </small>
               </div>
@@ -1350,7 +1328,7 @@
                   *ngIf="tipoDocumentoTomador && documentValidationRules[tipoDocumentoTomador]"
                   class="text-grayscaleD100 text-xs mt-1 block"
                 >
-                  <i class="fa-solid fa-info-circle mr-1"></i
+                  <i class="fa-regular fa-circle-info mr-1"></i
                   >{{ documentValidationRules[tipoDocumentoTomador].formato }}
                 </small>
               </div>
@@ -1486,7 +1464,7 @@
                   *ngIf="tipoDocumentoAsegurado && documentValidationRules[tipoDocumentoAsegurado]"
                   class="text-grayscaleD100 text-xs mt-1 block"
                 >
-                  <i class="fa-solid fa-info-circle mr-1"></i
+                  <i class="fa-regular fa-circle-info mr-1"></i
                   >{{ documentValidationRules[tipoDocumentoAsegurado].formato }}
                 </small>
               </div>
@@ -1542,7 +1520,7 @@
           <div class="policy-input__file-upload mt-4">
             <div class="bg-grayscaleL400 p-6 rounded-lg border border-grayscaleL200">
               <h4 class="text-base font-semibold text-grayscaleBlack mb-4">
-                <i class="fa-solid fa-cloud-arrow-up text-primaryBase mr-2"></i>
+                <i class="fa-regular fa-cloud-arrow-up text-primaryBase mr-2"></i>
                 Carga de contrato
               </h4>
 
@@ -1585,7 +1563,7 @@
                   (change)="onFileSelected($event)"
                 />
                 <div class="file-upload-area__content">
-                  <i class="fa-solid fa-cloud-arrow-up file-upload-area__icon"></i>
+                  <i class="fa-regular fa-cloud-arrow-up file-upload-area__icon"></i>
                   <p class="file-upload-area__text">
                     {{ tipoDocumentoSoporte ? 'Seleccionar archivo' : 'Primero selecciona el tipo de documento' }}
                   </p>
@@ -1606,7 +1584,7 @@
               <div *ngIf="isUploading" class="file-uploading-container">
                 <div class="file-uploading-header">
                   <h3 class="file-uploading-title">
-                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
+                    <i class="fa-regular fa-cloud-arrow-up mr-2"></i>
                     Subiendo Archivo...
                   </h3>
                   <p class="file-uploading-subtitle">
@@ -1712,7 +1690,7 @@
               class="bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200"
             >
               <h4 class="text-base font-semibold text-grayscaleBlack mb-2">
-                <i class="fa-solid fa-info-circle text-primaryBase mr-2"></i>
+                <i class="fa-regular fa-circle-info text-primaryBase mr-2"></i>
                 Información básica del contrato
               </h4>
               <p class="text-sm text-grayscaleD200 leading-relaxed">
@@ -1740,18 +1718,26 @@
 
         <!-- ✅ Paso 2: Formulario Completo con Scroll Vertical -->
         <div *ngIf="currentStep === 1" class="policy-input__step">
-          <!-- Cupo Disponible del Cliente - Estilo Corporativo Bolívar -->
-          <div class="cupo-disponible-card mb-6">
+          <!-- ✅ RF-007 Regla 7.1: Cupo Disponible del Cliente - Dinámico -->
+          <div class="cupo-disponible-card mb-6" *ngIf="tipoDocumentoTomador && numeroDocumentoTomador">
             <div class="cupo-disponible-card__icon">
-              <i class="fa-solid fa-wallet"></i>
+              <i class="fa-solid fa-wallet" *ngIf="!estaCalculandoCupo"></i>
+              <i class="fa-solid fa-spinner fa-spin" *ngIf="estaCalculandoCupo"></i>
             </div>
             <div class="cupo-disponible-card__content">
               <span class="cupo-disponible-card__label">Cupo Disponible del Cliente:</span>
-              <span class="cupo-disponible-card__value">$100.000.000</span>
+              <span class="cupo-disponible-card__value" *ngIf="!estaCalculandoCupo">
+                {{ formatCurrency(cupoDisponibleVisible) }}
+              </span>
+              <span class="cupo-disponible-card__value" *ngIf="estaCalculandoCupo">
+                Calculando...
+              </span>
             </div>
-            <div class="cupo-disponible-card__badge">
-              <i class="fa-solid fa-check-circle"></i>
-              <span>Activo</span>
+            <div class="cupo-disponible-card__badge" *ngIf="!estaCalculandoCupo">
+              <i class="fa-solid fa-check-circle" *ngIf="cupoDisponible > 0"></i>
+              <i class="fa-solid fa-exclamation-circle" *ngIf="cupoDisponible <= 0"></i>
+              <span *ngIf="cupoDisponible > 0">Activo</span>
+              <span *ngIf="cupoDisponible <= 0">Sin cupo</span>
             </div>
           </div>
 
@@ -2231,12 +2217,16 @@
               </div>
 
               <!-- Coaseguro (dentro de Ubicación del Riesgo) -->
-              <div class="mt-6">
+              <!-- ✅ AJUSTE LÍNEA: Bloqueado para intermediarios -->
+              <div class="mt-6" [class.disabled-section]="tipoUsuario === 'intermediario'">
                 <div class="section-block__header">
                   <div class="icon-ring-bicolor">
                     <i class="fa-solid fa-handshake"></i>
                   </div>
                   <h3 class="section-block__title">Coaseguro</h3>
+                  <span *ngIf="tipoUsuario === 'intermediario'" class="text-xs text-grayscaleD300 ml-2">
+                    (No autorizado para intermediarios)
+                  </span>
                 </div>
 
                 <!-- Tipo Coaseguro - Radio Buttons -->
@@ -2252,6 +2242,7 @@
                         value="sin-coaseguro"
                         [(ngModel)]="tipoCoaseguro"
                         (ngModelChange)="onTipoCoaseguroChange()"
+                        [disabled]="tipoUsuario === 'intermediario'"
                       />
                       <span class="radio-option__checkmark"></span>
                       <span class="radio-option__label">Sin Coaseguro</span>
@@ -2263,6 +2254,7 @@
                         value="cedido"
                         [(ngModel)]="tipoCoaseguro"
                         (ngModelChange)="onTipoCoaseguroChange()"
+                        [disabled]="tipoUsuario === 'intermediario'"
                       />
                       <span class="radio-option__checkmark"></span>
                       <span class="radio-option__label">Cedido</span>
@@ -2274,6 +2266,7 @@
                         value="aceptado"
                         [(ngModel)]="tipoCoaseguro"
                         (ngModelChange)="onTipoCoaseguroChange()"
+                        [disabled]="tipoUsuario === 'intermediario'"
                       />
                       <span class="radio-option__checkmark"></span>
                       <span class="radio-option__label">Aceptado</span>
@@ -2282,7 +2275,7 @@
                 </div>
 
                 <!-- Coaseguro Cedido -->
-                <div *ngIf="tipoCoaseguro === 'cedido'" class="coaseguro-subsection mt-4">
+                <div *ngIf="tipoCoaseguro === 'cedido' && tipoUsuario !== 'intermediario'" class="coaseguro-subsection mt-4">
                   <div class="coaseguro-subsection__header">
                     <span>Coaseguro Cedido</span>
                   </div>
@@ -2443,7 +2436,7 @@
                 </div>
 
                 <!-- Coaseguro Aceptado -->
-                <div *ngIf="tipoCoaseguro === 'aceptado'" class="coaseguro-subsection mt-4">
+                <div *ngIf="tipoCoaseguro === 'aceptado' && tipoUsuario !== 'intermediario'" class="coaseguro-subsection mt-4">
                   <div class="coaseguro-subsection__header">
                     <span>Coaseguro Aceptado</span>
                   </div>
@@ -3025,7 +3018,7 @@ NIT:</textarea
                   </h4>
                   <div class="coberturas-header">
                     <span class="coberturas-count"
-                      >{{ rcCoberturas.length }} elementos encontrados</span
+                      >{{ rcCoberturasContratadas.length }} elementos encontrados</span
                     >
                     <div class="coberturas-actions">
                       <button class="btn-limpiar" (click)="limpiarSeleccionRC()">
@@ -3104,7 +3097,8 @@ NIT:</textarea
                         </tr>
                       </thead>
                       <tbody>
-                        <tr *ngFor="let cob of rcCoberturas" [class.selected]="cob.seleccionada">
+                        <!-- ✅ AJUSTE LÍNEA: Solo mostrar coberturas RC contratadas (valorAsegurado > 0) -->
+                        <tr *ngFor="let cob of rcCoberturasContratadas" [class.selected]="cob.seleccionada">
                           <td class="text-center">
                             <input
                               type="checkbox"
@@ -3278,17 +3272,7 @@ NIT:</textarea
                 </div>
               </div>
             </div>
-            <div class="s3-card">
-              <div class="s3-card__header">
-                <div class="icon-ring-bicolor">
-                  <i class="fa-regular fa-circle-dollar-to-slot"></i>
-                </div>
-                <h3>Valor del Contrato</h3>
-              </div>
-              <div class="s3-card__body s3-card__body--center">
-                <span class="s3-big-number">{{ formatCurrency(valorContrato) }}</span>
-              </div>
-            </div>
+            <!-- ✅ AJUSTE LÍNEA: Valor del Contrato removido del paso 3 (ya está en paso 2) -->
           </div>
 
           <!-- FILA: Tomador + Asegurado -->
@@ -3764,10 +3748,12 @@ NIT:</textarea
 
     <!-- Mensaje -->
     <p class="archivo-no-compatible-modal__message">
-      El archivo <strong>"{{ archivoNoCompatibleNombre }}"</strong> no se puede procesar.
-    </p>
-    <p class="archivo-no-compatible-modal__submessage">
-      Por favor, selecciona un archivo en uno de los formatos permitidos.
+      <span *ngIf="archivoNoCompatibleNombre">
+        El archivo "{{ archivoNoCompatibleNombre }}" no se puede procesar. Por favor, selecciona un archivo en uno de los formatos permitidos.
+      </span>
+      <span *ngIf="!archivoNoCompatibleNombre">
+        Las extensiones soportadas son: *.DOCX, XLSX y *.PDF
+      </span>
     </p>
 
     <!-- Botones -->
@@ -4373,8 +4359,8 @@ NIT:</textarea
           />
         </svg>
       </div>
-      <h3 class="modal-cliente__subtitle text-center">El tomador tiene sarlaft desactualizado</h3>
-      <p class="modal-cliente__description">
+      <h3 class="modal-cliente__subtitle modal-cliente__subtitle--centered">El tomador tiene sarlaft desactualizado</h3>
+      <p class="modal-cliente__description modal-cliente__description--centered">
         Ingresa la siguiente información para iniciar actualización en línea.
       </p>
       <div class="modal-cliente__form">
@@ -4498,7 +4484,7 @@ NIT:</textarea
               style="display: none;"
             />
             <div class="file-upload-content">
-              <i class="fa-solid fa-cloud-arrow-up file-upload-icon"></i>
+              <i class="fa-regular fa-cloud-arrow-up file-upload-icon"></i>
               <p class="file-upload-text">Haz clic para cargar estados financieros</p>
               <small class="file-upload-hint">PDF, Excel o Word. Máximo 30 MB</small>
             </div>
@@ -4688,7 +4674,7 @@ NIT:</textarea
             <!-- ✅ Mostrar porcentaje disponible -->
             <div class="participacion-info">
               <small class="text-grayscaleD100 text-xs flex items-center">
-                <i class="fa-solid fa-info-circle mr-1 text-primaryBase"></i>
+                <i class="fa-regular fa-circle-info mr-1 text-primaryBase"></i>
                 Porcentaje disponible:
                 <strong class="ml-1 text-primaryBase">{{ porcentajeDisponible }}%</strong>
               </small>
@@ -4881,6 +4867,424 @@ NIT:</textarea
         (click)="confirmarEliminarCoaseguro()"
       >
         Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-008: Alerta: Confirmar Eliminar Archivo del Contrato -->
+<div
+  *ngIf="showAlertaEliminarArchivo"
+  class="modal-overlay"
+  (click)="cancelarEliminarArchivo()"
+  (keydown.escape)="cancelarEliminarArchivo()"
+  (keydown.enter)="cancelarEliminarArchivo()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon alert-bolivar__icon--outline">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 8V12M12 16H12.01M10.29 3.86L1.82 18C1.64538 18.3024 1.55299 18.6453 1.552 19C1.55101 19.3547 1.64145 19.6983 1.81445 20.0019C1.98745 20.3055 2.23675 20.5587 2.53773 20.7357C2.83871 20.9127 3.18082 21.0074 3.53 21.01H20.47C20.8192 21.0074 21.1613 20.9127 21.4623 20.7357C21.7633 20.5587 22.0126 20.3055 22.1856 20.0019C22.3586 19.6983 22.449 19.3547 22.448 19C22.447 18.6453 22.3546 18.3024 22.18 18L13.71 3.86C13.5315 3.56631 13.2806 3.32311 12.9812 3.15447C12.6819 2.98584 12.3438 2.89725 12 2.89725C11.6562 2.89725 11.3181 2.98584 11.0188 3.15447C10.7194 3.32311 10.4685 3.56631 10.29 3.86Z" stroke="#FFE16F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Confirmar Eliminación</h3>
+        <p class="alert-bolivar__message">
+          ¡Estás seguro de que quieres borrar el documento?
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cancelarEliminarArchivo()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--cancel"
+        (click)="cancelarEliminarArchivo()"
+      >
+        Cancelar
+      </button>
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="confirmarEliminarArchivo()"
+      >
+        Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-007 Regla 7.1: Modal Cupo Bloqueado -->
+<div
+  *ngIf="showModalCupoBloqueado"
+  class="modal-overlay"
+  (click)="cerrarModalCupoBloqueado()"
+  (keydown.escape)="cerrarModalCupoBloqueado()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Cupo No Disponible</h3>
+        <p class="alert-bolivar__message">
+          EL TOMADOR O AFINAZADO NO CUENTA CON CUPO DISPONIBLE. POR FAVOR COMUNICATE CON LA UNIDAD DE CUMPLIMIENTO: unidaddecumplimiento@segurosbolivar.com NO OLVIDES ADJUNTAR LOS ESTADOS FINANCIEROS ACTUALIZADOS Y SOLICITAR LA VALIDACIÓN DE UN NUEVO CUPO PARA EL CLIENTE
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalCupoBloqueado()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalCupoBloqueado()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-007 Regla 7.2: Modal Error Grupo Bolívar -->
+<div
+  *ngIf="showModalGrupoBolivar"
+  class="modal-overlay"
+  (click)="cerrarModalGrupoBolivar()"
+  (keydown.escape)="cerrarModalGrupoBolivar()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Validación Grupo Bolívar</h3>
+        <p class="alert-bolivar__message">
+          ESTÁS INGRESANDO A UN TOMADOR O ASEGURADO DE EMPRESAS DEL GRUPO BOLÍVAR, ESTAS EMISIONES DEBEN SER CON CLAVE DIRECTA DE LA COMPAÑÍA.
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalGrupoBolivar()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalGrupoBolivar()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-007 Regla 7.4: Modal Asegurado No En Programa -->
+<div
+  *ngIf="showModalAseguradoNoEnPrograma"
+  class="modal-overlay"
+  (click)="cerrarModalAseguradoNoEnPrograma()"
+  (keydown.escape)="cerrarModalAseguradoNoEnPrograma()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Asegurado No En Programa</h3>
+        <p class="alert-bolivar__message">
+          EL ASEGURADO NO SE ENCUENTRA EN EL PROGRAMA SELECCIONADO, REVISA CON TU DIRECTOR COMERCIAL O COMUNICATE A LA UNIDAD DE SERVICIO DE CUMPLIMIENTO AL BUZÓN: unidaddecumplimiento@segurosbolivar.com
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalAseguradoNoEnPrograma()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalAseguradoNoEnPrograma()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-005 Regla 5.3: Modal Error Producto vs Tipo Cliente -->
+<div
+  *ngIf="showModalProductoNoCorresponde"
+  class="modal-overlay"
+  (click)="cerrarModalProductoNoCorresponde()"
+  (keydown.escape)="cerrarModalProductoNoCorresponde()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Error de Validación</h3>
+        <p class="alert-bolivar__message">
+          EL PRODUCTO SELECCIONADO NO CORRESPONDE A LA ENTIDAD QUE ESTÁS SELECCIONANDO COMO TOMADOR/AFIANZADO.
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalProductoNoCorresponde()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalProductoNoCorresponde()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-005 Regla 5.4: Modal Error Combinación de Clientes -->
+<div
+  *ngIf="showModalCombinacionClientes"
+  class="modal-overlay"
+  (click)="cerrarModalCombinacionClientes()"
+  (keydown.escape)="cerrarModalCombinacionClientes()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Error de Validación</h3>
+        <p class="alert-bolivar__message">
+          NO ES POSIBLE AVANZAR: AL MENOS UNO ENTRE TOMADOR Y ASEGURADO DEBE SER UNA PERSONA JURÍDICA.
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalCombinacionClientes()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalCombinacionClientes()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-005 Regla 5.5: Popup Cliente Consultable (Restringido) -->
+<div
+  *ngIf="showModalClienteConsultable"
+  class="modal-overlay"
+  (click)="cerrarModalClienteConsultable()"
+  (keydown.escape)="cerrarModalClienteConsultable()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="popup-cliente-restringido"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <button class="popup-cliente-restringido__close" (click)="cerrarModalClienteConsultable()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="popup-cliente-restringido__icon">
+      <div class="popup-cliente-restringido__icon-circle">
+        <i class="fa-solid fa-exclamation"></i>
+      </div>
+    </div>
+    <h3 class="popup-cliente-restringido__title">No es posible activar el seguro para el cliente</h3>
+    <p class="popup-cliente-restringido__message">
+      Para más información, escríbanos a WhatsApp o comuníquese al #773.
+    </p>
+    <div class="popup-cliente-restringido__actions">
+      <button
+        class="popup-cliente-restringido__btn-llamar"
+        (click)="llamar773()"
+      >
+        Marcar al #773
+      </button>
+      <button
+        class="popup-cliente-restringido__btn-whatsapp"
+        (click)="irAWhatsApp()"
+      >
+        Ir al WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-005 Regla 5.6: Popup Reputación Negativa -->
+<div
+  *ngIf="showModalReputacionNegativa"
+  class="modal-overlay"
+  (click)="cerrarModalReputacionNegativa()"
+  (keydown.escape)="cerrarModalReputacionNegativa()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="popup-cliente-restringido"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <button class="popup-cliente-restringido__close" (click)="cerrarModalReputacionNegativa()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="popup-cliente-restringido__icon">
+      <div class="popup-cliente-restringido__icon-circle">
+        <i class="fa-solid fa-exclamation"></i>
+      </div>
+    </div>
+    <h3 class="popup-cliente-restringido__title">No es posible activar el seguro para el cliente</h3>
+    <p class="popup-cliente-restringido__message">
+      Para más información, escríbanos a WhatsApp o comuníquese al #773.
+    </p>
+    <div class="popup-cliente-restringido__actions">
+      <button
+        class="popup-cliente-restringido__btn-llamar"
+        (click)="llamar773()"
+      >
+        Marcar al #773
+      </button>
+      <button
+        class="popup-cliente-restringido__btn-whatsapp"
+        (click)="irAWhatsApp()"
+      >
+        Ir al WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-005 Regla 5.7: Modal Consorcio/Uniones Temporales -->
+<div
+  *ngIf="showModalConsorcioUnionTemporal"
+  class="modal-overlay"
+  (click)="cerrarModalConsorcioUnionTemporal()"
+  (keydown.escape)="cerrarModalConsorcioUnionTemporal()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-info"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Información Importante</h3>
+        <p class="alert-bolivar__message">
+          EL TOMADOR HACE PARTE DE UN CONSORCIO O UNIÓN TEMPORAL, ESTO IMPACTA EL CUPO DEL GRUPO.
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalConsorcioUnionTemporal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalConsorcioUnionTemporal()"
+      >
+        Entendido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RF-005 Regla 5.10: Modal Cliente Enfoque - NITs Autorizados -->
+<div
+  *ngIf="showModalClienteEnfoque"
+  class="modal-overlay"
+  (click)="cerrarModalClienteEnfoque()"
+  (keydown.escape)="cerrarModalClienteEnfoque()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+>
+  <div
+    class="alert-bolivar alert-bolivar--error"
+    (click)="$event.stopPropagation()"
+    tabindex="-1"
+  >
+    <div class="alert-bolivar__header">
+      <div class="alert-bolivar__icon">
+        <i class="fa-regular fa-circle-exclamation"></i>
+      </div>
+      <div class="alert-bolivar__text">
+        <h3 class="alert-bolivar__title">Error de Validación</h3>
+        <p class="alert-bolivar__message">
+          EL NIT DEL TOMADOR NO ESTÁ AUTORIZADO PARA ESTE USUARIO INTERMEDIARIO.
+        </p>
+      </div>
+      <button class="alert-bolivar__close" (click)="cerrarModalClienteEnfoque()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="alert-bolivar__actions">
+      <button
+        class="alert-bolivar__btn alert-bolivar__btn--confirm"
+        (click)="cerrarModalClienteEnfoque()"
+      >
+        Entendido
       </button>
     </div>
   </div>

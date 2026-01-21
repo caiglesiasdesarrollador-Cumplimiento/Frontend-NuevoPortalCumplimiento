@@ -1,9 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { PolicyInputComponent } from './policy-input.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { QuoteService } from '../../shared/services/quote.service';
+import { CupoService } from '../../shared/services/cupo.service';
+import { GrupoBolivarService } from '../../shared/services/grupo-bolivar.service';
+import { ProgramaService } from '../../shared/services/programa.service';
+import { ClienteValidacionService } from '../../shared/services/cliente-validacion.service';
+import { ProductoValidacionService } from '../../shared/services/producto-validacion.service';
+import { ClienteEnfoqueService } from '../../shared/services/cliente-enfoque.service';
 import { of } from 'rxjs';
 
 describe('PolicyInputComponent', () => {
@@ -19,7 +25,15 @@ describe('PolicyInputComponent', () => {
         HttpClientTestingModule,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [QuoteService],
+      providers: [
+        QuoteService,
+        CupoService,
+        GrupoBolivarService,
+        ProgramaService,
+        ClienteValidacionService, // ✅ RF-005
+        ProductoValidacionService, // ✅ RF-005
+        ClienteEnfoqueService, // ✅ RF-005
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PolicyInputComponent);
@@ -495,6 +509,472 @@ describe('PolicyInputComponent', () => {
         // Act & Assert
         expect(() => component.selectEmitirOption('cotizacion-existente')).not.toThrow();
         expect(() => component.selectEmitirOption('poliza-nueva')).not.toThrow();
+      });
+    });
+  });
+
+  // ✅ RF-005: Tests para Validaciones de Tomador y Asegurado
+  describe('RF-005 - Validaciones de Tomador y Asegurado', () => {
+    let cupoService: CupoService;
+
+    beforeEach(() => {
+      // NOSONAR: Servicios inyectados pero no usados directamente en tests (se usan a través del componente)
+      void TestBed.inject(ClienteValidacionService);
+      void TestBed.inject(ProductoValidacionService);
+      void TestBed.inject(ClienteEnfoqueService);
+      cupoService = TestBed.inject(CupoService);
+    });
+
+    describe('Regla 5.3 - Validación Producto vs Tipo Cliente', () => {
+      it('debe mostrar modal cuando producto no corresponde a entidad pública', () => {
+        // Arrange
+        component.tipoDocumentoTomador = 'NIT';
+        component.numeroDocumentoTomador = '800123456'; // Empieza con 8 (entidad pública)
+        component.tipoProducto = '450'; // Producto diferente a 455
+        component.nombreTomador = 'ENTIDAD PÚBLICA S.A.';
+
+        // Act
+        (component as any).validarProductoVsTipoCliente();
+
+        // Assert
+        expect(component.showModalProductoNoCorresponde).toBe(true);
+      });
+
+      it('no debe mostrar modal cuando producto corresponde a entidad pública', () => {
+        // Arrange
+        component.tipoDocumentoTomador = 'NIT';
+        component.numeroDocumentoTomador = '800123456'; // Empieza con 8 (entidad pública)
+        component.tipoProducto = '455'; // Producto correcto para entidad pública
+        component.nombreTomador = 'ENTIDAD PÚBLICA S.A.';
+
+        // Act
+        (component as any).validarProductoVsTipoCliente();
+
+        // Assert
+        expect(component.showModalProductoNoCorresponde).toBe(false);
+      });
+
+      it('debe cerrar modal correctamente', () => {
+        // Arrange
+        component.showModalProductoNoCorresponde = true;
+
+        // Act
+        component.cerrarModalProductoNoCorresponde();
+
+        // Assert
+        expect(component.showModalProductoNoCorresponde).toBe(false);
+      });
+    });
+
+    describe('Regla 5.4 - Validación Combinación de Clientes', () => {
+      it('debe mostrar modal cuando ambos son naturales en producto 450', () => {
+        // Arrange
+        component.tipoProducto = '450';
+        component.tipoDocumentoTomador = 'CC';
+        component.tipoDocumentoAsegurado = 'CC';
+
+        // Act
+        (component as any).validarCombinacionClientes();
+
+        // Assert
+        expect(component.showModalCombinacionClientes).toBe(true);
+      });
+
+      it('debe mostrar modal cuando ambos son naturales en producto 455', () => {
+        // Arrange
+        component.tipoProducto = '455';
+        component.tipoDocumentoTomador = 'CE';
+        component.tipoDocumentoAsegurado = 'PP';
+
+        // Act
+        (component as any).validarCombinacionClientes();
+
+        // Assert
+        expect(component.showModalCombinacionClientes).toBe(true);
+      });
+
+      it('no debe mostrar modal cuando al menos uno es jurídica en producto 450', () => {
+        // Arrange
+        component.tipoProducto = '450';
+        component.tipoDocumentoTomador = 'NIT';
+        component.tipoDocumentoAsegurado = 'CC';
+
+        // Act
+        (component as any).validarCombinacionClientes();
+
+        // Assert
+        expect(component.showModalCombinacionClientes).toBe(false);
+      });
+
+      it('debe cerrar modal correctamente', () => {
+        // Arrange
+        component.showModalCombinacionClientes = true;
+
+        // Act
+        component.cerrarModalCombinacionClientes();
+
+        // Assert
+        expect(component.showModalCombinacionClientes).toBe(false);
+      });
+    });
+
+    describe('Regla 5.5 - Cliente Consultable', () => {
+      it('debe mostrar popup cuando cliente es consultable', (done) => {
+        // Arrange
+        component.tipoDocumentoTomador = 'CC';
+        component.numeroDocumentoTomador = '1234567890'; // Documento consultable según mock
+
+        // Act
+        (component as any).validarClienteConsultable();
+
+        // Assert
+        setTimeout(() => {
+          expect(component.showModalClienteConsultable).toBe(true);
+          done();
+        }, 500);
+      });
+
+      it('no debe mostrar popup cuando cliente no es consultable', (done) => {
+        // Arrange
+        component.tipoDocumentoTomador = 'CC';
+        component.numeroDocumentoTomador = '9999999999'; // Documento no consultable
+
+        // Act
+        (component as any).validarClienteConsultable();
+
+        // Assert
+        setTimeout(() => {
+          expect(component.showModalClienteConsultable).toBe(false);
+          done();
+        }, 500);
+      });
+
+      it('debe cerrar popup correctamente', () => {
+        // Arrange
+        component.showModalClienteConsultable = true;
+
+        // Act
+        component.cerrarModalClienteConsultable();
+
+        // Assert
+        expect(component.showModalClienteConsultable).toBe(false);
+      });
+
+      it('debe direccionar a teléfono al llamar #773', () => {
+        // Arrange
+        const originalLocation = (window as any).location;
+        delete (window as any).location;
+        (window as any).location = { href: '' };
+
+        // Act
+        component.llamar773();
+
+        // Assert
+        expect((window as any).location.href).toBe('tel:#773');
+
+        // Cleanup
+        (window as any).location = originalLocation;
+      });
+
+      it('debe abrir WhatsApp al hacer clic en botón', () => {
+        // Arrange
+        const originalOpen = window.open;
+        let openedUrl = '';
+        window.open = jest.fn((url) => {
+          openedUrl = url as string;
+          return null;
+        }) as any;
+
+        // Act
+        component.irAWhatsApp();
+
+        // Assert
+        expect(window.open).toHaveBeenCalled();
+        expect(openedUrl).toContain('wa.me');
+
+        // Cleanup
+        window.open = originalOpen;
+      });
+    });
+
+    describe('Regla 5.6 - Reputación Negativa', () => {
+      it('debe mostrar popup cuando cliente tiene reputación negativa', (done) => {
+        // Arrange
+        component.tipoDocumentoTomador = 'CC';
+        component.numeroDocumentoTomador = '1111111111'; // Documento con reputación negativa según mock
+
+        // Act
+        (component as any).validarReputacionNegativa();
+
+        // Assert
+        setTimeout(() => {
+          expect(component.showModalReputacionNegativa).toBe(true);
+          done();
+        }, 500);
+      });
+
+      it('no debe mostrar popup cuando cliente no tiene reputación negativa', (done) => {
+        // Arrange
+        component.tipoDocumentoTomador = 'CC';
+        component.numeroDocumentoTomador = '9999999999'; // Documento sin reputación negativa
+
+        // Act
+        (component as any).validarReputacionNegativa();
+
+        // Assert
+        setTimeout(() => {
+          expect(component.showModalReputacionNegativa).toBe(false);
+          done();
+        }, 500);
+      });
+
+      it('debe cerrar popup correctamente', () => {
+        // Arrange
+        component.showModalReputacionNegativa = true;
+
+        // Act
+        component.cerrarModalReputacionNegativa();
+
+        // Assert
+        expect(component.showModalReputacionNegativa).toBe(false);
+      });
+    });
+
+    describe('Regla 5.7 - Consorcio/Uniones Temporales', () => {
+      it('debe mostrar modal cuando tomador pertenece a consorcio', (done) => {
+        // Arrange
+        component.tipoDocumentoTomador = 'NIT';
+        component.numeroDocumentoTomador = '3333333333'; // Documento de consorcio según mock
+
+        // Act
+        (component as any).validarConsorcioUnionTemporal();
+
+        // Assert
+        setTimeout(() => {
+          expect(component.showModalConsorcioUnionTemporal).toBe(true);
+          done();
+        }, 500);
+      });
+
+      it('debe usar cupo del grupo cuando pertenece a grupo empresarial', fakeAsync(() => {
+        // Arrange
+        component.tipoDocumentoTomador = 'NIT';
+        component.numeroDocumentoTomador = '4444444444'; // Documento de grupo según mock del servicio
+        component.tipoCliente = 'enfoque';
+        component.tipoUsuario = 'intermediario';
+        component.cupoDisponible = 0; // Inicializar en 0
+        jest.spyOn(cupoService, 'obtenerCupoVisible').mockReturnValue(2000000000);
+        jest.spyOn(component as any, 'actualizarCupoEnTronador').mockImplementation(() => {});
+
+        // Act
+        (component as any).validarConsorcioUnionTemporal();
+        tick(500); // Esperar el delay del servicio (300ms) más margen
+
+        // Assert - El cupo se actualiza desde el servicio de validación (response.cupoGrupo)
+        // El servicio devuelve perteneceGrupoEmpresarial: true y cupoGrupo: 2000000000 cuando numeroDocumento es '4444444444'
+        // El cupo se actualiza independientemente de si muestra el modal o no
+        expect(component.cupoDisponible).toBe(2000000000);
+        expect(cupoService.obtenerCupoVisible).toHaveBeenCalledWith(2000000000, 'enfoque', 'intermediario');
+      }));
+
+      it('debe cerrar modal correctamente', () => {
+        // Arrange
+        component.showModalConsorcioUnionTemporal = true;
+
+        // Act
+        component.cerrarModalConsorcioUnionTemporal();
+
+        // Assert
+        expect(component.showModalConsorcioUnionTemporal).toBe(false);
+      });
+    });
+
+    describe('Regla 5.10 - Cliente Enfoque - NITs Autorizados', () => {
+      it('debe mostrar modal cuando NIT no está autorizado para intermediario', (done) => {
+        // Arrange
+        component.tipoUsuario = 'intermediario';
+        component.tipoCliente = 'enfoque';
+        component.tipoDocumentoTomador = 'NIT';
+        component.numeroDocumentoTomador = '999999999'; // NIT no autorizado
+
+        // Act
+        (component as any).validarClienteEnfoque();
+
+        // Assert
+        setTimeout(() => {
+          expect(component.showModalClienteEnfoque).toBe(true);
+          done();
+        }, 500);
+      });
+
+      it('no debe validar para administradores', (done) => {
+        // Arrange
+        component.tipoUsuario = 'administrador';
+        component.tipoCliente = 'enfoque';
+        component.tipoDocumentoTomador = 'NIT';
+        component.numeroDocumentoTomador = '999999999';
+
+        // Act
+        (component as any).validarClienteEnfoque();
+
+        // Assert
+        setTimeout(() => {
+          expect(component.showModalClienteEnfoque).toBe(false);
+          done();
+        }, 500);
+      });
+
+      it('no debe validar para clientes ocasionales', (done) => {
+        // Arrange
+        component.tipoUsuario = 'intermediario';
+        component.tipoCliente = 'ocasional';
+        component.tipoDocumentoTomador = 'NIT';
+        component.numeroDocumentoTomador = '999999999';
+
+        // Act
+        (component as any).validarClienteEnfoque();
+
+        // Assert
+        setTimeout(() => {
+          expect(component.showModalClienteEnfoque).toBe(false);
+          done();
+        }, 500);
+      });
+
+      it('debe cerrar modal correctamente', () => {
+        // Arrange
+        component.showModalClienteEnfoque = true;
+
+        // Act
+        component.cerrarModalClienteEnfoque();
+
+        // Assert
+        expect(component.showModalClienteEnfoque).toBe(false);
+      });
+    });
+
+    describe('Integración - Validaciones en nextStep', () => {
+      it('debe bloquear avance cuando hay modal de producto no corresponde', () => {
+        // Arrange
+        component.currentStep = 0;
+        component.showModalProductoNoCorresponde = true;
+        const initialStep = component.currentStep;
+
+        // Act
+        component.nextStep();
+
+        // Assert
+        expect(component.currentStep).toBe(initialStep);
+      });
+
+      it('debe bloquear avance cuando hay modal de combinación de clientes', () => {
+        // Arrange
+        component.currentStep = 0;
+        component.showModalCombinacionClientes = true;
+        const initialStep = component.currentStep;
+
+        // Act
+        component.nextStep();
+
+        // Assert
+        expect(component.currentStep).toBe(initialStep);
+      });
+
+      it('debe bloquear avance cuando hay modal de cliente consultable', () => {
+        // Arrange
+        component.currentStep = 0;
+        component.showModalClienteConsultable = true;
+        const initialStep = component.currentStep;
+
+        // Act
+        component.nextStep();
+
+        // Assert
+        expect(component.currentStep).toBe(initialStep);
+      });
+
+      it('debe bloquear avance cuando hay modal de reputación negativa', () => {
+        // Arrange
+        component.currentStep = 0;
+        component.showModalReputacionNegativa = true;
+        const initialStep = component.currentStep;
+
+        // Act
+        component.nextStep();
+
+        // Assert
+        expect(component.currentStep).toBe(initialStep);
+      });
+
+      it('debe bloquear avance cuando hay modal de cliente Enfoque', () => {
+        // Arrange
+        component.currentStep = 0;
+        component.showModalClienteEnfoque = true;
+        const initialStep = component.currentStep;
+
+        // Act
+        component.nextStep();
+
+        // Assert
+        expect(component.currentStep).toBe(initialStep);
+      });
+    });
+
+    describe('Integración - Validaciones en buscarNombreTomador', () => {
+      it('debe invocar validaciones RF-005 después de encontrar tomador', fakeAsync(() => {
+        // Arrange
+        component.tipoDocumentoTomador = 'CC';
+        component.numeroDocumentoTomador = '12345678';
+        jest.spyOn(component as any, 'validarReglasRF005Tomador').mockImplementation(() => {});
+
+        // Act
+        component.buscarNombreTomador();
+        tick(1500);
+
+        // Assert
+        expect((component as any).validarReglasRF005Tomador).toHaveBeenCalled();
+      }));
+    });
+
+    describe('Integración - Validaciones en buscarNombreAsegurado', () => {
+      it('debe invocar validación de combinación de clientes después de encontrar asegurado', fakeAsync(() => {
+        // Arrange
+        component.tipoDocumentoTomador = 'CC';
+        component.numeroDocumentoTomador = '12345678';
+        component.nombreTomador = 'TOMADOR TEST';
+        component.tipoDocumentoAsegurado = 'CC';
+        component.numeroDocumentoAsegurado = '900111222'; // Número que existe en mockData del componente
+        jest.spyOn(component as any, 'validarCombinacionClientes').mockImplementation(() => {});
+
+        // Act
+        component.buscarNombreAsegurado();
+        tick(1500);
+
+        // Assert - La validación se llama solo si nombreTomador existe (condición en el código)
+        // Como nombreTomador está establecido, debería llamarse
+        expect((component as any).validarCombinacionClientes).toHaveBeenCalled();
+      }));
+    });
+
+    describe('Integración - Validaciones en onTipoProductoChange', () => {
+      it('debe invocar validación de producto vs tipo cliente al cambiar producto', () => {
+        // Arrange - Primero establecer el producto inicial para que no se limpien los campos
+        component.tipoProducto = 'grandes-beneficiarios';
+        component.tipoDocumentoTomador = 'NIT';
+        component.numeroDocumentoTomador = '800123456';
+        component.nombreTomador = 'ENTIDAD PÚBLICA';
+        component.tipoDocumentoAsegurado = 'CC';
+        component.numeroDocumentoAsegurado = '12345678';
+        jest.spyOn(component as any, 'validarProductoVsTipoCliente').mockImplementation(() => {});
+        jest.spyOn(component as any, 'validarCombinacionClientes').mockImplementation(() => {});
+
+        // Act - Cambiar a otro producto (no grandes-beneficiarios limpia campos, pero validamos antes)
+        // Para este test, cambiamos a un producto que no limpia campos
+        component.onTipoProductoChange('grandes-beneficiarios'); // No limpia porque es el mismo tipo
+
+        // Assert - Las validaciones se llaman si se cumplen las condiciones
+        expect((component as any).validarProductoVsTipoCliente).toHaveBeenCalled();
+        expect((component as any).validarCombinacionClientes).toHaveBeenCalled();
       });
     });
   });

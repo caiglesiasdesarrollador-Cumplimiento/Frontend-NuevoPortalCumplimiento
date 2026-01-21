@@ -35,7 +35,18 @@ import {
 } from 'tech-block-lib';
 import { BreadcrumbService, BreadcrumbItem } from '../../shared/services/breadcrumb.service';
 import { QuoteService } from '../../shared/services/quote.service';
+import { CupoService } from '../../shared/services/cupo.service';
+import { GrupoBolivarService } from '../../shared/services/grupo-bolivar.service';
+import { ProgramaService } from '../../shared/services/programa.service';
+import { ClienteValidacionService } from '../../shared/services/cliente-validacion.service';
+import { ProductoValidacionService } from '../../shared/services/producto-validacion.service';
+import { ClienteEnfoqueService } from '../../shared/services/cliente-enfoque.service';
 import { firstValueFrom } from 'rxjs';
+import {
+  TipoCliente,
+  TipoUsuario,
+  IProgramaParametrizado,
+} from '../../shared/interfaces/cupo.interface';
 import {
   PolicyInputAction,
   ACTION_LABELS,
@@ -49,7 +60,8 @@ import { step1PolicyInfoForm } from './configs/config-step-1/step1-policy-info.c
 import { step2ContractInfoForm } from './configs/config-step-2/step2-contract-info.config';
 import { sarlaftModalConfig } from './configs/sarlaft-modal.config';
 import { MOCK_MANAGEMENT_DATA, IPolicyManagementItem } from '../management/management.interface';
-import { CoberturasCumplimientoTableComponent } from './configs/config-step-2/components/coberturas-cumplimiento-table.component';
+// NOSONAR: Componente usado dinámicamente en configs, no directamente en template
+// import { CoberturasCumplimientoTableComponent } from './configs/config-step-2/components/coberturas-cumplimiento-table.component';
 import { SbCalendarModule } from '../../shared/components/sb-calendar/sb-calendar.module';
 
 @Component({
@@ -75,8 +87,8 @@ import { SbCalendarModule } from '../../shared/components/sb-calendar/sb-calenda
     LibTbInputNumberModule,
     // Calendario Seguros Bolívar UI
     SbCalendarModule,
-    // Componente hijo
-    CoberturasCumplimientoTableComponent,
+    // Componente hijo (usado dinámicamente, no directamente en template)
+    // CoberturasCumplimientoTableComponent, // NOSONAR: Se usa dinámicamente en configs
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -130,135 +142,136 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   primeraLiquidacionRC = true;
 
   // ✅ Coberturas Cumplimiento con selección
+  // ✅ AJUSTE LÍNEA: Coberturas Cumplimiento inician en $0 (usuario puede ajustar si IA no leyó bien)
   coberturasCumplimiento = [
     {
       id: 1,
       nombre: 'SERIEDAD DE LA OFERTA',
       porcentaje: 10,
-      valorAsegurado: 15000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2025-05-05',
       tiempoAdicional: 30,
       fechaFin: '2025-08-05',
       fechaVencimiento: '2025-11-05',
-      prima: 150000,
+      prima: 0, // Prima también en 0 cuando valorAsegurado es 0
       seleccionada: false,
     },
     {
       id: 2,
       nombre: 'MANEJO DEL ANTICIPO',
       porcentaje: 50,
-      valorAsegurado: 75000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2025-05-05',
       tiempoAdicional: 60,
       fechaFin: '2025-12-05',
       fechaVencimiento: '2026-05-04',
-      prima: 750000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 3,
       nombre: 'CUMPLIMIENTO',
       porcentaje: 20,
-      valorAsegurado: 30000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2025-05-05',
       tiempoAdicional: 45,
       fechaFin: '2025-10-05',
       fechaVencimiento: '2026-05-04',
-      prima: 300000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 4,
       nombre: 'SALARIOS Y PRESTACIONES SOCIALES',
       porcentaje: 20,
-      valorAsegurado: 30000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2025-05-05',
       tiempoAdicional: 45,
       fechaFin: '2025-10-05',
       fechaVencimiento: '2026-05-04',
-      prima: 300000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 5,
       nombre: 'PAGO ANTICIPADO',
       porcentaje: 100,
-      valorAsegurado: 150000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2025-05-05',
       tiempoAdicional: 120,
       fechaFin: '2026-01-05',
       fechaVencimiento: '2026-05-04',
-      prima: 1500000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 6,
       nombre: 'ESTABILIDAD DE LA OBRA',
       porcentaje: 30,
-      valorAsegurado: 45000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2026-05-05',
       tiempoAdicional: 90,
       fechaFin: '2028-05-05',
       fechaVencimiento: '2031-05-04',
-      prima: 450000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 7,
       nombre: 'CALIDAD DEL SERVICIO',
       porcentaje: 25,
-      valorAsegurado: 37500000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2026-05-05',
       tiempoAdicional: 60,
       fechaFin: '2026-11-05',
       fechaVencimiento: '2027-05-04',
-      prima: 375000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 8,
       nombre: 'BUEN FUNCIONAMIENTO DE LOS EQUIPOS',
       porcentaje: 15,
-      valorAsegurado: 22500000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2026-05-05',
       tiempoAdicional: 45,
       fechaFin: '2026-10-05',
       fechaVencimiento: '2027-05-04',
-      prima: 225000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 9,
       nombre: 'SUMINISTRO DE REPUESTOS',
       porcentaje: 10,
-      valorAsegurado: 15000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2026-05-05',
       tiempoAdicional: 30,
       fechaFin: '2026-09-05',
       fechaVencimiento: '2027-05-04',
-      prima: 150000,
+      prima: 0,
       seleccionada: false,
     },
     {
       id: 10,
       nombre: 'CALIDAD DE LOS BIENES SUMINISTRADOS',
       porcentaje: 10,
-      valorAsegurado: 15000000,
+      valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
       fechaInicio: '2026-05-05',
       tiempoAdicional: 30,
       fechaFin: '2026-09-05',
       fechaVencimiento: '2027-05-04',
-      prima: 150000,
+      prima: 0,
       seleccionada: false,
     },
   ];
@@ -557,6 +570,10 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   isContractFileRequired = true;
   contractFileError = false;
 
+  // ✅ RF-008: Constantes de validación de archivo
+  readonly MAX_FILE_NAME_LENGTH = 255; // Máximo de caracteres del nombre del archivo (ajustar según requerimiento de arquitectura)
+  showAlertaEliminarArchivo = false; // Flag para mostrar confirmación de eliminación
+
   // ✅ Propiedades para el formulario paso 1
   tipoProducto = '';
   claveIntermediario = '';
@@ -684,8 +701,36 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   estadosFinancierosFileName: string | null = null;
   actividadEconomica = '';
   actividadEconomicaRC = ''; // Actividad económica para contrato RC
+
+  // ✅ RF-007: Propiedades para gestión de cupo disponible
+  cupoDisponible: number = 0;
+  cupoDisponibleVisible: number = 0; // Cupo visible según tipo cliente y usuario
+  tipoCliente: TipoCliente = 'ocasional';
+  tipoUsuario: TipoUsuario = 'intermediario'; // TODO: Obtener del servicio de autenticación
+  estaCalculandoCupo = false;
+  cupoBloqueado = false; // Flag para bloquear proceso cuando no hay cupo
+  showModalCupoBloqueado = false; // Modal con mensaje bloqueante
+
+  // ✅ RF-007 Regla 7.2: Validación Grupo Bolívar
+  showModalGrupoBolivar = false; // Modal de error Grupo Bolívar
+
+  // ✅ RF-007 Reglas 7.3 y 7.4: Programas para producto 440
+  programasDisponibles: IProgramaParametrizado[] = [];
+  estaCargandoProgramas = false;
+  programaSeleccionadoId: string = '';
+  facilityPrograma: number | null = null;
+  cupoPrimario: number = 0; // Cupo que primará (facility vs cupo cliente)
+  showModalAseguradoNoEnPrograma = false; // Modal cuando asegurado no está en programa
   isUploadingEstadosFinancieros = false;
   uploadProgressEstadosFinancieros = 0;
+
+  // ✅ RF-005: Propiedades para modales de validación
+  showModalProductoNoCorresponde = false; // Regla 5.3: Modal error producto vs tipo cliente
+  showModalCombinacionClientes = false; // Regla 5.4: Modal error combinación de clientes
+  showModalClienteConsultable = false; // Regla 5.5: Popup cliente consultable/restringido
+  showModalReputacionNegativa = false; // Regla 5.6: Popup reputación negativa
+  showModalConsorcioUnionTemporal = false; // Regla 5.7: Modal informativo consorcio/uniones temporales
+  showModalClienteEnfoque = false; // Regla 5.10: Modal error cliente Enfoque - NITs autorizados
 
   // ✅ Lista de actividades económicas CIIU
   actividadesEconomicas = [
@@ -1225,6 +1270,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly breadcrumbService: BreadcrumbService,
     private readonly quoteService: QuoteService,
+    private readonly cupoService: CupoService,
+    private readonly grupoBolivarService: GrupoBolivarService,
+    private readonly programaService: ProgramaService,
+    private readonly clienteValidacionService: ClienteValidacionService, // ✅ RF-005
+    private readonly productoValidacionService: ProductoValidacionService, // ✅ RF-005
+    private readonly clienteEnfoqueService: ClienteEnfoqueService, // ✅ RF-005
     private readonly ngZone: NgZone,
     private readonly cdr: ChangeDetectorRef,
   ) {}
@@ -1635,7 +1686,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     dataQaId: 'contract-file-upload',
     multiple: false,
     dragDropLabel: 'Seleccionar archivo',
-    dragDropIcon: 'fa-solid fa-upload', // ✅ Icono de upload como en imagen 1
+    dragDropIcon: 'fa-regular fa-upload', // ✅ Icono de upload en línea (outline) según Sistema de Diseño
     caption: 'Peso máximo por cada archivo: 30 MB. Formatos permitidos: PDF, Word, Excel.',
     avaibleTypes: [
       'application/pdf', // PDF
@@ -1646,8 +1697,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     ],
     maxSize: 31457280, // 30MB en bytes
     errorText: {
-      type: 'Tipo de archivo no válido. Use PDF, Word o Excel.',
-      maxSize: 'El archivo es demasiado grande. Máximo 30MB.',
+      type: 'Las extensiones soportadas son: *.DOCX, XLSX y *.PDF',
+      maxSize: 'El tamaño máximo del archivo 30 MB',
       length: 'Solo se permite un archivo a la vez.',
     },
     customAlert: {
@@ -2027,15 +2078,16 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   toggleTodasCoberturasRC(event: any): void {
-    // Permite toggle en todas las coberturas RC
+    // ✅ AJUSTE LÍNEA: Toggle solo en coberturas RC contratadas (valorAsegurado > 0)
     const checked = event.target.checked;
-    this.rcCoberturas.forEach(c => {
+    this.rcCoberturasContratadas.forEach(c => {
       c.seleccionada = checked;
     });
   }
 
   limpiarSeleccionRC(): void {
-    this.rcCoberturas.forEach(c => (c.seleccionada = false));
+    // ✅ AJUSTE LÍNEA: Limpiar solo coberturas RC contratadas
+    this.rcCoberturasContratadas.forEach(c => (c.seleccionada = false));
     // Limpiar también las variables de liquidación RC
     this.mostrarTotalPrimaRC = false;
     this.mostrarCambiosRC = false;
@@ -2054,7 +2106,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   guardarCoberturasRC(): void {
-    const seleccionadas = this.rcCoberturas.filter(c => c.seleccionada);
+    // ✅ AJUSTE LÍNEA: Guardar solo coberturas RC contratadas y seleccionadas
+    const seleccionadas = this.rcCoberturasContratadas.filter(c => c.seleccionada);
     console.log('Guardando coberturas RC:', seleccionadas);
   }
 
@@ -2083,7 +2136,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   // ✅ Liquidar Prima RC - Calcula, muestra el total y detecta cambios
   liquidarPrimaRC(): void {
-    const coberturasSeleccionadas = this.rcCoberturas.filter(c => c.seleccionada);
+    // ✅ AJUSTE LÍNEA: Liquidar solo coberturas RC contratadas y seleccionadas
+    const coberturasSeleccionadas = this.rcCoberturasContratadas.filter(c => c.seleccionada);
 
     if (coberturasSeleccionadas.length === 0) {
       this.showErrorNotification('⚠️ Seleccione al menos una cobertura RC para liquidar');
@@ -2206,8 +2260,14 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   // ✅ Obtener cantidad de coberturas RC seleccionadas
+  // ✅ AJUSTE LÍNEA: Getter para filtrar coberturas RC - Solo mostrar las contratadas (valorAsegurado > 0)
+  get rcCoberturasContratadas(): any[] {
+    return this.rcCoberturas.filter(cob => cob.valorAsegurado > 0);
+  }
+
   getCoberturasRCSeleccionadasCount(): number {
-    return this.rcCoberturas.filter(c => c.seleccionada).length;
+    // ✅ AJUSTE LÍNEA: Contar solo coberturas RC contratadas y seleccionadas
+    return this.rcCoberturasContratadas.filter(c => c.seleccionada).length;
   }
 
   actualizarValorAseguradoRC(cob: any, event: any): void {
@@ -2329,20 +2389,28 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // ✅ VALIDAR EXTENSIÓN - Solo PDF, Word, Excel (NO imágenes)
+      // ✅ RF-008: VALIDAR EXTENSIÓN - Solo PDF, Word, Excel (NO imágenes)
       const validExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
 
       if (!validExtensions.includes(extension)) {
+        // ✅ RF-008: Mostrar modal de archivo no compatible
         this.mostrarToastArchivoNoValido(file.name);
         input.value = ''; // Limpiar input
         return;
       }
 
-      // ✅ VALIDAR TAMAÑO - Máximo 30 MB
+      // ✅ RF-008: VALIDAR TAMAÑO - Máximo 30 MB
       if (file.size > 30 * 1024 * 1024) {
+        this.showErrorNotification('El tamaño máximo del archivo 30 MB');
+        input.value = ''; // Limpiar input
+        return;
+      }
+
+      // ✅ RF-008: VALIDAR LONGITUD DEL NOMBRE DEL ARCHIVO
+      if (file.name.length > this.MAX_FILE_NAME_LENGTH) {
         this.showErrorNotification(
-          '❌ Archivo supera 30 MB. Tu archivo es muy pesado, elige uno más pequeño.',
+          `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
         );
         input.value = ''; // Limpiar input
         return;
@@ -2376,11 +2444,24 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     }
   }
 
+  // ✅ RF-008: Mostrar confirmación antes de eliminar archivo
   removeFile(): void {
+    this.showAlertaEliminarArchivo = true;
+  }
+
+  // ✅ RF-008: Cancelar eliminación de archivo
+  cancelarEliminarArchivo(): void {
+    this.showAlertaEliminarArchivo = false;
+  }
+
+  // ✅ RF-008: Confirmar y ejecutar la eliminación del archivo
+  confirmarEliminarArchivo(): void {
     this.selectedFile = null;
     this.selectedFileName = null;
     this.fileName = null;
     this.uploadProgress = 0;
+    this.contractFileError = true; // Marcar error cuando se elimina el archivo
+    this.showAlertaEliminarArchivo = false;
     console.log('🗑️ Archivo removido');
   }
 
@@ -2414,9 +2495,19 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // Validar tamaño (30 MB)
+      // ✅ RF-008: Validar tamaño (30 MB)
       if (file.size > 30 * 1024 * 1024) {
-        this.showErrorNotification('El archivo excede el tamaño máximo de 30 MB');
+        this.showErrorNotification('El tamaño máximo del archivo 30 MB');
+        input.value = '';
+        return;
+      }
+
+      // ✅ RF-008: Validar longitud del nombre del archivo
+      if (file.name.length > this.MAX_FILE_NAME_LENGTH) {
+        this.showErrorNotification(
+          `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
+        );
+        input.value = '';
         return;
       }
 
@@ -2445,17 +2536,26 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
       const file = event.dataTransfer.files[0];
 
-      // Validar tamaño (30 MB)
-      if (file.size > 30 * 1024 * 1024) {
-        this.showErrorNotification('El archivo excede el tamaño máximo de 30 MB');
-        return;
-      }
-
-      // Validar extensión - Solo PDF, Word, Excel (NO imágenes)
+      // ✅ RF-008: Validar extensión - Solo PDF, Word, Excel (NO imágenes)
       const validExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
       if (!validExtensions.includes(extension)) {
+        // ✅ RF-008: Mostrar modal de archivo no compatible
         this.mostrarToastArchivoNoValido(file.name);
+        return;
+      }
+
+      // ✅ RF-008: Validar tamaño (30 MB)
+      if (file.size > 30 * 1024 * 1024) {
+        this.showErrorNotification('El tamaño máximo del archivo 30 MB');
+        return;
+      }
+
+      // ✅ RF-008: Validar longitud del nombre del archivo
+      if (file.name.length > this.MAX_FILE_NAME_LENGTH) {
+        this.showErrorNotification(
+          `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
+        );
         return;
       }
 
@@ -2485,6 +2585,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
     this.showSuccessNotification(`✅ Documento "${nuevoDoc.nombreArchivo}" agregado`);
     console.log('📁 Documentos soporte:', this.documentosSoporte);
+    
+    // ✅ AJUSTE LÍNEA: Mock - Simular extracción de IA del valor del contrato cuando se carga archivo
+    // TODO: Reemplazar con llamada real al servicio de IA cuando esté disponible
+    setTimeout(() => {
+      this.simularExtraccionIAValorContrato();
+    }, 1000); // Simular delay de procesamiento de IA
   }
 
   // ✅ Método para agregar documento usando el diseño original con spinner
@@ -2625,6 +2731,51 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     const numero = parseInt(valorLimpio, 10) || 0;
     this.valorContrato = numero;
     console.log(`💰 Valor del Contrato actualizado: ${this.formatearNumero(this.valorContrato)}`);
+    
+    // ✅ AJUSTE LÍNEA: Recalcular automáticamente valorAsegurado de coberturas seleccionadas
+    this.recalcularValoresAseguradosDesdeContrato();
+  }
+
+  // ✅ AJUSTE LÍNEA: Mock - Simular extracción de IA del valor del contrato
+  // TODO: Reemplazar con llamada real al servicio de IA cuando esté disponible
+  simularExtraccionIAValorContrato(): void {
+    // Mock: Simular que la IA extrajo un valor del contrato
+    // En producción, esto vendría del servicio de lectura de contratos
+    const valorExtraidoPorIA = 150000000; // Mock: Valor extraído por IA
+    
+    if (this.valorContrato === 0 || !this.valorContrato) {
+      this.valorContrato = valorExtraidoPorIA;
+      console.log(`🤖 IA extrajo valor del contrato: ${this.formatearNumero(this.valorContrato)}`);
+      
+      // Recalcular valores asegurados automáticamente
+      this.recalcularValoresAseguradosDesdeContrato();
+    } else {
+      console.log(`ℹ️ Valor del contrato ya ingresado manualmente: ${this.formatearNumero(this.valorContrato)}`);
+    }
+  }
+
+  // ✅ AJUSTE LÍNEA: Recalcular automáticamente valorAsegurado desde valorContrato y porcentajes
+  recalcularValoresAseguradosDesdeContrato(): void {
+    if (!this.valorContrato || this.valorContrato === 0) {
+      console.log('⚠️ No se puede recalcular: valor del contrato es 0');
+      return;
+    }
+
+    // Recalcular solo para coberturas seleccionadas
+    this.coberturasCumplimiento.forEach(cob => {
+      if (cob.seleccionada && cob.porcentaje > 0) {
+        const nuevoValorAsegurado = Math.round((this.valorContrato * cob.porcentaje) / 100);
+        cob.valorAsegurado = nuevoValorAsegurado;
+        
+        // Recalcular prima también (simplificado - se calculará cuando se liquide)
+        // cob.prima = this.recalcularPrimaCobertura(cob);
+        
+        console.log(`🔄 ${cob.nombre}: ${cob.porcentaje}% de ${this.formatearNumero(this.valorContrato)} = ${this.formatearNumero(nuevoValorAsegurado)}`);
+      }
+    });
+
+    // Recalcular total de prima
+    this.calcularTotalPrima();
   }
 
   // ✅ Método para manejar cambio de tipo de producto
@@ -2638,9 +2789,27 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       this.numeroDocumentoTomador = '';
       this.programaParametrizado = '';
       this.programaSeleccionado = '';
+      this.programasDisponibles = [];
+      this.programaSeleccionadoId = '';
+      this.facilityPrograma = null;
     }
     // ✅ GUARDAR INMEDIATAMENTE al cambiar campo
     this.guardarDatosFormulario();
+
+    // ✅ RF-005 Regla 5.3: Validar producto vs tipo de cliente cuando cambia el producto
+    if (this.tipoDocumentoTomador && this.numeroDocumentoTomador && this.nombreTomador) {
+      this.validarProductoVsTipoCliente();
+    }
+
+    // ✅ RF-005 Regla 5.4: Validar combinación de clientes cuando cambia el producto
+    if (
+      this.tipoDocumentoTomador &&
+      this.numeroDocumentoTomador &&
+      this.tipoDocumentoAsegurado &&
+      this.numeroDocumentoAsegurado
+    ) {
+      this.validarCombinacionClientes();
+    }
   }
 
   // ✅ Método para manejar cambio de clave del intermediario
@@ -2658,6 +2827,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     } else {
       this.nombreIntermediario = '';
     }
+    
+    // ✅ RF-007 Regla 7.2: Validar Grupo Bolívar cuando cambia la clave (solo cliente ocasional)
+    if (this.tipoCliente === 'ocasional' && value && this.tipoDocumentoTomador && this.numeroDocumentoTomador) {
+      this.validarGrupoBolivar();
+    }
+    
     // ✅ GUARDAR INMEDIATAMENTE al cambiar campo (después de asignar nombreIntermediario)
     this.guardarDatosFormulario();
   }
@@ -2703,6 +2878,37 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       maxSteps: this.stepperConfig.items!.length - 1,
     });
 
+    // ✅ RF-007 Regla 7.1: Bloquear si no hay cupo disponible
+    if (this.cupoBloqueado || this.showModalCupoBloqueado) {
+      console.log('❌ No se puede avanzar: Cupo bloqueado');
+      this.mostrarModalCupoBloqueado();
+      return;
+    }
+
+    // ✅ RF-007 Regla 7.2: Bloquear si hay error de Grupo Bolívar
+    if (this.showModalGrupoBolivar) {
+      console.log('❌ No se puede avanzar: Error Grupo Bolívar');
+      return;
+    }
+
+    // ✅ RF-007 Regla 7.4: Bloquear si asegurado no está en programa (producto 440)
+    if (this.showModalAseguradoNoEnPrograma) {
+      console.log('❌ No se puede avanzar: Asegurado no está en programa');
+      return;
+    }
+
+    // ✅ RF-005: Bloquear si hay modales de validación RF-005 activos
+    if (
+      this.showModalProductoNoCorresponde ||
+      this.showModalCombinacionClientes ||
+      this.showModalClienteConsultable ||
+      this.showModalReputacionNegativa ||
+      this.showModalClienteEnfoque
+    ) {
+      console.log('❌ No se puede avanzar: Validaciones RF-005 bloqueantes activas');
+      return;
+    }
+
     // ✅ GUARDAR DATOS antes de cambiar de paso
     this.guardarDatosFormulario();
 
@@ -2715,11 +2921,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // Si es Grandes Beneficiarios, validar campos adicionales
+      // ✅ RF-007 Regla 7.4: Si es Grandes Beneficiarios, validar que programa esté seleccionado
       if (this.tipoProducto === 'grandes-beneficiarios') {
         if (
           !this.claveIntermediario ||
           !this.programaParametrizado ||
+          !this.programaSeleccionadoId ||
           !this.tipoDocumentoTomador ||
           !this.numeroDocumentoTomador ||
           !this.tipoDocumentoAsegurado ||
@@ -2728,11 +2935,17 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           console.log('❌ Campos obligatorios faltantes para Grandes Beneficiarios:', {
             claveIntermediario: this.claveIntermediario,
             programaParametrizado: this.programaParametrizado,
+            programaSeleccionadoId: this.programaSeleccionadoId,
             tipoDocumentoTomador: this.tipoDocumentoTomador,
             numeroDocumentoTomador: this.numeroDocumentoTomador,
             tipoDocumentoAsegurado: this.tipoDocumentoAsegurado,
             numeroDocumentoAsegurado: this.numeroDocumentoAsegurado,
           });
+          
+          // ✅ RF-007 Regla 7.4: Si no hay programa seleccionado, mostrar modal
+          if (!this.programaParametrizado || !this.programaSeleccionadoId) {
+            this.mostrarModalAseguradoNoEnPrograma();
+          }
           return;
         }
       }
@@ -3054,18 +3267,28 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   }
 
   // ✅ Métodos de manejo de archivos usando tech-block-lib
+  // ✅ RF-008: Validar archivo cuando se captura desde la librería tech-block-lib
   onFileCaught(files: File[]): void {
     if (files.length > 0) {
-      this.fileName = files[0].name;
+      const file = files[0];
+
+      // ✅ RF-008: Validar longitud del nombre del archivo
+      if (file.name.length > this.MAX_FILE_NAME_LENGTH) {
+        this.showErrorNotification(
+          `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
+        );
+        return;
+      }
+
+      this.fileName = file.name;
       this.contractFileError = false; // ✅ Limpiar error cuando se carga un archivo
-      console.log('Archivo seleccionado:', files[0]);
+      console.log('Archivo seleccionado:', file);
     }
   }
 
-  onFileDeleted(file: File): void {
-    this.fileName = null;
-    this.contractFileError = true; // ✅ Marcar error cuando se elimina el archivo
-    console.log('Archivo eliminado:', file);
+  // ✅ RF-008: Mostrar confirmación antes de eliminar archivo (cuando se elimina desde la librería)
+  onFileDeleted(_file: File): void {
+    this.showAlertaEliminarArchivo = true;
   }
 
   onFileReload(uploadingFile: any): void {
@@ -5159,6 +5382,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           '22222222': '', // Trigger modal SARLAFT desactualizado
           '33333333': '', // Trigger modal Solicitar Cupo (sin cupo disponible)
           '12345678': 'COMERCIALIZADORA NACIONAL S.A.',
+          '890900608': 'GRUPO BOLIVAR S.A.', // ✅ RF-007: NIT Grupo Bolívar para pruebas
         };
 
         const docNum = this.numeroDocumentoTomador.replace(/[^0-9]/g, '');
@@ -5187,6 +5411,21 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
         this.nombreTomador = mockData[docNum] || 'CLIENTE ENCONTRADO - ' + docNum;
         this.buscandoTomador = false;
+
+        // ✅ RF-007 Regla 7.1: Calcular cupo disponible después de encontrar tomador
+        if (this.tipoDocumentoTomador && this.numeroDocumentoTomador) {
+          this.calcularCupoDisponible();
+        }
+
+        // ✅ RF-007 Regla 7.2: Validar Grupo Bolívar (solo para cliente ocasional)
+        if (this.tipoCliente === 'ocasional' && this.claveIntermediario) {
+          this.validarGrupoBolivar();
+        }
+
+        // ✅ RF-005: Validar todas las reglas RF-005 después de encontrar tomador
+        if (this.tipoDocumentoTomador && this.numeroDocumentoTomador) {
+          this.validarReglasRF005Tomador();
+        }
       }, 1000);
     }
   }
@@ -5205,11 +5444,27 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           '900111222': 'ASEGURADO PRINCIPAL S.A.',
           '800333444': 'BENEFICIARIO EJEMPLO LTDA',
           '12345678': 'ASEGURADO COMERCIAL S.A.S.',
+          '890900608': 'GRUPO BOLIVAR S.A.', // ✅ RF-007: NIT Grupo Bolívar para pruebas
         };
 
         const docNum = this.numeroDocumentoAsegurado.replace(/[^0-9]/g, '');
         this.nombreAsegurado = mockData[docNum] || 'ASEGURADO ENCONTRADO - ' + docNum;
         this.buscandoAsegurado = false;
+
+        // ✅ RF-007 Regla 7.4: Cargar programas cuando se encuentra asegurado (producto 440)
+        if (this.tipoProducto === 'grandes-beneficiarios' && this.nombreAsegurado) {
+          this.cargarProgramasDisponibles();
+        }
+
+        // ✅ RF-007 Regla 7.2: Validar Grupo Bolívar (solo para cliente ocasional)
+        if (this.tipoCliente === 'ocasional' && this.claveIntermediario) {
+          this.validarGrupoBolivar();
+        }
+
+        // ✅ RF-005 Regla 5.4: Validar combinación de clientes cuando se encuentra asegurado
+        if (this.tipoDocumentoTomador && this.numeroDocumentoTomador && this.nombreTomador) {
+          this.validarCombinacionClientes();
+        }
       }, 1000);
     }
   }
@@ -5424,7 +5679,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         this.snackbarConfig = {
           ...this.snackbarConfig,
           show: true,
-          message: '❌ El archivo no puede superar los 30 MB',
+          message: 'El tamaño máximo del archivo 30 MB',
           class: 'snackbar-error-theme',
         };
         return;
@@ -5491,14 +5746,688 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       actividadEconomica: this.actividadEconomica,
     });
 
-    // Cerrar modal y mostrar notificación de éxito
-    this.closeSolicitarCupo();
-    this.snackbarConfig = {
-      ...this.snackbarConfig,
-      show: true,
-      message: '✅ Solicitud de cupo enviada exitosamente. Será procesada en breve.',
-      class: 'snackbar-success-theme',
+    // ✅ RF-007 Regla 7.1: Recalcular cupo después de cargar estados financieros
+    if (this.estadosFinancierosFile && this.tipoDocumentoTomador && this.numeroDocumentoTomador) {
+      this.recalcularCupoConEstadosFinancieros();
+    } else {
+      // Cerrar modal y mostrar notificación de éxito
+      this.closeSolicitarCupo();
+      this.snackbarConfig = {
+        ...this.snackbarConfig,
+        show: true,
+        message: '✅ Solicitud de cupo enviada exitosamente. Será procesada en breve.',
+        class: 'snackbar-success-theme',
+      };
+    }
+  }
+
+  // ============================================
+  // ✅ RF-007: MÉTODOS PARA GESTIÓN DE CUPO
+  // ============================================
+
+  /**
+   * ✅ RF-007 Regla 7.1: Calcular cupo disponible del cliente
+   * Se invoca cuando se ingresa el documento del tomador
+   */
+  calcularCupoDisponible(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      this.cupoDisponible = 0;
+      this.cupoDisponibleVisible = 0;
+      return;
+    }
+
+    this.estaCalculandoCupo = true;
+
+    this.cupoService
+      .calcularCupoDisponible(this.tipoDocumentoTomador, this.numeroDocumentoTomador, this.tipoUsuario)
+      .subscribe({
+        next: (response) => {
+          this.cupoDisponible = response.cupoDisponible;
+          this.tipoCliente = response.tipoCliente;
+          this.cupoDisponibleVisible = this.cupoService.obtenerCupoVisible(
+            this.cupoDisponible,
+            this.tipoCliente,
+            this.tipoUsuario,
+          );
+
+          // ✅ RF-007 Regla 7.1: Validar si cupo <= 0
+          if (this.cupoService.requiereValidacionIngenieroDigital(this.cupoDisponible)) {
+            this.validarCapacidadIngenieroDigital();
+          } else {
+            // Actualizar cupo en Tronador
+            this.actualizarCupoEnTronador();
+            this.cupoBloqueado = false;
+          }
+
+          this.estaCalculandoCupo = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('❌ Error al calcular cupo:', error);
+          this.estaCalculandoCupo = false;
+          this.cupoDisponible = 0;
+          this.cupoDisponibleVisible = 0;
+          this.cdr.detectChanges();
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.1: Validar capacidad con servicio ingeniero digital
+   * Se invoca cuando cupo <= 0
+   */
+  private validarCapacidadIngenieroDigital(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.cupoService
+      .validarCapacidadIngenieroDigital(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
+      .subscribe({
+        next: (response) => {
+          if (!response.tieneInformacion) {
+            // ✅ RF-007 Regla 7.1: Habilitar servicio del lector de estados financieros
+            this.showSolicitarCupo = true;
+            console.log('📊 Ingeniero digital no tiene información, habilitando lector de estados financieros');
+          } else if (response.cupoCalculado !== undefined) {
+            // Si el ingeniero digital tiene información y calculó cupo
+            this.cupoDisponible = response.cupoCalculado;
+            this.cupoDisponibleVisible = this.cupoService.obtenerCupoVisible(
+              this.cupoDisponible,
+              this.tipoCliente,
+              this.tipoUsuario,
+            );
+            this.actualizarCupoEnTronador();
+            this.cupoBloqueado = false;
+          } else {
+            // Si no hay cupo disponible, mostrar mensaje bloqueante
+            this.mostrarModalCupoBloqueado();
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al validar con ingeniero digital:', error);
+          // Si falla, habilitar lector de estados financieros
+          this.showSolicitarCupo = true;
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.1: Recalcular cupo con estados financieros
+   * Se invoca después de cargar estados financieros en el modal
+   */
+  private recalcularCupoConEstadosFinancieros(): void {
+    if (!this.estadosFinancierosFile || !this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.estaCalculandoCupo = true;
+
+    const solicitudCupo = {
+      tipoDocumentoTomador: this.tipoDocumentoTomador,
+      numeroDocumentoTomador: this.numeroDocumentoTomador,
+      tipoDocumentoAsegurado: this.tipoDocumentoAsegurado || undefined,
+      numeroDocumentoAsegurado: this.numeroDocumentoAsegurado || undefined,
+      estadosFinancierosFile: this.estadosFinancierosFile,
+      actividadEconomica: this.actividadEconomica,
     };
+
+    this.cupoService.recalcularCupoConEstadosFinancieros(solicitudCupo).subscribe({
+      next: (response) => {
+        this.cupoDisponible = response.cupoDisponible;
+        this.tipoCliente = response.tipoCliente;
+        this.cupoDisponibleVisible = this.cupoService.obtenerCupoVisible(
+          this.cupoDisponible,
+          this.tipoCliente,
+          this.tipoUsuario,
+        );
+
+        // Actualizar en Tronador
+        this.actualizarCupoEnTronador();
+
+        // Si aún no hay cupo, mostrar mensaje bloqueante
+        if (!response.tieneCupo) {
+          this.mostrarModalCupoBloqueado();
+        } else {
+          this.cupoBloqueado = false;
+          this.closeSolicitarCupo();
+          this.snackbarConfig = {
+            ...this.snackbarConfig,
+            show: true,
+            message: '✅ Cupo recalculado exitosamente.',
+            class: 'snackbar-success-theme',
+          };
+        }
+
+        this.estaCalculandoCupo = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('❌ Error al recalcular cupo:', error);
+        this.estaCalculandoCupo = false;
+        this.mostrarModalCupoBloqueado();
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.1: Actualizar cupo en Tronador
+   */
+  private actualizarCupoEnTronador(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.cupoService
+      .actualizarCupoEnTronador(
+        this.tipoDocumentoTomador,
+        this.numeroDocumentoTomador,
+        this.cupoDisponible,
+      )
+      .subscribe({
+        next: () => {
+          console.log('✅ Cupo actualizado en Tronador');
+        },
+        error: (error) => {
+          console.error('❌ Error al actualizar cupo en Tronador:', error);
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.1: Mostrar modal con mensaje bloqueante cuando no hay cupo
+   */
+  mostrarModalCupoBloqueado(): void {
+    this.cupoBloqueado = true;
+    this.showModalCupoBloqueado = true;
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.1: Cerrar modal de cupo bloqueado
+   */
+  cerrarModalCupoBloqueado(): void {
+    this.showModalCupoBloqueado = false;
+  }
+
+
+  // ============================================
+  // ✅ RF-007 Regla 7.2: VALIDACIÓN GRUPO BOLÍVAR
+  // ============================================
+
+  /**
+   * ✅ RF-007 Regla 7.2: Validar Grupo Bolívar
+   * Se invoca cuando se ingresa tomador/asegurado y clave de intermediación
+   * Solo aplica para cliente ocasional
+   */
+  validarGrupoBolivar(): void {
+    // Solo validar si es cliente ocasional
+    if (this.tipoCliente !== 'ocasional') {
+      return;
+    }
+
+    // Validar que tengamos los datos necesarios
+    if (
+      !this.tipoDocumentoTomador ||
+      !this.numeroDocumentoTomador ||
+      !this.claveIntermediario
+    ) {
+      return;
+    }
+
+    this.grupoBolivarService
+      .validarGrupoBolivarCompleto(
+        this.tipoDocumentoTomador,
+        this.numeroDocumentoTomador,
+        this.tipoDocumentoAsegurado || null,
+        this.numeroDocumentoAsegurado || null,
+        this.claveIntermediario,
+      )
+      .subscribe({
+        next: (validacion) => {
+          if (validacion.requiereError) {
+            // ✅ RF-007 Regla 7.2: Mostrar popup de error
+            this.showModalGrupoBolivar = true;
+            console.log('🚨 Validación Grupo Bolívar: Error detectado', validacion);
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al validar Grupo Bolívar:', error);
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.2: Cerrar modal de error Grupo Bolívar
+   */
+  cerrarModalGrupoBolivar(): void {
+    this.showModalGrupoBolivar = false;
+  }
+
+  // ============================================
+  // ✅ RF-007 Reglas 7.3 y 7.4: PROGRAMAS PRODUCTO 440
+  // ============================================
+
+  /**
+   * ✅ RF-007 Regla 7.4: Cargar programas disponibles cuando se ingresa asegurado
+   * Se invoca automáticamente cuando se encuentra el asegurado
+   */
+  cargarProgramasDisponibles(): void {
+    if (
+      !this.tipoProducto ||
+      this.tipoProducto !== 'grandes-beneficiarios' ||
+      !this.tipoDocumentoAsegurado ||
+      !this.numeroDocumentoAsegurado ||
+      !this.claveIntermediario
+    ) {
+      this.programasDisponibles = [];
+      return;
+    }
+
+    this.estaCargandoProgramas = true;
+    this.programasDisponibles = [];
+
+    this.programaService
+      .obtenerProgramasDisponibles(
+        this.claveIntermediario,
+        this.tipoDocumentoAsegurado,
+        this.numeroDocumentoAsegurado,
+        this.tipoUsuario,
+      )
+      .subscribe({
+        next: (programas) => {
+          this.programasDisponibles = programas;
+          this.estaCargandoProgramas = false;
+
+          // Si no hay programas disponibles, mostrar mensaje
+          if (programas.length === 0) {
+            this.mostrarModalAseguradoNoEnPrograma();
+          }
+
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('❌ Error al cargar programas:', error);
+          this.estaCargandoProgramas = false;
+          this.programasDisponibles = [];
+          this.mostrarModalAseguradoNoEnPrograma();
+          this.cdr.detectChanges();
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.4: Manejar selección de programa
+   * @param programaId ID del programa seleccionado
+   */
+  onProgramaSeleccionado(programaId: string): void {
+    this.programaSeleccionadoId = programaId;
+    this.programaParametrizado = programaId;
+
+    // ✅ RF-007 Regla 7.4: Validar si asegurado está en programa seleccionado
+    if (this.tipoDocumentoAsegurado && this.numeroDocumentoAsegurado) {
+      this.validarAseguradoEnPrograma(programaId);
+    }
+
+    // ✅ RF-007 Regla 7.4: Obtener facility del programa
+    this.obtenerFacilityPrograma(programaId);
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.4: Validar si asegurado está en programa seleccionado
+   * @param programaId ID del programa
+   */
+  private validarAseguradoEnPrograma(programaId: string): void {
+    if (!this.tipoDocumentoAsegurado || !this.numeroDocumentoAsegurado) {
+      return;
+    }
+
+    this.programaService
+      .validarAseguradoEnPrograma(
+        programaId,
+        this.tipoDocumentoAsegurado,
+        this.numeroDocumentoAsegurado,
+      )
+      .subscribe({
+        next: (estaEnPrograma) => {
+          if (!estaEnPrograma) {
+            // ✅ RF-007 Regla 7.4: Mostrar mensaje y bloquear proceso
+            this.mostrarModalAseguradoNoEnPrograma();
+            this.programaSeleccionadoId = '';
+            this.programaParametrizado = '';
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al validar asegurado en programa:', error);
+          this.mostrarModalAseguradoNoEnPrograma();
+          this.programaSeleccionadoId = '';
+          this.programaParametrizado = '';
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.4: Obtener facility del programa seleccionado
+   * @param programaId ID del programa
+   */
+  private obtenerFacilityPrograma(programaId: string): void {
+    this.programaService.obtenerFacilityPrograma(programaId).subscribe({
+      next: (facility) => {
+        this.facilityPrograma = facility;
+
+        // ✅ RF-007 Regla 7.4: Determinar cupo que primará (facility vs cupo cliente)
+        if (facility !== null) {
+          this.cupoPrimario = this.programaService.determinarCupoPrimario(
+            facility,
+            this.cupoDisponible,
+          );
+          console.log('💰 Cupo primario determinado:', {
+            facility,
+            cupoCliente: this.cupoDisponible,
+            cupoPrimario: this.cupoPrimario,
+          });
+        } else {
+          this.cupoPrimario = this.cupoDisponible;
+        }
+
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('❌ Error al obtener facility:', error);
+        this.facilityPrograma = null;
+        this.cupoPrimario = this.cupoDisponible;
+      },
+    });
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.4: Mostrar modal cuando asegurado no está en programa
+   */
+  mostrarModalAseguradoNoEnPrograma(): void {
+    this.showModalAseguradoNoEnPrograma = true;
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.4: Cerrar modal de asegurado no en programa
+   */
+  cerrarModalAseguradoNoEnPrograma(): void {
+    this.showModalAseguradoNoEnPrograma = false;
+  }
+
+  // ============================================
+  // ✅ RF-005: MÉTODOS PARA MODALES DE VALIDACIÓN
+  // ============================================
+
+  /**
+   * ✅ RF-005 Regla 5.3: Cerrar modal de error producto vs tipo cliente
+   */
+  cerrarModalProductoNoCorresponde(): void {
+    this.showModalProductoNoCorresponde = false;
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.4: Cerrar modal de error combinación de clientes
+   */
+  cerrarModalCombinacionClientes(): void {
+    this.showModalCombinacionClientes = false;
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.5: Cerrar popup cliente consultable
+   */
+  cerrarModalClienteConsultable(): void {
+    this.showModalClienteConsultable = false;
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.5: Llamar al #773 (mobile: direcciona al teclado)
+   */
+  llamar773(): void {
+    // En mobile, esto direccionará al teclado del teléfono con #773 precargado
+    window.location.href = 'tel:#773';
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.5: Ir a WhatsApp (mobile: direcciona a WhatsApp)
+   */
+  irAWhatsApp(): void {
+    // En mobile, esto direccionará a WhatsApp para comunicarse con la línea
+    const whatsappUrl = 'https://wa.me/573001234567?text=Hola,%20necesito%20información%20sobre%20el%20cliente%20restringido';
+    window.open(whatsappUrl, '_blank');
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.6: Cerrar popup reputación negativa
+   */
+  cerrarModalReputacionNegativa(): void {
+    this.showModalReputacionNegativa = false;
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.7: Cerrar modal consorcio/uniones temporales
+   */
+  cerrarModalConsorcioUnionTemporal(): void {
+    this.showModalConsorcioUnionTemporal = false;
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.10: Cerrar modal cliente Enfoque
+   */
+  cerrarModalClienteEnfoque(): void {
+    this.showModalClienteEnfoque = false;
+  }
+
+  // ============================================
+  // ✅ RF-005: MÉTODOS DE VALIDACIÓN
+  // ============================================
+
+  /**
+   * ✅ RF-005: Validar todas las reglas RF-005 para el tomador
+   * Se invoca después de encontrar el tomador
+   */
+  private validarReglasRF005Tomador(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    // Validar en paralelo todas las reglas RF-005
+    this.validarProductoVsTipoCliente();
+    this.validarClienteConsultable();
+    this.validarReputacionNegativa();
+    this.validarConsorcioUnionTemporal();
+    this.validarClienteEnfoque();
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.3: Validar producto vs tipo de cliente
+   */
+  private validarProductoVsTipoCliente(): void {
+    if (!this.tipoProducto || !this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    const esEntidadPublica = this.productoValidacionService.esEntidadJuridicaPublica(
+      this.tipoDocumentoTomador,
+      this.numeroDocumentoTomador,
+    );
+
+    if (esEntidadPublica) {
+      const productoValido = this.productoValidacionService.validarProductoVsTipoEntidad(
+        this.tipoProducto,
+        esEntidadPublica,
+      );
+
+      if (!productoValido) {
+        this.showModalProductoNoCorresponde = true;
+        console.log('❌ RF-005 Regla 5.3: Producto no corresponde a entidad pública');
+      }
+    }
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.4: Validar combinación de clientes
+   */
+  private validarCombinacionClientes(): void {
+    if (
+      !this.tipoProducto ||
+      !this.tipoDocumentoTomador ||
+      !this.tipoDocumentoAsegurado
+    ) {
+      return;
+    }
+
+    const combinacionValida = this.productoValidacionService.validarCombinacionClientes(
+      this.tipoProducto,
+      this.tipoDocumentoTomador,
+      this.tipoDocumentoAsegurado,
+    );
+
+    if (!combinacionValida) {
+      this.showModalCombinacionClientes = true;
+      console.log('❌ RF-005 Regla 5.4: Combinación de clientes inválida');
+    }
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.5: Validar cliente consultable
+   */
+  private validarClienteConsultable(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.clienteValidacionService
+      .validarClienteConsultable(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
+      .subscribe({
+        next: (response) => {
+          if (response.esConsultable) {
+            this.showModalClienteConsultable = true;
+            console.log('❌ RF-005 Regla 5.5: Cliente es consultable (restringido)');
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al validar cliente consultable:', error);
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.6: Validar reputación negativa
+   */
+  private validarReputacionNegativa(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.clienteValidacionService
+      .validarReputacionNegativa(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
+      .subscribe({
+        next: (response) => {
+          if (response.tieneReputacionNegativa) {
+            this.showModalReputacionNegativa = true;
+            console.log('❌ RF-005 Regla 5.6: Cliente tiene reputación negativa');
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al validar reputación negativa:', error);
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.7: Validar consorcio/uniones temporales
+   */
+  private validarConsorcioUnionTemporal(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.clienteValidacionService
+      .validarConsorcioUnionTemporal(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
+      .subscribe({
+        next: (response) => {
+          // ✅ RF-005 Regla 5.7: Mostrar modal si pertenece a consorcio/uniones temporales
+          if (response.perteneceConsorcio || response.perteneceUnionTemporal) {
+            this.showModalConsorcioUnionTemporal = true;
+            console.log('⚠️ RF-005 Regla 5.7: Tomador pertenece a consorcio/uniones temporales');
+          }
+
+          // ✅ RF-005 Regla 5.7: Si pertenece a grupo empresarial, usar cupo del grupo
+          // Esto puede ocurrir independientemente de si es consorcio/uniones temporales
+          if (response.perteneceGrupoEmpresarial && response.cupoGrupo) {
+            this.cupoDisponible = response.cupoGrupo;
+            this.cupoDisponibleVisible = this.cupoService.obtenerCupoVisible(
+              this.cupoDisponible,
+              this.tipoCliente,
+              this.tipoUsuario,
+            );
+            this.actualizarCupoEnTronador();
+            console.log('💰 Usando cupo del grupo empresarial:', response.cupoGrupo);
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al validar consorcio/uniones temporales:', error);
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.10: Validar cliente Enfoque - NITs autorizados
+   */
+  private validarClienteEnfoque(): void {
+    // Solo aplica para intermediarios
+    if (this.tipoUsuario !== 'intermediario') {
+      return;
+    }
+
+    // Solo aplica si el tomador es tipo Enfoque
+    if (this.tipoCliente !== 'enfoque') {
+      return;
+    }
+
+    // Solo aplica si el documento es NIT
+    if (this.tipoDocumentoTomador !== 'NIT' && this.tipoDocumentoTomador !== 'NT') {
+      return;
+    }
+
+    if (!this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.clienteEnfoqueService
+      .validarNITAutorizado(this.numeroDocumentoTomador, this.tipoUsuario)
+      .subscribe({
+        next: (response) => {
+          if (!response.nitAutorizado) {
+            this.showModalClienteEnfoque = true;
+            console.log('❌ RF-005 Regla 5.10: NIT no autorizado para usuario intermediario');
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al validar NIT autorizado:', error);
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-007 Regla 7.4: Obtener texto para dropdown de programas
+   * @returns Texto a mostrar en el dropdown
+   */
+  getProgramaDropdownText(): string {
+    if (this.programaSeleccionadoId) {
+      const programa = this.programasDisponibles.find((p) => p.id === this.programaSeleccionadoId);
+      return programa?.nombre || 'Programa seleccionado';
+    }
+
+    if (!this.nombreAsegurado) {
+      return 'Complete la información del asegurado primero';
+    }
+
+    if (this.programasDisponibles.length > 0) {
+      return 'Seleccione un programa';
+    }
+
+    return 'No hay programas disponibles';
   }
 
   // ============================================

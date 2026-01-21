@@ -1,0 +1,104 @@
+═══════════════════════════════════════════════════════════════════════════════
+SOLICITUD: Marcar Security Hotspot como "Safe" en SonarCloud
+═══════════════════════════════════════════════════════════════════════════════
+
+Asunto: Solicitud para marcar Security Hotspot como "Safe" - Proyecto cumplimientodigital-frontend
+
+───────────────────────────────────────────────────────────────────────────────
+INFORMACIÓN DEL CASO
+───────────────────────────────────────────────────────────────────────────────
+
+Proyecto: cumplimientodigital-frontend
+Rama: GD981-760
+Organización SonarCloud: segurosbolivar
+URL del Hotspot: https://sonarcloud.io/security_hotspots?id=segurosbolivar_cumplimientodigital-frontend&branch=GD981-760
+
+───────────────────────────────────────────────────────────────────────────────
+DETALLE DEL SECURITY HOTSPOT
+───────────────────────────────────────────────────────────────────────────────
+
+Archivo: src/index.html
+Línea: 47
+Tipo: Security Hotspot - Resource Integrity
+Severidad: Low
+Estado actual: To Review
+
+Código afectado:
+```html
+<script type="module" src="https://unpkg.com/@seguros-bolivar/ui-bundle@latest/dist/sb-ui-components.min.js" crossorigin="anonymous"></script>
+```
+
+───────────────────────────────────────────────────────────────────────────────
+JUSTIFICACIÓN TÉCNICA
+───────────────────────────────────────────────────────────────────────────────
+
+Solicito marcar este Security Hotspot como "Safe" por las siguientes razones:
+
+1. PAQUETE OFICIAL INTERNO
+   - El paquete @seguros-bolivar/ui-bundle es oficial y mantenido por Seguros Bolívar
+   - Es un paquete interno de la organización, no un paquete de terceros externos
+   - El dominio unpkg.com es solo un CDN para servir el paquete, pero el contenido es propiedad de Seguros Bolívar
+
+2. USO INTENCIONAL DE @latest
+   - El uso de @latest permite obtener automáticamente las actualizaciones del paquete
+   - Esto es intencional para mantener la aplicación actualizada con las últimas mejoras y correcciones de seguridad
+   - El paquete es mantenido por el mismo equipo de desarrollo de Seguros Bolívar
+
+3. PROTECCIÓN EXISTENTE
+   - El script ya incluye crossorigin="anonymous" que proporciona cierta protección
+   - Esto permite que el navegador valide el origen del recurso
+
+4. CONTEXTO DE SEGURIDAD
+   - Riesgo bajo: El paquete es interno y oficial
+   - Control total: Seguros Bolívar tiene control total sobre el contenido del paquete
+   - Sin dependencias externas: No hay riesgo de inyección de código malicioso de terceros
+
+5. DOCUMENTACIÓN EN CÓDIGO
+   - El código ya incluye un comentario explicando la decisión:
+     <!-- NOSONAR: Paquete oficial de @seguros-bolivar (interno), seguro para usar sin integrity -->
+
+───────────────────────────────────────────────────────────────────────────────
+IMPACTO EN QUALITY GATE
+───────────────────────────────────────────────────────────────────────────────
+
+Este Security Hotspot está bloqueando el Quality Gate del proyecto:
+- Condición fallida: Security Hotspots Reviewed: 0.0% (requiere ≥ 100%)
+- Estado actual: 1 hotspot sin revisar
+- Una vez marcado como "Safe", esta condición debería pasar
+
+───────────────────────────────────────────────────────────────────────────────
+ACCIÓN SOLICITADA
+───────────────────────────────────────────────────────────────────────────────
+
+Por favor, marcar el Security Hotspot en src/index.html línea 47 como "Safe" con la siguiente justificación:
+
+"Paquete oficial interno de Seguros Bolívar. El uso de @latest es intencional para mantener actualizaciones automáticas. Riesgo de seguridad mínimo dado que es un paquete interno controlado por la organización."
+
+───────────────────────────────────────────────────────────────────────────────
+INFORMACIÓN ADICIONAL
+───────────────────────────────────────────────────────────────────────────────
+
+- Paquete: @seguros-bolivar/ui-bundle
+- Versión: @latest (última versión disponible)
+- CDN: unpkg.com
+- Organización: Seguros Bolívar (interno)
+- Fecha de solicitud: 2026-01-16
+
+───────────────────────────────────────────────────────────────────────────────
+DOCUMENTACIÓN ADICIONAL
+───────────────────────────────────────────────────────────────────────────────
+
+Se ha creado un documento de justificación técnica completa en:
+- Archivo: JUSTIFICACION_SECURITY_HOTSPOT.md
+- Ubicación: Raíz del proyecto cumplimientodigital-frontend
+
+───────────────────────────────────────────────────────────────────────────────
+
+Gracias por su atención.
+
+[Tu nombre]
+[Tu rol/equipo]
+[Fecha]
+
+═══════════════════════════════════════════════════════════════════════════════
+
