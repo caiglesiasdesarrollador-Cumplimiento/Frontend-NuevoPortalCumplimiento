@@ -9,6 +9,29 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 /**
+ * ✅ Interfaz para tipar el environment con propiedades opcionales de API Keys
+ * Esto permite que el interceptor funcione tanto con environment básico como completo
+ */
+interface EnvironmentApiKeys {
+  production: boolean;
+  apiUrl: string;
+  apiKeysEspecificas?: {
+    catalogos?: { dev?: string; staging?: string; prod?: string };
+    multiclaves?: { dev?: string; staging?: string; prod?: string };
+    recuperarAgente?: { dev?: string; staging?: string; prod?: string };
+    notificador?: { dev?: string; staging?: string; prod?: string };
+    generarPdfCotizacionRC?: { dev?: string; staging?: string; prod?: string };
+    generarPdfPoliza?: { dev?: string; staging?: string; prod?: string };
+    generarQR?: { dev?: string; staging?: string; prod?: string };
+  };
+  apiKeysComunes?: { dev?: string; staging?: string; prod?: string };
+  apiKeysGCP?: { dev?: string; staging?: string; prod?: string };
+  apiKeysAWSActuaria?: { dev?: string; staging?: string; prod?: string };
+  apiKeysOpenL?: { dev?: string; staging?: string; prod?: string };
+  apiKeysCumplimiento?: { dev?: string; staging?: string; prod?: string };
+}
+
+/**
  * ✅ Interceptor para agregar header x-api-key automáticamente
  * según el tipo de servicio (Comunes, GCP, AWS Actuaría, OpenL)
  * 
@@ -16,9 +39,14 @@ import { environment } from '../../../environments/environment';
  * Este interceptor detecta el servicio por URL y usa la API Key correcta.
  * 
  * Basado en la documentación de microservicios y colección de Postman
+ * 
+ * NOTA: Compatible con environment básico (sin API Keys) y completo (con API Keys)
  */
 @Injectable()
 export class ApiKeyInterceptor implements HttpInterceptor {
+  // ✅ Cast del environment para acceso tipado con propiedades opcionales
+  private readonly env = environment as EnvironmentApiKeys;
+
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // ✅ Determinar qué API Key usar según la URL
     const apiKey = this.getApiKeyForUrl(request.url);
@@ -76,6 +104,8 @@ export class ApiKeyInterceptor implements HttpInterceptor {
    * Detecta el servicio específico y usa la API Key correspondiente
    * @param url URL de la petición
    * @returns API Key o null si no aplica
+   * 
+   * NOTA: Usa optional chaining para ser compatible con environment básico
    */
   private getApiKeyForUrl(url: string): string | null {
     // ✅ Determinar ambiente (dev, staging, prod)
@@ -85,61 +115,61 @@ export class ApiKeyInterceptor implements HttpInterceptor {
     if (this.isComunesUrl(url)) {
       // Catalogos (COMUNES_001)
       if (this.isCatalogosUrl(url)) {
-        return environment.apiKeysEspecificas.catalogos[ambiente] || null;
+        return this.env.apiKeysEspecificas?.catalogos?.[ambiente] || null;
       }
 
       // Multiclaves (COMUNES_007)
       if (this.isMulticlavesUrl(url)) {
-        return environment.apiKeysEspecificas.multiclaves[ambiente] || null;
+        return this.env.apiKeysEspecificas?.multiclaves?.[ambiente] || null;
       }
 
       // Recuperar Agente (COMUNES_008)
       if (this.isRecuperarAgenteUrl(url)) {
-        return environment.apiKeysEspecificas.recuperarAgente[ambiente] || null;
+        return this.env.apiKeysEspecificas?.recuperarAgente?.[ambiente] || null;
       }
 
       // Notificador (COMUNES_009)
       if (this.isNotificadorUrl(url)) {
-        return environment.apiKeysEspecificas.notificador[ambiente] || null;
+        return this.env.apiKeysEspecificas?.notificador?.[ambiente] || null;
       }
 
       // Generar PDF Cotización RC (COMUNES_010)
       if (this.isGenerarPdfCotizacionRCUrl(url)) {
-        return environment.apiKeysEspecificas.generarPdfCotizacionRC[ambiente] || null;
+        return this.env.apiKeysEspecificas?.generarPdfCotizacionRC?.[ambiente] || null;
       }
 
       // Generar PDF Póliza (COMUNES_011)
       if (this.isGenerarPdfPolizaUrl(url)) {
-        return environment.apiKeysEspecificas.generarPdfPoliza[ambiente] || null;
+        return this.env.apiKeysEspecificas?.generarPdfPoliza?.[ambiente] || null;
       }
 
       // Generar QR PDF (COMUNES_012)
       if (this.isGenerarQRUrl(url)) {
-        return environment.apiKeysEspecificas.generarQR[ambiente] || null;
+        return this.env.apiKeysEspecificas?.generarQR?.[ambiente] || null;
       }
 
       // ✅ Para otros servicios de Comunes, usar API Key genérica
-      return environment.apiKeysComunes[ambiente] || null;
+      return this.env.apiKeysComunes?.[ambiente] || null;
     }
 
     // ✅ Servicios GCP (HTTP Proxy)
     if (this.isGCPProxyUrl(url)) {
-      return environment.apiKeysGCP[ambiente] || null;
+      return this.env.apiKeysGCP?.[ambiente] || null;
     }
 
     // ✅ Servicios AWS Actuaría (Ingeniero Digital)
     if (this.isAWSActuariaUrl(url)) {
-      return environment.apiKeysAWSActuaria[ambiente] || null;
+      return this.env.apiKeysAWSActuaria?.[ambiente] || null;
     }
 
     // ✅ Servicios OpenL
     if (this.isOpenLUrl(url)) {
-      return environment.apiKeysOpenL[ambiente] || null;
+      return this.env.apiKeysOpenL?.[ambiente] || null;
     }
 
     // ✅ Servicios de Cumplimiento Digital
     if (this.isCumplimientoUrl(url)) {
-      return environment.apiKeysCumplimiento[ambiente] || null;
+      return this.env.apiKeysCumplimiento?.[ambiente] || null;
     }
 
     return null;
@@ -150,7 +180,7 @@ export class ApiKeyInterceptor implements HttpInterceptor {
    * @returns 'dev', 'staging' o 'prod'
    */
   private getAmbiente(): 'dev' | 'staging' | 'prod' {
-    if (environment.production) {
+    if (this.env.production) {
       return 'prod';
     }
     // TODO: Detectar staging vs dev de forma más precisa
