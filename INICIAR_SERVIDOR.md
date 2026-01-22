@@ -76,3 +76,4 @@ taskkill /F /IM node.exe
 
 **¿Qué ves en la terminal ahora? ¿Compiló correctamente o hay errores?**
 
+

@@ -121,3 +121,4 @@ Los tres servicios tienen código similar:
 
 **Recomendación**: Revisar primero los 10 issues críticos en SonarCloud y determinar su naturaleza antes de proceder con correcciones masivas.
 
+

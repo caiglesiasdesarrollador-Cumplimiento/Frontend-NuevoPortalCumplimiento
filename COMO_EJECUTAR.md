@@ -81,3 +81,4 @@ TCP    0.0.0.0:4200    0.0.0.0:0    LISTENING    12345
 
 **Ejecuta el script `EJECUTAR_SERVIDOR.bat` o `npm start` y comparte qué ves en la terminal.**
 
+

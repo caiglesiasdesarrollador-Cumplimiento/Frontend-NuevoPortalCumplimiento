@@ -100,3 +100,4 @@ npm start
 
 **¿Qué ves en la terminal ahora? ¿Compiló o hay errores?**
 
+

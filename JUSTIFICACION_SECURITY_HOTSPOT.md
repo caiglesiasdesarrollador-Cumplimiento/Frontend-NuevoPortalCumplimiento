@@ -98,3 +98,4 @@ Por favor, marcar el Security Hotspot en `src/index.html` línea 47 como **"Safe
 
 Si se requiere más información sobre esta decisión, contactar al equipo de desarrollo del proyecto.
 
+

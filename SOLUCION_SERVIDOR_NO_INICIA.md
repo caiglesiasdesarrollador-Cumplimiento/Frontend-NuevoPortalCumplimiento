@@ -143,3 +143,4 @@ Comparte el **error completo** que aparece en la terminal cuando ejecutas `npm s
 
 **¿Qué error específico ves en la terminal cuando ejecutas `npm start`?**
 
+

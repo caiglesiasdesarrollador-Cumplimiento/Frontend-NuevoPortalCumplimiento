@@ -540,3 +540,4 @@ Las validaciones se ejecutan automáticamente cuando:
 
 **Todas las validaciones bloquean el proceso si fallan y permiten continuar si pasan.**
 
+

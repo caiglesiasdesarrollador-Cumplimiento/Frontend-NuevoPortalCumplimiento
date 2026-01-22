@@ -224,3 +224,4 @@ readonly sistemaOrigen = '196';  // ⚠️ Tu Postman dice 100, pero tu doc dice
 
 **¿Quieres que te muestre otro servicio específico para que veas exactamente cómo usé tu información?**
 
+

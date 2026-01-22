@@ -84,3 +84,4 @@ Una vez marcado como "Safe" en esta rama, no debería volver a aparecer a menos 
 
 Este es un comportamiento normal de SonarCloud. Los Security Hotspots deben revisarse y marcarse en cada rama donde aparecen, ya que cada rama tiene su propio contexto de análisis.
 
+

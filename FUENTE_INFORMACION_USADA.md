@@ -211,3 +211,4 @@ readonly sistemaOrigen = '196'; // De tu doc (nota: tu Postman dice 100, pero do
 
 **El código está basado 100% en la información que me diste. No inventé nada.**
 
+
