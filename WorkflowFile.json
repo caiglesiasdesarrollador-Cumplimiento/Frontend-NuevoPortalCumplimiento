@@ -23,6 +23,23 @@
     "stage": "stage",
     "master": "prod"
   },
+  "environments": {
+    "dev": {
+      "apiUrl": "/cumplimientodigital/dev/environment/front/apiUrlFront",
+      "secretKey": "/cumplimientodigital/dev/environment/front/secretKeyFront",
+      "secretIv": "/cumplimientodigital/dev/environment/front/secretIvFront"
+    },
+    "stage": {
+      "apiUrl": "/cumplimientodigital/stage/environment/front/apiUrlFront",
+      "secretKey": "/cumplimientodigital/stage/environment/front/secretKeyFront",
+      "secretIv": "/cumplimientodigital/stage/environment/front/secretIvFront"
+    },
+    "prod": {
+      "apiUrl": "/cumplimientodigital/prod/environment/front/apiUrlFront",
+      "secretKey": "/cumplimientodigital/prod/environment/front/secretKeyFront",
+      "secretIv": "/cumplimientodigital/prod/environment/front/secretIvFront"
+    }
+  },
   "repositoryUrl": {
     "dev": {
       "repository_url": "bolivar-npm-core-web-kit-components-lib-prod-virtual"
