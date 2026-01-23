@@ -23,6 +23,20 @@
     "stage": "stage",
     "master": "prod"
   },
+  "cloudfront": {
+    "dev": {
+      "distributionId": "",
+      "invalidationPaths": "/*"
+    },
+    "stage": {
+      "distributionId": "",
+      "invalidationPaths": "/*"
+    },
+    "prod": {
+      "distributionId": "",
+      "invalidationPaths": "/*"
+    }
+  },
   "environments": {
     "dev": {
       "apiUrl": "/cumplimientodigital/dev/environment/front/apiUrlFront",
