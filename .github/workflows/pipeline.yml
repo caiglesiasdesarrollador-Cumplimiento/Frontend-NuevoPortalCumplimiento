@@ -14,5 +14,3 @@ jobs:
     with:
       language_package_manager: 'npm' # npm | pip | gradle
       language_version: '22.21.1' # specific version of npm | pip | gradle - Updated for Angular 20
-      repository_url: ${{ github.repository }}
-      branch_name: ${{ github.head_ref || github.ref_name }}
