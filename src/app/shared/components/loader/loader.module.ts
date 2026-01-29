@@ -4,10 +4,8 @@ import { LoaderComponent } from './loader.component';
 import { LibTbModalModule, LibTbProgressSpinnerModule } from 'tech-block-lib';
 
 @NgModule({
-  imports: [
-    LoaderComponent,CommonModule, LibTbProgressSpinnerModule, LibTbModalModule],
+  imports: [LoaderComponent, CommonModule, LibTbProgressSpinnerModule, LibTbModalModule],
   exports: [LoaderComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class LoaderModule {}
-

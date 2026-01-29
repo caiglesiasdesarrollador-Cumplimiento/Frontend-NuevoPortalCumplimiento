@@ -18,7 +18,13 @@ const routes: Routes = [
   // ✅ FAKE LOGIN - Simulación de ingreso IDM (Solo Dev/Stage)
   {
     path: 'fake-login',
-    loadChildren: () => import('./containers/fake-login/fake-login.module').then(m => m.FakeLoginModule),
+    loadChildren: () =>
+      import('./containers/fake-login/fake-login.module').then(m => m.FakeLoginModule),
+  },
+  {
+    path: 'redirect',
+    loadChildren: () =>
+      import('./containers/redirect/redirect.module').then(m => m.RedirectModule),
   },
 
   // ✅ PORTAL DE INTERMEDIARIOS - Pantalla principal inspirada en imagen 1
@@ -137,18 +143,18 @@ const routes: Routes = [
   {
     path: 'valor-asegurado-modification',
     loadChildren: () =>
-      import(
-        './containers/policy-modification/valor-asegurado-modification/valor-asegurado-modification.module'
-      ).then(m => m.ValorAseguradoModificationModule),
+      import('./containers/policy-modification/valor-asegurado-modification/valor-asegurado-modification.module').then(
+        m => m.ValorAseguradoModificationModule,
+      ),
   },
 
   // ✅ MODIFICACIONES NOMINATIVAS - Pantalla para cambios en datos generales y ubicación del riesgo
   {
     path: 'modificaciones-nominativas',
     loadChildren: () =>
-      import(
-        './containers/policy-modification/modificaciones-nominativas/modificaciones-nominativas.module'
-      ).then(m => m.ModificacionesNominativasModule),
+      import('./containers/policy-modification/modificaciones-nominativas/modificaciones-nominativas.module').then(
+        m => m.ModificacionesNominativasModule,
+      ),
   },
 
   // ✅ EXISTENTE - Formulario dinámico (mantener compatibilidad)

@@ -2,16 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import {
-  IGenerarQRRequest,
-  IGenerarQRResponse,
-} from '../interfaces/comunes.interface';
+import { IGenerarQRRequest, IGenerarQRResponse } from '../interfaces/comunes.interface';
 
 /**
  * ✅ COMUNES_012: Servicio para generar estampado de código QR en PDFs
- * 
+ *
  * Genera el código QR en los PDFs de pólizas de Cumplimiento y Responsabilidad Civil.
- * 
+ *
  * Basado en documentación de microservicios
  */
 @Injectable({
@@ -21,9 +18,17 @@ export class GenerarQRService {
   private readonly baseUrl: string;
 
   constructor(private readonly http: HttpClient) {
-    // ✅ Usar API Gateway Comunes según ambiente
+    // ✅ Usar proxy en desarrollo para evitar CORS, URL directa en producción
     const ambiente = environment.production ? 'prod' : 'dev';
-    this.baseUrl = `${environment.apiGatewayComunes[ambiente]}/poliza_transversal/api/v1`;
+    
+    if (environment.production) {
+      // ✅ Producción: usar URL directa del API Gateway
+      this.baseUrl = `${environment.apiGatewayComunes[ambiente]}/poliza_transversal/api/v1`;
+    } else {
+      // ✅ Desarrollo: usar proxy para evitar CORS
+      // El proxy ya está configurado en proxy.conf.json
+      this.baseUrl = `/proxy/comunes-personas-administracion/poliza_transversal/api/v1`;
+    }
   }
 
   /**
@@ -49,7 +54,7 @@ export class GenerarQRService {
       soapBody,
       {
         headers,
-        responseType: 'json' as 'json',
+        responseType: 'json' as const,
       },
     );
   }
@@ -178,5 +183,3 @@ export class GenerarQRService {
     return this.generarQR(request);
   }
 }
-
-

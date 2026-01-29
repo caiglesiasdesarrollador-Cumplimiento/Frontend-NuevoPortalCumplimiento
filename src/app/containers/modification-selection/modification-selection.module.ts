@@ -22,4 +22,3 @@ import { ModificationSelectionComponent } from './modification-selection.compone
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ModificationSelectionModule {}
-

@@ -1,0 +1,26 @@
+{
+  "/proxy/comunes-personas-administracion/*": {
+    "target": "https://fz73xehwah.execute-api.us-east-1.amazonaws.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/proxy/comunes-personas-administracion": "/dev/persona_administracion"
+    },
+    "headers": {
+      "x-api-key": "gNlVN7pIkc5OK412NgbtL9xpl3vEB9xi3VlvJ8yu"
+    }
+  },
+  "/proxy/comunes-multiclaves/*": {
+    "target": "https://z0jo90imu8.execute-api.us-east-1.amazonaws.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/proxy/comunes-multiclaves": "/dev/comunes/api/v1"
+    },
+    "headers": {
+      "x-api-key": "8BKiD5m9kl2mueLPC1byo2n0gEDiXiZ022IQj7xV"
+    }
+  }
+}

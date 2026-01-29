@@ -53,4 +53,3 @@ export interface IValidacionGrupoBolivar {
   claveEsDirecta: boolean;
   requiereError: boolean;
 }
-

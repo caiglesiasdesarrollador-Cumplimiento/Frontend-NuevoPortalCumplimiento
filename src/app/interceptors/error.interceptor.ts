@@ -4,7 +4,7 @@ import {
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
-  HttpErrorResponse
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -17,8 +17,7 @@ import { catchError } from 'rxjs/operators';
  */
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-
-  constructor() { }
+  constructor() {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
@@ -35,7 +34,7 @@ export class ErrorInterceptor implements HttpInterceptor {
           console.error('🔴 [ErrorInterceptor] Server Error:', {
             status: error.status,
             message: errorMessage,
-            url: request.url
+            url: request.url,
           });
         }
 
@@ -43,7 +42,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         // this.notificationService.showError(errorMessage);
 
         return throwError(() => new Error(errorMessage));
-      })
+      }),
     );
   }
 
@@ -77,4 +76,3 @@ export class ErrorInterceptor implements HttpInterceptor {
     }
   }
 }
-

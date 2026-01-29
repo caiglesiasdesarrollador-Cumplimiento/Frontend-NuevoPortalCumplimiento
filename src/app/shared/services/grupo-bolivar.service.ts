@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 // NOSONAR: environment se usará cuando se conecte API real
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import { environment } from '../../../environments/environment';
 import { IValidacionGrupoBolivar } from '../interfaces/cupo.interface';
 
@@ -60,10 +60,7 @@ export class GrupoBolivarService {
    * @param numeroDocumento Número de documento
    * @returns Observable con resultado de validación
    */
-  validarEsGrupoBolivar(
-    tipoDocumento: string,
-    numeroDocumento: string,
-  ): Observable<boolean> {
+  validarEsGrupoBolivar(tipoDocumento: string, numeroDocumento: string): Observable<boolean> {
     // TODO: Conectar con API real cuando esté disponible
     // return this.http.get<boolean>(
     //   `${this.apiUrl}/grupo-bolivar/validar?tipoDocumento=${tipoDocumento}&numeroDocumento=${numeroDocumento}`
@@ -89,9 +86,7 @@ export class GrupoBolivarService {
     // );
 
     // Mock: Validar si la clave está en la lista de directas autorizadas
-    return of(this.CLAVES_DIRECTAS_AUTORIZADAS.includes(claveIntermediario)).pipe(
-      delay(300),
-    );
+    return of(this.CLAVES_DIRECTAS_AUTORIZADAS.includes(claveIntermediario)).pipe(delay(300));
   }
 
   /**
@@ -126,16 +121,15 @@ export class GrupoBolivarService {
     const validarClave$ = this.validarClaveDirectaAutorizada(claveIntermediario);
 
     // Combinar validaciones
-    return new Observable((observer) => {
-      validarTomador$.subscribe((tomadorEsGrupoBolivar) => {
-        validarAsegurado$.subscribe((aseguradoEsGrupoBolivar) => {
-          validarClave$.subscribe((claveEsDirecta) => {
+    return new Observable(observer => {
+      validarTomador$.subscribe(tomadorEsGrupoBolivar => {
+        validarAsegurado$.subscribe(aseguradoEsGrupoBolivar => {
+          validarClave$.subscribe(claveEsDirecta => {
             const resultado: IValidacionGrupoBolivar = {
               tomadorEsGrupoBolivar,
               aseguradoEsGrupoBolivar,
               claveEsDirecta,
-              requiereError:
-                (tomadorEsGrupoBolivar || aseguradoEsGrupoBolivar) && !claveEsDirecta,
+              requiereError: (tomadorEsGrupoBolivar || aseguradoEsGrupoBolivar) && !claveEsDirecta,
             };
 
             observer.next(resultado);
@@ -146,4 +140,3 @@ export class GrupoBolivarService {
     });
   }
 }
-

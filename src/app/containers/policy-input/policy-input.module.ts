@@ -12,4 +12,3 @@ import { PolicyInputRoutingModule } from './policy-input-routing.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PolicyInputModule {}
-

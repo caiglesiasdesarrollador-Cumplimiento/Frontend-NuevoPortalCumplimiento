@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor
-} from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -15,12 +10,11 @@ import { finalize } from 'rxjs/operators';
  */
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor {
-
   private activeRequests = 0;
 
   // TODO: Inyectar servicio de loading cuando esté disponible
   // constructor(private loadingService: LoadingService) { }
-  constructor() { }
+  constructor() {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Incrementar contador
@@ -40,7 +34,7 @@ export class LoadingInterceptor implements HttpInterceptor {
         if (this.activeRequests === 0) {
           this.hideLoading();
         }
-      })
+      }),
     );
   }
 
@@ -62,4 +56,3 @@ export class LoadingInterceptor implements HttpInterceptor {
     // this.loadingService.hide();
   }
 }
-

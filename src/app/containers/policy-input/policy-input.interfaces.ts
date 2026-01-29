@@ -218,4 +218,3 @@ export interface INotificacion {
   mensaje: string;
   duracion?: number;
 }
-

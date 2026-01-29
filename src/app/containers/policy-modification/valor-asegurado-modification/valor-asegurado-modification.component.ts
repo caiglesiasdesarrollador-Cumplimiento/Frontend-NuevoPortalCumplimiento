@@ -40,12 +40,12 @@ export class ValorAseguradoModificationComponent implements OnInit {
     items: [
       {
         label: 'Seleccionar',
-        icon: 'fal fa-search',
+        icon: 'fa-solid fa-search',
         command: () => this.goToStep(0),
       },
       {
         label: 'Modificar',
-        icon: 'fal fa-edit',
+        icon: 'fa-solid fa-edit',
         command: () => this.goToStep(1),
       },
     ],
@@ -66,7 +66,7 @@ export class ValorAseguradoModificationComponent implements OnInit {
   // ✅ Botones de acción
   btnGuardarCambios: ILibTbButton = {
     label: 'Guardar Cambios',
-    icon: 'fal fa-save',
+    icon: 'fa-solid fa-save',
     iconPosition: 'left',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -75,7 +75,7 @@ export class ValorAseguradoModificationComponent implements OnInit {
 
   btnCancelar: ILibTbButton = {
     label: 'Cancelar',
-    icon: 'fal fa-times',
+    icon: 'fa-solid fa-times',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -84,7 +84,7 @@ export class ValorAseguradoModificationComponent implements OnInit {
 
   btnVolver: ILibTbButton = {
     label: 'Volver a Modificaciones',
-    icon: 'fal fa-arrow-left',
+    icon: 'fa-solid fa-arrow-left',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -118,22 +118,22 @@ export class ValorAseguradoModificationComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Portal',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/portal'],
       },
       {
         label: 'Modificaciones',
-        icon: 'fal fa-edit',
+        icon: 'fa-solid fa-edit',
         routerLink: ['/modification-selection'],
       },
       {
         label: 'Modificar Póliza',
-        icon: 'fal fa-clipboard-check',
+        icon: 'fa-solid fa-clipboard-check',
         routerLink: ['/policy-modification'],
       },
       {
         label: 'Modificar Valor Asegurado',
-        icon: 'fal fa-dollar-sign',
+        icon: 'fa-solid fa-dollar-sign',
       },
     ];
 
@@ -316,5 +316,3 @@ export class ValorAseguradoModificationComponent implements OnInit {
     return cobertura.id;
   }
 }
-
-

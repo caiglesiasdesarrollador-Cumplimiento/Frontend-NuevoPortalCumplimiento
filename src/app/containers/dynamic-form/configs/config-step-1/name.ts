@@ -21,7 +21,7 @@ export const name = (self: IDynamicFormComponent): ILibTbDynamicFormConfigType =
       showIconCaption: true,
       showHelp: true,
       floatLabel: true,
-      icon: 'fal fa-user',
+      icon: 'fa-solid fa-user',
       iconPosition: 'right',
       captionText: {
         help: 'Digite sus nombres completos',

@@ -28,5 +28,3 @@ export class BreadcrumbComponent implements OnInit {
     this.breadcrumbService.clearBreadcrumb();
   }
 }
-
-

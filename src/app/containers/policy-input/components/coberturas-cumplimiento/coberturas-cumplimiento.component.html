@@ -1,0 +1,38 @@
+<!-- ✅ Coberturas de Cumplimiento -->
+<div class="coberturas-cumplimiento-container">
+  <div class="coberturas-header">
+    <h3>Coberturas de Cumplimiento</h3>
+    <span class="badge">{{ coberturas.length }}</span>
+  </div>
+
+  <div class="coberturas-table" *ngIf="coberturas.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Cobertura</th>
+          <th>%</th>
+          <th>Valor Asegurado</th>
+          <th>Prima</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cob of coberturas">
+          <td>{{ cob.nombre }}</td>
+          <td>{{ cob.porcentaje }}%</td>
+          <td>{{ formatCurrency(cob.valorAsegurado) }}</td>
+          <td>{{ formatCurrency(cob.prima) }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3"><strong>Total Prima:</strong></td>
+          <td><strong>{{ formatCurrency(totalPrima) }}</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="coberturas-empty" *ngIf="coberturas.length === 0">
+    <p>No hay coberturas de cumplimiento agregadas</p>
+  </div>
+</div>

@@ -55,12 +55,12 @@ export class ThirdPartyValidationComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Dashboard',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/dashboard'],
       },
       {
         label: 'Validación de Terceros',
-        icon: 'fal fa-shield-alt',
+        icon: 'fa-solid fa-shield-alt',
       },
     ];
 
@@ -96,7 +96,7 @@ export class ThirdPartyValidationComponent implements OnInit {
   // ✅ BOTONES DE ACCIÓN usando propiedades nativas de tech-block-lib (patrón settings)
   btnValidate: ILibTbButton = {
     label: 'Validar Tercero',
-    icon: 'fal fa-shield-check',
+    icon: 'fa-solid fa-shield-check',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -105,7 +105,7 @@ export class ThirdPartyValidationComponent implements OnInit {
 
   btnReset: ILibTbButton = {
     label: 'Limpiar Formulario',
-    icon: 'fal fa-redo',
+    icon: 'fa-solid fa-redo',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -123,7 +123,7 @@ export class ThirdPartyValidationComponent implements OnInit {
       this.showAlert(
         'error',
         'Por favor completa todos los campos requeridos',
-        'fal fa-exclamation-circle',
+        'fa-solid fa-exclamation-circle',
       );
     }
   }
@@ -144,7 +144,7 @@ export class ThirdPartyValidationComponent implements OnInit {
         clearInterval(progressInterval);
         setTimeout(() => {
           this.loadingSubject.next(false);
-          this.showAlert('success', 'Tercero validado exitosamente', 'fal fa-check-circle');
+          this.showAlert('success', 'Tercero validado exitosamente', 'fa-solid fa-check-circle');
         }, 500);
       }
     }, 600);
@@ -184,5 +184,3 @@ export class ThirdPartyValidationComponent implements OnInit {
     return this.validationProgress >= 100 && !this.isLoading;
   }
 }
-
-

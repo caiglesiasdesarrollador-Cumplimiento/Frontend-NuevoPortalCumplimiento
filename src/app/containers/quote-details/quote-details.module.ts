@@ -20,4 +20,3 @@ import { QuoteDetailsComponent } from './quote-details.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class QuoteDetailsModule {}
-

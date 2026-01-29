@@ -27,4 +27,3 @@ import { ModificacionesNominativasComponent } from './modificaciones-nominativas
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ModificacionesNominativasModule {}
-

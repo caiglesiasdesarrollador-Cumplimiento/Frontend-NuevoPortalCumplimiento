@@ -16,8 +16,10 @@ import { ApiKeyInterceptor } from './shared/interceptors/api-key.interceptor';
 import { GCPAccessTokenInterceptor } from './shared/interceptors/gcp-access-token.interceptor';
 
 @NgModule({
-  imports: [
+  declarations: [
     AppComponent,
+  ],
+  imports: [
     BrowserModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
@@ -57,4 +59,3 @@ import { GCPAccessTokenInterceptor } from './shared/interceptors/gcp-access-toke
   bootstrap: [AppComponent],
 })
 export class AppModule {}
-

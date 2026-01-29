@@ -87,5 +87,3 @@ export class CoberturasCumplimientoTableComponent {
     this.saveChanges.emit();
   }
 }
-
-

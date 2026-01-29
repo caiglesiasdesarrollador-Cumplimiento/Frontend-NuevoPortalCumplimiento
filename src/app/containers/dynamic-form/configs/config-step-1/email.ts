@@ -15,7 +15,7 @@ export const email: ILibTbDynamicFormConfigType = {
     showIconCaption: true,
     showHelp: true,
     floatLabel: true,
-    icon: 'fal fa-envelope',
+    icon: 'fa-solid fa-envelope',
     iconPosition: 'right',
     captionText: {
       help: 'Digite su correo electrónico válido',

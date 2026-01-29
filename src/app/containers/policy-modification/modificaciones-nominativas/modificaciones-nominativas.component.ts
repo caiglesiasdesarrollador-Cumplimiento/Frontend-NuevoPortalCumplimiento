@@ -44,7 +44,7 @@ export class ModificacionesNominativasComponent implements OnInit {
   // ✅ Botones de acción siguiendo tech-block-lib
   btnGuardarCambios: ILibTbButton = {
     label: 'Guardar Cambios',
-    icon: 'fal fa-save',
+    icon: 'fa-solid fa-save',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -53,7 +53,7 @@ export class ModificacionesNominativasComponent implements OnInit {
 
   btnCancelar: ILibTbButton = {
     label: 'Cancelar',
-    icon: 'fal fa-times',
+    icon: 'fa-solid fa-times',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -62,7 +62,7 @@ export class ModificacionesNominativasComponent implements OnInit {
 
   btnVolverModificaciones: ILibTbButton = {
     label: 'Volver a Modificaciones',
-    icon: 'fal fa-arrow-left',
+    icon: 'fa-solid fa-arrow-left',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'tertiary',
@@ -71,7 +71,7 @@ export class ModificacionesNominativasComponent implements OnInit {
 
   btnAnterior: ILibTbButton = {
     label: 'Anterior',
-    icon: 'fal fa-chevron-left',
+    icon: 'fa-solid fa-chevron-left',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -95,17 +95,17 @@ export class ModificacionesNominativasComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Portal',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/portal'],
       },
       {
         label: 'Modificaciones',
-        icon: 'fal fa-edit',
+        icon: 'fa-solid fa-edit',
         routerLink: ['/policy-modification'],
       },
       {
         label: 'Modificaciones Nominativas',
-        icon: 'fal fa-file-contract',
+        icon: 'fa-solid fa-file-contract',
       },
     ];
 
@@ -345,5 +345,3 @@ export class ModificacionesNominativasComponent implements OnInit {
     );
   }
 }
-
-

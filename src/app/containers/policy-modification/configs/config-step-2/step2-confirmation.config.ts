@@ -28,7 +28,7 @@ export const step2ConfirmationForm = (): ILibTbDynamicForm => {
         containerId: 'step2-summary-container',
         htmlContent: `
           <h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
-            <i class="fal fa-clipboard-list text-primaryBase mr-2"></i>
+            <i class="fa-solid fa-clipboard-list text-primaryBase mr-2"></i>
             Resumen de la Modificación
           </h4>
           <div class="bg-grayscaleL400 p-4 rounded-lg">
@@ -55,7 +55,7 @@ export const step2ConfirmationForm = (): ILibTbDynamicForm => {
         containerId: 'step2-policy-info-container',
         htmlContent: `
           <h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
-            <i class="fal fa-file-contract text-primaryBase mr-2"></i>
+            <i class="fa-solid fa-file-contract text-primaryBase mr-2"></i>
             Información Completa de la Póliza
           </h4>
           <div class="bg-grayscaleL400 p-4 rounded-lg">
@@ -106,7 +106,7 @@ export const step2ConfirmationForm = (): ILibTbDynamicForm => {
         containerId: 'step2-editable-fields-container',
         htmlContent: `
           <h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">
-            <i class="fal fa-edit text-primaryBase mr-2"></i>
+            <i class="fa-solid fa-edit text-primaryBase mr-2"></i>
             Campos a Modificar
           </h4>
           <div class="bg-grayscaleL400 p-4 rounded-lg">

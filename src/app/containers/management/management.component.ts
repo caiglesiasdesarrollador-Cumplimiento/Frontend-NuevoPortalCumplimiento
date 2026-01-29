@@ -56,7 +56,7 @@ export class ManagementComponent implements OnInit {
     class: 'bg-successBase text-grayscaleWhite',
     libTbButton: {
       label: 'Cerrar',
-      icon: 'fal fa-times',
+      icon: 'fa-solid fa-times',
       styleBtn: 'stroke',
       typeBtn: 'secondary',
       libTbClick: () => this.hideNotification(),
@@ -77,12 +77,12 @@ export class ManagementComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Portal',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/portal'],
       },
       {
         label: 'Emitir póliza desde una cotización existente',
-        icon: 'fal fa-redo',
+        icon: 'fa-solid fa-redo',
       },
     ];
 
@@ -153,7 +153,7 @@ export class ManagementComponent implements OnInit {
   // ✅ Configuración de botones de acción
   btnNew: ILibTbButton = {
     label: 'Nueva Cotización',
-    icon: 'fal fa-plus',
+    icon: 'fa-solid fa-plus',
     iconPosition: 'left',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -162,7 +162,7 @@ export class ManagementComponent implements OnInit {
 
   btnRefresh: ILibTbButton = {
     label: 'Actualizar',
-    icon: 'fal fa-refresh',
+    icon: 'fa-solid fa-refresh',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -171,7 +171,7 @@ export class ManagementComponent implements OnInit {
 
   btnClearFilters: ILibTbButton = {
     label: 'Limpiar Filtros',
-    icon: 'fal fa-times',
+    icon: 'fa-solid fa-times',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -181,7 +181,7 @@ export class ManagementComponent implements OnInit {
   // ✅ Botón para crear una póliza nueva
   btnCrearPolizaNueva: ILibTbButton = {
     label: 'Crear una póliza nueva',
-    icon: 'fal fa-plus',
+    icon: 'fa-solid fa-plus',
     iconPosition: 'left',
     styleBtn: 'fill',
     typeBtn: 'secondary',
@@ -223,7 +223,7 @@ export class ManagementComponent implements OnInit {
     );
     const actions = [
       {
-        icon: 'fal fa-eye',
+        icon: 'fa-solid fa-eye',
         label: 'Ver Detalles',
         action: 'view',
         styleBtn: 'stroke' as const,
@@ -231,7 +231,7 @@ export class ManagementComponent implements OnInit {
         visible: () => true,
       },
       {
-        icon: 'fal fa-edit',
+        icon: 'fa-solid fa-edit',
         label: 'Modificar',
         action: 'edit',
         styleBtn: 'stroke' as const,
@@ -240,7 +240,7 @@ export class ManagementComponent implements OnInit {
           item.estado !== PolicyStatus.CANCELADA && item.estado !== PolicyStatus.VENCIDA,
       },
       {
-        icon: 'fal fa-redo',
+        icon: 'fa-solid fa-redo',
         label: 'Renovar',
         action: 'renew',
         styleBtn: 'stroke' as const,
@@ -417,7 +417,7 @@ export class ManagementComponent implements OnInit {
       class: 'bg-successBase text-grayscaleWhite p-4 rounded-lg shadow-lg',
       libTbButton: {
         label: 'Cerrar',
-        icon: 'fal fa-times',
+        icon: 'fa-solid fa-times',
         styleBtn: 'stroke',
         typeBtn: 'secondary',
         libTbClick: () => this.hideNotification(),
@@ -502,7 +502,7 @@ export class ManagementComponent implements OnInit {
   }
 
   getTipoIcon(tipo: 'cotizacion' | 'poliza'): string {
-    return tipo === 'poliza' ? 'fal fa-shield-check' : 'fal fa-file-invoice';
+    return tipo === 'poliza' ? 'fa-solid fa-shield-check' : 'fa-solid fa-file-invoice';
   }
 
   // ✅ Método para mostrar el texto correcto del tipo con ortografía adecuada
@@ -533,7 +533,7 @@ export class ManagementComponent implements OnInit {
   // ✅ Métodos para configurar botones individuales
   getBtnViewDetails(item: IPolicyManagementItem): ILibTbButton {
     return {
-      icon: 'fal fa-eye',
+      icon: 'fa-solid fa-eye',
       styleBtn: 'stroke',
       typeBtn: 'primary',
       libTbClick: () => {
@@ -546,7 +546,7 @@ export class ManagementComponent implements OnInit {
 
   getBtnEdit(item: IPolicyManagementItem): ILibTbButton {
     return {
-      icon: 'fal fa-edit',
+      icon: 'fa-solid fa-edit',
       styleBtn: 'stroke',
       typeBtn: 'secondary',
       libTbClick: () => {
@@ -558,7 +558,7 @@ export class ManagementComponent implements OnInit {
 
   getBtnRenew(item: IPolicyManagementItem): ILibTbButton {
     return {
-      icon: 'fal fa-redo',
+      icon: 'fa-solid fa-redo',
       styleBtn: 'stroke',
       typeBtn: 'error',
       libTbClick: () => {
@@ -571,7 +571,7 @@ export class ManagementComponent implements OnInit {
   // ✅ Regla 17.3: Botón para imprimir cotización/póliza
   getBtnPrint(item: IPolicyManagementItem): ILibTbButton {
     return {
-      icon: 'fal fa-print',
+      icon: 'fa-solid fa-print',
       styleBtn: 'stroke',
       typeBtn: 'primary',
       libTbClick: () => {
@@ -584,7 +584,7 @@ export class ManagementComponent implements OnInit {
   // ✅ Regla 17.3: Método para imprimir póliza/cotización desde management
   imprimirPoliza(item: IPolicyManagementItem): void {
     console.log('🖨️ Imprimir póliza/cotización:', item.id);
-    
+
     // Abrir ventana de impresión
     const ventanaImpresion = window.open('', '_blank');
     if (!ventanaImpresion) {
@@ -595,7 +595,7 @@ export class ManagementComponent implements OnInit {
     const contenido = this.generarContenidoImpresion(item);
     ventanaImpresion.document.write(contenido);
     ventanaImpresion.document.close();
-    
+
     // Esperar a que se cargue el contenido antes de imprimir
     ventanaImpresion.onload = () => {
       setTimeout(() => {
@@ -607,7 +607,7 @@ export class ManagementComponent implements OnInit {
   // ✅ Generar contenido HTML para impresión desde management
   private generarContenidoImpresion(item: IPolicyManagementItem): string {
     const tipoDocumento = item.tipo === 'poliza' ? 'PÓLIZA' : 'COTIZACIÓN';
-    
+
     return `
       <!DOCTYPE html>
       <html lang="es">
@@ -695,7 +695,9 @@ export class ManagementComponent implements OnInit {
           </div>
         </div>
 
-        ${item.numeroContrato ? `
+        ${
+          item.numeroContrato
+            ? `
         <div class="section">
           <h2>Contrato</h2>
           <div class="row">
@@ -703,7 +705,9 @@ export class ManagementComponent implements OnInit {
             <span class="value">${item.numeroContrato}</span>
           </div>
         </div>
-        ` : ''}
+        `
+            : ''
+        }
 
         <div class="footer">
           <p>Documento generado el ${new Date().toLocaleDateString('es-CO')} a las ${new Date().toLocaleTimeString('es-CO')}</p>
@@ -730,5 +734,3 @@ export class ManagementComponent implements OnInit {
     );
   }
 }
-
-

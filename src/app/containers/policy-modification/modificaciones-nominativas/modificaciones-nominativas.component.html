@@ -10,7 +10,7 @@
     <div class="bg-grayscaleWhite p-4 rounded-lg shadow-sm border border-grayscaleL200">
       <div class="flex items-center justify-between">
         <div class="flex items-center">
-          <i class="fal fa-edit text-primaryBase text-lg mr-3"></i>
+          <i class="fa-solid fa-edit text-primaryBase text-lg mr-3"></i>
           <div>
             <h2 class="lib-tb-h6-bold text-grayscaleBlack">Modificaciones Nominativas</h2>
             <p class="lib-tb-body-small text-grayscaleD200">
@@ -23,8 +23,8 @@
         <div class="flex items-center">
           <i
             [ngClass]="{
-              'fal fa-edit text-successBase': modificationData.modoEdicion,
-              'fal fa-eye text-warningBase': !modificationData.modoEdicion
+              'fa-solid fa-edit text-successBase': modificationData.modoEdicion,
+              'fa-solid fa-eye text-warningBase': !modificationData.modoEdicion
             }"
             class="mr-2"
           ></i>
@@ -40,6 +40,47 @@
             </span>
             <span *ngIf="!modificationData.modoEdicion">
               Solo Coberturas{{ hayModificacionesValor ? ' (Valores)' : ''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -80,7 +121,7 @@
     <div class="bg-grayscaleWhite rounded-lg shadow-sm border border-grayscaleL200 p-4 sm:p-6">
       <div class="mb-4">
         <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-2">
-          <i class="fal fa-shield-alt text-primaryBase mr-2"></i>
+          <i class="fa-solid fa-shield-alt text-primaryBase mr-2"></i>
           Coberturas de Cumplimiento
         </h3>
         <p class="lib-tb-body-medium text-grayscaleD200">
@@ -109,19 +150,19 @@
             <tr class="border-b border-grayscaleL200">
               <th class="text-center py-3 px-2 w-16">
                 <div class="flex items-center justify-center">
-                  <i class="fal fa-check-square text-primaryBase mr-1"></i>
+                  <i class="fa-solid fa-check-square text-primaryBase mr-1"></i>
                   <span class="lib-tb-body-small font-semibold text-grayscaleBlack">Sel.</span>
                 </div>
               </th>
               <th class="text-left py-3 px-4">
                 <div class="flex items-center">
-                  <i class="fal fa-shield-alt text-primaryBase mr-2"></i>
+                  <i class="fa-solid fa-shield-alt text-primaryBase mr-2"></i>
                   <span class="lib-tb-body-small font-semibold text-grayscaleBlack">Cobertura</span>
                 </div>
               </th>
               <th class="text-center py-3 px-4">
                 <div class="flex items-center justify-center">
-                  <i class="fal fa-percentage text-primaryBase mr-2"></i>
+                  <i class="fa-solid fa-percentage text-primaryBase mr-2"></i>
                   <span class="lib-tb-body-small font-semibold text-grayscaleBlack"
                     >% Asegurado</span
                   >
@@ -129,7 +170,7 @@
               </th>
               <th class="text-center py-3 px-4">
                 <div class="flex items-center justify-center">
-                  <i class="fal fa-dollar-sign text-primaryBase mr-2"></i>
+                  <i class="fa-solid fa-dollar-sign text-primaryBase mr-2"></i>
                   <span class="lib-tb-body-small font-semibold text-grayscaleBlack"
                     >Valor Asegurado</span
                   >
@@ -137,7 +178,7 @@
               </th>
               <th class="text-center py-3 px-4">
                 <div class="flex items-center justify-center">
-                  <i class="fal fa-calendar-alt text-primaryBase mr-2"></i>
+                  <i class="fa-solid fa-calendar-alt text-primaryBase mr-2"></i>
                   <span class="lib-tb-body-small font-semibold text-grayscaleBlack">Vigencia</span>
                 </div>
               </th>
@@ -273,8 +314,8 @@
         <div class="flex items-center">
           <i
             [ngClass]="{
-              'fal fa-edit text-successBase': modificationData.modoEdicion,
-              'fal fa-info-circle text-infoBase': !modificationData.modoEdicion
+              'fa-solid fa-edit text-successBase': modificationData.modoEdicion,
+              'fa-solid fa-info-circle text-infoBase': !modificationData.modoEdicion
             }"
             class="mr-2"
           ></i>

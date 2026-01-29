@@ -8,4 +8,3 @@ export * from './sb-ui-interfaces';
 
 // Exportar todos los módulos stub
 export * from './sb-ui-modules';
-

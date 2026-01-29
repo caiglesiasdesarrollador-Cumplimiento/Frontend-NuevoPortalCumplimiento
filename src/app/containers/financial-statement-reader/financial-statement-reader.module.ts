@@ -26,4 +26,3 @@ import { FinancialStatementReaderRoutingModule } from './financial-statement-rea
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class FinancialStatementReaderModule {}
-

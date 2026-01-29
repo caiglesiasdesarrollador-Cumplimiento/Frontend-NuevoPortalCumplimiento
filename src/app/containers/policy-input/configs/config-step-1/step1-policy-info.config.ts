@@ -42,7 +42,7 @@ export const step1PolicyInfoForm = (): ILibTbDynamicForm => {
 
       // ✅ Tercera fila - Producto e Intermediario: Seleccione Producto | Clave Intermediario
       insuranceProduct, // containerId: 'step1-product-intermediario-row-container'
-      claveIntermediario, // containerId: 'step1-product-intermediario-row-container'
+      claveIntermediario, // containerId: 'step1-product-intermediario-row-container' - Se configura dinámicamente según haya claves
     ],
   };
 };

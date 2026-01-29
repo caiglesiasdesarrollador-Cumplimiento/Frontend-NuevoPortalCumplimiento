@@ -20,10 +20,10 @@ export const sarlaftModalConfig = (
     autoZIndex: true,
     focusOnShow: true,
     focusTrap: true,
-    closeIcon: 'fal fa-times',
+    closeIcon: 'fa-solid fa-times',
     primaryButton: {
       label: isEmitirMode ? 'Actualizar' : 'Continuar',
-      icon: isEmitirMode ? 'fal fa-sync-alt' : 'fal fa-arrow-right',
+      icon: isEmitirMode ? 'fa-solid fa-sync-alt' : 'fa-solid fa-arrow-right',
       iconPosition: 'right',
       styleBtn: 'fill',
       typeBtn: isEmitirMode ? 'primary' : 'secondary',
@@ -35,7 +35,7 @@ export const sarlaftModalConfig = (
     secondaryButton: isEmitirMode
       ? {
           label: 'Cancelar',
-          icon: 'fal fa-times',
+          icon: 'fa-solid fa-times',
           iconPosition: 'left',
           styleBtn: 'stroke',
           typeBtn: 'secondary',

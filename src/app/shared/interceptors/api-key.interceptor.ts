@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-} from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
@@ -34,12 +29,12 @@ interface EnvironmentApiKeys {
 /**
  * ✅ Interceptor para agregar header x-api-key automáticamente
  * según el tipo de servicio (Comunes, GCP, AWS Actuaría, OpenL)
- * 
+ *
  * IMPORTANTE: Cada servicio de Comunes tiene su propia API Key.
  * Este interceptor detecta el servicio por URL y usa la API Key correcta.
- * 
+ *
  * Basado en la documentación de microservicios y colección de Postman
- * 
+ *
  * NOTA: Compatible con environment básico (sin API Keys) y completo (con API Keys)
  */
 @Injectable()
@@ -51,16 +46,7 @@ export class ApiKeyInterceptor implements HttpInterceptor {
     // ✅ Determinar qué API Key usar según la URL
     const apiKey = this.getApiKeyForUrl(request.url);
 
-    // ✅ LOG: Para validación local - Ver en Console del navegador
-    if (apiKey && this.isComunesUrl(request.url)) {
-      const servicio = this.detectarServicioComunes(request.url);
-      console.log('🔑 [ApiKeyInterceptor] Agregando API Key a Comunes:', {
-        url: request.url,
-        servicio: servicio,
-        apiKey: apiKey.substring(0, 15) + '...', // Solo primeros 15 caracteres por seguridad
-        ambiente: this.getAmbiente(),
-      });
-    }
+    // ✅ Logging removido - usar LoggerService en servicios si es necesario
 
     // ✅ Si no hay API Key para esta URL, continuar sin modificar
     if (!apiKey) {
@@ -82,29 +68,13 @@ export class ApiKeyInterceptor implements HttpInterceptor {
     return next.handle(modifiedRequest);
   }
 
-  /**
-   * ✅ Detectar qué servicio de Comunes es según la URL
-   * Para logging y validación local
-   */
-  private detectarServicioComunes(url: string): string {
-    if (this.isCatalogosUrl(url)) return 'Catalogos';
-    if (this.isMulticlavesUrl(url)) return 'Multiclaves';
-    if (this.isRecuperarAgenteUrl(url)) return 'Recuperar Agente';
-    if (this.isNotificadorUrl(url)) return 'Notificador';
-    if (this.isGenerarPdfCotizacionRCUrl(url)) return 'Generar PDF Cotización RC';
-    if (this.isGenerarPdfPolizaUrl(url)) return 'Generar PDF Póliza';
-    if (this.isGenerarQRUrl(url)) return 'Generar QR';
-    if (url.includes('/terceros/')) return 'Terceros';
-    if (url.includes('/sarlaft/')) return 'SARLAFT';
-    return 'Comunes (Genérico)';
-  }
 
   /**
    * ✅ Obtener API Key según la URL del servicio
    * Detecta el servicio específico y usa la API Key correspondiente
    * @param url URL de la petición
    * @returns API Key o null si no aplica
-   * 
+   *
    * NOTA: Usa optional chaining para ser compatible con environment básico
    */
   private getApiKeyForUrl(url: string): string | null {
@@ -197,11 +167,13 @@ export class ApiKeyInterceptor implements HttpInterceptor {
    */
   private isComunesUrl(url: string): boolean {
     return (
-      url.includes('fz73xehwah.execute-api') || // API Gateway Comunes Dev
+      url.includes('fz73xehwah.execute-api') || // API Gateway Comunes Dev (viejo)
+      url.includes('z0jo90imu8.execute-api') || // API Gateway Comunes Dev (nuevo)
       url.includes('c4huz7dmpc-vpce') || // API Gateway Comunes Stage
       url.includes('03l44gahq8-vpce') || // API Gateway Comunes Prod
       url.includes('/catalogos/') ||
       url.includes('/persona_administracion/') ||
+      url.includes('/comunes-personas-administracion/') || // Nuevo path
       url.includes('/personas_sarlaft/') ||
       url.includes('/personas/') ||
       url.includes('/sarlaft/') ||
@@ -211,7 +183,8 @@ export class ApiKeyInterceptor implements HttpInterceptor {
       url.includes('/comunes/') ||
       url.includes('/poliza_administracion/') ||
       url.includes('/poliza/') ||
-      url.includes('/poliza_transversal/')
+      url.includes('/poliza_transversal/') ||
+      url.includes('/terceros/') // Para personasNaturales y personasJuridicas
     );
   }
 
@@ -270,11 +243,13 @@ export class ApiKeyInterceptor implements HttpInterceptor {
 
   /**
    * ✅ Verificar si es URL de servicios GCP (HTTP Proxy)
+   * NOTA: Solo para rutas específicas de GCP, no para Comunes
    */
   private isGCPProxyUrl(url: string): boolean {
     return (
-      url.includes('z0jo90imu8.execute-api') && // API Gateway GCP Dev
-      (url.includes('/gcp-lector-contratos/') || url.includes('/gcp-lector-estados-financieros/'))
+      url.includes('z0jo90imu8.execute-api') && 
+      (url.includes('/gcp-lector-contratos/') || url.includes('/gcp-lector-estados-financieros/')) &&
+      !url.includes('/comunes-personas-administracion/') // Excluir Comunes
     );
   }
 

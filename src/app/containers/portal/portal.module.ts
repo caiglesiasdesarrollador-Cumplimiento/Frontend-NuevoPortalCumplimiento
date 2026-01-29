@@ -25,4 +25,3 @@ import { PortalRoutingModule } from './portal-routing.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PortalModule {}
-

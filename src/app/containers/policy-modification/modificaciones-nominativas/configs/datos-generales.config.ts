@@ -86,7 +86,7 @@ export const modificacionesNominativasForm = (isEditable: boolean = true): ILibT
         containerId: 'mod-nom-cupo-info-container',
         htmlContent: `
           <div class="flex items-center">
-            <i class="fal fa-credit-card text-primaryBase mr-2"></i>
+            <i class="fa-solid fa-credit-card text-primaryBase mr-2"></i>
             <span class="lib-tb-body-medium text-grayscaleBlack">
               <strong>Cupo Disponible del Cliente:</strong> $100.000.000
             </span>
@@ -98,7 +98,7 @@ export const modificacionesNominativasForm = (isEditable: boolean = true): ILibT
       {
         containerId: 'mod-nom-general-data-title-container',
         htmlContent:
-          '<h4 class="lib-tb-h6-bold text-grayscaleBlack"><i class="fal fa-file-contract text-primaryBase mr-2"></i>Datos Generales Póliza</h4>',
+          '<h4 class="lib-tb-h6-bold text-grayscaleBlack"><i class="fa-solid fa-file-contract text-primaryBase mr-2"></i>Datos Generales Póliza</h4>',
       },
 
       // ✅ Campos de Datos Generales
@@ -124,7 +124,7 @@ export const modificacionesNominativasForm = (isEditable: boolean = true): ILibT
       {
         containerId: 'mod-nom-location-title-container',
         htmlContent:
-          '<h4 class="lib-tb-h6-bold text-grayscaleBlack"><i class="fal fa-map-marker-alt text-primaryBase mr-2"></i>Ubicación del Riesgo</h4>',
+          '<h4 class="lib-tb-h6-bold text-grayscaleBlack"><i class="fa-solid fa-map-marker-alt text-primaryBase mr-2"></i>Ubicación del Riesgo</h4>',
       },
 
       // ✅ Campos de Ubicación del Riesgo

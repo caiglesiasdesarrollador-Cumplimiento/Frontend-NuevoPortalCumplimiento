@@ -46,7 +46,7 @@ export class QuoteDetailsComponent implements OnInit {
   // ✅ Botón para volver a management
   btnBackToManagement: ILibTbButton = {
     label: 'Volver a Cotizaciones',
-    icon: 'fal fa-arrow-left',
+    icon: 'fa-solid fa-arrow-left',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -56,7 +56,7 @@ export class QuoteDetailsComponent implements OnInit {
   // ✅ Botón para generar emisión
   btnGenerateEmission: ILibTbButton = {
     label: 'Generar emisión',
-    icon: 'fal fa-file-check',
+    icon: 'fa-solid fa-file-check',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -270,7 +270,7 @@ export class QuoteDetailsComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Portal',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/portal'],
       },
     ];
@@ -280,21 +280,21 @@ export class QuoteDetailsComponent implements OnInit {
       // Viene desde management para emisión
       breadcrumbItems.push({
         label: 'Emitir póliza desde una cotización existente',
-        icon: 'fal fa-redo',
+        icon: 'fa-solid fa-redo',
         routerLink: ['/management'],
       });
     } else {
       // Vista normal de detalles
       breadcrumbItems.push({
         label: 'Retomar Cotización',
-        icon: 'fal fa-file-alt',
+        icon: 'fa-solid fa-file-alt',
         routerLink: ['/management'],
       });
     }
 
     breadcrumbItems.push({
       label: `Detalles ${item.numero}`,
-      icon: 'fal fa-eye',
+      icon: 'fa-solid fa-eye',
     });
 
     this.breadcrumbService.setBreadcrumb(breadcrumbItems);
@@ -434,5 +434,3 @@ export class QuoteDetailsComponent implements OnInit {
     }).format(primaTotal);
   }
 }
-
-

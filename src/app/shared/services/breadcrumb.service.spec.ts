@@ -80,7 +80,7 @@ describe('BreadcrumbService', () => {
         expect(config).toBeDefined();
         expect(config.home).toBeDefined();
         expect(config.items).toBeDefined();
-        expect(config.iconRight).toBe('fal fa-chevron-right');
+        expect(config.iconRight).toBe('fa-solid fa-chevron-right');
         done();
       });
     });
@@ -182,8 +182,8 @@ describe('BreadcrumbService', () => {
       service.breadcrumb$.subscribe(config => {
         expect(config.home).toBeDefined();
         expect(config.home?.label).toBe('Dashboard');
-        expect(config.home?.icon).toBe('fal fa-home');
-        expect(config.iconRight).toBe('fal fa-chevron-right');
+        expect(config.home?.icon).toBe('fa-solid fa-home');
+        expect(config.iconRight).toBe('fa-solid fa-chevron-right');
         done();
       });
     });
@@ -273,7 +273,7 @@ describe('BreadcrumbService', () => {
       service.breadcrumb$.subscribe(config => {
         expect(config.items?.length).toBe(3);
         expect(config.items?.[2].label).toBe('Paso 3 de 4');
-        expect(config.items?.[2].icon).toBe('fal fa-step-forward');
+        expect(config.items?.[2].icon).toBe('fa-solid fa-step-forward');
         done();
       });
     });
@@ -297,9 +297,9 @@ describe('BreadcrumbService', () => {
       service.setResultsBreadcrumb('Analysis', 'Complete');
 
       service.breadcrumb$.subscribe(config => {
-        expect(config.items?.[0].icon).toBe('fal fa-analytics');
-        expect(config.items?.[1].icon).toBe('fal fa-chart-pie');
-        expect(config.items?.[2].icon).toBe('fal fa-check-circle');
+        expect(config.items?.[0].icon).toBe('fa-solid fa-analytics');
+        expect(config.items?.[1].icon).toBe('fa-solid fa-chart-pie');
+        expect(config.items?.[2].icon).toBe('fa-solid fa-check-circle');
         done();
       });
     });

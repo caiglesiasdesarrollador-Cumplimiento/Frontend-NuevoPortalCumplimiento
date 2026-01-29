@@ -647,4 +647,3 @@ export interface ILibTbMapMarker {
   icon?: string;
   [key: string]: unknown;
 }
-

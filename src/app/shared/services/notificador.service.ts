@@ -11,9 +11,9 @@ import {
 
 /**
  * ✅ COMUNES_009: Servicio para Notificador Transversal
- * 
+ *
  * Servicio para enviar correos con PDFs de cotización y códigos OTP al cliente.
- * 
+ *
  * Basado en documentación de microservicios
  */
 @Injectable({
@@ -24,9 +24,17 @@ export class NotificadorService {
   private readonly aplicacionDefault = 'U8C4K6FJ51PYPPX'; // Valor por defecto según documentación
 
   constructor(private readonly http: HttpClient) {
-    // ✅ Usar API Gateway Comunes según ambiente
+    // ✅ Usar proxy en desarrollo para evitar CORS, URL directa en producción
     const ambiente = environment.production ? 'prod' : 'dev';
-    this.baseUrl = `${environment.apiGatewayComunes[ambiente]}/notificacion/api/v1/mensajeria/notificador`;
+    
+    if (environment.production) {
+      // ✅ Producción: usar URL directa del API Gateway
+      this.baseUrl = `${environment.apiGatewayComunes[ambiente]}/notificacion/api/v1/mensajeria/notificador`;
+    } else {
+      // ✅ Desarrollo: usar proxy para evitar CORS
+      // El proxy ya está configurado en proxy.conf.json
+      this.baseUrl = `/proxy/comunes-personas-administracion/notificacion/api/v1/mensajeria/notificador`;
+    }
   }
 
   /**
@@ -141,5 +149,3 @@ export class NotificadorService {
     return this.enviarNotificacion(request);
   }
 }
-
-

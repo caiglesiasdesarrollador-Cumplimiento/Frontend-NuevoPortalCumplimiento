@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 
 /**
  * FakeLoginComponent - Simulación de ingreso IDM para desarrollo
- * 
+ *
  * Este componente simula el ingreso del usuario a través del IDM (Identity Management)
  * para ambientes de desarrollo y staging.
  */
@@ -19,24 +19,23 @@ import { Router } from '@angular/router';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class FakeLoginComponent implements OnInit {
-  
   // ========================================
   // OPCIONES DE DROPDOWNS
   // ========================================
-  
+
   tiposDocumento = [
     { value: 'CC', label: 'CC - Cédula de ciudadanía' },
     { value: 'NT', label: 'NT - Nit' },
     { value: 'CE', label: 'CE - Cédula de Extranjería' },
     { value: 'PP', label: 'PP - Pasaporte' },
-    { value: 'PE', label: 'PE - Permiso de Permanencia' }
+    { value: 'PE', label: 'PE - Permiso de Permanencia' },
   ];
-  
+
   tiposUsuario = [
     { value: '48', label: '48 - Administrativo' },
-    { value: '2', label: '2 - Intermediario' }
+    { value: '2', label: '2 - Intermediario' },
   ];
-  
+
   tiposNomina = [
     { value: '1', label: '1 - Administrativo' },
     { value: '2', label: '2 - Grupos Homogéneos - Bancaseguros' },
@@ -44,25 +43,25 @@ export class FakeLoginComponent implements OnInit {
     { value: '7', label: '7 - Aprendices y Practicantes' },
     { value: '8', label: '8 - Personal por Honorarios' },
     { value: '9', label: '9 - Temporales o trabajadores en misión' },
-    { value: '10', label: '10 - Outsourcing' }
+    { value: '10', label: '10 - Outsourcing' },
   ];
 
   // ========================================
   // MODELO DE DATOS - VALORES POR DEFECTO
   // ========================================
-  
+
   fakeLoginData = {
-    employeeType: 'NT',           // Tipo de documento
-    userName: '860352541',         // Número de documento
-    fullName: 'DAVID COHEN Y CIA LIMITADA AGENCIA DE SEGUROS', // Nombre
-    sbCodeActBenef: '2',          // Tipo de usuario (2 = Intermediario)
-    usrSubTipo: '4',              // Tipo de nómina (4 = Intermediarios)
-    workForceId: '54384',          // Clave de intermediación
+    employeeType: 'CC', // Tipo de documento (CC funciona en Postman)
+    userName: '53049440', // Número de documento que funciona en Postman
+    fullName: 'USUARIO PRUEBAS DEV', // Nombre
+    sbCodeActBenef: '2', // Tipo de usuario (2 = Intermediario)
+    usrSubTipo: '4', // Tipo de nómina (4 = Intermediarios) 
+    workForceId: '54384', // Clave de intermediación
     email: 'correoprueba@segurosbolivar.com',
-    usrLocationCode: '1505',       // Código de localidad
-    company: '3',                  // Código de compañía
-    jobCode: 'V11200',             // Código del cargo
-    country: '1'                   // País
+    usrLocationCode: '1505', // Código de localidad
+    company: '3', // Código de compañía
+    jobCode: 'V11200', // Código del cargo
+    country: '1', // País
   };
 
   // Estado del formulario
@@ -80,7 +79,8 @@ export class FakeLoginComponent implements OnInit {
    * Actualiza el tipo de ingreso basado en sbCodeActBenef
    */
   actualizarTipoIngreso(): void {
-    this.tipoIngreso = this.fakeLoginData.sbCodeActBenef === '48' ? 'administrativo' : 'intermediario';
+    this.tipoIngreso =
+      this.fakeLoginData.sbCodeActBenef === '48' ? 'administrativo' : 'intermediario';
   }
 
   /**
@@ -88,7 +88,7 @@ export class FakeLoginComponent implements OnInit {
    */
   onTipoUsuarioCambio(): void {
     this.actualizarTipoIngreso();
-    
+
     // Ajustar tipo de nómina según tipo de usuario
     if (this.fakeLoginData.sbCodeActBenef === '48') {
       // Administrativo
@@ -104,9 +104,9 @@ export class FakeLoginComponent implements OnInit {
    */
   onReset(): void {
     this.fakeLoginData = {
-      employeeType: 'NT',
-      userName: '860352541',
-      fullName: 'DAVID COHEN Y CIA LIMITADA AGENCIA DE SEGUROS',
+      employeeType: 'CC',
+      userName: '49787610',
+      fullName: 'USUARIO PRUEBAS DEV',
       sbCodeActBenef: '2',
       usrSubTipo: '4',
       workForceId: '54384',
@@ -114,7 +114,7 @@ export class FakeLoginComponent implements OnInit {
       usrLocationCode: '1505',
       company: '3',
       jobCode: 'V11200',
-      country: '1'
+      country: '1',
     };
     this.actualizarTipoIngreso();
   }
@@ -135,57 +135,72 @@ export class FakeLoginComponent implements OnInit {
       usrLocationCode: '',
       company: '2',
       jobCode: 'E96160',
-      country: '1'
+      country: '1',
     };
     this.actualizarTipoIngreso();
   }
 
   /**
    * Carga valores de ejemplo para Intermediario
+   * Usando documento que funciona en Postman: 53049440 con CC
    */
   cargarEjemploIntermediario(): void {
     this.fakeLoginData = {
-      employeeType: 'NT',
-      userName: '860069265',
-      fullName: 'AON RISK SERVICES COLOMBIA SA CORREDORES DE SEGURO',
+      employeeType: 'CC', // Tipo que funciona en Postman
+      userName: '53049440', // Documento que funciona en Postman
+      fullName: 'USUARIO PRUEBAS INTERMEDIARIO',
       sbCodeActBenef: '2',
       usrSubTipo: '4',
-      workForceId: '32289',
-      email: 'ejemplo@aon.com',
-      usrLocationCode: '1025',
-      company: '2',
-      jobCode: 'V11400',
-      country: '1'
+      workForceId: '54384',
+      email: 'correoprueba@segurosbolivar.com',
+      usrLocationCode: '1505',
+      company: '3',
+      jobCode: 'V11200',
+      country: '1',
     };
     this.actualizarTipoIngreso();
   }
 
   /**
-   * Envía los datos del fake login y redirige al portal
+   * ✅ Envía los datos del fake login y redirige al redirect
+   * El redirect será el encargado de consultar Multiclaves según el documento
    */
   onSubmit(): void {
     this.isLoading = true;
+    this.showSuccess = false;
 
-    // Simular llamada al servicio (en producción esto iría a Redis)
+    // ✅ Guardar datos de sesión básicos (sin consultar Multiclaves aún)
+    const timestamp = new Date().toISOString();
+    const sessionData = {
+      ...this.fakeLoginData,
+      tipoUsuario: this.tipoIngreso,
+      timestamp,
+      isAuthenticated: true,
+    };
+    sessionStorage.setItem('fakeLoginSession', JSON.stringify(sessionData));
+
+    // ✅ Preparar parámetros para el redirect
+    const redirectParams = {
+      company: this.fakeLoginData.company,
+      country: this.fakeLoginData.country,
+      email: this.fakeLoginData.email,
+      employeeType: this.fakeLoginData.employeeType,
+      fullName: this.fakeLoginData.fullName,
+      jobCode: this.fakeLoginData.jobCode,
+      usrLocationCode: this.fakeLoginData.usrLocationCode,
+      sbCodeActBenef: this.fakeLoginData.sbCodeActBenef,
+      userName: this.fakeLoginData.userName,
+      workForceId: this.fakeLoginData.workForceId,
+      usrSubTipo: this.fakeLoginData.usrSubTipo,
+    };
+
+    this.showSuccess = true;
+    this.isLoading = false;
+
+    // ✅ Redirigir al redirect (quien consultará Multiclaves)
     setTimeout(() => {
-      // Guardar datos en sessionStorage para simular sesión
-      const sessionData = {
-        ...this.fakeLoginData,
-        tipoUsuario: this.tipoIngreso,
-        timestamp: new Date().toISOString(),
-        isAuthenticated: true
-      };
-      
-      sessionStorage.setItem('fakeLoginSession', JSON.stringify(sessionData));
-      
-      this.isLoading = false;
-      this.showSuccess = true;
-
-      // Redirigir a la página de cotización después de mostrar éxito
-      setTimeout(() => {
-        this.router.navigate(['/policy-input']);
-      }, 1500);
-    }, 1000);
+      this.router.navigate(['/redirect'], { queryParams: redirectParams });
+    }, 500);
   }
 
   /**
@@ -196,6 +211,3 @@ export class FakeLoginComponent implements OnInit {
     return tipo ? tipo.label : '';
   }
 }
-
-
-

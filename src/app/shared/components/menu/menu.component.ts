@@ -60,5 +60,3 @@ export class MenuComponent {
     this.menuClose.emit();
   }
 }
-
-

@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import { SessionService } from './session.service';
 import { ConfigService } from './config.service';
 import {
-  ISarlaftMarcaRequest,
+  // ISarlaftMarcaRequest, // Reservado para uso futuro
   ISarlaftMarcaResponse,
   ISarlaftGenerarUrlRequest,
   ISarlaftGenerarUrlResponse,
@@ -13,11 +13,11 @@ import {
 
 /**
  * ✅ COMUNES_005, COMUNES_006: Servicio para SARLAFT
- * 
+ *
  * Servicios disponibles:
  * - COMUNES_005: Obtener marca SARLAFT (validar si necesita actualización)
  * - COMUNES_006: Generar URL de conocimiento de cliente
- * 
+ *
  * Basado en documentación de microservicios
  */
 @Injectable({
@@ -32,11 +32,20 @@ export class SarlaftService {
     private readonly sessionService: SessionService,
     private readonly configService: ConfigService,
   ) {
-    // ✅ Usar API Gateway Comunes según ambiente
+    // ✅ Usar proxy en desarrollo para evitar CORS, URL directa en producción
     const ambiente = environment.production ? 'prod' : 'dev';
-    const apiGateway = environment.apiGatewayComunes[ambiente];
-    this.baseUrl = `${apiGateway}/personas_sarlaft/api/v1`;
-    this.baseUrlV1 = `${apiGateway}/personas_sarlaft/api/v1`;
+    
+    if (environment.production) {
+      // ✅ Producción: usar URL directa del API Gateway
+      const apiGateway = environment.apiGatewayComunes[ambiente];
+      this.baseUrl = `${apiGateway}/personas_sarlaft/api/v1`;
+      this.baseUrlV1 = `${apiGateway}/personas_sarlaft/api/v1`;
+    } else {
+      // ✅ Desarrollo: usar proxy para evitar CORS
+      // El proxy ya está configurado en proxy.conf.json
+      this.baseUrl = `/proxy/comunes-personas-administracion/personas_sarlaft/api/v1`;
+      this.baseUrlV1 = `/proxy/comunes-personas-administracion/personas_sarlaft/api/v1`;
+    }
   }
 
   /**
@@ -85,13 +94,10 @@ export class SarlaftService {
     });
 
     // ✅ Realizar petición GET
-    return this.http.get<ISarlaftMarcaResponse>(
-      `${this.baseUrl}/terceros/marcas/datosbasicos`,
-      {
-        params,
-        headers,
-      },
-    );
+    return this.http.get<ISarlaftMarcaResponse>(`${this.baseUrl}/terceros/marcas/datosbasicos`, {
+      params,
+      headers,
+    });
   }
 
   /**
@@ -114,5 +120,3 @@ export class SarlaftService {
     );
   }
 }
-
-

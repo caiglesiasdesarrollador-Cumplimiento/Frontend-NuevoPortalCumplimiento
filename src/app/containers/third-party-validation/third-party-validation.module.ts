@@ -27,4 +27,3 @@ import { ThirdPartyValidationRoutingModule } from './third-party-validation-rout
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ThirdPartyValidationModule {}
-

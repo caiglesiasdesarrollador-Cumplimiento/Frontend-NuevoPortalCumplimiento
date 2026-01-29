@@ -10,8 +10,8 @@
     <div class="contract-reader__header text-center mb-6 sm:mb-8">
       <h1 class="lib-tb-h4-bold text-grayscaleBlack mb-2">Análisis de Contratos con IA</h1>
       <p class="lib-tb-body-medium text-grayscaleD200 max-w-3xl mx-auto">
-        Suba un contrato en formato PDF, DOC o DOCX y obtenga automáticamente la información
-        extraída y sugerencias de pólizas.
+        Suba un contrato en formato PDF, DOCX o XLSX (máximo 30MB) y obtenga automáticamente la
+        información extraída y sugerencias de pólizas.
       </p>
     </div>
 
@@ -90,7 +90,7 @@
           class="contract-reader__general-info bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200"
         >
           <h3 class="lib-tb-h6-bold text-primaryBase mb-4">
-            <i class="fal fa-file-contract text-primaryBase mr-2"></i>
+            <i class="fa-solid fa-file-contract text-primaryBase mr-2"></i>
             Información General
           </h3>
 
@@ -138,7 +138,7 @@
           class="contract-reader__parties-info bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200"
         >
           <h3 class="lib-tb-h6-bold text-primaryBase mb-4">
-            <i class="fal fa-users text-primaryBase mr-2"></i>
+            <i class="fa-solid fa-users text-primaryBase mr-2"></i>
             Partes del Contrato
           </h3>
 
@@ -182,7 +182,7 @@
       >
         <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
           <h3 class="lib-tb-h6-bold text-primaryBase">
-            <i class="fal fa-lightbulb text-primaryBase mr-2"></i>
+            <i class="fa-solid fa-lightbulb text-primaryBase mr-2"></i>
             Sugerencias de Pólizas
           </h3>
 
@@ -228,7 +228,7 @@
                 </span>
               </span>
 
-              <i class="fal fa-arrow-right text-primaryBase"></i>
+              <i class="fa-solid fa-arrow-right text-primaryBase"></i>
             </div>
           </div>
         </div>
@@ -239,7 +239,7 @@
         class="contract-reader__risks bg-grayscaleWhite p-4 sm:p-6 rounded-lg shadow-sm border border-grayscaleL200"
       >
         <h3 class="lib-tb-h6-bold text-primaryBase mb-4">
-          <i class="fal fa-exclamation-triangle text-primaryBase mr-2"></i>
+          <i class="fa-solid fa-exclamation-triangle text-primaryBase mr-2"></i>
           Riesgos Identificados
         </h3>
 
@@ -259,7 +259,7 @@
         class="contract-reader__warnings bg-warningBase p-4 rounded-lg"
       >
         <h4 class="lib-tb-body-medium text-grayscaleBlack font-semibold mb-2">
-          <i class="fal fa-info-circle mr-2"></i>
+          <i class="fa-solid fa-info-circle mr-2"></i>
           Advertencias
         </h4>
         <ul class="space-y-1">
@@ -275,12 +275,99 @@
 
     <!-- ✅ Estado de error -->
     <div *ngIf="hasError" class="contract-reader__error text-center py-12">
-      <i class="fal fa-exclamation-triangle text-6xl text-errorBase mb-4"></i>
+      <i class="fa-solid fa-exclamation-triangle text-6xl text-errorBase mb-4"></i>
       <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-2">Error en el Procesamiento</h3>
       <p class="lib-tb-body-medium text-grayscaleD200 mb-6">
         {{ currentFile.errorMessage }}
       </p>
       <lib-tb-button [custom]="btnUploadNew"></lib-tb-button>
+    </div>
+
+    <!-- ✅ RF-009 Regla 9.4: Modal de error de procesamiento -->
+    <lib-tb-modal
+      *ngIf="showErrorModal"
+      [custom]="errorModalConfig"
+      (libTbOnClose)="cerrarErrorModal()"
+    >
+      <div class="p-6">
+        <div class="text-center mb-6">
+          <i class="fa-solid fa-exclamation-triangle text-5xl text-errorBase mb-4"></i>
+          <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-2">Error de Procesamiento</h3>
+          <p class="lib-tb-body-medium text-grayscaleD200 whitespace-pre-line">
+            {{ errorMensaje }}
+          </p>
+        </div>
+        <div class="flex gap-3 justify-center">
+          <lib-tb-button
+            [custom]="{
+              label: 'Continuar Manualmente',
+              icon: 'fa-solid fa-edit',
+              iconPosition: 'left',
+              styleBtn: 'fill',
+              typeBtn: 'primary'
+            }"
+            (click)="continuarConCorreccionManual()"
+          ></lib-tb-button>
+          <lib-tb-button
+            [custom]="{
+              label: 'Cerrar',
+              icon: 'fa-solid fa-times',
+              iconPosition: 'left',
+              styleBtn: 'stroke',
+              typeBtn: 'secondary'
+            }"
+            (click)="cerrarErrorModal()"
+          ></lib-tb-button>
+        </div>
+      </div>
+    </lib-tb-modal>
+
+    <!-- ✅ RF-009 Regla 9.5: Modal de asegurabilidad -->
+    <lib-tb-modal
+      *ngIf="showAsegurabilidadModal"
+      [custom]="asegurabilidadModalConfig"
+      (libTbOnClose)="cerrarAsegurabilidadModal()"
+    >
+      <div class="p-6">
+        <div class="text-center mb-6">
+          <i class="fa-solid fa-ban text-5xl text-errorBase mb-4"></i>
+          <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-2">Contrato No Asegurable</h3>
+          <p class="lib-tb-body-medium text-grayscaleD200 whitespace-pre-line">
+            {{ asegurabilidadMensaje }}
+          </p>
+        </div>
+        <div class="flex justify-center">
+          <lib-tb-button
+            [custom]="{
+              label: 'Entendido',
+              icon: 'fa-solid fa-check',
+              iconPosition: 'left',
+              styleBtn: 'fill',
+              typeBtn: 'primary'
+            }"
+            (click)="cerrarAsegurabilidadModal()"
+          ></lib-tb-button>
+        </div>
+      </div>
+    </lib-tb-modal>
+
+    <!-- ✅ RF-009 Regla 9.11: Modo corrección manual -->
+    <div
+      *ngIf="modoCorreccionManual && hasResults"
+      class="contract-reader__manual-correction bg-infoBase p-4 rounded-lg mb-6"
+    >
+      <div class="flex items-start gap-3">
+        <i class="fa-solid fa-edit text-grayscaleWhite text-xl mt-1"></i>
+        <div>
+          <h4 class="lib-tb-body-medium text-grayscaleWhite font-semibold mb-1">
+            Modo Corrección Manual
+          </h4>
+          <p class="lib-tb-body-small text-grayscaleWhite">
+            Puedes corregir manualmente los datos que fueron marcados como inválidos o
+            inconsistentes. Los campos editables están habilitados para tu corrección.
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </div>

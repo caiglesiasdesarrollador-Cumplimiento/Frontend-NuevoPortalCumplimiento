@@ -16,8 +16,15 @@
     <nav *ngIf="showNavigation && breadcrumbItems.length > 0" class="header-banner__breadcrumb">
       <ol class="header-breadcrumb__list">
         <ng-container *ngFor="let item of breadcrumbItems; let last = last">
-          <li class="header-breadcrumb__item" [class.header-breadcrumb__item--active]="item.isActive">
-            <a *ngIf="item.routerLink && !item.isActive" [routerLink]="item.routerLink" class="header-breadcrumb__link">
+          <li
+            class="header-breadcrumb__item"
+            [class.header-breadcrumb__item--active]="item.isActive"
+          >
+            <a
+              *ngIf="item.routerLink && !item.isActive"
+              [routerLink]="item.routerLink"
+              class="header-breadcrumb__link"
+            >
               <i *ngIf="item.icon" [class]="item.icon"></i>
               <span>{{ item.label }}</span>
             </a>
@@ -33,11 +40,7 @@
   </div>
 
   <!-- Logo a la derecha -->
-  <img
-    class="header-banner__logo"
-    src="assets/img/seguros_bolivar.svg"
-    alt="Seguros Bolívar"
-  />
+  <img class="header-banner__logo" src="assets/img/seguros_bolivar.svg" alt="Seguros Bolívar" />
 </div>
 
 <!-- Menu lateral/overlay -->

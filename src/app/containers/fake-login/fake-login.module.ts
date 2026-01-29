@@ -13,11 +13,9 @@ import { FakeLoginRoutingModule } from './fake-login-routing.module';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    FakeLoginRoutingModule
+    FakeLoginRoutingModule,
   ],
   exports: [FakeLoginComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class FakeLoginModule {}
-
-

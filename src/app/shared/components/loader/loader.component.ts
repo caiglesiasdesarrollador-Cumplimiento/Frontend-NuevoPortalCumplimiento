@@ -29,5 +29,3 @@ export class LoaderComponent implements OnInit, OnDestroy {
     this.loaderSubscription?.unsubscribe();
   }
 }
-
-

@@ -9,10 +9,9 @@ import { environment } from '../../environments/environment';
  * Preparado para conectar con el backend.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
   private readonly apiUrl = environment.apiUrl;
   private readonly tokenKey = 'auth_token';
   private readonly userKey = 'auth_user';
@@ -25,7 +24,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<any>(this.getStoredUser());
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   // ========== LOGIN/LOGOUT ==========
 
@@ -45,7 +44,7 @@ export class AuthService {
     // );
 
     console.log('🔐 [AuthService] Login:', credentials.username);
-    
+
     // Mock login - siempre exitoso
     const mockResponse = {
       token: 'mock-jwt-token-' + Date.now(),
@@ -53,8 +52,8 @@ export class AuthService {
         id: '1',
         username: credentials.username,
         nombre: 'Usuario Demo',
-        rol: 'asesor'
-      }
+        rol: 'asesor',
+      },
     };
 
     this.setToken(mockResponse.token);
@@ -148,4 +147,3 @@ export class AuthService {
     return of({ token: 'refreshed-mock-token-' + Date.now() });
   }
 }
-

@@ -400,7 +400,7 @@ describe('QuoteDetailsComponent', () => {
       it('should have correct button configuration', () => {
         // Assert
         expect(component.btnGenerateEmission.label).toBe('Generar emisión');
-        expect(component.btnGenerateEmission.icon).toBe('fal fa-file-check');
+        expect(component.btnGenerateEmission.icon).toBe('fa-solid fa-file-check');
         expect(component.btnGenerateEmission.iconPosition).toBe('right');
         expect(component.btnGenerateEmission.styleBtn).toBe('fill');
         expect(component.btnGenerateEmission.typeBtn).toBe('primary');
@@ -426,7 +426,7 @@ describe('QuoteDetailsComponent', () => {
       it('should have correct button configuration', () => {
         // Assert
         expect(component.btnBackToManagement.label).toBe('Volver a Cotizaciones');
-        expect(component.btnBackToManagement.icon).toBe('fal fa-arrow-left');
+        expect(component.btnBackToManagement.icon).toBe('fa-solid fa-arrow-left');
         expect(component.btnBackToManagement.iconPosition).toBe('left');
         expect(component.btnBackToManagement.styleBtn).toBe('stroke');
         expect(component.btnBackToManagement.typeBtn).toBe('secondary');

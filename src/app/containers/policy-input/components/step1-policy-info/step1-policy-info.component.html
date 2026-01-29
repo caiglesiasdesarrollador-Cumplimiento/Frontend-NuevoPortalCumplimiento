@@ -1,0 +1,125 @@
+<!-- ✅ Step 1: Información de Póliza -->
+<div class="step1-policy-info-container">
+  <!-- ✅ Formulario HTML nativo con clases de Seguros Bolívar -->
+  <form [formGroup]="step1Form" class="grid grid-cols-1 gap-4">
+    
+    <!-- ✅ Primera fila - Tomador: Tipo Doc Tomador | Número Doc Tomador -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="form-group">
+        <label class="sb-ui-label">Tipo de documento del tomador</label>
+        <select 
+          class="sb-ui-select"
+          formControlName="tipoDocumentoTomador"
+          [disabled]="!isFormEnabled"
+        >
+          <option value="">Seleccione tipo de documento</option>
+          <option value="CC">CC - Cédula de ciudadanía</option>
+          <option value="NT">NT - Nit</option>
+          <option value="CE">CE - Cédula de Extranjería</option>
+          <option value="PP">PP - Pasaporte</option>
+          <option value="PE">PE - Permiso de Permanencia</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="sb-ui-label">Número de documento del tomador</label>
+        <input
+          type="text"
+          class="sb-ui-input"
+          formControlName="numeroDocumentoTomador"
+          [disabled]="!isFormEnabled"
+          placeholder="Ingrese el número de documento"
+        />
+      </div>
+    </section>
+
+    <!-- ✅ Segunda fila - Asegurado: Tipo Doc Asegurado | Número Doc Asegurado -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="form-group">
+        <label class="sb-ui-label">Tipo de documento del asegurado</label>
+        <select 
+          class="sb-ui-select"
+          formControlName="tipoDocumentoAsegurado"
+          [disabled]="!isFormEnabled"
+        >
+          <option value="">Seleccione tipo de documento</option>
+          <option value="CC">CC - Cédula de ciudadanía</option>
+          <option value="NT">NT - Nit</option>
+          <option value="CE">CE - Cédula de Extranjería</option>
+          <option value="PP">PP - Pasaporte</option>
+          <option value="PE">PE - Permiso de Permanencia</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="sb-ui-label">Número de documento del asegurado</label>
+        <input
+          type="text"
+          class="sb-ui-input"
+          formControlName="numeroDocumentoAsegurado"
+          [disabled]="!isFormEnabled"
+          placeholder="Ingrese el número de documento"
+        />
+      </div>
+    </section>
+
+    <!-- ✅ Tercera fila - Producto e Intermediario: Seleccione Producto | Clave Intermediario -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="form-group">
+        <label class="sb-ui-label">Tipo de producto</label>
+        <select 
+          class="sb-ui-select"
+          formControlName="insuranceProduct"
+          [disabled]="!isFormEnabled"
+        >
+          <option value="">Seleccione un producto</option>
+          <option value="CUMPLIMIENTO">Cumplimiento</option>
+          <option value="RC">Responsabilidad Civil</option>
+        </select>
+      </div>
+
+      <!-- ✅ Campo Clave del Intermediario: SELECT si hay lista, INPUT si no hay -->
+      <div class="form-group">
+        <label class="sb-ui-label">Clave del Intermediario</label>
+        
+        <!-- ✅ SELECT si hay claves -->
+        <select
+          *ngIf="clavesIntermediario.length > 0"
+          class="sb-ui-select"
+          formControlName="claveIntermediario"
+          (change)="onClaveIntermediarioChange($any($event.target).value)"
+          [disabled]="!isFormEnabled"
+        >
+          <option value="">Seleccione una clave</option>
+          <option *ngFor="let clave of clavesIntermediario" [value]="clave.codigo">
+            {{ clave.codigo }} - {{ clave.nombre }}
+          </option>
+        </select>
+
+        <!-- ✅ INPUT si NO hay claves -->
+        <input
+          *ngIf="clavesIntermediario.length === 0"
+          type="text"
+          class="sb-ui-input"
+          [class.sb-ui-input--error]="claveIntermediarioError"
+          formControlName="claveIntermediario"
+          (input)="onClaveIntermediarioChange($any($event.target).value)"
+          placeholder="Ingrese la clave del intermediario manualmente"
+          [disabled]="!isFormEnabled"
+        />
+      </div>
+    </section>
+  </form>
+
+  <!-- ✅ Mensaje de error de clave de intermediario -->
+  <div *ngIf="claveIntermediarioError" class="mt-2 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+    <i class="fa-solid fa-exclamation-circle mr-2"></i>
+    {{ claveIntermediarioValidationMessage }}
+  </div>
+
+  <!-- ✅ Información del intermediario seleccionado -->
+  <div *ngIf="nombreIntermediario && !claveIntermediarioError" class="mt-2 p-2 bg-green-50 border border-green-200 rounded text-green-700 text-sm">
+    <i class="fa-solid fa-check-circle mr-2"></i>
+    <strong>Intermediario:</strong> {{ nombreIntermediario }}
+  </div>
+</div>

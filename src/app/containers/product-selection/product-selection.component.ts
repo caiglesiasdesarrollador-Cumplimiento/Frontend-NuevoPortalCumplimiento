@@ -32,7 +32,7 @@ export class ProductSelectionComponent implements OnInit {
   // ✅ Botones usando tipos nativos de tech-block-lib (imagen 2)
   btnSimonCotizadores: ILibTbButton = {
     label: 'Ir a Simón Cotizadores',
-    icon: 'fal fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'secondary',
@@ -42,7 +42,7 @@ export class ProductSelectionComponent implements OnInit {
 
   btnPymesDigital: ILibTbButton = {
     label: 'Ir a Pymes + Digital',
-    icon: 'fal fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'secondary',
@@ -52,7 +52,7 @@ export class ProductSelectionComponent implements OnInit {
 
   btnProcreditos: ILibTbButton = {
     label: 'Ir a Procreditos',
-    icon: 'fal fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'secondary',
@@ -62,7 +62,7 @@ export class ProductSelectionComponent implements OnInit {
 
   btnSimonWeb: ILibTbButton = {
     label: 'Ir a Simón Web',
-    icon: 'fal fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'secondary',
@@ -73,7 +73,7 @@ export class ProductSelectionComponent implements OnInit {
   // ✅ Botón destacado para Cumplimiento usando tipo nativo
   btnCumplimiento: ILibTbButton = {
     label: 'Ir a Cumplimiento',
-    icon: 'fal fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -94,12 +94,12 @@ export class ProductSelectionComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Portal',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/portal'],
       },
       {
         label: 'Cotizar o Emitir',
-        icon: 'fal fa-paper-plane',
+        icon: 'fa-solid fa-paper-plane',
       },
     ];
 
@@ -145,5 +145,3 @@ export class ProductSelectionComponent implements OnInit {
     return this.productData.products.filter(p => !p.featured);
   }
 }
-
-

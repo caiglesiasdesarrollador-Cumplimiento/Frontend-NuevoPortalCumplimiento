@@ -18,4 +18,3 @@ import { MenuComponent } from './menu.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MenuModule {}
-

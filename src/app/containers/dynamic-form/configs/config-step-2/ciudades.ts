@@ -86,7 +86,7 @@ export const ciudades: ILibTbDynamicFormConfigType = {
     autofocusFilter: true,
     chip: true,
     ellipsis: true,
-    dropdownIcon: 'fal fa-city',
+    dropdownIcon: 'fa-solid fa-city',
     showToggleAll: false,
     showHeader: true,
     selectionLimit: 5,

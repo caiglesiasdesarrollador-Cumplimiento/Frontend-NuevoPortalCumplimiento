@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 // NOSONAR: environment se usará cuando se conecte API real
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import { environment } from '../../../environments/environment';
 
 /**
@@ -138,4 +138,3 @@ export class ClienteValidacionService {
     }).pipe(delay(300));
   }
 }
-

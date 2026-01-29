@@ -71,11 +71,11 @@ export interface ICoverageDetail {
 
 // ✅ Opciones para dropdowns
 export const POLICY_TYPE_OPTIONS = [
-  { label: 'Seguro de Auto', value: PolicyType.AUTO, icon: 'fal fa-car' },
-  { label: 'Seguro de Hogar', value: PolicyType.HOME, icon: 'fal fa-home' },
-  { label: 'Seguro de Vida', value: PolicyType.LIFE, icon: 'fal fa-heart' },
-  { label: 'Seguro de Salud', value: PolicyType.HEALTH, icon: 'fal fa-medkit' },
-  { label: 'Seguro Empresarial', value: PolicyType.BUSINESS, icon: 'fal fa-building' },
+  { label: 'Seguro de Auto', value: PolicyType.AUTO, icon: 'fa-solid fa-car' },
+  { label: 'Seguro de Hogar', value: PolicyType.HOME, icon: 'fa-solid fa-home' },
+  { label: 'Seguro de Vida', value: PolicyType.LIFE, icon: 'fa-solid fa-heart' },
+  { label: 'Seguro de Salud', value: PolicyType.HEALTH, icon: 'fa-solid fa-medkit' },
+  { label: 'Seguro Empresarial', value: PolicyType.BUSINESS, icon: 'fa-solid fa-building' },
 ];
 
 export const COVERAGE_TYPE_OPTIONS = [

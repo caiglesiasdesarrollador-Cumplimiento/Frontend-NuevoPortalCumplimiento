@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import './polyfills';
 
 import { enableProdMode } from '@angular/core';

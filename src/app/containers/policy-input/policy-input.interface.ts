@@ -219,7 +219,8 @@ export const MOCK_EXTRACTED_CONTRACT_DATA: IPolicyStep2Data = {
 export const ACTION_LABELS = {
   [PolicyInputAction.EMITIR]: {
     step1Title: 'Paso 1: Información del producto y las partes',
-    step1Description: 'Selecciona el producto, completa los datos del tomador y del asegurado, y adjunta el contrato.',
+    step1Description:
+      'Selecciona el producto, completa los datos del tomador y del asegurado, y adjunta el contrato.',
     step2Title: 'Paso 2: Formulario de Emisión',
     step2Description:
       'Completa o edita los detalles para la emisión de la póliza. Los campos pre-llenados provienen de la información del contrato.',
@@ -231,7 +232,8 @@ export const ACTION_LABELS = {
   },
   [PolicyInputAction.COTIZAR]: {
     step1Title: 'Paso 1: Información del producto y las partes',
-    step1Description: 'Selecciona el producto, completa los datos del tomador y del asegurado, y adjunta el contrato.',
+    step1Description:
+      'Selecciona el producto, completa los datos del tomador y del asegurado, y adjunta el contrato.',
     step2Title: 'Paso 2: Formulario de cotización',
     step2Description:
       'Completa o edita los detalles para la cotización de la póliza. Los campos pre-llenados provienen de la información identificada del contrato.',

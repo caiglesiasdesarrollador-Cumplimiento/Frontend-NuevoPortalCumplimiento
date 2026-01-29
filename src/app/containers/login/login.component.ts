@@ -72,5 +72,3 @@ export class LoginComponent {
     return validEmails.includes(this.email) && this.password.length >= 6;
   }
 }
-
-

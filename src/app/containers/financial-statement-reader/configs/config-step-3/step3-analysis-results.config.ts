@@ -38,12 +38,12 @@ export const step3AnalysisResultsForm = (): ILibTbDynamicForm => {
       {
         containerId: 'step3-results-container',
         htmlContent:
-          '<h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">Resultados del Análisis</h4><div id="analysis-results-placeholder" class="p-6 text-center border border-grayscaleL200 rounded-lg"><i class="fal fa-chart-line text-4xl text-successBase mb-4"></i><p class="lib-tb-body-medium text-grayscaleBlack">Los resultados detallados del análisis financiero se mostrarán aquí</p><p class="lib-tb-body-small text-grayscaleD200 mt-2">Ratios financieros, evaluación de riesgo y calificación crediticia</p></div>',
+          '<h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">Resultados del Análisis</h4><div id="analysis-results-placeholder" class="p-6 text-center border border-grayscaleL200 rounded-lg"><i class="fa-solid fa-chart-line text-4xl text-successBase mb-4"></i><p class="lib-tb-body-medium text-grayscaleBlack">Los resultados detallados del análisis financiero se mostrarán aquí</p><p class="lib-tb-body-small text-grayscaleD200 mt-2">Ratios financieros, evaluación de riesgo y calificación crediticia</p></div>',
       },
       {
         containerId: 'step3-recommendations-container',
         htmlContent:
-          '<h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">Recomendaciones de Seguros</h4><div id="recommendations-placeholder" class="p-6 text-center border border-grayscaleL200 rounded-lg"><i class="fal fa-shield-alt text-4xl text-primaryBase mb-4"></i><p class="lib-tb-body-medium text-grayscaleBlack">Recomendaciones personalizadas de seguros empresariales</p><p class="lib-tb-body-small text-grayscaleD200 mt-2">Basadas en el análisis de riesgo y perfil financiero</p></div>',
+          '<h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">Recomendaciones de Seguros</h4><div id="recommendations-placeholder" class="p-6 text-center border border-grayscaleL200 rounded-lg"><i class="fa-solid fa-shield-alt text-4xl text-primaryBase mb-4"></i><p class="lib-tb-body-medium text-grayscaleBlack">Recomendaciones personalizadas de seguros empresariales</p><p class="lib-tb-body-small text-grayscaleD200 mt-2">Basadas en el análisis de riesgo y perfil financiero</p></div>',
       },
     ],
   };

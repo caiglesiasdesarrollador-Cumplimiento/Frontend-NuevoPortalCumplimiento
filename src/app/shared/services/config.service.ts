@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 /**
  * ✅ Servicio de configuración con valores por defecto del sistema
@@ -10,7 +12,7 @@ import { Injectable } from '@angular/core';
 })
 export class ConfigService {
   // ✅ Valores por defecto según colección de Postman y documentación
-  
+
   /**
    * Código de compañía (Seguros Bolívar)
    */
@@ -22,10 +24,9 @@ export class ConfigService {
   readonly codSecc = '4';
 
   /**
-   * Sistema origen (196 = Cumplimiento Digital según documentación)
-   * Nota: En algunos casos puede ser '100', pero por defecto usamos '196'
+   * Sistema origen (100 = según colección de Postman DEV)
    */
-  readonly sistemaOrigen = '196';
+  readonly sistemaOrigen = '100';
 
   /**
    * País (1 = Colombia)
@@ -68,7 +69,10 @@ export class ConfigService {
    * @param codProducto Código de producto (opcional, por defecto '440')
    * @returns Objeto con headers de proceso
    */
-  getProcesoHeaders(codUsr: string, codProducto: string = this.codProducto): Record<string, string> {
+  getProcesoHeaders(
+    codUsr: string,
+    codProducto: string = this.codProducto,
+  ): Record<string, string> {
     return {
       codProducto: codProducto,
       modulo: this.modulo,
@@ -84,19 +88,52 @@ export class ConfigService {
   }
 
   /**
-   * Obtener headers comunes para servicios de Comunes (con API Key)
+   * Obtener API Key (usa apiKey principal, fallback a apiKeyComunes)
+   */
+  getApiKey(): string {
+    return environment.apiKey || environment.apiKeyComunes || '';
+  }
+
+  /**
+   * Obtener headers comunes para servicios de Comunes - Personas Jurídicas
    * @param codUsr Código de usuario (obligatorio)
    * @returns Objeto con headers comunes
    */
   getComunesHeaders(codUsr: string): Record<string, string> {
     return {
-      codUsr: codUsr,
-      sistemaOrigen: this.sistemaOrigen,
-      paisISO: this.pais,
-      direccionIP: '',
-      info1: '',
+      'x-api-key': this.getApiKey(),
+      'codUsr': codUsr,
+      'sistemaOrigen': this.sistemaOrigen,
+      'paisISO': this.pais,
+      'direccionIP': '',
+      'info1': '',
     };
   }
+
+  /**
+   * Obtener headers comunes para servicios de Comunes - Personas Naturales
+   * @param codUsr Código de usuario (obligatorio)
+   * @returns HttpHeaders con headers comunes (info1 = 'N')
+   * 
+   * ⚠️ IMPORTANTE CORS:
+   * Los navegadores normalizan los headers a minúsculas en el preflight CORS.
+   * El backend DEBE tener configurado en Access-Control-Allow-Headers:
+   * - paisiso (minúsculas) - requerido por CORS preflight
+   * - paisISO (mayúsculas) - opcional, para compatibilidad
+   * Lo mismo aplica para: sistemaorigen, codusr, info1, x-api-key
+   */
+  getComunesHeadersNaturales(codUsr: string): HttpHeaders {
+    const headers: { [key: string]: string } = {
+      'x-api-key': this.getApiKey(),
+      'sistemaOrigen': this.sistemaOrigen,
+      'codUsr': codUsr,
+      'paisISO': this.pais,
+      'info1': 'N',
+    };
+    
+    // Solo agregar direccionIp si tiene valor (no enviar vacío)
+    // Nota: El CURL del usuario muestra 'direccionIp;' pero parece ser un error de sintaxis
+    
+    return new HttpHeaders(headers);
+  }
 }
-
-

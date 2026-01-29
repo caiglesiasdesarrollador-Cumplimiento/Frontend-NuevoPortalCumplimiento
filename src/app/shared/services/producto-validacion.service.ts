@@ -60,7 +60,7 @@ export class ProductoValidacionService {
   obtenerTipoPersona(tipoDocumento: string): TipoPersona {
     // Documentos de personas naturales
     const documentosNaturales = ['CC', 'CE', 'PP', 'PT', 'TI', 'PA'];
-    
+
     // Documentos de personas jurídicas
     const documentosJuridicos = ['NIT', 'NT', 'NE'];
 
@@ -90,9 +90,9 @@ export class ProductoValidacionService {
   ): boolean {
     // Productos que requieren validación especial
     const PRODUCTOS_VALIDACION_COMBINACION = ['450', '455'];
-    
+
     // Verificar si el producto requiere validación
-    const requiereValidacion = PRODUCTOS_VALIDACION_COMBINACION.some((prod) =>
+    const requiereValidacion = PRODUCTOS_VALIDACION_COMBINACION.some(prod =>
       productoId.includes(prod),
     );
 
@@ -114,5 +114,3 @@ export class ProductoValidacionService {
     return true;
   }
 }
-
-

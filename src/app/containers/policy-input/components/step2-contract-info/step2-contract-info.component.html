@@ -1,0 +1,25 @@
+<!-- ✅ Step 2: Información del Contrato -->
+<div class="step2-contract-info-container">
+  <lib-tb-dynamic-form
+    [custom]="step2Form"
+  ></lib-tb-dynamic-form>
+
+  <!-- ✅ Componentes de Coberturas -->
+  <div class="coberturas-section mt-6">
+    <!-- Coberturas de Cumplimiento -->
+    <app-coberturas-cumplimiento
+      [coberturas]="coberturasCumplimiento"
+      [isFormEnabled]="isFormEnabled"
+      (coberturasChange)="coberturasCumplimientoChange.emit($event)"
+      (totalPrimaChange)="totalPrimaCumplimientoChange.emit($event)"
+    ></app-coberturas-cumplimiento>
+
+    <!-- Coberturas de Responsabilidad Civil -->
+    <app-coberturas-rc
+      [coberturas]="coberturasRC"
+      [isFormEnabled]="isFormEnabled"
+      (coberturasChange)="coberturasRCChange.emit($event)"
+      (totalPrimaChange)="totalPrimaRCChange.emit($event)"
+    ></app-coberturas-rc>
+  </div>
+</div>

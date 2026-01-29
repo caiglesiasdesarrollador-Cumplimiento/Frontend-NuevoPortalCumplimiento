@@ -13,4 +13,3 @@ import { BreadcrumbComponent } from './breadcrumb.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class BreadcrumbModule {}
-

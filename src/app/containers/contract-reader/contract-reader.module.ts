@@ -34,4 +34,3 @@ import { ContractReaderRoutingModule } from './contract-reader-routing.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ContractReaderModule {}
-

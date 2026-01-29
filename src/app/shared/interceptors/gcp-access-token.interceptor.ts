@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-} from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
@@ -24,11 +19,11 @@ interface EnvironmentGCP {
 /**
  * ✅ Interceptor para agregar header access_token automáticamente
  * a peticiones a servicios GCP directos (Cloud Run)
- * 
+ *
  * Basado en la colección de Postman: CumplimientoDigital.postman_collection.json
  * - Dev: Actuaria2024*
  * - Stage: Analitica2025*
- * 
+ *
  * NOTA: Compatible con environment básico (sin gcpAccessTokens) y completo
  */
 @Injectable()
@@ -47,7 +42,7 @@ export class GCPAccessTokenInterceptor implements HttpInterceptor {
 
     // ✅ Si no hay token configurado, continuar sin modificar
     if (!accessToken) {
-      console.warn('⚠️ [GCPAccessTokenInterceptor] No hay access_token configurado para GCP');
+      // ✅ Continuar sin access_token si no está configurado (puede ser petición no-GCP)
       return next.handle(request);
     }
 
