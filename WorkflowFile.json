@@ -63,6 +63,9 @@
     },
     "prod": {
       "repository_url": "bolivar-npm-core-web-kit-components-lib-prod-virtual"
+    },
+    "GD981-760": {
+      "repository_url": "bolivar-npm-core-web-kit-components-lib-prod-virtual"
     }
   }
 }
