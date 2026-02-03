@@ -13,7 +13,7 @@ export const environment = {
 
   // ========== API Gateway Comunes (HTTP Proxy) ==========
   apiGatewayComunes: {
-    dev: 'https://fz73xehwah.execute-api.us-east-1.amazonaws.com/dev/persona_administracion',
+    dev: 'https://z0jo90imu8.execute-api.us-east-1.amazonaws.com/dev/comunes-personas-administracion',
     staging: 'https://c4huz7dmpc-vpce-0d1e15f4e7cf53d97.execute-api.us-east-1.amazonaws.com/stage/comunes-personas-administracion',
     prod: 'https://03l44gahq8-vpce-0316f1f34c146e45d.execute-api.us-east-1.amazonaws.com/prod/comunes-personas-administracion',
   },
@@ -26,7 +26,7 @@ export const environment = {
   },
 
   // ========== API Key para Comunes (desde variable de entorno) ==========
-  apiKeyComunes: 'gNlVN7pIkc5OK412NgbtL9xpl3vEB9xi3VlvJ8yu',
+  apiKeyComunes: '8BKiD5m9kl2mueLPC1byo2n0gEDiXiZ022IQj7xV',
 
   // ========== Legacy (mantener para compatibilidad) ==========
   apiUrl: "https://z0jo90imu8.execute-api.us-east-1.amazonaws.com/dev",

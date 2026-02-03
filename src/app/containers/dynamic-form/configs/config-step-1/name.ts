@@ -27,7 +27,7 @@ export const name = (self: IDynamicFormComponent): ILibTbDynamicFormConfigType =
         help: 'Digite sus nombres completos',
         success: 'Nombres completados',
       },
-      libTbKeypress: value => {
+      libTbKeypress: (value: any) => {
         console.log(value.target.value);
         console.log(self.toUpperCase(value.target.value));
       },

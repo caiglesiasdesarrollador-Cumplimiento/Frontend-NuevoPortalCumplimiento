@@ -15,6 +15,12 @@ import {
   ITerceroNaturalResponse,
   ITerceroNaturalBackendResponse,
 } from '../interfaces/comunes.interface';
+import {
+  validarYSanitizarDocumento,
+  validarTipoDocumento,
+  TIPOS_DOCUMENTO_NATURALES,
+  TIPOS_DOCUMENTO_JURIDICAS,
+} from '../utils/input-sanitizer';
 
 /**
  * ✅ COMUNES_002, COMUNES_003, COMUNES_004: Servicio para consultar terceros
@@ -39,22 +45,14 @@ export class TercerosService {
     private readonly configService: ConfigService,
     private readonly logger: LoggerService,
   ) {
-    // ✅ Usar proxy en desarrollo para evitar CORS, URL directa en producción
-    // En desarrollo: /proxy/comunes-personas-administracion/api/v1/terceros
-    // En producción: https://z0jo90imu8.execute-api.us-east-1.amazonaws.com/dev/comunes-personas-administracion/api/v1/terceros
+    // ✅ SOLUCIÓN TEMPORAL: Usar URL directa porque el proxy NO funciona en Angular 20
+    // El backend tiene CORS configurado (Access-Control-Allow-Origin: *)
     const ambiente = environment.production ? 'prod' : 'dev';
     
-    if (environment.production) {
-      // ✅ Producción: usar URL directa del API Gateway
-      const apiGateway = environment.apiGatewayComunes[ambiente];
-      this.baseUrl = `${apiGateway}/api/v1/terceros`;
-      this.baseUrlV2 = `${apiGateway}/api/v2/terceros`;
-    } else {
-      // ✅ Desarrollo: usar proxy para evitar CORS (igual que Multiclaves)
-      // El proxy ya está configurado en proxy.conf.json
-      this.baseUrl = `/proxy/comunes-personas-administracion/api/v1/terceros`;
-      this.baseUrlV2 = `/proxy/comunes-personas-administracion/api/v2/terceros`;
-    }
+    // ✅ Usar URL directa siempre (el backend tiene CORS habilitado)
+    const apiGateway = environment.apiGatewayComunes[ambiente];
+    this.baseUrl = `${apiGateway}/api/v1/terceros`;
+    this.baseUrlV2 = `${apiGateway}/api/v2/terceros`;
     
     this.logger.debug('Base URL configurada', { baseUrl: this.baseUrl, production: environment.production });
   }
@@ -80,10 +78,23 @@ export class TercerosService {
       throw new Error('No se encontró código de usuario en la sesión');
     }
 
+    // ✅ Validar y sanitizar documento (puede ser natural o jurídico)
+    const todosLosTipos = [...TIPOS_DOCUMENTO_NATURALES, ...TIPOS_DOCUMENTO_JURIDICAS];
+    const validacionTipo = validarTipoDocumento(tipoDocumento, todosLosTipos);
+    if (!validacionTipo.valido) {
+      throw new Error(validacionTipo.error || 'Tipo de documento inválido');
+    }
+    
+    const tipoDocNormalizado = tipoDocumento === 'NIT' ? 'NT' : tipoDocumento;
+    const validacionDoc = validarYSanitizarDocumento(tipoDocNormalizado, numeroDocumento);
+    if (!validacionDoc.valido) {
+      throw new Error(validacionDoc.error || 'Número de documento inválido');
+    }
+
     // ✅ Construir parámetros de query (según colección Postman DEV)
     const params = new HttpParams()
-      .set('pTipoDocumento', tipoDocumento)
-      .set('pNumeroDocumento', numeroDocumento)
+      .set('pTipoDocumento', tipoDocNormalizado)
+      .set('pNumeroDocumento', validacionDoc.sanitizado)
       .set('pCodCia', this.configService.codCia) // 3
       .set('pCodSecc', codSecc) // 66 por defecto
       .set('pCodProducto', codProducto) // dinámico
@@ -115,13 +126,22 @@ export class TercerosService {
     tipoDocumento: string,
     numeroDocumento: string,
   ): Observable<ITerceroJuridicoResponse> {
+    // ✅ Validar tipo de documento contra whitelist
+    const validacionTipo = validarTipoDocumento(tipoDocumento, TIPOS_DOCUMENTO_JURIDICAS);
+    if (!validacionTipo.valido) {
+      throw new Error(validacionTipo.error || 'Tipo de documento inválido');
+    }
+    
     // ✅ Normalizar tipo de documento: NIT -> NT (el backend espera NT)
     const tipoDocNormalizado = tipoDocumento === 'NIT' ? 'NT' : tipoDocumento;
     
-    // ✅ Validar que el tipo de documento sea NT o NE
-    if (tipoDocNormalizado !== 'NT' && tipoDocNormalizado !== 'NE') {
-      throw new Error('El tipo de documento para terceros jurídicos debe ser NIT, NT o NE');
+    // ✅ Validar y sanitizar número de documento
+    const validacionDoc = validarYSanitizarDocumento(tipoDocNormalizado, numeroDocumento);
+    if (!validacionDoc.valido) {
+      throw new Error(validacionDoc.error || 'Número de documento inválido');
     }
+    
+    const numeroDocumentoSanitizado = validacionDoc.sanitizado;
 
     // ✅ Obtener código de usuario de la sesión
     const codUsr = this.sessionService.getCodUsr();
@@ -129,10 +149,10 @@ export class TercerosService {
       throw new Error('No se encontró código de usuario en la sesión');
     }
 
-    // ✅ Construir parámetros de query (usar tipo normalizado)
+    // ✅ Construir parámetros de query (usar tipo normalizado y número sanitizado)
     const params = new HttpParams()
       .set('tipoDocumento', tipoDocNormalizado)
-      .set('numeroDocumento', numeroDocumento);
+      .set('numeroDocumento', numeroDocumentoSanitizado);
 
     // ✅ Obtener headers comunes
     const comunesHeaders = this.configService.getComunesHeaders(codUsr);
@@ -155,13 +175,19 @@ export class TercerosService {
     tipoDocumento: string,
     numeroDocumento: string,
   ): Observable<ITerceroNaturalResponse> {
-    // ✅ Validar que el tipo de documento sea válido para persona natural
-    const tiposValidos = ['CC', 'CE', 'PP', 'PE', 'PA', 'TI', 'PT'];
-    if (!tiposValidos.includes(tipoDocumento)) {
-      throw new Error(
-        `Tipo de documento inválido para persona natural. Tipos válidos: ${tiposValidos.join(', ')}`,
-      );
+    // ✅ Validar tipo de documento contra whitelist
+    const validacionTipo = validarTipoDocumento(tipoDocumento, TIPOS_DOCUMENTO_NATURALES);
+    if (!validacionTipo.valido) {
+      throw new Error(validacionTipo.error || 'Tipo de documento inválido');
     }
+    
+    // ✅ Validar y sanitizar número de documento
+    const validacionDoc = validarYSanitizarDocumento(tipoDocumento, numeroDocumento);
+    if (!validacionDoc.valido) {
+      throw new Error(validacionDoc.error || 'Número de documento inválido');
+    }
+    
+    const numeroDocumentoSanitizado = validacionDoc.sanitizado;
 
     // ✅ Obtener código de usuario de la sesión
     const codUsr = this.sessionService.getCodUsr();
@@ -169,17 +195,17 @@ export class TercerosService {
       throw new Error('No se encontró código de usuario en la sesión');
     }
 
-    // ✅ Construir parámetros de query
+    // ✅ Construir parámetros de query (usar número sanitizado)
     const params = new HttpParams()
       .set('tipoDocumento', tipoDocumento)
-      .set('numeroDocumento', numeroDocumento);
+      .set('numeroDocumento', numeroDocumentoSanitizado);
 
     // ✅ Obtener headers específicos para personas naturales
     const headers = this.configService.getComunesHeadersNaturales(codUsr);
 
     this.logger.debug('Consultando tercero natural', {
       tipoDocumento,
-      numeroDocumento,
+      numeroDocumento: numeroDocumentoSanitizado,
       codUsr,
       url: `${this.baseUrl}/personasNaturales/simplificado`,
     });

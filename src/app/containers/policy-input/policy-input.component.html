@@ -868,7 +868,7 @@
                   (click)="toggleDropdown('claveIntermediario', $event)"
                 >
                   <span
-                    >{{ claveIntermediario ? (claveIntermediario + ' - ' + nombreIntermediario) : 'Seleccione una clave' }}</span
+                    >{{ claveIntermediario ? (nombreIntermediario || claveIntermediario) : 'Seleccione una clave' }}</span
                   >
                 </button>
                 <div

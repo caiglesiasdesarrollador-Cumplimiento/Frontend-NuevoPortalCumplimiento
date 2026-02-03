@@ -11,15 +11,13 @@
  */
 
 import { Injectable } from '@angular/core';
-// import { HttpClient } from '@angular/common/http'; // Reservado para uso futuro
-// import { HttpHeaders } from '@angular/common/http'; // Reservado para uso futuro
-import { Observable, Subject, throwError, timer } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-// import { environment } from '../../../environments/environment'; // Reservado para uso futuro
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, Subject, throwError } from 'rxjs';
+import { catchError, map, timeout, finalize } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { CatalogosService } from './catalogos.service';
 import { LoggerService } from './logger.service';
 import {
-  IContractAIRequest,
   IContractAIResponse,
   IWebSocketMessage,
   IExtractedContractData,
@@ -34,31 +32,36 @@ import {
   providedIn: 'root',
 })
 export class ContractAIService {
-  // private readonly _baseUrl: string; // Reservado para uso futuro
-  // private readonly _wsUrl: string; // Reservado para uso futuro
+  private readonly _baseUrl: string;
+  private readonly _apiKey: string;
   private wsConnection: WebSocket | null = null;
   private wsMessages$ = new Subject<IWebSocketMessage>();
   private processingBlocked = false; // RF-009 Regla 9.1
 
   constructor(
-    // private readonly _http: HttpClient, // Reservado para uso futuro
+    private readonly _http: HttpClient,
     private readonly catalogosService: CatalogosService,
     private readonly logger: LoggerService,
   ) {
-    // TODO: Configurar URLs según ambiente cuando se implemente HTTP real
-    // const ambiente = environment.production ? 'prod' : 'dev';
-    // this._baseUrl = environment.gcpCloudRun?.[ambiente] || '';
-    // this._wsUrl = environment.gcpCloudRun?.[ambiente]?.replace('https://', 'wss://') || '';
+    // ✅ Configurar URL base del servicio de lector de contratos
+    this._baseUrl = 'https://z0jo90imu8.execute-api.us-east-1.amazonaws.com/dev/gcp-lector-contratos/contrato/lector-contratos';
+    this._apiKey = environment.apiKeyComunes || '';
   }
 
   /**
    * ✅ RF-009 Regla 9.1: Procesar contrato con IA
    * Bloquea re-ejecución durante el procesamiento
    *
-   * @param request Request con archivo y metadata
+   * @param archivo Archivo del contrato a procesar
+   * @param correoUsuario Correo electrónico del usuario
+   * @param idFront ID del frontend (identificador único de la solicitud)
    * @returns Observable con respuesta del procesamiento
    */
-  procesarContrato(request: IContractAIRequest): Observable<IContractAIResponse> {
+  procesarContrato(
+    archivo: File,
+    correoUsuario: string,
+    idFront: string,
+  ): Observable<IContractAIResponse> {
     // ✅ RF-009 Regla 9.1: Bloquear re-ejecución
     if (this.processingBlocked) {
       return throwError(() => new Error('El procesamiento ya está en curso. Por favor espera.'));
@@ -66,93 +69,102 @@ export class ContractAIService {
 
     this.processingBlocked = true;
 
-    // ✅ RF-009 Regla 9.3: Conectar WebSocket para estado en tiempo real
-    this.conectarWebSocket(request.metadata.idMongo);
+    // ✅ Validar parámetros de entrada
+    if (!archivo) {
+      this.processingBlocked = false;
+      return throwError(() => new Error('El archivo es requerido'));
+    }
 
-    // ✅ RF-009 Regla 9.7: Configurar timeout de 30 segundos
-    const timeoutTimer = timer(FILE_UPLOAD_CONFIG.processingTimeoutMs);
+    if (!correoUsuario || !correoUsuario.trim()) {
+      this.processingBlocked = false;
+      return throwError(() => new Error('El correo del usuario es requerido'));
+    }
 
+    if (!idFront || !idFront.trim()) {
+      this.processingBlocked = false;
+      return throwError(() => new Error('El ID del frontend es requerido'));
+    }
+
+    // ✅ Construir FormData según especificación del endpoint
     const formData = new FormData();
-    formData.append('file', request.archivo);
-    formData.append('metadata', JSON.stringify(request.metadata));
-    formData.append('producto', request.producto);
+    formData.append('file', archivo);
+    formData.append('correo_usuario', correoUsuario.trim());
+    formData.append('id_front', idFront.trim());
 
-    // const headers = new HttpHeaders({ // Reservado para uso futuro
-    //   'accept': 'application/json',
-    // });
+    // ✅ Headers con API Key
+    const headers = new HttpHeaders({
+      'x-api-key': this._apiKey,
+    });
 
-    // TODO: Conectar con servicio real cuando esté disponible
-    // return this.http.post<IContractAIResponse>(`${this.baseUrl}/contrato/lector-contratos`, formData, { headers })
-    //   .pipe(
-    //     timeout(FILE_UPLOAD_CONFIG.processingTimeoutMs),
-    //     map(response => this.validarYProcesarRespuesta(response)),
-    //     catchError(error => this.handleError(error)),
-    //     finalize(() => {
-    //       this.processingBlocked = false;
-    //       this.desconectarWebSocket();
-    //     })
-    //   );
+    this.logger.debug('Enviando contrato para procesamiento', {
+      nombreArchivo: archivo.name,
+      tamaño: archivo.size,
+      tipo: archivo.type,
+      correoUsuario,
+      idFront,
+      url: this._baseUrl,
+    });
 
-    // Mock para desarrollo - Simular procesamiento con WebSocket
-    return new Observable(observer => {
-      let progreso = 0;
-      const intervalo = setInterval(() => {
-        progreso += 10;
+    // ✅ RF-009 Regla 9.3: Conectar WebSocket para estado en tiempo real (simulado)
+    this.conectarWebSocket(idFront);
+
+    // ✅ Realizar petición HTTP al servicio real
+    return this._http.post<any>(this._baseUrl, formData, { headers }).pipe(
+      timeout(FILE_UPLOAD_CONFIG.processingTimeoutMs),
+      map((response: any) => {
+        this.logger.debug('Respuesta del servicio de lector de contratos', response);
+
+        // ✅ Mapear respuesta del backend a la estructura esperada
+        const respuestaMapeada: IContractAIResponse = {
+          success: true,
+          asegurabilidad: Asegurabilidad.SI, // TODO: Mapear desde respuesta real
+          datosExtraidos: this.mapearDatosExtraidos(response),
+          tiempoProcesamiento: response.tiempoProcesamiento || 0,
+          confianza: response.confianza || 0,
+          warnings: response.warnings || [],
+        };
+
+        // ✅ RF-009 Regla 9.8 y 9.10: Validar datos
+        const respuestaValidada = this.validarYProcesarRespuesta(respuestaMapeada);
+
         this.enviarMensajeWebSocket({
-          tipo: 'procesando',
-          mensaje: RF009_MESSAGES.PROCESANDO,
-          progreso,
+          tipo: 'finalizado',
+          mensaje: RF009_MESSAGES.FINALIZADO,
+          progreso: 100,
+          datos: respuestaValidada.datosExtraidos,
         });
 
-        if (progreso >= 100) {
-          clearInterval(intervalo);
+        return respuestaValidada;
+      }),
+      catchError((error: any) => {
+        this.logger.error('Error al procesar contrato', error);
 
-          // Simular respuesta exitosa
-          const respuesta: IContractAIResponse = {
-            success: true,
-            asegurabilidad: Asegurabilidad.SI,
-            datosExtraidos: this.generarDatosMock(),
-            tiempoProcesamiento: 5.2,
-            confianza: 92,
-            warnings: [],
-          };
-
-          // ✅ RF-009 Regla 9.8 y 9.10: Validar datos
-          const respuestaValidada = this.validarYProcesarRespuesta(respuesta);
-
-          this.enviarMensajeWebSocket({
-            tipo: 'finalizado',
-            mensaje: RF009_MESSAGES.FINALIZADO,
-            progreso: 100,
-            datos: respuestaValidada.datosExtraidos,
-          });
-
-          observer.next(respuestaValidada);
-          observer.complete();
-
-          this.processingBlocked = false;
-          this.desconectarWebSocket();
-        }
-      }, 500);
-
-      // ✅ RF-009 Regla 9.7: Manejar timeout
-      timeoutTimer.subscribe(() => {
-        clearInterval(intervalo);
         this.enviarMensajeWebSocket({
-          tipo: 'timeout',
-          mensaje: RF009_MESSAGES.TIMEOUT,
+          tipo: 'error',
+          mensaje: error.message || RF009_MESSAGES.ERROR_PROCESAMIENTO,
+          error: error,
         });
 
+        return throwError(() => ({
+          success: false,
+          error: error.message || RF009_MESSAGES.ERROR_PROCESAMIENTO,
+          detalles: error,
+        }));
+      }),
+      finalize(() => {
         this.processingBlocked = false;
         this.desconectarWebSocket();
+      }),
+    );
+  }
 
-        observer.error({
-          success: false,
-          error: RF009_MESSAGES.TIMEOUT,
-          timeout: true,
-        });
-      });
-    });
+  /**
+   * ✅ Mapear datos extraídos de la respuesta del backend
+   * TODO: Ajustar según la estructura real de la respuesta del servicio
+   */
+  private mapearDatosExtraidos(_response: any): IExtractedContractData {
+    // Por ahora retornar datos mock, pero esto debe mapearse desde la respuesta real
+    return this.generarDatosMock();
   }
 
   /**

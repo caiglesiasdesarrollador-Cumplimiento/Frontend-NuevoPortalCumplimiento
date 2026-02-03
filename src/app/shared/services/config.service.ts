@@ -100,13 +100,14 @@ export class ConfigService {
    * @returns Objeto con headers comunes
    */
   getComunesHeaders(codUsr: string): Record<string, string> {
+    // ✅ Headers EXACTAMENTE como el backend los espera según el CURL (CamelCase)
     return {
       'x-api-key': this.getApiKey(),
-      'codUsr': codUsr,
-      'sistemaOrigen': this.sistemaOrigen,
-      'paisISO': this.pais,
-      'direccionIP': '',
-      'info1': '',
+      'codUsr': codUsr.trim(), // ✅ CamelCase como en el CURL
+      'sistemaOrigen': this.sistemaOrigen, // ✅ CamelCase como en el CURL
+      'paisISO': this.pais, // ✅ CamelCase como en el CURL
+      'direccionIP': '', // ✅ CamelCase como en el CURL (corregido: era direccionIP; en el curl)
+      'info1': '', // ✅ Ya está correcto
     };
   }
 
@@ -123,16 +124,18 @@ export class ConfigService {
    * Lo mismo aplica para: sistemaorigen, codusr, info1, x-api-key
    */
   getComunesHeadersNaturales(codUsr: string): HttpHeaders {
+    // ✅ Headers EXACTAMENTE como el backend los espera según el CURL que funciona
+    // IMPORTANTE: El backend debe tener en Access-Control-Allow-Headers estos headers en CamelCase
+    // El navegador normaliza a minúsculas en preflight, pero el backend puede estar configurado
+    // para aceptar CamelCase si tiene ambos casos en Access-Control-Allow-Headers
     const headers: { [key: string]: string } = {
-      'x-api-key': this.getApiKey(),
-      'sistemaOrigen': this.sistemaOrigen,
-      'codUsr': codUsr,
-      'paisISO': this.pais,
-      'info1': 'N',
+      'x-api-key': '8BKiD5m9kl2mueLPC1byo2n0gEDiXiZ022IQj7xV', // ✅ API Key específica para personas naturales
+      'codUsr': codUsr.trim(), // ✅ CamelCase como en el CURL
+      'sistemaOrigen': this.sistemaOrigen, // ✅ CamelCase como en el CURL
+      'paisISO': this.pais, // ✅ CamelCase como en el CURL
+      'info1': 'N', // ✅ Ya está correcto
+      'direccionIP': '', // ✅ CamelCase como en el CURL (corregido: era direccionIP; en el curl)
     };
-    
-    // Solo agregar direccionIp si tiene valor (no enviar vacío)
-    // Nota: El CURL del usuario muestra 'direccionIp;' pero parece ser un error de sintaxis
     
     return new HttpHeaders(headers);
   }

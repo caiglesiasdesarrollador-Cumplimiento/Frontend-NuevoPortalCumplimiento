@@ -101,11 +101,11 @@ export class Step2ContractInfoComponent implements OnInit, OnChanges {
    */
   private setupFormListeners(): void {
     if (this.step2Form?.form) {
-      this.step2Form.form.valueChanges.subscribe((values) => {
+      this.step2Form.form.valueChanges.subscribe((values: any) => {
         this.onFormValueChange(values);
       });
 
-      this.step2Form.form.statusChanges.subscribe((status) => {
+      this.step2Form.form.statusChanges.subscribe((status: string) => {
         this.formValidChange.emit(status === 'VALID');
       });
     }

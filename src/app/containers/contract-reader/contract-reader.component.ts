@@ -405,14 +405,18 @@ export class ContractReaderComponent implements OnInit, OnDestroy {
   /**
    * ✅ RF-009 Regla 9.1, 9.3, 9.5: Procesar contrato con IA
    */
-  private procesarConIA(file: File, metadata: IFileStorageMetadata): void {
-    const request = {
-      archivo: file,
-      metadata,
-      producto: metadata.producto,
-    };
+  private procesarConIA(file: File, _metadata: IFileStorageMetadata): void {
+    // ✅ Obtener correo del usuario desde la sesión
+    const correoUsuario = this.sessionService.getEmail();
+    if (!correoUsuario) {
+      this.handleErrorProcesamiento('No se encontró el correo del usuario en la sesión');
+      return;
+    }
 
-    this.contractAIService.procesarContrato(request).subscribe({
+    // ✅ Generar ID único para el frontend
+    const idFront = `front_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+    this.contractAIService.procesarContrato(file, correoUsuario, idFront).subscribe({
       next: response => {
         // ✅ RF-009 Regla 9.5: Validar asegurabilidad
         try {

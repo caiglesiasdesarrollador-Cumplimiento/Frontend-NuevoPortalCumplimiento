@@ -14,6 +14,7 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { CumplimientoHeadersInterceptor } from './shared/interceptors/cumplimiento-headers.interceptor';
 import { ApiKeyInterceptor } from './shared/interceptors/api-key.interceptor';
 import { GCPAccessTokenInterceptor } from './shared/interceptors/gcp-access-token.interceptor';
+import { CorsHeadersInterceptor } from './shared/interceptors/cors-headers.interceptor';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,12 @@ import { GCPAccessTokenInterceptor } from './shared/interceptors/gcp-access-toke
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
-    // ✅ Orden importante: primero headers de proceso, luego API keys, luego access tokens, finalmente auth
+    // ✅ Orden importante: primero CORS, luego headers de proceso, luego API keys, luego access tokens, finalmente auth
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CorsHeadersInterceptor,
+      multi: true,
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: CumplimientoHeadersInterceptor,

@@ -114,9 +114,9 @@ export class MulticlavesService {
           return {
             claves: [],
             totalClaves: 0,
-            datosBasicos: null,
-            marcaMostrarClave: null,
-            tipoUsuario: null,
+            datosBasicos: undefined,
+            marcaMostrarClave: undefined,
+            tipoUsuario: undefined,
           };
         }
         
@@ -126,9 +126,9 @@ export class MulticlavesService {
           return {
             claves: [],
             totalClaves: 0,
-            datosBasicos: backendResponse.data?.datosBasicos || null,
-            marcaMostrarClave: backendResponse.data?.marcaMostrarClave || null,
-            tipoUsuario: backendResponse.data?.tipoUsuario || null,
+            datosBasicos: backendResponse.data?.datosBasicos || undefined,
+            marcaMostrarClave: backendResponse.data?.marcaMostrarClave || undefined,
+            tipoUsuario: backendResponse.data?.tipoUsuario || undefined,
           };
         }
         

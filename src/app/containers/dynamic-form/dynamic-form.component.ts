@@ -56,7 +56,7 @@ export class DynamicFormComponent implements IDynamicFormComponent {
     libTbUpdated: form => {
       console.log('Paso 1 - Formulario actualizado', form);
       // Suscribirse a cambios en el campo nombres para convertir a mayúsculas
-      form.get('name')?.valueChanges.subscribe(value => {
+      form.get('name')?.valueChanges.subscribe((value: any) => {
         if (value && typeof value === 'string') {
           form.get('name')?.setValue(value.toUpperCase(), { emitEvent: false });
         }

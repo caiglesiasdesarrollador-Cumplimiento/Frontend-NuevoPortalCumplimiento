@@ -43,10 +43,12 @@ import { ProductoValidacionService } from '../../shared/services/producto-valida
 import { ClienteEnfoqueService } from '../../shared/services/cliente-enfoque.service';
 import { PolicyInputFacadeService } from '../../shared/services/policy-input-facade.service'; // ✅ Facade Pattern
 import { ContractAIService } from '../../shared/services/contract-ai.service';
+import { FinancialStatementService } from '../../shared/services/financial-statement.service';
 import { FileStorageService } from '../../shared/services/file-storage.service';
 import { CoberturaService } from '../../shared/services/cobertura.service'; // ✅ RF-013 Regla 13.6
 import { RecuperarAgenteService } from '../../shared/services/recuperar-agente.service';
 import { SessionMulticlavesService } from '../../shared/services/session-multiclaves.service';
+import { SessionService } from '../../shared/services/session.service';
 import { LoggerService } from '../../shared/services/logger.service';
 import {
   TipoArchivo,
@@ -54,6 +56,7 @@ import {
   IFileStorageMetadata,
 } from '../contract-reader/contract-reader.interface';
 import { IMulticlavesResponse } from '../../shared/interfaces/comunes.interface';
+import { validarYSanitizarDocumento } from '../../shared/utils/input-sanitizer';
 import { firstValueFrom, Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import {
@@ -1118,6 +1121,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   // ✅ Datos para simular carga de archivo y extracción
   fileName: string | null = null;
+
+  // ✅ Estado de procesamiento de contrato con IA
+  isProcessingContract = false;
+  contractProcessingMessage = '';
+  contractAnalysisResult: any = null;
   isProcessing = false;
   step2Data: IPolicyStep2Data = INITIAL_STEP2_DATA;
 
@@ -1204,7 +1212,18 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
     this.recuperarAgenteService.recuperarAgente(value).subscribe({
       next: response => {
-        this.nombreIntermediario = response.nombreRazonSocial || this.nombreIntermediario;
+        // ✅ Si nombreRazonSocial ya incluye la clave (formato "53940 - Nombre"), usar directamente
+        // Si no, concatenar clave + nombre
+        const nombreCompleto = response.nombreRazonSocial || '';
+        if (nombreCompleto.startsWith(value + ' - ')) {
+          // Ya incluye la clave, usar directamente
+          this.nombreIntermediario = nombreCompleto;
+        } else if (nombreCompleto) {
+          // No incluye la clave, concatenar
+          this.nombreIntermediario = value + ' - ' + nombreCompleto;
+        } else {
+          this.nombreIntermediario = '';
+        }
         this.claveIntermediarioError = false;
         this.claveIntermediarioValidationMessage = '';
       },
@@ -1916,10 +1935,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     private readonly clienteEnfoqueService: ClienteEnfoqueService, // ✅ RF-005
     private readonly facade: PolicyInputFacadeService, // ✅ Facade Pattern - Reemplaza múltiples servicios
     private readonly contractAIService: ContractAIService, // ✅ RF-008, RF-009
+    private readonly financialStatementService: FinancialStatementService, // ✅ Servicio de estados financieros
     private readonly fileStorageService: FileStorageService, // ✅ RF-008, RF-009
     private readonly coberturaService: CoberturaService, // ✅ RF-013 Regla 13.6
     private readonly recuperarAgenteService: RecuperarAgenteService,
     private readonly sessionMulticlavesService: SessionMulticlavesService,
+    private readonly sessionService: SessionService,
     private readonly logger: LoggerService,
     private readonly ngZone: NgZone,
     private readonly cdr: ChangeDetectorRef,
@@ -3294,33 +3315,23 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Preparar metadata para el servicio
-    const idMongo = this.generarIdMongo();
-    const metadata: IFileStorageMetadata = {
-      idMongo,
-      seccion: this.facade.getConfig().codSecc || '4',
-      producto:
-        this.tipoProducto === 'grandes-beneficiarios'
-          ? '440'
-          : this.tipoProducto === 'particulares'
-            ? '450'
-            : '455',
-      tipoDocTomador: this.facade.getSessionData().tipoDocumento || 'CC',
-      nroDocTomador: this.facade.getSessionData().numeroDocumento || '',
-      tipoArchivo: TipoArchivo.CONTRATO,
-      fecha: this.formatearFechaYYYYMMDD(new Date()),
-      estado: EstadoArchivo.PE,
-      formato: this.fileStorageService.obtenerFormatoArchivo(file),
-    };
+    // ✅ Metadata reservada para uso futuro (no se usa en la nueva firma del servicio)
+    // const idMongo = this.generarIdMongo();
+    // const metadata: IFileStorageMetadata = { ... };
 
-    const request = {
-      archivo: file,
-      metadata,
-      producto: metadata.producto,
-    };
+    // ✅ Obtener correo del usuario desde la sesión
+    const correoUsuario = this.sessionService.getEmail();
+    if (!correoUsuario) {
+      console.error('❌ RF-008: No se encontró el correo del usuario en la sesión');
+      this.archivoContratoProcesando = false;
+      return;
+    }
+
+    // ✅ Generar ID único para el frontend
+    const idFront = `front_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
     // ✅ RF-008: Invocar servicio del lector de contratos
-    this.contractAIService.procesarContrato(request).subscribe({
+    this.contractAIService.procesarContrato(file, correoUsuario, idFront).subscribe({
       next: response => {
         console.log('✅ RF-008: Lector de contratos procesado:', response);
         this.archivoContratoProcesando = false;
@@ -4122,7 +4133,68 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       this.fileName = file.name;
       this.contractFileError = false; // ✅ Limpiar error cuando se carga un archivo
       console.log('Archivo seleccionado:', file);
+
+      // ✅ Consumir automáticamente el servicio de lector de contratos
+      this.procesarContratoConIA(file);
     }
+  }
+
+  /**
+   * ✅ Procesar contrato con IA automáticamente al cargar el archivo
+   */
+  private procesarContratoConIA(archivo: File): void {
+    // ✅ Obtener correo del usuario desde la sesión
+    const correoUsuario = this.sessionService.getEmail();
+    if (!correoUsuario) {
+      this.showErrorNotification('No se encontró el correo del usuario en la sesión');
+      this.logger.error('Correo de usuario no disponible para procesar contrato');
+      return;
+    }
+
+    // ✅ Generar ID único para el frontend (usando timestamp + random)
+    const idFront = `front_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+    this.logger.debug('Iniciando procesamiento de contrato con IA', {
+      nombreArchivo: archivo.name,
+      correoUsuario,
+      idFront,
+    });
+
+    // ✅ Mostrar indicador de carga
+    this.isProcessingContract = true;
+    this.contractProcessingMessage = 'Procesando contrato con IA...';
+
+    // ✅ Llamar al servicio de lector de contratos
+    this.contractAIService.procesarContrato(archivo, correoUsuario, idFront).subscribe({
+      next: (response) => {
+        this.isProcessingContract = false;
+        this.contractProcessingMessage = '';
+
+        this.logger.debug('Contrato procesado exitosamente', response);
+
+        // ✅ Mostrar notificación de éxito
+        this.showSuccessNotification('Contrato procesado exitosamente');
+
+        // ✅ Guardar respuesta para uso posterior
+        this.contractAnalysisResult = response;
+
+        // ✅ RF-009: Procesar datos del contrato desde contract-reader
+        if (response.datosExtraidos) {
+          this.procesarDatosContratoIA(response.datosExtraidos);
+        }
+      },
+      error: (error) => {
+        this.isProcessingContract = false;
+        this.contractProcessingMessage = '';
+
+        this.logger.error('Error al procesar contrato con IA', error);
+
+        // ✅ Mostrar notificación de error
+        const mensajeError =
+          error?.error || error?.message || 'Error al procesar el contrato. Intenta nuevamente.';
+        this.showErrorNotification(mensajeError);
+      },
+    });
   }
 
   // ✅ RF-008: Mostrar confirmación antes de eliminar archivo (cuando se elimina desde la librería)
@@ -5702,7 +5774,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       // También actualizar step2Form si está disponible
       if (this.step2Form?.form) {
         setTimeout(() => {
-          this.step2Form.form.patchValue({
+          this.step2Form.form!.patchValue({
             numeroContratoGeneral: cotizacion.datosGenerales.numeroContrato || '',
             numeroContrato: cotizacion.datosGenerales.numeroContrato || '',
             tipoDocumentoTomadorGeneral: cotizacion.datosGenerales.tipoDocTomador || 'NIT',
@@ -6221,7 +6293,20 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       this.buscandoTomador = true;
       this.nombreTomador = '';
 
-      const docNum = this.numeroDocumentoTomador.replace(/[^0-9]/g, '');
+      // ✅ Validar y sanitizar documento antes de procesar
+      try {
+        const validacionDoc = validarYSanitizarDocumento(
+          this.tipoDocumentoTomador,
+          this.numeroDocumentoTomador
+        );
+        
+        if (!validacionDoc.valido) {
+          this.buscandoTomador = false;
+          this.errorDocumentoTomador = validacionDoc.error || 'Documento inválido';
+          return;
+        }
+        
+        const docNum = validacionDoc.sanitizado;
 
       // ✅ RF-005 Regla 5.2: Determinar tipo de persona según tipo de documento
       const tipoPersona = this.productoValidacionService.obtenerTipoPersona(
@@ -6234,6 +6319,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         this.facade.consultarTerceroJuridico(this.tipoDocumentoTomador, docNum).subscribe({
           next: response => {
             this.buscandoTomador = false;
+            // ✅ LIMPIAR ERROR cuando la consulta es exitosa
+            this.errorDocumentoTomador = '';
 
             // ✅ Escenarios especiales para pruebas (mantener compatibilidad)
             if (docNum === '11111111') {
@@ -6260,6 +6347,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
             // ✅ Si el cliente no existe (404), mostrar modal según modo
             if (error.status === 404 || error.status === 400) {
+              // ✅ Limpiar error si es 404/400 (cliente no encontrado pero no es error de conexión)
+              this.errorDocumentoTomador = '';
               if (this.action === 'emitir') {
                 this.showClienteNoCreado = true;
               } else {
@@ -6277,6 +6366,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         this.facade.consultarTerceroNatural(this.tipoDocumentoTomador, docNum).subscribe({
           next: response => {
             this.buscandoTomador = false;
+            // ✅ LIMPIAR ERROR cuando la consulta es exitosa
+            this.errorDocumentoTomador = '';
 
             // ✅ Escenarios especiales para pruebas (mantener compatibilidad)
             if (docNum === '11111111') {
@@ -6303,6 +6394,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
             // ✅ Si el cliente no existe (404), mostrar modal según modo
             if (error.status === 404 || error.status === 400) {
+              // ✅ Limpiar error si es 404/400 (cliente no encontrado pero no es error de conexión)
+              this.errorDocumentoTomador = '';
               if (this.action === 'emitir') {
                 this.showClienteNoCreado = true;
               } else {
@@ -6315,6 +6408,10 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
             }
           },
         });
+        }
+      } catch (error) {
+        this.buscandoTomador = false;
+        this.errorDocumentoTomador = error instanceof Error ? error.message : 'Error al validar documento';
       }
     }
   }
@@ -6358,21 +6455,36 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       this.buscandoAsegurado = true;
       this.nombreAsegurado = '';
 
-      const docNum = this.numeroDocumentoAsegurado.replace(/[^0-9]/g, '');
+      // ✅ Validar y sanitizar documento antes de procesar
+      try {
+        const validacionDoc = validarYSanitizarDocumento(
+          this.tipoDocumentoAsegurado,
+          this.numeroDocumentoAsegurado
+        );
+        
+        if (!validacionDoc.valido) {
+          this.buscandoAsegurado = false;
+          this.errorDocumentoAsegurado = validacionDoc.error || 'Documento inválido';
+          return;
+        }
+        
+        const docNum = validacionDoc.sanitizado;
 
-      // ✅ RF-005 Regla 5.2: Determinar tipo de persona según tipo de documento
-      const tipoPersona = this.productoValidacionService.obtenerTipoPersona(
-        this.tipoDocumentoAsegurado,
-      );
+        // ✅ RF-005 Regla 5.2: Determinar tipo de persona según tipo de documento
+        const tipoPersona = this.productoValidacionService.obtenerTipoPersona(
+          this.tipoDocumentoAsegurado,
+        );
 
-      // ✅ RF-005 Regla 5.2: Invocar servicio según tipo de persona
-      if (tipoPersona === 'juridica') {
-        // Terceros Jurídicos: NT, NE
-        this.facade
-          .consultarTerceroJuridico(this.tipoDocumentoAsegurado, docNum)
+        // ✅ RF-005 Regla 5.2: Invocar servicio según tipo de persona
+        if (tipoPersona === 'juridica') {
+          // Terceros Jurídicos: NT, NE
+          this.facade
+            .consultarTerceroJuridico(this.tipoDocumentoAsegurado, docNum)
           .subscribe({
             next: response => {
               this.buscandoAsegurado = false;
+              // ✅ LIMPIAR ERROR cuando la consulta es exitosa
+              this.errorDocumentoAsegurado = '';
               this.nombreAsegurado = response.razonSocial || 'ASEGURADO ENCONTRADO - ' + docNum;
               this.procesarAseguradoEncontrado();
             },
@@ -6380,6 +6492,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
               console.error('❌ Error al consultar tercero jurídico (asegurado):', error);
               this.buscandoAsegurado = false;
               if (error.status === 404 || error.status === 400) {
+                // ✅ Limpiar error si es 404/400 (persona no encontrada pero no es error de conexión)
+                this.errorDocumentoAsegurado = '';
                 this.nombreAsegurado = 'ASEGURADO NO ENCONTRADO - ' + docNum;
                 this.procesarAseguradoEncontrado();
               } else {
@@ -6395,6 +6509,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           .subscribe({
             next: response => {
               this.buscandoAsegurado = false;
+              // ✅ LIMPIAR ERROR cuando la consulta es exitosa
+              this.errorDocumentoAsegurado = '';
               this.nombreAsegurado = response.nombreCompleto || 'ASEGURADO ENCONTRADO - ' + docNum;
               this.procesarAseguradoEncontrado();
             },
@@ -6402,6 +6518,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
               console.error('❌ Error al consultar tercero natural (asegurado):', error);
               this.buscandoAsegurado = false;
               if (error.status === 404 || error.status === 400) {
+                // ✅ Limpiar error si es 404/400 (persona no encontrada pero no es error de conexión)
+                this.errorDocumentoAsegurado = '';
                 this.nombreAsegurado = 'ASEGURADO NO ENCONTRADO - ' + docNum;
                 this.procesarAseguradoEncontrado();
               } else {
@@ -6410,6 +6528,10 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
               }
             },
           });
+        }
+      } catch (error) {
+        this.buscandoAsegurado = false;
+        this.errorDocumentoAsegurado = error instanceof Error ? error.message : 'Error al validar documento';
       }
     }
   }
@@ -6708,22 +6830,75 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       this.isUploadingEstadosFinancieros = true;
       this.uploadProgressEstadosFinancieros = 0;
 
-      // Simular progreso de carga
-      // Limpiar intervalo anterior si existe
-      if (this.uploadIntervalEstadosFinancieros) {
-        clearInterval(this.uploadIntervalEstadosFinancieros);
-      }
-
-      this.uploadIntervalEstadosFinancieros = setInterval(() => {
-        this.uploadProgressEstadosFinancieros += 10;
-        if (this.uploadProgressEstadosFinancieros >= 100) {
-          clearInterval(this.uploadIntervalEstadosFinancieros);
-          this.uploadIntervalEstadosFinancieros = null;
-          this.isUploadingEstadosFinancieros = false;
-          console.log('✅ Estados financieros cargados:', file.name);
-        }
-      }, 150);
+      // ✅ Consumir automáticamente el servicio de lector de estados financieros
+      this.procesarEstadosFinancierosConIA(file);
     }
+  }
+
+  /**
+   * ✅ Procesar estados financieros con IA automáticamente al cargar el archivo
+   */
+  private procesarEstadosFinancierosConIA(archivo: File): void {
+    // ✅ Obtener correo del usuario desde la sesión
+    const correoUsuario = this.sessionService.getEmail();
+    if (!correoUsuario) {
+      this.isUploadingEstadosFinancieros = false;
+      this.uploadProgressEstadosFinancieros = 0;
+      this.snackbarConfig = {
+        ...this.snackbarConfig,
+        show: true,
+        message: 'No se encontró el correo del usuario en la sesión',
+        class: 'snackbar-error-theme',
+      };
+      this.logger.error('Correo de usuario no disponible para procesar estados financieros');
+      return;
+    }
+
+    this.logger.debug('Iniciando procesamiento de estados financieros con IA', {
+      nombreArchivo: archivo.name,
+      correoUsuario,
+    });
+
+    // ✅ Llamar al servicio de lector de estados financieros
+    this.financialStatementService.procesarEstadosFinancieros(archivo, correoUsuario).subscribe({
+      next: (response) => {
+        this.isUploadingEstadosFinancieros = false;
+        this.uploadProgressEstadosFinancieros = 100;
+
+        this.logger.debug('Estados financieros procesados exitosamente', response);
+
+        // ✅ Mostrar notificación de éxito
+        this.snackbarConfig = {
+          ...this.snackbarConfig,
+          show: true,
+          message: response.mensaje || 'Estados financieros procesados exitosamente',
+          class: 'snackbar-success-theme',
+        };
+
+        // ✅ Guardar respuesta para uso posterior (puede usarse para recalcular cupo)
+        console.log('✅ Estados financieros procesados:', response);
+      },
+      error: (error) => {
+        this.isUploadingEstadosFinancieros = false;
+        this.uploadProgressEstadosFinancieros = 0;
+
+        this.logger.error('Error al procesar estados financieros con IA', error);
+
+        // ✅ Mostrar notificación de error
+        const mensajeError =
+          error?.error || error?.message || 'Error al procesar los estados financieros. Intenta nuevamente.';
+        this.snackbarConfig = {
+          ...this.snackbarConfig,
+          show: true,
+          message: mensajeError,
+          class: 'snackbar-error-theme',
+        };
+
+        // ✅ Limpiar archivo en caso de error
+        this.estadosFinancierosFile = null;
+        this.estadosFinancierosFileName = null;
+      },
+    });
   }
 
   // ✅ Eliminar archivo de estados financieros
@@ -7833,8 +8008,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         valorA = a.tomador?.nombre || '';
         valorB = b.tomador?.nombre || '';
       } else {
-        valorA = a[columna];
-        valorB = b[columna];
+        // Usar aserción de tipo para acceso dinámico seguro
+        valorA = (a as any)[columna];
+        valorB = (b as any)[columna];
       }
 
       // Si es número, comparar como número

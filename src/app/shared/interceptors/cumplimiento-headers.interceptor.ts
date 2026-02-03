@@ -48,6 +48,11 @@ export class CumplimientoHeadersInterceptor implements HttpInterceptor {
    * @returns true si es URL de Cumplimiento
    */
   private isCumplimientoUrl(url: string): boolean {
+    // ✅ EXCLUIR URLs de terceros que tienen sus propios headers
+    if (url.includes('/terceros/') || url.includes('/personasNaturales/') || url.includes('/personasJuridicas/')) {
+      return false;
+    }
+
     // URLs de servicios de Cumplimiento según colección de Postman
     const cumplimientoPatterns = [
       '/catalogos/',
