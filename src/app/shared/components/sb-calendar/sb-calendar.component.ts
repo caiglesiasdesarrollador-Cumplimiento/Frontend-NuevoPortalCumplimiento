@@ -1,7 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { Component, Input, Output, EventEmitter, forwardRef, ElementRef, ViewChild, HostListener, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  forwardRef,
+  ElementRef,
+  ViewChild,
+  HostListener,
+  OnInit,
+} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 interface CalendarDay {
@@ -23,9 +33,9 @@ interface CalendarDay {
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => SbCalendarComponent),
-      multi: true
-    }
-  ]
+      multi: true,
+    },
+  ],
 })
 export class SbCalendarComponent implements ControlValueAccessor, OnInit {
   @Input() label: string = '';
@@ -36,40 +46,50 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
   @Input() required: boolean = false;
   @Input() error: boolean = false;
   @Input() errorMessage: string = '';
-  @Input() icon: string = 'fa-regular fa-calendar';
+  @Input() icon: string = 'fa-solid fa-calendar';
   @Input() showLabelIcon: boolean = true; // Controla si se muestra el icono en el label
   @Input() forceBottom: boolean = false; // Forzar que el popup se muestre abajo
-  
+
   @Output() dateChange = new EventEmitter<string>();
-  
+
   @ViewChild('calendarContainer') calendarContainer!: ElementRef;
-  
+
   value: string = '';
   showCalendar: boolean = false;
   displayValue: string = '';
-  
+
   // Posición del popup
   popupPosition: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left' = 'bottom-right';
   popupStyle: { [key: string]: string } = {};
-  
+
   // Calendario nativo
   currentMonth: number = new Date().getMonth();
   currentYear: number = new Date().getFullYear();
   calendarDays: CalendarDay[] = [];
   tempSelectedDate: Date | null = null;
-  
+
   months: string[] = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
   ];
-  
+
   weekDays: string[] = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
-  
+
   years: number[] = [];
-  
+
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
-  
+
   ngOnInit(): void {
     // Generar años (10 años atrás y 10 años adelante)
     const currentYear = new Date().getFullYear();
@@ -78,19 +98,19 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
     }
     this.updateCalendar();
   }
-  
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     if (this.calendarContainer && !this.calendarContainer.nativeElement.contains(event.target)) {
       this.showCalendar = false;
     }
   }
-  
+
   toggleCalendar(): void {
     if (!this.disabled) {
       this.showCalendar = !this.showCalendar;
       this.onTouched();
-      
+
       if (this.showCalendar) {
         // Si hay una fecha seleccionada, posicionar el calendario en ese mes
         if (this.value) {
@@ -102,29 +122,29 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
           this.tempSelectedDate = null;
         }
         this.updateCalendar();
-        
+
         // Calcular posición óptima del popup
         setTimeout(() => this.calculatePopupPosition(), 10);
       }
     }
   }
-  
+
   calculatePopupPosition(): void {
     if (!this.calendarContainer) return;
-    
+
     const element = this.calendarContainer.nativeElement;
     const rect = element.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    
+
     const popupWidth = 300;
     const popupHeight = 350;
-    
+
     // Detectar si está cerca del borde derecho
-    const nearRightEdge = (rect.right + popupWidth) > viewportWidth;
+    const nearRightEdge = rect.right + popupWidth > viewportWidth;
     // Detectar si está cerca del borde inferior (solo si no está forzado abajo)
-    const nearBottomEdge = !this.forceBottom && (rect.bottom + popupHeight) > viewportHeight;
-    
+    const nearBottomEdge = !this.forceBottom && rect.bottom + popupHeight > viewportHeight;
+
     // Determinar posición
     if (nearBottomEdge && nearRightEdge) {
       this.popupPosition = 'top-left';
@@ -133,7 +153,7 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
         right: '0',
         left: 'auto',
         top: 'auto',
-        marginBottom: '8px'
+        marginBottom: '8px',
       };
     } else if (nearBottomEdge) {
       this.popupPosition = 'top-right';
@@ -142,7 +162,7 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
         left: '0',
         right: 'auto',
         top: 'auto',
-        marginBottom: '8px'
+        marginBottom: '8px',
       };
     } else if (nearRightEdge) {
       this.popupPosition = 'bottom-left';
@@ -151,7 +171,7 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
         right: '0',
         left: 'auto',
         bottom: 'auto',
-        marginTop: '8px'
+        marginTop: '8px',
       };
     } else {
       this.popupPosition = 'bottom-right';
@@ -160,22 +180,22 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
         left: '0',
         right: 'auto',
         bottom: 'auto',
-        marginTop: '8px'
+        marginTop: '8px',
       };
     }
   }
-  
+
   updateCalendar(): void {
     this.calendarDays = [];
-    
+
     const firstDay = new Date(this.currentYear, this.currentMonth, 1);
     const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
     const startingDay = firstDay.getDay();
     const totalDays = lastDay.getDate();
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     // Días del mes anterior
     const prevMonthLastDay = new Date(this.currentYear, this.currentMonth, 0).getDate();
     for (let i = startingDay - 1; i >= 0; i--) {
@@ -186,26 +206,27 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
         currentMonth: false,
         selected: false,
         today: false,
-        date
+        date,
       });
     }
-    
+
     // Días del mes actual
     for (let i = 1; i <= totalDays; i++) {
       const date = new Date(this.currentYear, this.currentMonth, i);
-      const isSelected = this.tempSelectedDate ? 
-        this.isSameDate(date, this.tempSelectedDate) : false;
+      const isSelected = this.tempSelectedDate
+        ? this.isSameDate(date, this.tempSelectedDate)
+        : false;
       const isToday = this.isSameDate(date, today);
-      
+
       this.calendarDays.push({
         day: i,
         currentMonth: true,
         selected: isSelected,
         today: isToday,
-        date
+        date,
       });
     }
-    
+
     // Días del mes siguiente para completar la grilla
     const remainingDays = 42 - this.calendarDays.length;
     for (let i = 1; i <= remainingDays; i++) {
@@ -215,17 +236,19 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
         currentMonth: false,
         selected: false,
         today: false,
-        date
+        date,
       });
     }
   }
-  
+
   isSameDate(date1: Date, date2: Date): boolean {
-    return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
   }
-  
+
   prevMonth(): void {
     if (this.currentMonth === 0) {
       this.currentMonth = 11;
@@ -235,7 +258,7 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
     }
     this.updateCalendar();
   }
-  
+
   nextMonth(): void {
     if (this.currentMonth === 11) {
       this.currentMonth = 0;
@@ -245,21 +268,21 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
     }
     this.updateCalendar();
   }
-  
+
   selectDate(day: CalendarDay): void {
     if (day.currentMonth) {
       this.tempSelectedDate = day.date;
       this.updateCalendar();
     }
   }
-  
+
   acceptSelection(): void {
     if (this.tempSelectedDate) {
       const year = this.tempSelectedDate.getFullYear();
       const month = String(this.tempSelectedDate.getMonth() + 1).padStart(2, '0');
       const day = String(this.tempSelectedDate.getDate()).padStart(2, '0');
       const dateString = `${year}-${month}-${day}`;
-      
+
       this.value = dateString;
       this.displayValue = this.formatDisplayDate(dateString);
       this.onChange(dateString);
@@ -267,12 +290,12 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
     }
     this.showCalendar = false;
   }
-  
+
   cancelSelection(): void {
     this.tempSelectedDate = this.value ? new Date(this.value + 'T00:00:00') : null;
     this.showCalendar = false;
   }
-  
+
   formatDisplayDate(dateString: string): string {
     if (!dateString || dateString === 'undefined' || dateString === 'null') return '';
     try {
@@ -294,7 +317,7 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
       return '';
     }
   }
-  
+
   clearDate(event: Event): void {
     event.stopPropagation();
     this.value = '';
@@ -303,7 +326,7 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
     this.onChange('');
     this.dateChange.emit('');
   }
-  
+
   // ControlValueAccessor implementation
   writeValue(value: string): void {
     if (!value || value === 'undefined' || value === 'null') {
@@ -321,18 +344,16 @@ export class SbCalendarComponent implements ControlValueAccessor, OnInit {
       }
     }
   }
-  
+
   registerOnChange(fn: (value: string) => void): void {
     this.onChange = fn;
   }
-  
+
   registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
-  
+
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
 }
-
-

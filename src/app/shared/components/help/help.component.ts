@@ -22,7 +22,7 @@ export class HelpComponent {
   // ✅ Botón de ayuda único (se expande con hover)
   helpBtn: ILibTbButton = {
     label: '', // Sin texto inicialmente
-    icon: 'fal fa-question-circle',
+    icon: 'fa-solid fa-question-circle',
     styleBtn: 'fill',
     typeBtn: 'primary',
     class: 'help-btn--hover',
@@ -53,7 +53,7 @@ export class HelpComponent {
   openHelp(): void {
     const config: ILibTbModalNotification = {
       key: 'app-notification',
-      icon: 'fal fa-question-circle',
+      icon: 'fa-solid fa-question-circle',
       title: '¿Necesitas ayuda?',
       message:
         'Cuéntanos en qué podemos ayudarte. Comunícate con soporte o revisa la guía según tu proceso.',
@@ -71,5 +71,3 @@ export class HelpComponent {
     this.notificationService.show(config);
   }
 }
-
-

@@ -1,19 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SessionService } from './session.service';
 import { ConfigService } from './config.service';
-import {
-  IRecuperarAgenteRequest,
-  IRecuperarAgenteResponse,
-} from '../interfaces/comunes.interface';
+import { IRecuperarAgenteResponse } from '../interfaces/comunes.interface';
 
 /**
  * ✅ COMUNES_008: Servicio para recuperar información de agente
- * 
+ *
  * Recibe la clave de intermediación y retorna la información del agente si existe.
- * 
+ *
  * Basado en documentación de microservicios
  */
 @Injectable({
@@ -27,9 +24,17 @@ export class RecuperarAgenteService {
     private readonly sessionService: SessionService,
     private readonly configService: ConfigService,
   ) {
-    // ✅ Usar API Gateway Comunes según ambiente
+    // ✅ Usar proxy en desarrollo para evitar CORS, URL directa en producción
     const ambiente = environment.production ? 'prod' : 'dev';
-    this.baseUrl = `${environment.apiGatewayComunes[ambiente]}/personas/api/v1/terceros/agentes`;
+    
+    if (environment.production) {
+      // ✅ Producción: usar URL directa del API Gateway
+      this.baseUrl = `${environment.apiGatewayComunes[ambiente]}/personas/api/v1/terceros/agentes`;
+    } else {
+      // ✅ Desarrollo: usar proxy para evitar CORS
+      // El proxy ya está configurado en proxy.conf.json
+      this.baseUrl = `/proxy/comunes-personas-administracion/personas/api/v1/terceros/agentes`;
+    }
   }
 
   /**
@@ -82,9 +87,9 @@ export class RecuperarAgenteService {
    * @returns Observable con true si existe, false si no
    */
   existeAgente(codigoAgente: string): Observable<boolean> {
-    return new Observable((observer) => {
+    return new Observable(observer => {
       this.recuperarAgente(codigoAgente).subscribe({
-        next: (response) => {
+        next: response => {
           observer.next(!!response && !!response.codigoAgente);
           observer.complete();
         },
@@ -96,4 +101,3 @@ export class RecuperarAgenteService {
     });
   }
 }
-

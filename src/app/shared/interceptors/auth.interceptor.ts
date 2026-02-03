@@ -38,7 +38,6 @@ export class AuthInterceptor implements HttpInterceptor {
 
     // ✅ Verificar si el token ha expirado
     if (this.authTokenService.isTokenExpired()) {
-      console.warn('Token expirado, eliminando token del storage');
       this.authTokenService.removeToken();
       return this.handleUnauthorized(request, next);
     }
@@ -95,7 +94,6 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     // ✅ Continuar con la petición original sin token
     // En una implementación real, podrías redirigir al login o intentar refresh
-    console.log('Petición sin token de autorización:', request.url);
     return next.handle(request);
   }
 
@@ -103,24 +101,10 @@ export class AuthInterceptor implements HttpInterceptor {
    * ✅ Manejar errores HTTP específicos de autenticación
    */
   private handleHttpError(error: HttpErrorResponse): Observable<never> {
-    switch (error.status) {
-      case 401:
-        console.error('Error 401: No autorizado - Token inválido o expirado');
-        this.authTokenService.removeToken();
-        // ✅ En una implementación real, redirigir al login
-        break;
-
-      case 403:
-        console.error('Error 403: Prohibido - Sin permisos suficientes');
-        break;
-
-      case 0:
-        console.error('Error de conexión: No se pudo conectar al servidor');
-        break;
-
-      default:
-        console.error(`Error HTTP ${error.status}:`, error.message);
-        break;
+    // ✅ Manejar errores específicos sin logging (el logger se maneja en servicios)
+    if (error.status === 401) {
+      this.authTokenService.removeToken();
+      // ✅ En una implementación real, redirigir al login
     }
 
     return throwError(() => error);

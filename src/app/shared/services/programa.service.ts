@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 // NOSONAR: environment se usará cuando se conecte API real
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import { environment } from '../../../environments/environment';
 import { IProgramaParametrizado, TipoUsuario } from '../interfaces/cupo.interface';
 
@@ -47,7 +47,9 @@ export class ProgramaService {
    */
   obtenerProgramasDisponibles(
     _claveIntermediario: string,
+
     _tipoDocumentoAsegurado: string,
+
     _numeroDocumentoAsegurado: string,
     tipoUsuario: TipoUsuario = 'intermediario',
   ): Observable<IProgramaParametrizado[]> {
@@ -100,7 +102,7 @@ export class ProgramaService {
     // - Programas activos asociados al intermediario
     // - Programas sin clave exclusiva donde esté el asegurado
     // - Si es usuario interno, mostrar todos donde esté el asegurado
-    let programasFiltrados = programasMock.filter((programa) => {
+    const programasFiltrados = programasMock.filter(programa => {
       if (!programa.activo) return false;
 
       // Si es usuario interno, mostrar todos donde esté el asegurado
@@ -130,7 +132,9 @@ export class ProgramaService {
    */
   validarAseguradoEnPrograma(
     programaId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _tipoDocumentoAsegurado: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _numeroDocumentoAsegurado: string,
   ): Observable<boolean> {
     // TODO: Conectar con API real cuando esté disponible
@@ -182,4 +186,3 @@ export class ProgramaService {
     return Math.max(facility, cupoCliente);
   }
 }
-

@@ -12,7 +12,7 @@ export const email: ILibTbDynamicFormConfigType = {
     label: 'Correo electrónico',
     placeholder: 'Ingresa tu correo electrónico',
     class: 'mb-4',
-    icon: 'fal fa-envelope',
+    icon: 'fa-solid fa-envelope',
     iconPosition: 'left',
     floatLabel: true,
   },

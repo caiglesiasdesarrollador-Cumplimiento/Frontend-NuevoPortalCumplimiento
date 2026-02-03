@@ -10,34 +10,34 @@
 export interface IFakeLoginData {
   /** EMPLOYEE TYPE - Tipo de documento (CC, NT, CE, PP, PE) */
   employeeType: string;
-  
+
   /** USER NAME - Número de documento del usuario */
   userName: string;
-  
+
   /** FULL NAME - Nombre o razón social del usuario */
   fullName: string;
-  
+
   /** SB CODE ACT BENEF - Tipo de usuario (48=Administrativo, 2=Intermediario) */
   sbCodeActBenef: string;
-  
+
   /** USR SUB TIPO - Tipo de nómina */
   usrSubTipo: string;
-  
+
   /** WORK FORCE ID - Clave de intermediación */
   workForceId: string;
-  
+
   /** EMAIL - Correo electrónico */
   email: string;
-  
+
   /** USR LOCATION CODE - Código de la localidad */
   usrLocationCode: string;
-  
+
   /** COMPANY - Código de la compañía Seguros Bolívar */
   company: string;
-  
+
   /** JOB_CODE - Código del cargo */
   jobCode: string;
-  
+
   /** COUNTRY - País */
   country: string;
 }
@@ -48,10 +48,10 @@ export interface IFakeLoginData {
 export interface IFakeLoginSession extends IFakeLoginData {
   /** Tipo de usuario (intermediario o administrativo) */
   tipoUsuario: 'intermediario' | 'administrativo';
-  
+
   /** Timestamp de la sesión */
   timestamp: string;
-  
+
   /** Estado de autenticación */
   isAuthenticated: boolean;
 }
@@ -123,4 +123,3 @@ export interface ITipoNominaOption {
   value: string;
   label: string;
 }
-

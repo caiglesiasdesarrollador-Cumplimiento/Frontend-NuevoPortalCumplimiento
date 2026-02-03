@@ -32,7 +32,7 @@ export class ModificationSelectionComponent implements OnInit {
   // ✅ Botones para cada producto usando tech-block-lib
   btnProteccionFamiliar: ILibTbButton = {
     label: 'Modificar póliza',
-    icon: 'fal fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'secondary',
@@ -42,7 +42,7 @@ export class ModificationSelectionComponent implements OnInit {
 
   btnPymesDigital: ILibTbButton = {
     label: 'Modificar póliza',
-    icon: 'fal fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'secondary',
@@ -52,7 +52,7 @@ export class ModificationSelectionComponent implements OnInit {
 
   btnProteccionCreditos: ILibTbButton = {
     label: 'Modificar póliza',
-    icon: 'fal fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'secondary',
@@ -62,7 +62,7 @@ export class ModificationSelectionComponent implements OnInit {
 
   btnProductoCumplimiento: ILibTbButton = {
     label: 'Ir a cumplimiento',
-    icon: 'fal fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -86,12 +86,12 @@ export class ModificationSelectionComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Portal',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/portal'],
       },
       {
         label: 'Modificaciones',
-        icon: 'fal fa-edit',
+        icon: 'fa-solid fa-edit',
       },
     ];
 
@@ -115,5 +115,3 @@ export class ModificationSelectionComponent implements OnInit {
     }
   }
 }
-
-

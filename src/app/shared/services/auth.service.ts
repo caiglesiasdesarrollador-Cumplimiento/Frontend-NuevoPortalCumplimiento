@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AuthTokenService } from './auth-token.service';
+import { LoggerService } from './logger.service';
 import { IAuthToken } from '../interceptors/auth-interceptor.interface';
 
 export interface ILoginRequest {
@@ -34,6 +35,7 @@ export class AuthService {
   constructor(
     private readonly http: HttpClient,
     private readonly authTokenService: AuthTokenService,
+    private readonly logger: LoggerService,
   ) {
     // ✅ Verificar si hay un token válido al inicializar el servicio
     this.checkInitialAuthState();
@@ -56,7 +58,7 @@ export class AuthService {
         this.authTokenService.setTokenData(tokenData);
         this.isAuthenticatedSubject.next(true);
 
-        console.log('Login exitoso, token guardado');
+        this.logger.info('Login exitoso, token guardado');
       }),
     );
   }
@@ -98,7 +100,7 @@ export class AuthService {
           };
 
           this.authTokenService.setTokenData(tokenData);
-          console.log('Token refrescado exitosamente');
+          this.logger.info('Token refrescado exitosamente');
         }),
       );
   }
@@ -139,7 +141,7 @@ export class AuthService {
   clearAuthData(): void {
     this.authTokenService.clearAuthData();
     this.isAuthenticatedSubject.next(false);
-    console.log('Sesión cerrada, datos limpiados');
+    this.logger.info('Sesión cerrada, datos limpiados');
   }
 
   /**
@@ -150,9 +152,9 @@ export class AuthService {
     this.isAuthenticatedSubject.next(hasValidToken);
 
     if (hasValidToken) {
-      console.log('Token válido encontrado al inicializar');
+      this.logger.debug('Token válido encontrado al inicializar');
     } else {
-      console.log('No hay token válido al inicializar');
+      this.logger.debug('No hay token válido al inicializar');
     }
   }
 }

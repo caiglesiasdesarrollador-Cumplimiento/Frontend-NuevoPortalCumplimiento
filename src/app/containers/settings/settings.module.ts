@@ -27,4 +27,3 @@ import { SettingsRoutingModule } from './settings-routing.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SettingsModule {}
-

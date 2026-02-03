@@ -11,7 +11,7 @@ export const fechaNacimiento: ILibTbDynamicFormConfigType = {
     placeholder: 'Seleccione su fecha de nacimiento',
     dateFormat: 'dd/mm/yy',
     showIcon: true,
-    icon: 'fal fa-birthday-cake',
+    icon: 'fa-solid fa-birthday-cake',
     caption: true,
     showIconCaption: true,
     showHelp: true,

@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 // NOSONAR: environment se usará cuando se conecte API real
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import { environment } from '../../../environments/environment';
+import { LoggerService } from './logger.service';
 import {
   ICupoDisponibleResponse,
   IIngenieroDigitalResponse,
@@ -26,8 +27,10 @@ export class CupoService {
   // NOSONAR: apiUrl y http se usarán cuando se conecte API real
   // TODO: Descomentar cuando se conecte API real:
   // private readonly apiUrl = environment.apiUrl;
+
   constructor(
     // NOSONAR: http se usará cuando se conecte API real - se mantiene para inyección de dependencias
+    private readonly logger: LoggerService,
     private readonly http: HttpClient,
   ) {
     // NOSONAR: Inicializar servicio para evitar warnings de TypeScript
@@ -190,7 +193,7 @@ export class CupoService {
     // });
 
     // NOSONAR: Log para desarrollo, se usará API real en producción
-    console.log('📤 [CupoService] Actualizando cupo en Tronador:', {
+    this.logger.debug('Actualizando cupo en Tronador', {
       tipoDocumento,
       numeroDocumento,
       cupoDisponible,
@@ -207,4 +210,3 @@ export class CupoService {
     return this.CUPO_MAXIMO_OCASIONAL_INTERMEDIARIO;
   }
 }
-

@@ -20,9 +20,9 @@
       "@environment": ["src/environments/environment"],
       "tech-block-lib": ["src/app/lib/index.ts"]
     },
-    "strict": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
     "strictFunctionTypes": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

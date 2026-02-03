@@ -124,7 +124,7 @@ describe('ManagementComponent', () => {
       const buttonConfig = component.getBtnPrint(mockItem as any);
 
       // Assert
-      expect(buttonConfig.icon).toBe('fal fa-print');
+      expect(buttonConfig.icon).toBe('fa-solid fa-print');
       expect(buttonConfig.styleBtn).toBe('stroke');
       expect(buttonConfig.typeBtn).toBe('primary');
       expect(buttonConfig.libTbClick).toBeDefined();

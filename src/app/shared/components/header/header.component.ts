@@ -29,20 +29,20 @@ export class HeaderComponent {
 
   constructor(
     private breadcrumbService: BreadcrumbService,
-    private router: Router
+    private router: Router,
   ) {
     this.checkMobile();
     // Suscribirse al servicio de breadcrumb
     this.breadcrumbService.breadcrumbItems$.subscribe(items => {
       this.breadcrumbItems = items;
     });
-    
+
     // Detectar rutas donde ocultar navegación (solo fake-login)
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
-      this.showNavigation = !event.url.includes('/fake-login');
-    });
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.showNavigation = !event.url.includes('/fake-login');
+      });
   }
 
   @HostListener('window:resize')
@@ -92,5 +92,3 @@ export class HeaderComponent {
     this.isMenuOpen = false;
   }
 }
-
-

@@ -4,7 +4,7 @@ import {
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
-  HttpErrorResponse
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, filter, take, switchMap } from 'rxjs/operators';
@@ -18,11 +18,10 @@ import { AuthService } from '../services/auth.service';
  */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Obtener token
@@ -39,7 +38,7 @@ export class AuthInterceptor implements HttpInterceptor {
           return this.handle401Error(request, next);
         }
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -49,8 +48,8 @@ export class AuthInterceptor implements HttpInterceptor {
   private addToken(request: HttpRequest<any>, token: string): HttpRequest<any> {
     return request.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
   }
 
@@ -72,7 +71,7 @@ export class AuthInterceptor implements HttpInterceptor {
           this.isRefreshing = false;
           this.authService.logout();
           return throwError(() => err);
-        })
+        }),
       );
     } else {
       return this.refreshTokenSubject.pipe(
@@ -80,9 +79,8 @@ export class AuthInterceptor implements HttpInterceptor {
         take(1),
         switchMap(token => {
           return next.handle(this.addToken(request, token));
-        })
+        }),
       );
     }
   }
 }
-

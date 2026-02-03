@@ -84,6 +84,53 @@ export interface ITerceroNaturalRequest {
   numeroDocumento: string;
 }
 
+// ✅ Estructura real de la respuesta del backend
+export interface ITerceroNaturalBackendResponse {
+  dataHeader: {
+    codRespuesta: number;
+    errores: {
+      codigo?: string;
+      descripcion?: string;
+      campo?: string;
+    }[];
+  };
+  data: {
+    tercerosNaturalInfo: {
+      infoGeneralTerceroNatural: {
+        rol: {
+          codigo: string;
+          valor: string;
+        };
+        tipoDocumento: {
+          codigo: string;
+          valor: string;
+        };
+        numeroDocumento: number;
+        fechaNacimiento: string | null;
+        primerNombre: string;
+        segundoNombre: string | null;
+        primerApellido: string;
+        segundoApellido: string | null;
+        sexo: {
+          codigo: string;
+          valor: string;
+        };
+        direccionResidencia: string | null;
+        ciudadResidencia: string | null;
+        telefonoResidencia: number | null;
+        celular: number | null;
+        correoElectronico: string | null;
+        autorizaRecibirInf: string | null;
+        autorizaCompartirInf: string | null;
+        solicitaModificacionDatos: string | null;
+        mensajeModificacionDatos: string | null;
+        fechaExpedicionDocumento: string | null;
+        fuenteIngresos: string | null;
+      };
+    };
+  };
+}
+
 export interface ITerceroNaturalResponse {
   tipoDocumento: string;
   numeroDocumento: string;
@@ -192,6 +239,52 @@ export interface IMulticlavesRequest {
   };
 }
 
+// ✅ Estructura real de la respuesta del backend
+export interface IMulticlavesBackendResponse {
+  dataHeader: {
+    success: boolean;
+    errores: any[];
+  };
+  data: {
+    datosBasicos: {
+      tipoDoc: string;
+      nroDoc: number;
+      nomRazonSocial: string;
+      codEmpleado: number;
+      codTipVinculacion: string;
+      descTipVinculacion: string;
+      codTipoNomina: number;
+      descTipoNomina: string;
+      codCarEsp: string;
+      desCarEsp: string;
+      tipoDocEmprInter: string;
+      nroDocEmprInter: number;
+      rzonSolEmprInter: string;
+      codCtroCostos: string;
+      desCtroCostos: string;
+      correoElectro: string;
+      marcaMostrarClave: string;
+      tipoUsuario: string;
+      [key: string]: any;
+    };
+    datoClaves: Array<{
+      clave: number;
+      tipoDoc: string;
+      nroDoc: number;
+      nomRazonSocial: string;
+      codCtroCostos: string;
+      desCtroCostos: string;
+      mcaClaveDirecta: string; // 'S' o 'N'
+      mcaClavePpla: string; // 'S' o 'N'
+      mcaClaveActiva: string; // 'S' o 'N'
+      [key: string]: any;
+    }>;
+    marcaMostrarClave: string; // 'S' o 'N'
+    tipoUsuario: string; // 'A' o 'E'
+  };
+}
+
+// ✅ Estructura que usa el frontend (normalizada)
 export interface IMulticlavesClave {
   clave: string;
   tipoDocumento: string;
@@ -207,6 +300,9 @@ export interface IMulticlavesClave {
 export interface IMulticlavesResponse {
   claves: IMulticlavesClave[];
   totalClaves?: number;
+  datosBasicos?: any;
+  marcaMostrarClave?: string;
+  tipoUsuario?: string;
 }
 
 // ========================================

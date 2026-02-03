@@ -32,14 +32,14 @@ export class DynamicFormComponent implements IDynamicFormComponent {
     items: [
       {
         label: 'Información Personal',
-        icon: 'fal fa-user',
+        icon: 'fa-solid fa-user',
         command: () => {
           this.goToStep(0);
         },
       },
       {
         label: 'Ubicación',
-        icon: 'fal fa-map-marker-alt',
+        icon: 'fa-solid fa-map-marker-alt',
         command: () => {
           this.goToStep(1);
         },
@@ -56,7 +56,7 @@ export class DynamicFormComponent implements IDynamicFormComponent {
     libTbUpdated: form => {
       console.log('Paso 1 - Formulario actualizado', form);
       // Suscribirse a cambios en el campo nombres para convertir a mayúsculas
-      form.get('name')?.valueChanges.subscribe(value => {
+      form.get('name')?.valueChanges.subscribe((value: any) => {
         if (value && typeof value === 'string') {
           form.get('name')?.setValue(value.toUpperCase(), { emitEvent: false });
         }
@@ -75,7 +75,7 @@ export class DynamicFormComponent implements IDynamicFormComponent {
   // ✅ OBLIGATORIO: Botones de navegación usando propiedades nativas de tech-block-lib
   btnNext: ILibTbButton = {
     label: 'Siguiente',
-    icon: 'fal fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -84,7 +84,7 @@ export class DynamicFormComponent implements IDynamicFormComponent {
 
   btnPrevious: ILibTbButton = {
     label: 'Anterior',
-    icon: 'fal fa-arrow-left',
+    icon: 'fa-solid fa-arrow-left',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -93,7 +93,7 @@ export class DynamicFormComponent implements IDynamicFormComponent {
 
   btnSubmit: ILibTbButton = {
     label: 'Enviar',
-    icon: 'fal fa-paper-plane',
+    icon: 'fa-solid fa-paper-plane',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -194,5 +194,3 @@ export class DynamicFormComponent implements IDynamicFormComponent {
     return this.currentStep === 1;
   }
 }
-
-

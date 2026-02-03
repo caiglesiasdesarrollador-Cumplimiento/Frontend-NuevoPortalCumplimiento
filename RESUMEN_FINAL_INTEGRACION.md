@@ -214,3 +214,4 @@
 **Listo para:** Integración con servicios de Comunes principales (Catalogos, Terceros, SARLAFT)  
 **Pendiente:** Servicios adicionales de Comunes y servicios de otros microservicios
 
+

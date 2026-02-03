@@ -1,6 +1,13 @@
 {
+  "version": 2,
+  "buildCommand": "npm run config:env:prod && npm run build -- --configuration=production",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "framework": "angular",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
-

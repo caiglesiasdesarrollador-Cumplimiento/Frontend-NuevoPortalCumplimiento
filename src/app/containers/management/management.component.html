@@ -38,47 +38,47 @@
             <!-- ✅ Nueva columna de selección como primera columna -->
             <th class="text-center w-16">
               <div class="flex items-center justify-center h-full py-2">
-                <i class="fal fa-check-circle text-primaryBase text-lg"></i>
+                <i class="fa-solid fa-check-circle text-primaryBase text-lg"></i>
               </div>
             </th>
             <th libTbSortableColumn="tipo" class="text-left">
               <div class="flex items-center">
-                <i class="fal fa-tag text-primaryBase mr-2"></i>
+                <i class="fa-solid fa-tag text-primaryBase mr-2"></i>
                 Tipo
                 <lib-tb-sort-icon [custom]="{field:'tipo'}"></lib-tb-sort-icon>
               </div>
             </th>
             <th libTbSortableColumn="numero" class="text-left">
               <div class="flex items-center">
-                <i class="fal fa-hashtag text-primaryBase mr-2"></i>
+                <i class="fa-solid fa-hashtag text-primaryBase mr-2"></i>
                 Número
                 <lib-tb-sort-icon [custom]="{field:'numero'}"></lib-tb-sort-icon>
               </div>
             </th>
             <th libTbSortableColumn="tomador" class="text-left hidden sm:table-cell">
               <div class="flex items-center">
-                <i class="fal fa-building text-primaryBase mr-2"></i>
+                <i class="fa-solid fa-building text-primaryBase mr-2"></i>
                 Tomador
                 <lib-tb-sort-icon [custom]="{field:'tomador'}"></lib-tb-sort-icon>
               </div>
             </th>
             <th libTbSortableColumn="producto" class="text-left hidden lg:table-cell">
               <div class="flex items-center">
-                <i class="fal fa-shield-alt text-primaryBase mr-2"></i>
+                <i class="fa-solid fa-shield-alt text-primaryBase mr-2"></i>
                 Producto
                 <lib-tb-sort-icon [custom]="{field:'producto'}"></lib-tb-sort-icon>
               </div>
             </th>
             <th libTbSortableColumn="valorAsegurado" class="text-right hidden md:table-cell">
               <div class="flex items-center justify-end">
-                <i class="fal fa-dollar-sign text-primaryBase mr-2"></i>
+                <i class="fa-solid fa-dollar-sign text-primaryBase mr-2"></i>
                 Valor Asegurado
                 <lib-tb-sort-icon [custom]="{field:'valorAsegurado'}"></lib-tb-sort-icon>
               </div>
             </th>
             <th libTbSortableColumn="estado" class="text-center">
               <div class="flex items-center justify-center">
-                <i class="fal fa-flag text-primaryBase mr-2"></i>
+                <i class="fa-solid fa-flag text-primaryBase mr-2"></i>
                 Estado
                 <lib-tb-sort-icon [custom]="{field:'estado'}"></lib-tb-sort-icon>
               </div>
@@ -167,10 +167,7 @@
                 ></lib-tb-button>
 
                 <!-- Botón Imprimir (Regla 17.3) -->
-                <lib-tb-button
-                  [custom]="getBtnPrint(item)"
-                  title="Imprimir"
-                ></lib-tb-button>
+                <lib-tb-button [custom]="getBtnPrint(item)" title="Imprimir"></lib-tb-button>
 
                 <!-- Botón Modificar (solo si no está cancelada o vencida) -->
                 <lib-tb-button
@@ -204,7 +201,7 @@
 
     <!-- ✅ Estado vacío -->
     <div *ngIf="totalItems === 0" class="management__empty-state text-center py-12">
-      <i class="fal fa-search text-6xl text-grayscaleD100 mb-4"></i>
+      <i class="fa-solid fa-search text-6xl text-grayscaleD100 mb-4"></i>
       <h3 class="lib-tb-h5-bold text-grayscaleBlack mb-2">No se encontraron resultados</h3>
       <p class="lib-tb-body-medium text-grayscaleD200 mb-6">
         Ajuste los filtros de búsqueda o cree una nueva cotización.

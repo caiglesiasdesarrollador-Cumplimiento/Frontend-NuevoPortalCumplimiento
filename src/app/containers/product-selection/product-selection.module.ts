@@ -21,4 +21,3 @@ import { ProductSelectionRoutingModule } from './product-selection-routing.modul
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ProductSelectionModule {}
-

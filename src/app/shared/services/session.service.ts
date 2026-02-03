@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { LoggerService } from './logger.service';
 
 /**
  * ✅ INTERFAZ: Datos de sesión del fake login
@@ -30,6 +31,9 @@ export interface IFakeLoginSession {
 })
 export class SessionService {
   private readonly SESSION_KEY = 'fakeLoginSession';
+  private readonly context = 'SessionService';
+
+  constructor(private readonly logger: LoggerService) {}
 
   /**
    * ✅ Obtener datos completos de la sesión
@@ -43,7 +47,7 @@ export class SessionService {
       }
       return JSON.parse(sessionData) as IFakeLoginSession;
     } catch (error) {
-      console.error('Error al leer sesión de sessionStorage:', error);
+      this.logger.logWithContext(this.context, 'error', 'Error al leer sesión de sessionStorage', error);
       return null;
     }
   }
@@ -145,8 +149,7 @@ export class SessionService {
     try {
       sessionStorage.removeItem(this.SESSION_KEY);
     } catch (error) {
-      console.error('Error al limpiar sesión:', error);
+      this.logger.logWithContext(this.context, 'error', 'Error al limpiar sesión', error);
     }
   }
 }
-

@@ -19,7 +19,7 @@ export const apellidos: ILibTbDynamicFormConfigType = {
     showIconCaption: true,
     showHelp: true,
     floatLabel: true,
-    icon: 'fal fa-user-friends',
+    icon: 'fa-solid fa-user-friends',
     iconPosition: 'right',
     captionText: {
       help: 'Digite sus apellidos completos',

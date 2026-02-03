@@ -12,7 +12,7 @@ export const password: ILibTbDynamicFormConfigType = {
     label: 'Contraseña',
     placeholder: 'Ingresa tu contraseña',
     class: 'mb-4',
-    icon: 'fal fa-lock',
+    icon: 'fa-solid fa-lock',
     iconPosition: 'left',
     floatLabel: true,
   },

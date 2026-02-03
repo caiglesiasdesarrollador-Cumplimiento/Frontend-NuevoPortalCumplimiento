@@ -69,12 +69,12 @@ export class PolicyGenerationComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Dashboard',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/dashboard'],
       },
       {
         label: 'Generación de Pólizas',
-        icon: 'fal fa-file-contract',
+        icon: 'fa-solid fa-file-contract',
       },
     ];
 
@@ -92,7 +92,7 @@ export class PolicyGenerationComponent implements OnInit {
   // ✅ OBLIGATORIO: Botones de acción usando propiedades nativas de tech-block-lib
   btnGenerate: ILibTbButton = {
     label: 'Generar Póliza',
-    icon: 'fal fa-file-contract',
+    icon: 'fa-solid fa-file-contract',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -101,7 +101,7 @@ export class PolicyGenerationComponent implements OnInit {
 
   btnReset: ILibTbButton = {
     label: 'Limpiar Formulario',
-    icon: 'fal fa-redo',
+    icon: 'fa-solid fa-redo',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -110,7 +110,7 @@ export class PolicyGenerationComponent implements OnInit {
 
   btnNewPolicy: ILibTbButton = {
     label: 'Nueva Póliza',
-    icon: 'fal fa-plus',
+    icon: 'fa-solid fa-plus',
     iconPosition: 'left',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -119,7 +119,7 @@ export class PolicyGenerationComponent implements OnInit {
 
   btnDownloadPolicy: ILibTbButton = {
     label: 'Descargar Póliza',
-    icon: 'fal fa-download',
+    icon: 'fa-solid fa-download',
     iconPosition: 'right',
     styleBtn: 'stroke',
     typeBtn: 'primary',
@@ -128,7 +128,7 @@ export class PolicyGenerationComponent implements OnInit {
 
   btnExportResult: ILibTbButton = {
     label: 'Exportar',
-    icon: 'fal fa-file-export',
+    icon: 'fa-solid fa-file-export',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -185,7 +185,7 @@ export class PolicyGenerationComponent implements OnInit {
         type: 'info',
         title: 'Generando Póliza',
         description: 'Procesando la información y generando la póliza automáticamente...',
-        icon: 'fal fa-spinner-third fa-spin',
+        icon: 'fa-solid fa-spinner-third fa-spin',
         sticky: true,
       });
 
@@ -196,7 +196,7 @@ export class PolicyGenerationComponent implements OnInit {
         type: 'error',
         title: 'Formulario Inválido',
         description: 'Por favor, completa todos los campos requeridos antes de generar la póliza.',
-        icon: 'fal fa-exclamation-triangle',
+        icon: 'fa-solid fa-exclamation-triangle',
       });
     }
   }
@@ -212,11 +212,11 @@ export class PolicyGenerationComponent implements OnInit {
           type: 'success',
           title: 'Póliza Generada Exitosamente',
           description: `Póliza ${this.generationResult?.policyNumber} ha sido generada correctamente.`,
-          icon: 'fal fa-check-circle',
+          icon: 'fa-solid fa-check-circle',
         });
 
         this.setupBreadcrumb();
-      } catch (error) {
+      } catch {
         this.isProcessing = false;
         this.clearAlerts();
 
@@ -225,7 +225,7 @@ export class PolicyGenerationComponent implements OnInit {
           title: 'Error en la Generación',
           description:
             'Ocurrió un error al generar la póliza. Por favor, verifica los datos e intenta nuevamente.',
-          icon: 'fal fa-exclamation-triangle',
+          icon: 'fa-solid fa-exclamation-triangle',
         });
       }
     }, 3000); // 3 segundos de simulación
@@ -386,5 +386,3 @@ export class PolicyGenerationComponent implements OnInit {
     }
   }
 }
-
-

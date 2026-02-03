@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTree } from '@angular/router';
+import {
+  CanActivate,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  Router,
+  UrlTree,
+} from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
@@ -9,20 +15,19 @@ import { AuthService } from '../services/auth.service';
  * - Usar en rutas: data: { roles: ['admin', 'supervisor'] }
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RoleGuard implements CanActivate {
-
   constructor(
     private authService: AuthService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    state: RouterStateSnapshot,
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    
     // Primero verificar autenticación
     if (!this.authService.isAuthenticated()) {
       console.log('🚫 [RoleGuard] Usuario no autenticado');
@@ -49,10 +54,11 @@ export class RoleGuard implements CanActivate {
       return true;
     }
 
-    console.log(`🚫 [RoleGuard] Usuario con rol '${userRole}' no tiene acceso. Roles requeridos: ${requiredRoles.join(', ')}`);
-    
+    console.log(
+      `🚫 [RoleGuard] Usuario con rol '${userRole}' no tiene acceso. Roles requeridos: ${requiredRoles.join(', ')}`,
+    );
+
     // TODO: Ajustar ruta de acceso denegado según tu configuración
     return this.router.createUrlTree(['/acceso-denegado']);
   }
 }
-

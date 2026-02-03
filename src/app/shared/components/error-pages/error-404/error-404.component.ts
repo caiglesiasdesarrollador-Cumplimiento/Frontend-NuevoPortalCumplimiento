@@ -19,6 +19,3 @@ export class Error404Component {
     this.router.navigate(['/']);
   }
 }
-
-
-

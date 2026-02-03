@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { ILibTbBreadcrumb } from 'tech-block-lib';
+import { LoggerService } from './logger.service';
 
 export interface BreadcrumbItem {
   label: string;
@@ -29,7 +30,10 @@ export class BreadcrumbService {
   private readonly breadcrumbItemsSubject = new BehaviorSubject<HeaderBreadcrumbItem[]>([]);
   public breadcrumbItems$ = this.breadcrumbItemsSubject.asObservable();
 
-  constructor(private readonly router: Router) {}
+  constructor(
+    private readonly router: Router,
+    private readonly logger: LoggerService,
+  ) {}
 
   // ✅ Establecer items del breadcrumb para el header
   setHeaderBreadcrumb(items: HeaderBreadcrumbItem[]): void {
@@ -46,7 +50,7 @@ export class BreadcrumbService {
     const breadcrumbConfig: ILibTbBreadcrumb = {
       home: {
         label: 'Dashboard',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         command: () => this.navigateToHome(),
       },
       items: items.map(item => ({
@@ -57,7 +61,7 @@ export class BreadcrumbService {
           ? () => this.navigateToRoute(item.routerLink!, item.queryParams)
           : undefined,
       })),
-      iconRight: 'fal fa-chevron-right',
+      iconRight: 'fa-solid fa-chevron-right',
       libTbOnItemClick: (e: any) => this.handleBreadcrumbClick(e),
     };
 
@@ -69,10 +73,10 @@ export class BreadcrumbService {
     this.breadcrumbSubject.next({
       home: {
         label: 'Dashboard',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         command: () => this.navigateToHome(),
       },
-      iconRight: 'fal fa-chevron-right',
+      iconRight: 'fa-solid fa-chevron-right',
     });
   }
 
@@ -88,30 +92,30 @@ export class BreadcrumbService {
 
   // ✅ Manejar clicks en breadcrumb
   private handleBreadcrumbClick(event: any): void {
-    console.log('Breadcrumb clicked:', event);
+    this.logger.debug('Breadcrumb clicked', event);
   }
 
   // ✅ Métodos específicos para containers
   setContractReaderBreadcrumb(): void {
     this.setBreadcrumb([
-      { label: 'Análisis', icon: 'fal fa-analytics' },
-      { label: 'Contratos', icon: 'fal fa-file-contract', routerLink: ['/contract-reader'] },
+      { label: 'Análisis', icon: 'fa-solid fa-analytics' },
+      { label: 'Contratos', icon: 'fa-solid fa-file-contract', routerLink: ['/contract-reader'] },
     ]);
   }
 
   setThirdPartyValidationBreadcrumb(): void {
     this.setBreadcrumb([
-      { label: 'Validaciones', icon: 'fal fa-shield-check' },
-      { label: 'Terceros', icon: 'fal fa-users', routerLink: ['/third-party-validation'] },
+      { label: 'Validaciones', icon: 'fa-solid fa-shield-check' },
+      { label: 'Terceros', icon: 'fa-solid fa-users', routerLink: ['/third-party-validation'] },
     ]);
   }
 
   setFinancialStatementBreadcrumb(): void {
     this.setBreadcrumb([
-      { label: 'Análisis', icon: 'fal fa-analytics' },
+      { label: 'Análisis', icon: 'fa-solid fa-analytics' },
       {
         label: 'Estados Financieros',
-        icon: 'fal fa-chart-line',
+        icon: 'fa-solid fa-chart-line',
         routerLink: ['/financial-statement-reader'],
       },
     ]);
@@ -120,14 +124,14 @@ export class BreadcrumbService {
   // ✅ Para steppers - actualizar según paso actual
   setStepperBreadcrumb(containerName: string, currentStep: number, totalSteps: number): void {
     const baseItems = [
-      { label: 'Procesos', icon: 'fal fa-tasks' },
-      { label: containerName, icon: 'fal fa-list-ol' },
+      { label: 'Procesos', icon: 'fa-solid fa-tasks' },
+      { label: containerName, icon: 'fa-solid fa-list-ol' },
     ];
 
     if (totalSteps > 1) {
       baseItems.push({
         label: `Paso ${currentStep + 1} de ${totalSteps}`,
-        icon: 'fal fa-step-forward',
+        icon: 'fa-solid fa-step-forward',
       });
     }
 
@@ -137,9 +141,9 @@ export class BreadcrumbService {
   // ✅ Para resultados
   setResultsBreadcrumb(containerName: string, resultType: string): void {
     this.setBreadcrumb([
-      { label: 'Análisis', icon: 'fal fa-analytics' },
-      { label: containerName, icon: 'fal fa-chart-pie' },
-      { label: resultType, icon: 'fal fa-check-circle' },
+      { label: 'Análisis', icon: 'fa-solid fa-analytics' },
+      { label: containerName, icon: 'fa-solid fa-chart-pie' },
+      { label: resultType, icon: 'fa-solid fa-check-circle' },
     ]);
   }
 }

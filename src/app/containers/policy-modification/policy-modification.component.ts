@@ -43,12 +43,12 @@ export class PolicyModificationComponent implements OnInit {
     items: [
       {
         label: 'Seleccionar Póliza',
-        icon: 'fal fa-search',
+        icon: 'fa-solid fa-search',
         command: () => this.goToStep(0),
       },
       {
         label: 'Modificar Valor',
-        icon: 'fal fa-edit',
+        icon: 'fa-solid fa-edit',
         command: () => this.goToStep(1),
       },
     ],
@@ -86,7 +86,7 @@ export class PolicyModificationComponent implements OnInit {
   // ✅ Botones de navegación
   btnNext: ILibTbButton = {
     label: 'Siguiente',
-    icon: 'fal fa-arrow-right',
+    icon: 'fa-solid fa-arrow-right',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -95,7 +95,7 @@ export class PolicyModificationComponent implements OnInit {
 
   btnPrevious: ILibTbButton = {
     label: 'Anterior',
-    icon: 'fal fa-arrow-left',
+    icon: 'fa-solid fa-arrow-left',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -104,7 +104,7 @@ export class PolicyModificationComponent implements OnInit {
 
   btnConfirmModification: ILibTbButton = {
     label: 'Confirmar Modificación',
-    icon: 'fal fa-check-circle',
+    icon: 'fa-solid fa-check-circle',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -122,7 +122,7 @@ export class PolicyModificationComponent implements OnInit {
     dismissableMask: true,
     primaryButton: {
       label: 'Aceptar',
-      icon: 'fal fa-check',
+      icon: 'fa-solid fa-check',
       styleBtn: 'fill',
       typeBtn: 'primary',
       libTbClick: () => this.closeSuccessModal(),
@@ -139,7 +139,7 @@ export class PolicyModificationComponent implements OnInit {
     dismissableMask: true,
     primaryButton: {
       label: 'Aceptar',
-      icon: 'fal fa-exclamation-triangle',
+      icon: 'fa-solid fa-exclamation-triangle',
       styleBtn: 'fill',
       typeBtn: 'secondary',
       libTbClick: () => this.closeWarningModal(),
@@ -156,7 +156,7 @@ export class PolicyModificationComponent implements OnInit {
     dismissableMask: true,
     primaryButton: {
       label: 'Aceptar',
-      icon: 'fal fa-times',
+      icon: 'fa-solid fa-times',
       styleBtn: 'fill',
       typeBtn: 'error',
       libTbClick: () => this.closeErrorModal(),
@@ -191,17 +191,17 @@ export class PolicyModificationComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Portal',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/portal'],
       },
       {
         label: 'Modificaciones',
-        icon: 'fal fa-edit',
+        icon: 'fa-solid fa-edit',
         routerLink: ['/modification-selection'],
       },
       {
         label: 'Modificar Póliza',
-        icon: 'fal fa-clipboard-check',
+        icon: 'fa-solid fa-clipboard-check',
       },
     ];
 
@@ -708,5 +708,3 @@ export class PolicyModificationComponent implements OnInit {
     this.errorModal.visible = false;
   }
 }
-
-

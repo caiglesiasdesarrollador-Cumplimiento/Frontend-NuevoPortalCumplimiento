@@ -26,7 +26,7 @@ export const pais: ILibTbDynamicFormConfigType = {
     filter: true,
     filterPlaceholder: 'Buscar país...',
     showClear: true,
-    dropdownIcon: 'fal fa-globe',
+    dropdownIcon: 'fa-solid fa-globe',
     floatLabel: true,
     caption: true,
     showIconCaption: true,

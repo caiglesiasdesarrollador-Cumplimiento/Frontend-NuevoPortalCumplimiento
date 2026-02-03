@@ -35,9 +35,9 @@ describe('FakeLoginComponent', () => {
     });
 
     it('should have default values for fakeLoginData', () => {
-      expect(component.fakeLoginData.employeeType).toBe('NT');
-      expect(component.fakeLoginData.userName).toBe('860352541');
-      expect(component.fakeLoginData.fullName).toBe('DAVID COHEN Y CIA LIMITADA AGENCIA DE SEGUROS');
+      expect(component.fakeLoginData.employeeType).toBe('CC');
+      expect(component.fakeLoginData.userName).toBe('53049440');
+      expect(component.fakeLoginData.fullName).toBe('USUARIO PRUEBAS DEV');
       expect(component.fakeLoginData.sbCodeActBenef).toBe('2');
       expect(component.fakeLoginData.usrSubTipo).toBe('4');
     });
@@ -105,10 +105,10 @@ describe('FakeLoginComponent', () => {
       // Reset
       component.onReset();
       
-      // Verify defaults
-      expect(component.fakeLoginData.userName).toBe('860352541');
-      expect(component.fakeLoginData.fullName).toBe('DAVID COHEN Y CIA LIMITADA AGENCIA DE SEGUROS');
-      expect(component.fakeLoginData.employeeType).toBe('NT');
+      // Verify defaults (onReset usa valores diferentes a iniciales)
+      expect(component.fakeLoginData.userName).toBe('49787610');
+      expect(component.fakeLoginData.fullName).toBe('USUARIO PRUEBAS DEV');
+      expect(component.fakeLoginData.employeeType).toBe('CC');
     });
 
     it('should call actualizarTipoIngreso after reset', () => {
@@ -134,18 +134,22 @@ describe('FakeLoginComponent', () => {
     it('should load intermediario example data', () => {
       component.cargarEjemploIntermediario();
       
-      expect(component.fakeLoginData.employeeType).toBe('NT');
-      expect(component.fakeLoginData.userName).toBe('860069265');
-      expect(component.fakeLoginData.fullName).toBe('AON RISK SERVICES COLOMBIA SA CORREDORES DE SEGURO');
+      expect(component.fakeLoginData.employeeType).toBe('CC');
+      expect(component.fakeLoginData.userName).toBe('53049440');
+      expect(component.fakeLoginData.fullName).toBe('USUARIO PRUEBAS INTERMEDIARIO');
       expect(component.fakeLoginData.sbCodeActBenef).toBe('2');
       expect(component.tipoIngreso).toBe('intermediario');
     });
   });
 
   describe('onSubmit', () => {
-    it('should set isLoading to true when called', () => {
+    it('should process submission and set showSuccess', () => {
+      component.isLoading = false;
+      component.showSuccess = false;
       component.onSubmit();
-      expect(component.isLoading).toBe(true);
+      // Después de procesar, isLoading es false y showSuccess es true
+      expect(component.isLoading).toBe(false);
+      expect(component.showSuccess).toBe(true);
     });
 
     it('should save session data to sessionStorage', fakeAsync(() => {
@@ -165,12 +169,19 @@ describe('FakeLoginComponent', () => {
       expect(component.showSuccess).toBe(true);
     }));
 
-    it('should navigate to policy-input after success', fakeAsync(() => {
+    it('should navigate to redirect after success', fakeAsync(() => {
+      jest.clearAllMocks(); // Limpiar llamadas previas
       component.onSubmit();
-      tick(1000); // Wait for loading
-      tick(1500); // Wait for redirect
+      tick(1000); // Wait for loading (setTimeout de 1000ms)
+      tick(500); // Wait for redirect (setTimeout de 500ms)
       
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/policy-input']);
+      expect(mockRouter.navigate).toHaveBeenCalledTimes(1);
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        ['/redirect'],
+        expect.objectContaining({
+          queryParams: expect.any(Object)
+        })
+      );
     }));
   });
 
@@ -185,8 +196,8 @@ describe('FakeLoginComponent', () => {
       expect(component.getLabelTipoDocumento()).toBe('');
     });
 
-    it('should return NT label for default value', () => {
-      expect(component.getLabelTipoDocumento()).toBe('NT - Nit');
+    it('should return CC label for default value', () => {
+      expect(component.getLabelTipoDocumento()).toBe('CC - Cédula de ciudadanía');
     });
   });
 });

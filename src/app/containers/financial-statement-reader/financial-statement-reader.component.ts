@@ -57,12 +57,12 @@ export class FinancialStatementReaderComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Dashboard',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/dashboard'],
       },
       {
         label: 'Análisis de Estados Financieros',
-        icon: 'fal fa-chart-line',
+        icon: 'fa-solid fa-chart-line',
       },
     ];
 
@@ -87,7 +87,7 @@ export class FinancialStatementReaderComponent implements OnInit {
     dragDropLabel: 'Arrastra tu estado financiero aquí',
     caption: 'PDF, Excel (Máx. 10MB)',
     label: 'Subir Estado Financiero',
-    dragDropIcon: 'fal fa-file-upload',
+    dragDropIcon: 'fa-solid fa-file-upload',
     avaibleTypes: [
       'application/pdf',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -123,7 +123,7 @@ export class FinancialStatementReaderComponent implements OnInit {
   // ✅ BOTONES DE ACCIÓN (patrón policy-input simplificado)
   btnAnalyze: ILibTbButton = {
     label: 'Iniciar Análisis',
-    icon: 'fal fa-play',
+    icon: 'fa-solid fa-play',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -132,7 +132,7 @@ export class FinancialStatementReaderComponent implements OnInit {
 
   btnReset: ILibTbButton = {
     label: 'Reiniciar',
-    icon: 'fal fa-redo',
+    icon: 'fa-solid fa-redo',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -153,7 +153,7 @@ export class FinancialStatementReaderComponent implements OnInit {
         clearInterval(progressInterval);
         setTimeout(() => {
           this.loadingSubject.next(false);
-          this.showAlert('success', 'Análisis completado exitosamente', 'fal fa-check-circle');
+          this.showAlert('success', 'Análisis completado exitosamente', 'fa-solid fa-check-circle');
         }, 500);
       }
     }, 800);
@@ -206,7 +206,7 @@ export class FinancialStatementReaderComponent implements OnInit {
       this.showAlert(
         'success',
         `Archivo "${file.name}" cargado exitosamente`,
-        'fal fa-check-circle',
+        'fa-solid fa-check-circle',
       );
     }
   }
@@ -219,7 +219,7 @@ export class FinancialStatementReaderComponent implements OnInit {
 
   onFileReload(): void {
     // Lógica para recargar archivo si es necesario
-    this.showAlert('info', 'Archivo recargado', 'fal fa-sync');
+    this.showAlert('info', 'Archivo recargado', 'fa-solid fa-sync');
   }
 
   // ✅ Getters para template
@@ -233,5 +233,3 @@ export class FinancialStatementReaderComponent implements OnInit {
       : '0 MB';
   }
 }
-
-

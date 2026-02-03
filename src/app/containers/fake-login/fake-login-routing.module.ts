@@ -5,13 +5,12 @@ import { FakeLoginComponent } from './fake-login.component';
 const routes: Routes = [
   {
     path: '',
-    component: FakeLoginComponent
-  }
+    component: FakeLoginComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class FakeLoginRoutingModule {}
-

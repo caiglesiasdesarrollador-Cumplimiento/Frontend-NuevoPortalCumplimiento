@@ -59,12 +59,12 @@ export class CreditLimitValidationComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Dashboard',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/dashboard'],
       },
       {
         label: 'Validación de Límite de Crédito',
-        icon: 'fal fa-credit-card',
+        icon: 'fa-solid fa-credit-card',
       },
     ];
 
@@ -93,7 +93,7 @@ export class CreditLimitValidationComponent implements OnInit {
   // ✅ BOTONES DE ACCIÓN usando propiedades nativas de tech-block-lib (patrón settings)
   btnValidate: ILibTbButton = {
     label: 'Validar Límite de Crédito',
-    icon: 'fal fa-calculator',
+    icon: 'fa-solid fa-calculator',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -102,7 +102,7 @@ export class CreditLimitValidationComponent implements OnInit {
 
   btnReset: ILibTbButton = {
     label: 'Limpiar Formulario',
-    icon: 'fal fa-redo',
+    icon: 'fa-solid fa-redo',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -120,7 +120,7 @@ export class CreditLimitValidationComponent implements OnInit {
       this.showAlert(
         'error',
         'Por favor completa todos los campos requeridos',
-        'fal fa-exclamation-circle',
+        'fa-solid fa-exclamation-circle',
       );
     }
   }
@@ -216,14 +216,14 @@ export class CreditLimitValidationComponent implements OnInit {
         this.showAlert(
           'success',
           `Límite aprobado: ${this.formatCurrency(this.validationResult.approvedLimit)}`,
-          'fal fa-check-circle',
+          'fa-solid fa-check-circle',
         );
         break;
       case ValidationStatus.REJECTED:
         this.showAlert(
           'error',
           'Solicitud rechazada. Revisa los requisitos.',
-          'fal fa-times-circle',
+          'fa-solid fa-times-circle',
         );
         break;
     }
@@ -248,5 +248,3 @@ export class CreditLimitValidationComponent implements OnInit {
     }).format(value);
   }
 }
-
-

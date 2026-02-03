@@ -21,13 +21,13 @@ export const name = (self: IDynamicFormComponent): ILibTbDynamicFormConfigType =
       showIconCaption: true,
       showHelp: true,
       floatLabel: true,
-      icon: 'fal fa-user',
+      icon: 'fa-solid fa-user',
       iconPosition: 'right',
       captionText: {
         help: 'Digite sus nombres completos',
         success: 'Nombres completados',
       },
-      libTbKeypress: value => {
+      libTbKeypress: (value: any) => {
         console.log(value.target.value);
         console.log(self.toUpperCase(value.target.value));
       },

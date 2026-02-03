@@ -11,11 +11,11 @@ import {
 
 /**
  * ✅ COMUNES_010, COMUNES_011: Servicio para generar PDFs
- * 
+ *
  * Servicios disponibles:
  * - COMUNES_010: Generar PDF de cotización de RC
  * - COMUNES_011: Generar PDF de póliza (CU y RC)
- * 
+ *
  * Basado en documentación de microservicios
  */
 @Injectable({
@@ -26,11 +26,20 @@ export class GenerarPdfService {
   private readonly baseUrlPoliza: string;
 
   constructor(private readonly http: HttpClient) {
-    // ✅ Usar API Gateway Comunes según ambiente
+    // ✅ Usar proxy en desarrollo para evitar CORS, URL directa en producción
     const ambiente = environment.production ? 'prod' : 'dev';
-    const apiGateway = environment.apiGatewayComunes[ambiente];
-    this.baseUrlCotizacion = `${apiGateway}/poliza_administracion/api/v1/cotizacion`;
-    this.baseUrlPoliza = `${apiGateway}/poliza/api/v1/polizas`;
+    
+    if (environment.production) {
+      // ✅ Producción: usar URL directa del API Gateway
+      const apiGateway = environment.apiGatewayComunes[ambiente];
+      this.baseUrlCotizacion = `${apiGateway}/poliza_administracion/api/v1/cotizacion`;
+      this.baseUrlPoliza = `${apiGateway}/poliza/api/v1/polizas`;
+    } else {
+      // ✅ Desarrollo: usar proxy para evitar CORS
+      // El proxy ya está configurado en proxy.conf.json
+      this.baseUrlCotizacion = `/proxy/comunes-personas-administracion/poliza_administracion/api/v1/cotizacion`;
+      this.baseUrlPoliza = `/proxy/comunes-personas-administracion/poliza/api/v1/polizas`;
+    }
   }
 
   /**
@@ -114,7 +123,7 @@ export class GenerarPdfService {
     }
 
     // ✅ Construir parámetros de query
-    let params = new HttpParams()
+    const params = new HttpParams()
       .set('compania', compania)
       .set('endoso', endoso)
       .set('numeroPoliza', numeroPoliza)
@@ -132,4 +141,3 @@ export class GenerarPdfService {
     });
   }
 }
-

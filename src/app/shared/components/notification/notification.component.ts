@@ -48,7 +48,7 @@ export class NotificationComponent implements OnInit, OnDestroy {
         class: `app-notification ${data.class ?? ''}`,
         showClose: data.showClose,
         closeButton: {
-          icon: 'fal fa-times',
+          icon: 'fa-solid fa-times',
           styleBtn: 'text',
           typeBtn: 'secondary',
           ...(data.closeButton || {}),
@@ -70,7 +70,7 @@ export class NotificationComponent implements OnInit, OnDestroy {
             this.close();
           },
         },
-        rejectButtonVisible: !!(data.rejectButton?.label),
+        rejectButtonVisible: !!data.rejectButton?.label,
         rejectButton: {
           label: 'Cancelar',
           styleBtn: 'stroke',
@@ -98,5 +98,3 @@ export class NotificationComponent implements OnInit, OnDestroy {
     this.notificacionSub?.unsubscribe();
   }
 }
-
-

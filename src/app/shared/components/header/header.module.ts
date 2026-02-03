@@ -19,4 +19,3 @@ import { MenuModule } from '../menu/menu.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class HeaderModule {}
-

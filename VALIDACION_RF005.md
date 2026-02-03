@@ -278,3 +278,4 @@
 - Los mensajes de error deben ser exactos según la HU
 - Las validaciones deben bloquear el proceso cuando corresponda según la HU
 
+

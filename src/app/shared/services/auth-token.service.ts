@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IAuthToken, IAuthStorage } from '../interceptors/auth-interceptor.interface';
+import { LoggerService } from './logger.service';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +10,8 @@ export class AuthTokenService implements IAuthStorage {
   private readonly TOKEN_EXPIRY_KEY = 'auth_token_expiry';
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
 
+  constructor(private readonly logger: LoggerService) {}
+
   /**
    * ✅ Obtener el token de autorización del localStorage
    */
@@ -17,7 +20,7 @@ export class AuthTokenService implements IAuthStorage {
       const token = localStorage.getItem(this.TOKEN_KEY);
       return token;
     } catch (error) {
-      console.error('Error al obtener token del localStorage:', error);
+      this.logger.error('Error al obtener token del localStorage', error);
       return null;
     }
   }
@@ -33,9 +36,9 @@ export class AuthTokenService implements IAuthStorage {
       const expiryTime = Date.now() + 60 * 60 * 1000; // 1 hora
       localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiryTime.toString());
 
-      console.log('Token guardado exitosamente');
+      this.logger.debug('Token guardado exitosamente');
     } catch (error) {
-      console.error('Error al guardar token en localStorage:', error);
+      this.logger.error('Error al guardar token en localStorage', error);
     }
   }
 
@@ -58,9 +61,9 @@ export class AuthTokenService implements IAuthStorage {
         localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiryTime.toString());
       }
 
-      console.log('Datos de token guardados exitosamente');
+      this.logger.debug('Datos de token guardados exitosamente');
     } catch (error) {
-      console.error('Error al guardar datos de token:', error);
+      this.logger.error('Error al guardar datos de token', error);
     }
   }
 
@@ -71,7 +74,7 @@ export class AuthTokenService implements IAuthStorage {
     try {
       return localStorage.getItem(this.REFRESH_TOKEN_KEY);
     } catch (error) {
-      console.error('Error al obtener refresh token:', error);
+      this.logger.error('Error al obtener refresh token', error);
       return null;
     }
   }
@@ -84,9 +87,9 @@ export class AuthTokenService implements IAuthStorage {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
       localStorage.removeItem(this.REFRESH_TOKEN_KEY);
-      console.log('Tokens eliminados exitosamente');
+      this.logger.debug('Tokens eliminados exitosamente');
     } catch (error) {
-      console.error('Error al eliminar tokens del localStorage:', error);
+      this.logger.error('Error al eliminar tokens del localStorage', error);
     }
   }
 
@@ -106,7 +109,7 @@ export class AuthTokenService implements IAuthStorage {
 
       return now >= expiry;
     } catch (error) {
-      console.error('Error al verificar expiración del token:', error);
+      this.logger.error('Error al verificar expiración del token', error);
       return true; // En caso de error, considerar expirado por seguridad
     }
   }
@@ -136,7 +139,7 @@ export class AuthTokenService implements IAuthStorage {
 
       return Math.floor(timeRemaining / 1000); // Retornar en segundos
     } catch (error) {
-      console.error('Error al calcular tiempo de expiración:', error);
+      this.logger.error('Error al calcular tiempo de expiración', error);
       return 0;
     }
   }
@@ -146,6 +149,6 @@ export class AuthTokenService implements IAuthStorage {
    */
   clearAuthData(): void {
     this.removeToken();
-    console.log('Datos de autenticación limpiados');
+    this.logger.debug('Datos de autenticación limpiados');
   }
 }

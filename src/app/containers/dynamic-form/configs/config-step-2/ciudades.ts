@@ -86,7 +86,7 @@ export const ciudades: ILibTbDynamicFormConfigType = {
     autofocusFilter: true,
     chip: true,
     ellipsis: true,
-    dropdownIcon: 'fal fa-city',
+    dropdownIcon: 'fa-solid fa-city',
     showToggleAll: false,
     showHeader: true,
     selectionLimit: 5,
@@ -102,13 +102,13 @@ export const ciudades: ILibTbDynamicFormConfigType = {
     },
     emptyFilterMessage: 'No se encontraron ciudades que coincidan con su búsqueda',
     toggleAllLabel: 'Seleccionar todas las ciudades visibles',
-    libTbChange: event => {
+    libTbChange: (event: any) => {
       console.log('Ciudades seleccionadas:', event.value);
       if (event.value && event.value.length >= 5) {
         console.log('Límite de 5 ciudades alcanzado');
       }
     },
-    libTbFilter: event => {
+    libTbFilter: (event: any) => {
       console.log('Filtro aplicado:', event.filter);
     },
   },

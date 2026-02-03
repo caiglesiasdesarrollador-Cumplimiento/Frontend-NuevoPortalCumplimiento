@@ -178,3 +178,4 @@ Marca cada punto cuando lo verifiques:
 
 **¿Todo funciona correctamente? Si algo no funciona, comparte el error que ves en la consola.**
 
+

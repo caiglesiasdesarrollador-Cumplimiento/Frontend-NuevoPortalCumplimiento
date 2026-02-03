@@ -104,3 +104,4 @@ Si sigue sin funcionar, comparte:
 
 **Ejecuta `npm start` en una terminal nueva y comparte qué ves.**
 
+

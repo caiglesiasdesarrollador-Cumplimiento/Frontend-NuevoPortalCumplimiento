@@ -1384,3 +1384,4 @@ El `AuthInterceptor` ya está configurado para agregar automáticamente:
 **Última actualización:** 16 de Enero de 2026
 **Documento base:** Cumplimiento_Microservicios.pdf
 
+

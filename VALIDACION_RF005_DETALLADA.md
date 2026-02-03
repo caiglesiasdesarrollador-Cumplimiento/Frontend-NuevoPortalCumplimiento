@@ -403,3 +403,4 @@
 - Los botones deben tener funcionalidad mobile específica (teléfono y WhatsApp)
 - Los modales de SARLAFT deben diferenciarse claramente entre modo COTIZAR y EMITIR
 
+

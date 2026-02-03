@@ -4,20 +4,21 @@ import { Observable, tap, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SessionService } from './session.service';
 import { ConfigService } from './config.service';
+import { LoggerService } from './logger.service';
 import {
-  ICatalogoRequest,
+  // ICatalogoRequest, // Reservado para uso futuro
   ICatalogoResponse,
 } from '../interfaces/comunes.interface';
 
 /**
  * ✅ COMUNES_001: Servicio para consultar catálogos comunes
- * 
+ *
  * Listas disponibles:
  * - DEPARTAMENTOS_CIUDAD: Ciudades y departamentos
  * - TIPOS_CONTRATO_CU: Tipos de contratos de Cumplimiento
  * - MODALIDAD_REASEGUROS: Modalidades de reaseguros
  * - TIPO_GARANTIA: Tipos de garantía
- * 
+ *
  * Basado en documentación de microservicios
  */
 @Injectable({
@@ -30,10 +31,19 @@ export class CatalogosService {
     private readonly http: HttpClient,
     private readonly sessionService: SessionService,
     private readonly configService: ConfigService,
+    private readonly logger: LoggerService,
   ) {
-    // ✅ Usar API Gateway Comunes según ambiente
+    // ✅ Usar proxy en desarrollo para evitar CORS, URL directa en producción
     const ambiente = environment.production ? 'prod' : 'dev';
-    this.baseUrl = `${environment.apiGatewayComunes[ambiente]}/catalogos/api/v1/poliza`;
+    
+    if (environment.production) {
+      // ✅ Producción: usar URL directa del API Gateway
+      this.baseUrl = `${environment.apiGatewayComunes[ambiente]}/catalogos/api/v1/poliza`;
+    } else {
+      // ✅ Desarrollo: usar proxy para evitar CORS
+      // El proxy ya está configurado en proxy.conf.json
+      this.baseUrl = `/proxy/comunes-personas-administracion/catalogos/api/v1/poliza`;
+    }
   }
 
   /**
@@ -71,35 +81,35 @@ export class CatalogosService {
 
     // ✅ LOG: Para validación local - Ver en Console del navegador
     const urlCompleta = `${this.baseUrl}/datosvariables?${params.toString()}`;
-    console.log('🔍 [CatalogosService] Petición a Comunes:', {
+    this.logger.debug('Petición a Comunes', {
       url: urlCompleta,
       baseUrl: this.baseUrl,
       ambiente: environment.production ? 'prod' : 'dev',
-      headers: procesoHeaders,
-      params: params.toString(),
+      codigoLista,
     });
 
     // ✅ Realizar petición GET
-    return this.http.get<ICatalogoResponse>(`${this.baseUrl}/datosvariables`, {
-      params,
-      headers: procesoHeaders,
-    }).pipe(
-      tap(response => {
-        // ✅ LOG: Respuesta exitosa
-        console.log('✅ [CatalogosService] Respuesta exitosa:', response);
-      }),
-      catchError(error => {
-        // ✅ LOG: Error en la petición
-        console.error('❌ [CatalogosService] Error:', {
-          status: error.status,
-          statusText: error.statusText,
-          message: error.message,
-          error: error.error,
-          url: urlCompleta,
-        });
-        return throwError(() => error);
+    return this.http
+      .get<ICatalogoResponse>(`${this.baseUrl}/datosvariables`, {
+        params,
+        headers: procesoHeaders,
       })
-    );
+      .pipe(
+        tap(response => {
+          // ✅ LOG: Respuesta exitosa
+          this.logger.debug('Respuesta exitosa', { totalItems: response.lista?.length || 0 });
+        }),
+        catchError(error => {
+          // ✅ LOG: Error en la petición
+          this.logger.error('Error en la petición', {
+            status: error.status,
+            statusText: error.statusText,
+            message: error.message,
+            url: urlCompleta,
+          });
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
@@ -135,4 +145,3 @@ export class CatalogosService {
     return this.obtenerCatalogo('TIPO_GARANTIA');
   }
 }
-

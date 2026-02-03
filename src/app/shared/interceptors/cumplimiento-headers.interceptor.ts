@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-} from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SessionService } from '../services/session.service';
 import { ConfigService } from '../services/config.service';
@@ -12,7 +7,7 @@ import { ConfigService } from '../services/config.service';
 /**
  * ✅ Interceptor para agregar headers de proceso (X-Proceso-*) automáticamente
  * a todas las peticiones de servicios de Cumplimiento Digital
- * 
+ *
  * Headers agregados según colección de Postman:
  * - codProducto, modulo, proceso, subproceso, codcia, codsecc, codusr, etc.
  */
@@ -32,7 +27,7 @@ export class CumplimientoHeadersInterceptor implements HttpInterceptor {
     // ✅ Obtener código de usuario de la sesión
     const codUsr = this.sessionService.getCodUsr();
     if (!codUsr) {
-      console.warn('⚠️ [CumplimientoHeadersInterceptor] No se encontró codUsr en sesión');
+      // ✅ Continuar sin headers si no hay codUsr (puede ser petición pública)
       return next.handle(request);
     }
 
@@ -53,6 +48,11 @@ export class CumplimientoHeadersInterceptor implements HttpInterceptor {
    * @returns true si es URL de Cumplimiento
    */
   private isCumplimientoUrl(url: string): boolean {
+    // ✅ EXCLUIR URLs de terceros que tienen sus propios headers
+    if (url.includes('/terceros/') || url.includes('/personasNaturales/') || url.includes('/personasJuridicas/')) {
+      return false;
+    }
+
     // URLs de servicios de Cumplimiento según colección de Postman
     const cumplimientoPatterns = [
       '/catalogos/',
@@ -68,4 +68,3 @@ export class CumplimientoHeadersInterceptor implements HttpInterceptor {
     return cumplimientoPatterns.some(pattern => url.includes(pattern));
   }
 }
-

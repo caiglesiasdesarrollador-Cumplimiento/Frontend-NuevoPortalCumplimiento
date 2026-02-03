@@ -9,13 +9,12 @@ import { ICliente, ITomador, IAsegurado } from '../containers/policy-input/polic
  * Preparado para conectar con el backend.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ClienteService {
-
   private readonly apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   // ========== BUSCAR CLIENTE ==========
 
@@ -26,7 +25,7 @@ export class ClienteService {
   buscarCliente(tipoDocumento: string, numeroDocumento: string): Observable<ICliente | null> {
     // Cuando tengas la API:
     // return this.http.get<ICliente>(`${this.apiUrl}/clientes/buscar?tipo=${tipoDocumento}&numero=${numeroDocumento}`);
-    
+
     console.log('🔍 [ClienteService] Buscar cliente:', tipoDocumento, numeroDocumento);
     return of(null);
   }
@@ -38,7 +37,7 @@ export class ClienteService {
   verificarClienteExiste(tipoDocumento: string, numeroDocumento: string): Observable<boolean> {
     // Cuando tengas la API:
     // return this.http.get<boolean>(`${this.apiUrl}/clientes/existe?tipo=${tipoDocumento}&numero=${numeroDocumento}`);
-    
+
     return of(false);
   }
 
@@ -51,7 +50,7 @@ export class ClienteService {
   getTomador(tipoDocumento: string, numeroDocumento: string): Observable<ITomador | null> {
     // Cuando tengas la API:
     // return this.http.get<ITomador>(`${this.apiUrl}/tomadores/${tipoDocumento}/${numeroDocumento}`);
-    
+
     return of(null);
   }
 
@@ -59,10 +58,13 @@ export class ClienteService {
    * Validar SARLAFT del tomador
    * TODO: Conectar con API real
    */
-  validarSarlaftTomador(tipoDocumento: string, numeroDocumento: string): Observable<{ valido: boolean; mensaje: string }> {
+  validarSarlaftTomador(
+    tipoDocumento: string,
+    numeroDocumento: string,
+  ): Observable<{ valido: boolean; mensaje: string }> {
     // Cuando tengas la API:
     // return this.http.get<any>(`${this.apiUrl}/tomadores/${tipoDocumento}/${numeroDocumento}/sarlaft`);
-    
+
     console.log('🔍 [ClienteService] Validar SARLAFT:', tipoDocumento, numeroDocumento);
     return of({ valido: true, mensaje: '' });
   }
@@ -76,7 +78,7 @@ export class ClienteService {
   getAsegurado(tipoDocumento: string, numeroDocumento: string): Observable<IAsegurado | null> {
     // Cuando tengas la API:
     // return this.http.get<IAsegurado>(`${this.apiUrl}/asegurados/${tipoDocumento}/${numeroDocumento}`);
-    
+
     return of(null);
   }
 
@@ -89,7 +91,7 @@ export class ClienteService {
   getCupoDisponible(tipoDocumento: string, numeroDocumento: string): Observable<number> {
     // Cuando tengas la API:
     // return this.http.get<number>(`${this.apiUrl}/clientes/${tipoDocumento}/${numeroDocumento}/cupo`);
-    
+
     return of(0);
   }
 
@@ -102,7 +104,7 @@ export class ClienteService {
   crearCliente(cliente: ICliente): Observable<{ id: string }> {
     // Cuando tengas la API:
     // return this.http.post<{ id: string }>(`${this.apiUrl}/clientes`, cliente);
-    
+
     console.log('📤 [ClienteService] Crear cliente:', cliente);
     return of({ id: Date.now().toString() });
   }
@@ -114,9 +116,8 @@ export class ClienteService {
   actualizarSarlaft(tipoDocumento: string, numeroDocumento: string, datos: any): Observable<any> {
     // Cuando tengas la API:
     // return this.http.put(`${this.apiUrl}/clientes/${tipoDocumento}/${numeroDocumento}/sarlaft`, datos);
-    
+
     console.log('📤 [ClienteService] Actualizar SARLAFT:', tipoDocumento, numeroDocumento);
     return of({ success: true });
   }
 }
-

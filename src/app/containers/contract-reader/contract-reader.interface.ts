@@ -1,33 +1,89 @@
-// ✅ Enum para estados del procesamiento
+/**
+ * ✅ RF-009: Interfaces completas para Procesamiento del Contrato con IA
+ * Incluye todos los campos requeridos según especificación RF-009
+ */
+
+// ========================================
+// ENUMS
+// ========================================
+
 export enum ProcessingStatus {
   IDLE = 'idle',
   UPLOADING = 'uploading',
   PROCESSING = 'processing',
   COMPLETED = 'completed',
   ERROR = 'error',
+  TIMEOUT = 'timeout',
 }
 
-// ✅ Interface para archivo subido
-export interface IUploadedFile {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  lastModified: number;
-  uploadedAt: string;
-  status: ProcessingStatus;
-  progress: number;
-  errorMessage?: string;
+export enum EtapaContrato {
+  PRECONTRACTUAL = 'precontractual',
+  CONTRACTUAL = 'contractual',
 }
 
-// ✅ Interface para datos extraídos del contrato
+export enum TipoArchivo {
+  CONTRATO = 'CONTRATO',
+  PLIEGO_LICITATORIO = 'PLIEGO_LICITATORIO',
+  OFERTA_MERCANTIL = 'OFERTA_MERCANTIL',
+}
+
+export enum EstadoArchivo {
+  PE = 'PE', // Pendiente
+  TE = 'TE', // Terminado, cargado en el Core
+}
+
+export enum Asegurabilidad {
+  SI = 'Si',
+  NO = 'No',
+}
+
+// ========================================
+// INTERFACES - Códigos Tronador (RF-009 Regla 9.2)
+// ========================================
+
+/**
+ * ✅ RF-009 Regla 9.2: Código Tronador para campos retornados por IA
+ */
+export interface ICodigoTronador {
+  codigo: string;
+  descripcion: string;
+  valido: boolean; // Validado contra catálogo
+}
+
+// ========================================
+// INTERFACES - Datos Extraídos del Contrato
+// ========================================
+
+/**
+ * ✅ RF-009 Regla 9.2: Datos extraídos con códigos Tronador
+ */
 export interface IExtractedContractData {
   // Información general
   numeroContrato: string;
   fechaContrato: string;
   objetoContrato: string;
   valorContrato: number;
-  moneda: string;
+
+  // ✅ RF-009 Regla 9.2: Moneda con código Tronador
+  moneda: ICodigoTronador;
+
+  // ✅ RF-009 Regla 9.2: Tipo documento con código Tronador
+  tipoDocumento: ICodigoTronador;
+
+  // ✅ RF-009 Regla 9.2: Ubicación con códigos Tronador
+  departamento: ICodigoTronador;
+  municipio: ICodigoTronador;
+  ciudad: ICodigoTronador;
+
+  // ✅ RF-009 Regla 9.2: Tipo contrato con código Tronador
+  tipoContrato: ICodigoTronador;
+
+  // ✅ RF-009 Regla 9.9: Etapa del contrato
+  etapaContrato: EtapaContrato;
+
+  // ✅ RF-009 Regla 9.5: Asegurabilidad
+  asegurabilidad: Asegurabilidad;
+  motivoAsegurabilidad?: string;
 
   // Partes del contrato
   contratante: {
@@ -48,31 +104,37 @@ export interface IExtractedContractData {
     email: string;
   };
 
-  // Fechas importantes
+  // Fechas importantes (validadas según RF-009 Regla 9.8)
   fechaInicio: string;
   fechaTerminacion: string;
   plazoEjecucion: number; // en días
+  fechaInicioValida: boolean; // RF-009 Regla 9.8
+  fechaTerminacionValida: boolean; // RF-009 Regla 9.8
 
-  // Garantías requeridas
-  garantias: {
+  // ✅ RF-009 Regla 9.2: Coberturas/Garantías con códigos Tronador
+  coberturas_o_garantias: {
     cumplimiento: {
       requerida: boolean;
       porcentaje: number;
       valor: number;
+      codigoTronador: ICodigoTronador;
     };
     calidadServicio: {
       requerida: boolean;
       porcentaje: number;
       valor: number;
+      codigoTronador: ICodigoTronador;
     };
     responsabilidadCivil: {
       requerida: boolean;
       valor: number;
+      codigoTronador: ICodigoTronador;
     };
     buenManejoInversion: {
       requerida: boolean;
       porcentaje: number;
       valor: number;
+      codigoTronador: ICodigoTronador;
     };
   };
 
@@ -85,9 +147,124 @@ export interface IExtractedContractData {
     descripcion: string;
     riesgoAsociado: string;
   }[];
+
+  // ✅ RF-009 Regla 9.8: Validación de formato
+  datosInvalidos: {
+    fechas: string[];
+    numeros: string[];
+  };
+
+  // ✅ RF-009 Regla 9.10: Datos no consistentes con catálogos
+  datosInconsistentes: {
+    moneda: boolean;
+    tipoContrato: boolean;
+    departamento: boolean;
+    municipio: boolean;
+    ciudad: boolean;
+  };
 }
 
-// ✅ Interface para sugerencias de pólizas
+// ========================================
+// INTERFACES - WebSocket (RF-009 Regla 9.3)
+// ========================================
+
+/**
+ * ✅ RF-009 Regla 9.3: Mensaje WebSocket para estado en tiempo real
+ */
+export interface IWebSocketMessage {
+  tipo: 'procesando' | 'finalizado' | 'error' | 'timeout';
+  mensaje: string;
+  progreso?: number; // 0-100
+  datos?: Partial<IExtractedContractData>;
+  error?: string;
+}
+
+// ========================================
+// INTERFACES - Almacenamiento S3/FileNet (RF-009 Regla 9.6)
+// ========================================
+
+/**
+ * ✅ RF-009 Regla 9.6: Metadatos para almacenamiento
+ */
+export interface IFileStorageMetadata {
+  idMongo: string;
+  seccion: string; // '4' - Cumplimiento
+  producto: string; // '440', '450', '455'
+  tipoDocTomador: string; // 'NT', 'CC', 'CE'
+  nroDocTomador: string;
+  tipoArchivo: TipoArchivo;
+  fecha: string; // YYYYMMDD
+  estado: EstadoArchivo;
+  formato: string; // 'PDF', 'DOC', 'DOCX'
+  numeroPoliza?: string; // Para FileNet
+}
+
+/**
+ * ✅ RF-009 Regla 9.6: Resultado de almacenamiento
+ */
+export interface IFileStorageResult {
+  s3Key: string;
+  s3Url?: string;
+  fileNetId?: string;
+  fileNetUrl?: string;
+  success: boolean;
+  error?: string;
+}
+
+// ========================================
+// INTERFACES - Respuesta del Servicio IA
+// ========================================
+
+/**
+ * ✅ RF-009: Respuesta completa del servicio IA Lector de Contratos
+ */
+export interface IContractAIResponse {
+  success: boolean;
+  asegurabilidad: Asegurabilidad;
+  motivoAsegurabilidad?: string;
+  datosExtraidos: IExtractedContractData;
+  tiempoProcesamiento: number; // segundos
+  confianza: number; // 0-100
+  errores?: string[];
+  warnings?: string[];
+}
+
+// ========================================
+// INTERFACES - Request del Servicio IA
+// ========================================
+
+/**
+ * ✅ RF-009: Request para procesar contrato con IA
+ */
+export interface IContractAIRequest {
+  archivo: File;
+  metadata: IFileStorageMetadata;
+  producto: string; // '440', '450', '455'
+}
+
+// ========================================
+// INTERFACES - Archivo Subido
+// ========================================
+
+export interface IUploadedFile {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  lastModified: number;
+  uploadedAt: string;
+  status: ProcessingStatus;
+  progress: number;
+  errorMessage?: string;
+  metadata?: IFileStorageMetadata;
+  storageResult?: IFileStorageResult;
+  procesamientoBloqueado?: boolean; // RF-009 Regla 9.1
+}
+
+// ========================================
+// INTERFACES - Sugerencias de Pólizas
+// ========================================
+
 export interface IPolicySuggestion {
   id: string;
   tipoPoliza: string;
@@ -99,138 +276,24 @@ export interface IPolicySuggestion {
   obligatoria: boolean;
 }
 
-// ✅ Interface para resultados del análisis
+// ========================================
+// INTERFACES - Resultados del Análisis
+// ========================================
+
 export interface IContractAnalysisResults {
   fileInfo: IUploadedFile;
   extractedData: IExtractedContractData;
   suggestions: IPolicySuggestion[];
-  confidence: number; // Porcentaje de confianza en la extracción
-  processingTime: number; // Tiempo en segundos
+  confidence: number;
+  processingTime: number;
   warnings: string[];
+  asegurabilidadValidada: boolean; // RF-009 Regla 9.5
 }
 
-// ✅ Datos mock para simulación
-export const MOCK_EXTRACTED_DATA: IExtractedContractData = {
-  numeroContrato: 'CONT-2024-456',
-  fechaContrato: '2024-01-15',
-  objetoContrato: 'Construcción de edificio residencial de 10 pisos en Bogotá D.C.',
-  valorContrato: 2500000000,
-  moneda: 'COP',
+// ========================================
+// CONSTANTES
+// ========================================
 
-  contratante: {
-    nombre: 'Inmobiliaria Constructora ABC S.A.S',
-    nit: '900123456-7',
-    representanteLegal: 'María Elena Rodríguez',
-    direccion: 'Carrera 15 #123-45, Bogotá D.C.',
-    telefono: '+57 1 2345678',
-    email: 'contacto@constructoraabc.com',
-  },
-
-  contratista: {
-    nombre: 'Ingeniería y Construcciones DEF Ltda',
-    nit: '800987654-3',
-    representanteLegal: 'Carlos Alberto Martínez',
-    direccion: 'Calle 80 #67-89, Bogotá D.C.',
-    telefono: '+57 1 9876543',
-    email: 'gerencia@ingenieriadef.com',
-  },
-
-  fechaInicio: '2024-02-01',
-  fechaTerminacion: '2025-08-01',
-  plazoEjecucion: 545,
-
-  garantias: {
-    cumplimiento: {
-      requerida: true,
-      porcentaje: 20,
-      valor: 500000000,
-    },
-    calidadServicio: {
-      requerida: true,
-      porcentaje: 15,
-      valor: 375000000,
-    },
-    responsabilidadCivil: {
-      requerida: true,
-      valor: 300000000,
-    },
-    buenManejoInversion: {
-      requerida: false,
-      porcentaje: 0,
-      valor: 0,
-    },
-  },
-
-  riesgosIdentificados: [
-    'Riesgo sísmico en zona de construcción',
-    'Variaciones en precios de materiales',
-    'Retrasos por condiciones climáticas',
-    'Riesgo de accidentes laborales en altura',
-    'Posibles hallazgos arqueológicos',
-  ],
-
-  clausulasRelevantes: [
-    {
-      titulo: 'Cláusula de Garantías',
-      descripcion:
-        'El contratista deberá constituir garantías de cumplimiento del 20% y calidad del servicio del 15%',
-      riesgoAsociado: 'Incumplimiento de obligaciones contractuales',
-    },
-    {
-      titulo: 'Cláusula de Responsabilidad Civil',
-      descripcion: 'Cobertura mínima de $300.000.000 por daños a terceros',
-      riesgoAsociado: 'Daños a terceros durante la construcción',
-    },
-    {
-      titulo: 'Cláusula de Fuerza Mayor',
-      descripcion: 'Eventos de fuerza mayor que pueden afectar la ejecución del contrato',
-      riesgoAsociado: 'Eventos externos fuera del control de las partes',
-    },
-  ],
-};
-
-export const MOCK_POLICY_SUGGESTIONS: IPolicySuggestion[] = [
-  {
-    id: 'sug001',
-    tipoPoliza: 'Cumplimiento de Contrato',
-    descripcion: 'Garantía de cumplimiento por el 20% del valor del contrato',
-    valorSugerido: 500000000,
-    porcentaje: 20,
-    justificacion: 'Requerido explícitamente en la cláusula de garantías del contrato',
-    prioridad: 'alta',
-    obligatoria: true,
-  },
-  {
-    id: 'sug002',
-    tipoPoliza: 'Calidad del Servicio',
-    descripcion: 'Garantía de calidad del servicio por el 15% del valor del contrato',
-    valorSugerido: 375000000,
-    porcentaje: 15,
-    justificacion: 'Requerido por la naturaleza de construcción del proyecto',
-    prioridad: 'alta',
-    obligatoria: true,
-  },
-  {
-    id: 'sug003',
-    tipoPoliza: 'Responsabilidad Civil',
-    descripcion: 'Cobertura por daños a terceros durante la construcción',
-    valorSugerido: 300000000,
-    justificacion: 'Construcción en zona urbana con alto riesgo de daños a terceros',
-    prioridad: 'alta',
-    obligatoria: true,
-  },
-  {
-    id: 'sug004',
-    tipoPoliza: 'Todo Riesgo Construcción',
-    descripcion: 'Cobertura adicional para riesgos específicos de construcción',
-    valorSugerido: 150000000,
-    justificacion: 'Recomendado por los riesgos sísmicos y climáticos identificados',
-    prioridad: 'media',
-    obligatoria: false,
-  },
-];
-
-// ✅ Estados iniciales
 export const INITIAL_FILE_STATE: IUploadedFile = {
   id: '',
   name: '',
@@ -240,21 +303,36 @@ export const INITIAL_FILE_STATE: IUploadedFile = {
   uploadedAt: '',
   status: ProcessingStatus.IDLE,
   progress: 0,
+  procesamientoBloqueado: false,
 };
 
-// ✅ Tipos de archivo admitidos
+// ✅ RF-008 Regla 8.2: Tipos MIME soportados según políticas FileNet
 export const ACCEPTED_FILE_TYPES = [
-  'application/pdf',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/pdf', // PDF
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
 ];
 
-export const ACCEPTED_FILE_EXTENSIONS = ['.pdf', '.doc', '.docx'];
+// ✅ RF-008 Regla 8.2: Extensiones soportadas según políticas FileNet
+export const ACCEPTED_FILE_EXTENSIONS = ['.pdf', '.docx', '.xlsx'];
 
-// ✅ Configuración de límites
 export const FILE_UPLOAD_CONFIG = {
-  maxSizeBytes: 10 * 1024 * 1024, // 10MB
-  maxSizeMB: 10,
-  processingTimeoutMs: 30000, // 30 segundos
+  maxSizeBytes: 30 * 1024 * 1024, // ✅ RF-008 Regla 8.2: 30MB según políticas FileNet
+  maxSizeMB: 30, // ✅ RF-008 Regla 8.2: 30MB según políticas FileNet
+  processingTimeoutMs: 30000, // 30 segundos (RF-009 Regla 9.7)
   allowedTypes: ACCEPTED_FILE_TYPES,
 };
+
+// ========================================
+// MENSAJES RF-009
+// ========================================
+
+export const RF009_MESSAGES = {
+  ERROR_PROCESAMIENTO:
+    'NO PUDIMOS PROCESAR LA INFORMACIÓN AUTOMÁTICAMENTE. PUEDES CONTINUAR EL PROCESO INGRESANDO LOS DATOS MANUALMENTE.',
+  NO_ASEGURABLE: 'ESTE CONTRATO NO ES ASEGURABLE. NO ES POSIBLE CONTINUAR CON EL PROCESO.',
+  PROCESANDO: 'Procesando...',
+  FINALIZADO: 'Finalizado',
+  TIMEOUT:
+    'El procesamiento está tomando más tiempo del esperado. Puedes continuar ingresando los datos manualmente.',
+} as const;

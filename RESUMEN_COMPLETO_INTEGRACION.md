@@ -288,3 +288,4 @@ validarSarlaft(tipoDoc: string, numDoc: string) {
 **Última actualización:** 16 de Enero de 2026  
 **Estado:** ✅ **COMPLETO Y LISTO PARA PRODUCCIÓN**
 
+

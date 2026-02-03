@@ -319,4 +319,3 @@ export class LibTbListboxModule {}
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class LibTbAlertModule {}
-

@@ -40,4 +40,3 @@ import { ManagementRoutingModule } from './management-routing.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ManagementModule {}
-

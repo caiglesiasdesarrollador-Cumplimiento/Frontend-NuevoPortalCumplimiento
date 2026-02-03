@@ -118,7 +118,7 @@ export const step2FileUploadForm = (): ILibTbDynamicForm => {
       {
         containerId: 'step2-upload-area-container',
         htmlContent:
-          '<h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">Cargar Archivo</h4><p class="lib-tb-body-small text-grayscaleD200 mb-4">Formatos soportados: PDF, Excel (XLS/XLSX), CSV (máximo 10MB)</p><div id="file-upload-placeholder" class="border-2 border-dashed border-grayscaleL200 rounded-lg p-6 text-center"><i class="fal fa-cloud-upload text-4xl text-grayscaleD200 mb-4"></i><p class="lib-tb-body-medium text-grayscaleD200">El componente de carga de archivos se integrará aquí</p></div>',
+          '<h4 class="lib-tb-h6-bold text-grayscaleBlack mb-4">Cargar Archivo</h4><p class="lib-tb-body-small text-grayscaleD200 mb-4">Formatos soportados: PDF, Excel (XLS/XLSX), CSV (máximo 10MB)</p><div id="file-upload-placeholder" class="border-2 border-dashed border-grayscaleL200 rounded-lg p-6 text-center"><i class="fa-solid fa-cloud-upload text-4xl text-grayscaleD200 mb-4"></i><p class="lib-tb-body-medium text-grayscaleD200">El componente de carga de archivos se integrará aquí</p></div>',
       },
       {
         containerId: 'step2-contact-info-container',

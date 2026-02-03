@@ -23,6 +23,3 @@ export class ErrorConnectionComponent {
     this.location.back();
   }
 }
-
-
-

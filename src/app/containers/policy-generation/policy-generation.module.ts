@@ -27,4 +27,3 @@ import { PolicyGenerationRoutingModule } from './policy-generation-routing.modul
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PolicyGenerationModule {}
-

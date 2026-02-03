@@ -36,4 +36,3 @@ import { ValorAseguradoModificationRoutingModule } from './valor-asegurado-modif
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ValorAseguradoModificationModule {}
-

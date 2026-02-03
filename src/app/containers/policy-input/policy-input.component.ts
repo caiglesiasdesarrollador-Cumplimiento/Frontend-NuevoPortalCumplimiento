@@ -41,7 +41,24 @@ import { ProgramaService } from '../../shared/services/programa.service';
 import { ClienteValidacionService } from '../../shared/services/cliente-validacion.service';
 import { ProductoValidacionService } from '../../shared/services/producto-validacion.service';
 import { ClienteEnfoqueService } from '../../shared/services/cliente-enfoque.service';
-import { firstValueFrom } from 'rxjs';
+import { PolicyInputFacadeService } from '../../shared/services/policy-input-facade.service'; // ✅ Facade Pattern
+import { ContractAIService } from '../../shared/services/contract-ai.service';
+import { FinancialStatementService } from '../../shared/services/financial-statement.service';
+import { FileStorageService } from '../../shared/services/file-storage.service';
+import { CoberturaService } from '../../shared/services/cobertura.service'; // ✅ RF-013 Regla 13.6
+import { RecuperarAgenteService } from '../../shared/services/recuperar-agente.service';
+import { SessionMulticlavesService } from '../../shared/services/session-multiclaves.service';
+import { SessionService } from '../../shared/services/session.service';
+import { LoggerService } from '../../shared/services/logger.service';
+import {
+  TipoArchivo,
+  EstadoArchivo,
+  IFileStorageMetadata,
+} from '../contract-reader/contract-reader.interface';
+import { IMulticlavesResponse } from '../../shared/interfaces/comunes.interface';
+import { validarYSanitizarDocumento } from '../../shared/utils/input-sanitizer';
+import { firstValueFrom, Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import {
   TipoCliente,
   TipoUsuario,
@@ -63,6 +80,10 @@ import { MOCK_MANAGEMENT_DATA, IPolicyManagementItem } from '../management/manag
 // NOSONAR: Componente usado dinámicamente en configs, no directamente en template
 // import { CoberturasCumplimientoTableComponent } from './configs/config-step-2/components/coberturas-cumplimiento-table.component';
 import { SbCalendarModule } from '../../shared/components/sb-calendar/sb-calendar.module';
+import { Step1PolicyInfoComponent } from './components/step1-policy-info/step1-policy-info.component';
+import { Step2ContractInfoComponent } from './components/step2-contract-info/step2-contract-info.component';
+import { CoberturasCumplimientoComponent } from './components/coberturas-cumplimiento/coberturas-cumplimiento.component';
+import { CoberturasRCComponent } from './components/coberturas-rc/coberturas-rc.component';
 
 @Component({
   standalone: true,
@@ -89,6 +110,11 @@ import { SbCalendarModule } from '../../shared/components/sb-calendar/sb-calenda
     SbCalendarModule,
     // Componente hijo (usado dinámicamente, no directamente en template)
     // CoberturasCumplimientoTableComponent, // NOSONAR: Se usa dinámicamente en configs
+    // ✅ Componentes hijos
+    Step1PolicyInfoComponent,
+    Step2ContractInfoComponent,
+    CoberturasCumplimientoComponent,
+    CoberturasRCComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -147,6 +173,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     {
       id: 1,
       nombre: 'SERIEDAD DE LA OFERTA',
+      codigo: '401', // ✅ RF-013 Regla 13.1: Código de cobertura
       porcentaje: 10,
       valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
@@ -156,130 +183,467 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       fechaVencimiento: '2025-11-05',
       prima: 0, // Prima también en 0 cuando valorAsegurado es 0
       seleccionada: false,
+      obligatoria: false,
+      etapa: 'precontractual', // ✅ RF-013 Regla 13.1: Etapa del contrato
+      errorPorcentaje: '',
+      errorValorAsegurado: '',
+      errorTasa: '',
+      errorFecha: '',
     },
     {
       id: 2,
       nombre: 'MANEJO DEL ANTICIPO',
+      codigo: '402', // ✅ RF-013 Regla 13.1: Código de cobertura (incompatible con 413)
       porcentaje: 50,
       valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
+      tasaAnterior: 0, // ✅ RF-013 Regla 13.3: Tasa anterior para validar que no se reduzca
       fechaInicio: '2025-05-05',
       tiempoAdicional: 60,
       fechaFin: '2025-12-05',
       fechaVencimiento: '2026-05-04',
       prima: 0,
       seleccionada: false,
+      obligatoria: false,
+      etapa: 'precontractual', // ✅ RF-013 Regla 13.1: Etapa del contrato
+      errorPorcentaje: '',
+      errorValorAsegurado: '',
+      errorTasa: '',
+      errorFecha: '',
     },
     {
       id: 3,
       nombre: 'CUMPLIMIENTO',
+      codigo: '403', // ✅ RF-013 Regla 13.1: Código de cobertura
       porcentaje: 20,
       valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
+      tasaAnterior: 0, // ✅ RF-013 Regla 13.3: Tasa anterior para validar que no se reduzca
       fechaInicio: '2025-05-05',
       tiempoAdicional: 45,
       fechaFin: '2025-10-05',
       fechaVencimiento: '2026-05-04',
       prima: 0,
-      seleccionada: false,
+      seleccionada: true, // ✅ RF-013 Regla 13.1: Cobertura obligatoria - seleccionada por defecto
+      obligatoria: true, // ✅ RF-013 Regla 13.1: Cobertura obligatoria
+      etapa: 'precontractual', // ✅ RF-013 Regla 13.1: Etapa del contrato
+      errorPorcentaje: '', // ✅ RF-013: Mensaje de error de validación
+      errorValorAsegurado: '', // ✅ RF-013: Mensaje de error de validación
+      errorTasa: '', // ✅ RF-013: Mensaje de error de validación
+      errorFecha: '', // ✅ RF-013: Mensaje de error de validación
     },
     {
       id: 4,
       nombre: 'SALARIOS Y PRESTACIONES SOCIALES',
+      codigo: '404',
       porcentaje: 20,
       valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
+      tasaAnterior: 0, // ✅ RF-013 Regla 13.3: Tasa anterior para validar que no se reduzca
       fechaInicio: '2025-05-05',
       tiempoAdicional: 45,
       fechaFin: '2025-10-05',
       fechaVencimiento: '2026-05-04',
       prima: 0,
       seleccionada: false,
+      obligatoria: false,
+      etapa: 'contractual', // ✅ RF-013 Regla 13.1: Etapa del contrato
+      errorPorcentaje: '',
+      errorValorAsegurado: '',
+      errorTasa: '',
+      errorFecha: '',
     },
     {
       id: 5,
       nombre: 'PAGO ANTICIPADO',
+      codigo: '413', // ✅ RF-013 Regla 13.1: Código de cobertura (incompatible con 402)
       porcentaje: 100,
       valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
+      tasaAnterior: 0, // ✅ RF-013 Regla 13.3: Tasa anterior para validar que no se reduzca
       fechaInicio: '2025-05-05',
       tiempoAdicional: 120,
       fechaFin: '2026-01-05',
       fechaVencimiento: '2026-05-04',
       prima: 0,
       seleccionada: false,
+      obligatoria: false,
+      etapa: 'precontractual', // ✅ RF-013 Regla 13.1: Etapa del contrato
+      errorPorcentaje: '',
+      errorValorAsegurado: '',
+      errorTasa: '',
+      errorFecha: '',
     },
     {
       id: 6,
       nombre: 'ESTABILIDAD DE LA OBRA',
+      codigo: '405',
       porcentaje: 30,
       valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
+      tasaAnterior: 0, // ✅ RF-013 Regla 13.3: Tasa anterior para validar que no se reduzca
       fechaInicio: '2026-05-05',
       tiempoAdicional: 90,
       fechaFin: '2028-05-05',
       fechaVencimiento: '2031-05-04',
       prima: 0,
       seleccionada: false,
+      obligatoria: false,
+      etapa: 'contractual', // ✅ RF-013 Regla 13.1: Etapa del contrato
+      errorPorcentaje: '',
+      errorValorAsegurado: '',
+      errorTasa: '',
+      errorFecha: '',
     },
     {
       id: 7,
       nombre: 'CALIDAD DEL SERVICIO',
+      codigo: '406',
       porcentaje: 25,
       valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
+      tasaAnterior: 0, // ✅ RF-013 Regla 13.3: Tasa anterior para validar que no se reduzca
       fechaInicio: '2026-05-05',
       tiempoAdicional: 60,
       fechaFin: '2026-11-05',
       fechaVencimiento: '2027-05-04',
       prima: 0,
       seleccionada: false,
+      obligatoria: false,
+      etapa: 'contractual', // ✅ RF-013 Regla 13.1: Etapa del contrato
+      errorPorcentaje: '',
+      errorValorAsegurado: '',
+      errorTasa: '',
+      errorFecha: '',
     },
     {
       id: 8,
       nombre: 'BUEN FUNCIONAMIENTO DE LOS EQUIPOS',
+      codigo: '407',
       porcentaje: 15,
       valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
+      tasaAnterior: 0, // ✅ RF-013 Regla 13.3: Tasa anterior para validar que no se reduzca
       fechaInicio: '2026-05-05',
       tiempoAdicional: 45,
       fechaFin: '2026-10-05',
       fechaVencimiento: '2027-05-04',
       prima: 0,
       seleccionada: false,
+      obligatoria: false,
+      etapa: 'contractual', // ✅ RF-013 Regla 13.1: Etapa del contrato
+      errorPorcentaje: '',
+      errorValorAsegurado: '',
+      errorTasa: '',
+      errorFecha: '',
     },
     {
       id: 9,
       nombre: 'SUMINISTRO DE REPUESTOS',
+      codigo: '411',
       porcentaje: 10,
       valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
+      tasaAnterior: 0, // ✅ RF-013 Regla 13.3: Tasa anterior para validar que no se reduzca
       fechaInicio: '2026-05-05',
       tiempoAdicional: 30,
       fechaFin: '2026-09-05',
       fechaVencimiento: '2027-05-04',
       prima: 0,
       seleccionada: false,
+      obligatoria: false,
+      etapa: 'contractual', // ✅ RF-013 Regla 13.1: Etapa del contrato
+      errorPorcentaje: '',
+      errorValorAsegurado: '',
+      errorTasa: '',
+      errorFecha: '',
     },
     {
       id: 10,
       nombre: 'CALIDAD DE LOS BIENES SUMINISTRADOS',
+      codigo: '412',
       porcentaje: 10,
       valorAsegurado: 0, // ✅ Inicia en $0 - Usuario puede ajustar
       tasa: 0,
+      tasaAnterior: 0, // ✅ RF-013 Regla 13.3: Tasa anterior para validar que no se reduzca
       fechaInicio: '2026-05-05',
       tiempoAdicional: 30,
       fechaFin: '2026-09-05',
       fechaVencimiento: '2027-05-04',
       prima: 0,
       seleccionada: false,
+      obligatoria: false,
+      etapa: 'contractual', // ✅ RF-013 Regla 13.1: Etapa del contrato
+      errorPorcentaje: '',
+      errorValorAsegurado: '',
+      errorTasa: '',
+      errorFecha: '',
     },
   ];
 
-  // ✅ Método para seleccionar/deseleccionar cobertura
+  // ✅ RF-013 Regla 13.1: Método para seleccionar/deseleccionar cobertura
   toggleCobertura(cobertura: any): void {
+    // ✅ RF-013 Regla 13.1: No permitir deseleccionar cobertura obligatoria (403 - CUMPLIMIENTO)
+    if (cobertura.obligatoria && cobertura.seleccionada) {
+      this.showErrorNotification(
+        'La cobertura CUMPLIMIENTO (403) es obligatoria y no puede ser deseleccionada',
+      );
+      return;
+    }
+
+    // ✅ RF-013 Regla 13.5: Validar incompatibilidad antes de seleccionar
+    if (!cobertura.seleccionada) {
+      const errorIncompatibilidad = this.validarIncompatibilidadCoberturas(cobertura);
+      if (errorIncompatibilidad) {
+        this.showErrorNotification(errorIncompatibilidad);
+        return;
+      }
+    }
+
     cobertura.seleccionada = !cobertura.seleccionada;
+
+    // ✅ RF-013 Regla 13.1: Si se deselecciona, borrar todos los datos ingresados
+    if (!cobertura.seleccionada) {
+      cobertura.porcentaje = 0;
+      cobertura.valorAsegurado = 0;
+      cobertura.tasa = 0;
+      cobertura.prima = 0;
+      cobertura.errorPorcentaje = '';
+      cobertura.errorValorAsegurado = '';
+      cobertura.errorTasa = '';
+      cobertura.errorFecha = '';
+    }
+
+    // ✅ RF-013 Regla 13.1: Validar que se haya seleccionado al menos una cobertura además de la básica
+    const coberturasSeleccionadas = this.coberturasCumplimiento.filter(c => c.seleccionada);
+    const coberturaBasica = this.coberturasCumplimiento.find(c => c.obligatoria);
+    const otrasSeleccionadas = coberturasSeleccionadas.filter(c => !c.obligatoria);
+
+    if (coberturaBasica && coberturaBasica.seleccionada && otrasSeleccionadas.length === 0) {
+      // Permitir solo la básica temporalmente, pero mostrar advertencia
+      this.logger.warn('Solo la cobertura básica está seleccionada');
+    }
+
     this.calcularTotalPrima();
+  }
+
+  // ✅ RF-013 Regla 13.5: Validar incompatibilidad entre coberturas 402 y 413
+  validarIncompatibilidadCoberturas(coberturaNueva: any): string | null {
+    // Si se está seleccionando 402 (MANEJO DEL ANTICIPO)
+    if (coberturaNueva.codigo === '402') {
+      const pagoAnticipado = this.coberturasCumplimiento.find(
+        c => c.codigo === '413' && c.seleccionada,
+      );
+      if (pagoAnticipado) {
+        return 'No se pueden seleccionar al mismo tiempo las coberturas "MANEJO DEL ANTICIPO" (402) y "PAGO ANTICIPADO" (413)';
+      }
+    }
+
+    // Si se está seleccionando 413 (PAGO ANTICIPADO)
+    if (coberturaNueva.codigo === '413') {
+      const manejoAnticipo = this.coberturasCumplimiento.find(
+        c => c.codigo === '402' && c.seleccionada,
+      );
+      if (manejoAnticipo) {
+        return 'No se pueden seleccionar al mismo tiempo las coberturas "MANEJO DEL ANTICIPO" (402) y "PAGO ANTICIPADO" (413)';
+      }
+    }
+
+    return null;
+  }
+
+  // ✅ RF-013 Regla 13.1: Validar porcentaje asegurado (0.01% - 100%)
+  validarPorcentajeAsegurado(cobertura: any): boolean {
+    cobertura.errorPorcentaje = '';
+
+    // Validar que exista valor de contrato antes de permitir porcentajes
+    if (!this.valorContrato || this.valorContrato <= 0) {
+      cobertura.errorPorcentaje =
+        'Debe ingresar un valor de contrato antes de especificar porcentajes';
+      return false;
+    }
+
+    const porcentaje = Number(cobertura.porcentaje) || 0;
+
+    // Validar rango 0.01% - 100%
+    if (porcentaje < 0.01) {
+      cobertura.errorPorcentaje = 'El porcentaje debe estar entre 0.01% y 100%';
+      return false;
+    }
+
+    if (porcentaje > 100) {
+      cobertura.errorPorcentaje = 'El porcentaje debe estar entre 0.01% y 100%';
+      return false;
+    }
+
+    if (porcentaje === 0) {
+      cobertura.errorPorcentaje = 'El porcentaje debe estar entre 0.01% y 100%';
+      return false;
+    }
+
+    return true;
+  }
+
+  // ✅ RF-013 Regla 13.1: Validar valor asegurado
+  validarValorAsegurado(cobertura: any): boolean {
+    cobertura.errorValorAsegurado = '';
+
+    // Validar que exista valor de contrato
+    if (!this.valorContrato || this.valorContrato <= 0) {
+      cobertura.errorValorAsegurado = 'Favor ingresar datos en el campo Valor Contrato.';
+      return false;
+    }
+
+    const valorAsegurado = Number(cobertura.valorAsegurado) || 0;
+
+    // Validar que sea positivo y mayor que cero
+    if (valorAsegurado <= 0) {
+      cobertura.errorValorAsegurado = 'Valor asegurado debe ser mayor que cero (0)';
+      return false;
+    }
+
+    // Validar que no exceda el valor del contrato
+    if (valorAsegurado > this.valorContrato) {
+      cobertura.errorValorAsegurado = 'Valor asegurado no puede exceder el valor del contrato';
+      return false;
+    }
+
+    // ✅ RF-013 Regla 13.1: Calcular porcentaje automáticamente desde valor asegurado
+    const porcentajeCalculado = (valorAsegurado / this.valorContrato) * 100;
+    cobertura.porcentaje = Number(porcentajeCalculado.toFixed(2));
+
+    return true;
+  }
+
+  // ✅ RF-013 Regla 13.1: Validar tasa
+  validarTasa(cobertura: any): boolean {
+    cobertura.errorTasa = '';
+
+    const tasa = Number(cobertura.tasa) || 0;
+    const tasaAnterior = Number(cobertura.tasaAnterior) || tasa;
+
+    // Validar que sea mayor que cero
+    if (tasa <= 0) {
+      cobertura.errorTasa = 'El valor de la tasa no puede ser cero (0)';
+      return false;
+    }
+
+    // ✅ RF-013 Regla 13.3: Si usuario interno modifica tasa, no puede ser menor que la actual
+    if (this.tipoUsuario === 'administrador' && tasa < tasaAnterior && tasaAnterior > 0) {
+      cobertura.errorTasa = 'La nueva tasa no puede ser menor que la actual';
+      return false;
+    }
+
+    // TODO: RF-013 Regla 13.1: Validar tasa mínima según condiciones/programa
+    // const tasaMinima = this.obtenerTasaMinimaCobertura(cobertura);
+    // if (tasa < tasaMinima) {
+    //   cobertura.errorTasa = 'El valor ingresado debe ser mayor al de las condiciones.';
+    //   return false;
+    // }
+
+    return true;
+  }
+
+  // ✅ RF-013 Regla 13.4: Validar fecha de inicio de vigencia
+  validarFechaInicio(cobertura: any): boolean {
+    cobertura.errorFecha = '';
+
+    if (!cobertura.fechaInicio) {
+      cobertura.errorFecha = 'La fecha de inicio es obligatoria';
+      return false;
+    }
+
+    const fechaInicio = new Date(cobertura.fechaInicio);
+    const fechaInicioPoliza = this.fechaInicioPoliza ? new Date(this.fechaInicioPoliza) : null;
+    const fechaInicioContrato = this.fechaInicioContrato
+      ? new Date(this.fechaInicioContrato)
+      : null;
+
+    // Validar que no sea anterior a la fecha de inicio de la póliza
+    if (fechaInicioPoliza && fechaInicio < fechaInicioPoliza) {
+      cobertura.errorFecha =
+        'La fecha de inicio no puede ser anterior a la fecha de inicio de vigencia de la póliza';
+      return false;
+    }
+
+    // Validar que no sea menor a la fecha de inicio del contrato
+    if (fechaInicioContrato && fechaInicio < fechaInicioContrato) {
+      cobertura.errorFecha = 'No puede ser menor a la fecha de inicio del contrato';
+      return false;
+    }
+
+    // ✅ RF-013 Regla 13.4: Validar límite de retroactividad (90 días)
+    if (fechaInicioPoliza) {
+      const diasDiferencia = Math.floor(
+        (fechaInicioPoliza.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24),
+      );
+      if (diasDiferencia > this.limiteRetroactividadDias) {
+        cobertura.errorFecha = `La fecha de inicio no puede ser anterior a más de ${this.limiteRetroactividadDias} días de la fecha de inicio de la póliza`;
+        return false;
+      }
+    }
+
+    // Validar que no sea mayor a la fecha fin del contrato
+    if (this.fechaFinContrato) {
+      const fechaFinContrato = new Date(this.fechaFinContrato);
+      if (fechaInicio > fechaFinContrato) {
+        cobertura.errorFecha = 'La fecha de inicio no puede ser mayor a la fecha fin del contrato';
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // ✅ RF-013 Regla 13.1: Calcular fecha fin y fecha vencimiento automáticamente
+  calcularFechasCobertura(cobertura: any): void {
+    if (!cobertura.fechaInicio) return;
+
+    const fechaInicio = new Date(cobertura.fechaInicio);
+
+    // Calcular fecha fin = fecha inicio + duración contractual
+    if (this.duracionContratoDias > 0) {
+      const fechaFin = new Date(fechaInicio);
+      fechaFin.setDate(fechaFin.getDate() + this.duracionContratoDias);
+      cobertura.fechaFin = fechaFin.toISOString().split('T')[0];
+    }
+
+    // Calcular fecha vencimiento = fecha inicio + tiempo adicional + días calculados
+    const tiempoAdicional = Number(cobertura.tiempoAdicional) || 0;
+    const fechaVencimiento = new Date(fechaInicio);
+    fechaVencimiento.setDate(
+      fechaVencimiento.getDate() + tiempoAdicional + this.duracionContratoDias,
+    );
+    cobertura.fechaVencimiento = fechaVencimiento.toISOString().split('T')[0];
+  }
+
+  // ✅ RF-013 Regla 13.1: Calcular prima con coeficiente proporcional (días calendario)
+  calcularPrimaConCoeficiente(cobertura: any): number {
+    const valorAsegurado = Number(cobertura.valorAsegurado) || 0;
+    const tasa = Number(cobertura.tasa) || 0;
+
+    if (valorAsegurado <= 0 || tasa <= 0) {
+      return 0;
+    }
+
+    // Calcular días de vigencia
+    let diasVigencia = 365; // Por defecto 365 días
+    if (cobertura.fechaInicio && cobertura.fechaVencimiento) {
+      const fechaInicio = new Date(cobertura.fechaInicio);
+      const fechaVencimiento = new Date(cobertura.fechaVencimiento);
+      diasVigencia = Math.floor(
+        (fechaVencimiento.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24),
+      );
+      if (diasVigencia <= 0) diasVigencia = 365;
+    }
+
+    // Calcular coeficiente proporcional (365 días = 1)
+    const coeficiente = diasVigencia / 365;
+
+    // Fórmula: coeficiente × Valor asegurado × tasa
+    const prima = coeficiente * valorAsegurado * (tasa / 100);
+
+    return Math.round(prima);
   }
 
   // ✅ Calcular total de prima seleccionada
@@ -295,46 +659,56 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     return Math.round(valor).toLocaleString('es-CO', { maximumFractionDigits: 0 });
   }
 
-  // ✅ Actualizar valor asegurado desde input formateado y recalcular prima
+  // ✅ RF-013 Regla 13.1: Actualizar valor asegurado desde input formateado y recalcular prima
   actualizarValorAsegurado(cob: any, event: any): void {
     const valorFormateado = event.target.value || '0';
     // Remover puntos (separadores de miles) y convertir a número
     const valorLimpio = valorFormateado.replace(/\./g, '').replace(/,/g, '');
     const numero = parseInt(valorLimpio, 10) || 0;
     cob.valorAsegurado = numero;
+
+    // ✅ RF-013 Regla 13.1: Validar valor asegurado
+    this.validarValorAsegurado(cob);
+
+    // ✅ RF-013 Regla 13.1: Recalcular prima con validaciones
     this.onCampoCoberturaCambio(cob);
+
     // Actualizar el valor formateado en el input
     event.target.value = this.formatearNumero(numero);
   }
 
-  // ✅ Recalcular Prima cuando cambian los valores
+  // ✅ RF-013 Regla 13.1: Recalcular Prima cuando cambian los valores (con coeficiente proporcional)
   recalcularPrimaCobertura(cob: any): void {
-    const porcentaje = Number(cob.porcentaje) || 0;
-    const valorAsegurado = Number(cob.valorAsegurado) || 0;
-    const tasa = Number(cob.tasa) || 0;
-
-    // Fórmula: Prima = Valor Asegurado * Porcentaje / 100 * Factor Tasa
-    // Si tasa = 0, usar 1% como factor base (0.01)
-    const factorTasa = tasa > 0 ? tasa / 100 : 0.01;
-    const prima = ((valorAsegurado * porcentaje) / 100) * factorTasa;
-
-    cob.prima = Math.round(prima);
+    // ✅ RF-013 Regla 13.1: Calcular prima con coeficiente proporcional
+    cob.prima = this.calcularPrimaConCoeficiente(cob);
     console.log(
       `📊 Prima Cumplimiento recalculada: ${cob.nombre} → $${this.formatearNumero(cob.prima)}`,
     );
   }
 
-  // ✅ Método para llamar cuando cambia cualquier campo que afecta la prima
+  // ✅ RF-013 Regla 13.7: Método para llamar cuando cambia cualquier campo que afecta la prima
   onCampoCoberturaCambio(cob: any): void {
-    const porcentaje = Number(cob.porcentaje) || 0;
-    const valorAsegurado = Number(cob.valorAsegurado) || 0;
-    const tasa = Number(cob.tasa) || 0;
+    // ✅ RF-013 Regla 13.1: Validar porcentaje asegurado
+    this.validarPorcentajeAsegurado(cob);
 
-    // Fórmula: Prima = Valor Asegurado * Porcentaje / 100 * Factor Tasa
-    const factorTasa = tasa > 0 ? tasa / 100 : 0.01;
-    cob.prima = Math.round(((valorAsegurado * porcentaje) / 100) * factorTasa);
+    // ✅ RF-013 Regla 13.1: Guardar tasa anterior antes de validar (si no existe)
+    if (!cob.tasaAnterior && cob.tasa > 0) {
+      cob.tasaAnterior = cob.tasa;
+    }
 
-    console.log('🔥 Prima Cumplimiento:', cob.nombre, '→', cob.prima);
+    // ✅ RF-013 Regla 13.1: Validar tasa
+    this.validarTasa(cob);
+
+    // ✅ RF-013 Regla 13.4: Validar fecha de inicio
+    this.validarFechaInicio(cob);
+
+    // ✅ RF-013 Regla 13.1: Calcular fechas automáticamente
+    this.calcularFechasCobertura(cob);
+
+    // ✅ RF-013 Regla 13.1: Calcular prima con coeficiente proporcional
+    cob.prima = this.calcularPrimaConCoeficiente(cob);
+
+    this.logger.debug('Prima Cumplimiento calculada', { nombre: cob.nombre, prima: cob.prima });
     this.cdr.detectChanges();
   }
 
@@ -357,6 +731,110 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     return this.coberturasCumplimiento.filter(c => c.seleccionada).length;
   }
 
+  // ✅ RF-013 Regla 13.1: Obtener coberturas por etapa del contrato
+  getCoberturasPorEtapa(etapa: 'precontractual' | 'contractual'): any[] {
+    return this.coberturasCumplimiento.filter(c => c.etapa === etapa);
+  }
+
+  // ✅ RF-013 Regla 13.2: Calcular valores de coberturas desde datos de IA (público para pruebas)
+  calcularCoberturasDesdeIA(datosExtraidos: any): void {
+    if (!datosExtraidos.coberturas_o_garantias || !this.valorContrato || this.valorContrato <= 0) {
+      return;
+    }
+
+    const garantias = datosExtraidos.coberturas_o_garantias;
+    const valorContrato = this.valorContrato;
+
+    // Mapeo de códigos de cobertura de IA a códigos del sistema
+    const mapeoCoberturas: { [key: string]: string } = {
+      '403': 'CUMPLIMIENTO',
+      '401': 'SERIEDAD DE LA OFERTA',
+      '402': 'MANEJO DEL ANTICIPO',
+      '404': 'SALARIOS Y PRESTACIONES SOCIALES',
+      '405': 'ESTABILIDAD DE LA OBRA',
+      '406': 'CALIDAD DEL SERVICIO',
+      '407': 'BUEN FUNCIONAMIENTO DE LOS EQUIPOS',
+      '411': 'SUMINISTRO DE REPUESTOS',
+      '412': 'CALIDAD DE LOS BIENES SUMINISTRADOS',
+      '413': 'PAGO ANTICIPADO',
+    };
+
+    // Procesar cobertura de cumplimiento
+    if (garantias.cumplimiento) {
+      const cob = this.coberturasCumplimiento.find(c => c.codigo === '403');
+      if (cob) {
+        // Si IA retorna porcentaje, calcular valor asegurado
+        if (garantias.cumplimiento.porcentaje) {
+          cob.porcentaje = garantias.cumplimiento.porcentaje;
+          cob.valorAsegurado = Math.round(
+            (valorContrato * garantias.cumplimiento.porcentaje) / 100,
+          );
+        }
+        // Si IA retorna valor asegurado, calcular porcentaje
+        else if (garantias.cumplimiento.valor) {
+          cob.valorAsegurado = garantias.cumplimiento.valor;
+          cob.porcentaje =
+            Math.round((garantias.cumplimiento.valor / valorContrato) * 100 * 100) / 100;
+        }
+        // Si IA retorna SMLV, convertir a valor
+        else if (garantias.cumplimiento.smlv) {
+          const valorSMLV = garantias.cumplimiento.smlv * 1300000; // Valor SMLV 2024 (ajustar según año)
+          cob.valorAsegurado = valorSMLV;
+          cob.porcentaje = Math.round((valorSMLV / valorContrato) * 100 * 100) / 100;
+        }
+        this.onCampoCoberturaCambio(cob);
+      }
+    }
+
+    // Procesar otras coberturas según mapeo
+    Object.keys(mapeoCoberturas).forEach(codigo => {
+      const nombreCobertura = mapeoCoberturas[codigo];
+      const cob = this.coberturasCumplimiento.find(c => c.codigo === codigo);
+
+      if (cob && garantias[nombreCobertura.toLowerCase().replace(/\s+/g, '')]) {
+        const garantia = garantias[nombreCobertura.toLowerCase().replace(/\s+/g, '')];
+
+        // Si IA retorna porcentaje, calcular valor asegurado
+        if (garantia.porcentaje) {
+          cob.porcentaje = garantia.porcentaje;
+          cob.valorAsegurado = Math.round((valorContrato * garantia.porcentaje) / 100);
+        }
+        // Si IA retorna valor asegurado, calcular porcentaje
+        else if (garantia.valor) {
+          cob.valorAsegurado = garantia.valor;
+          cob.porcentaje = Math.round((garantia.valor / valorContrato) * 100 * 100) / 100;
+        }
+        // Si IA retorna SMLV, convertir a valor
+        else if (garantia.smlv) {
+          const valorSMLV = garantia.smlv * 1300000; // Valor SMLV 2024 (ajustar según año)
+          cob.valorAsegurado = valorSMLV;
+          cob.porcentaje = Math.round((valorSMLV / valorContrato) * 100 * 100) / 100;
+        }
+
+        this.onCampoCoberturaCambio(cob);
+      }
+    });
+
+    this.logger.debug('RF-013 Regla 13.2: Coberturas calculadas desde datos de IA');
+  }
+
+  // ✅ RF-013 Regla 13.8: Obtener valor máximo asegurado RC para administrativos
+  obtenerValorMaximoAseguradoRC(): number {
+    // ✅ RF-013 Regla 13.8: Solo aplica para empleados administrativos
+    if (this.tipoUsuario !== 'administrador') {
+      return 0; // Sin límite para otros usuarios
+    }
+
+    // TODO: Obtener valor máximo desde parametrización del backend
+    // Por ahora, valor mock (debe venir del backend según parametrización de RC)
+    if (this.valorMaximoAseguradoRC > 0) {
+      return this.valorMaximoAseguradoRC;
+    }
+
+    // Valor por defecto si no está parametrizado (ejemplo: 1.000.000.000)
+    return 1000000000;
+  }
+
   // ✅ Obtener total participación de agentes adicionales (para Paso 3)
   getTotalParticipacionAgentes(): number {
     return this.agentesAdicionales.reduce(
@@ -373,7 +851,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     );
   }
 
-  // ✅ Liquidar Prima - Calcula, muestra el total y detecta cambios
+  // ✅ RF-013 Regla 13.6: Liquidar Prima - Valida garantías y calcula prima usando servicio
   liquidarPrima(): void {
     const coberturasSeleccionadas = this.coberturasCumplimiento.filter(c => c.seleccionada);
 
@@ -383,6 +861,86 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       this.mostrarCambios = false;
       return;
     }
+
+    // ✅ RF-013 Regla 13.1: Validar que se haya seleccionado al menos una cobertura además de la básica
+    const coberturaBasica = this.coberturasCumplimiento.find(c => c.obligatoria);
+    const otrasSeleccionadas = coberturasSeleccionadas.filter(c => !c.obligatoria);
+
+    if (coberturaBasica && coberturaBasica.seleccionada && otrasSeleccionadas.length === 0) {
+      this.showErrorNotification(
+        'Debe seleccionar al menos una cobertura además de CUMPLIMIENTO (403)',
+      );
+      return;
+    }
+
+    // ✅ RF-013 Regla 13.6: Invocar servicio de validación de garantías y cálculo de prima
+    const request = {
+      coberturas: coberturasSeleccionadas.map(cob => ({
+        cobertura: {
+          id: cob.id,
+          codigo: cob.codigo || '',
+          nombre: cob.nombre,
+          porcentaje: Number(cob.porcentaje) || 0,
+          valorAsegurado: Number(cob.valorAsegurado) || 0,
+          tasa: Number(cob.tasa) || 0,
+          fechaInicio: cob.fechaInicio || '',
+          fechaFin: cob.fechaFin || '',
+          fechaVencimiento: cob.fechaVencimiento || '',
+          tiempoAdicional: Number(cob.tiempoAdicional) || 0,
+        },
+        valorContrato: this.valorContrato,
+        producto: this.tipoProducto || '',
+        programaId: this.programaParametrizado || undefined,
+        tipoUsuario: this.tipoUsuario,
+        tipoCliente: this.tipoCliente,
+      })),
+      valorContrato: this.valorContrato,
+      producto: this.tipoProducto || '',
+      programaId: this.programaParametrizado || undefined,
+      tipoUsuario: this.tipoUsuario,
+      tipoCliente: this.tipoCliente,
+      moneda: 'COP', // TODO: Obtener de datos del contrato
+    };
+
+    this.coberturaService.validarGarantiasYCalcularPrima(request).subscribe({
+      next: response => {
+        // ✅ RF-013 Regla 13.6: Actualizar primas calculadas por el servicio
+        response.coberturas.forEach((cobValidada, index) => {
+          const cob = coberturasSeleccionadas[index];
+          if (cob) {
+            // Guardar tasa anterior antes de actualizar
+            cob.tasaAnterior = cob.tasa;
+
+            // Actualizar prima calculada por el servicio
+            cob.prima = cobValidada.prima;
+
+            // Mostrar errores de validación si existen
+            if (cobValidada.validaciones.errores.length > 0) {
+              cob.errorPorcentaje =
+                cobValidada.validaciones.errores.find(e => e.includes('porcentaje')) || '';
+              cob.errorValorAsegurado =
+                cobValidada.validaciones.errores.find(e => e.includes('valor')) || '';
+              cob.errorTasa = cobValidada.validaciones.errores.find(e => e.includes('tasa')) || '';
+            }
+          }
+        });
+
+        // Actualizar prima total con prima mínima aplicada
+        this.totalPrimaLiquidada = response.primaTotal;
+        this.mostrarTotalPrima = true;
+
+        // Mostrar mensaje si se aplicó prima mínima
+        if (response.primaTotal > coberturasSeleccionadas.reduce((sum, c) => sum + c.prima, 0)) {
+          this.showSuccessNotification(
+            `Se aplicó prima mínima de póliza: $${this.formatearNumero(response.primaMinimaPoliza)}`,
+          );
+        }
+      },
+      error: error => {
+        this.logger.error('RF-013 Regla 13.6: Error al validar garantías', error);
+        this.showErrorNotification('Error al validar garantías. Intenta nuevamente.');
+      },
+    });
 
     const idsActuales = coberturasSeleccionadas.map(c => c.id);
 
@@ -481,7 +1039,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       }, 5000);
     }
 
-    console.log(`💰 Total Prima Liquidada: ${this.totalPrimaLiquidada}`);
+    this.logger.debug('Total Prima Liquidada', { total: this.totalPrimaLiquidada });
     this.showSuccessNotification(
       `Prima liquidada: ${this.formatCurrency(this.totalPrimaLiquidada)}`,
     );
@@ -543,7 +1101,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       };
       return;
     }
-    console.log('💾 Guardando coberturas:', seleccionadas);
+    this.logger.debug('Guardando coberturas', { total: seleccionadas.length });
     this.snackbarConfig = {
       ...this.snackbarConfig,
       show: true,
@@ -563,6 +1121,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   // ✅ Datos para simular carga de archivo y extracción
   fileName: string | null = null;
+
+  // ✅ Estado de procesamiento de contrato con IA
+  isProcessingContract = false;
+  contractProcessingMessage = '';
+  contractAnalysisResult: any = null;
   isProcessing = false;
   step2Data: IPolicyStep2Data = INITIAL_STEP2_DATA;
 
@@ -570,13 +1133,18 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   isContractFileRequired = true;
   contractFileError = false;
 
-  // ✅ RF-008: Constantes de validación de archivo
+  // ✅ RF-008: Constantes de validación de archivo según políticas FileNet
   readonly MAX_FILE_NAME_LENGTH = 255; // Máximo de caracteres del nombre del archivo (ajustar según requerimiento de arquitectura)
+  readonly MAX_FILE_SIZE_MB = 30; // RF-008 Regla 8.2: Máximo 30 MB
+  readonly MAX_FILE_SIZE_BYTES = 30 * 1024 * 1024; // 30MB en bytes
+  readonly VALID_FILE_EXTENSIONS = ['.pdf', '.docx', '.xlsx']; // RF-008 Regla 8.2: PDF, DOCX, XLSX
   showAlertaEliminarArchivo = false; // Flag para mostrar confirmación de eliminación
+  archivoContratoProcesando = false; // Flag para indicar que se está procesando con IA
 
   // ✅ Propiedades para el formulario paso 1
   tipoProducto = '';
   claveIntermediario = '';
+  step1Valid = false; // ✅ Estado de validación del paso 1
 
   // ✅ Valor del Contrato (con incremento/decremento)
   valorContrato = 150000000; // Valor inicial: $150.000.000
@@ -585,17 +1153,95 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ DROPDOWNS PERSONALIZADOS - Control de apertura
   dropdownsOpen: { [key: string]: boolean } = {};
   claveIntermediarioError = false;
+  claveIntermediarioValidationMessage = '';
 
   // ✅ Lista de claves del intermediario (un intermediario puede tener múltiples claves)
-  clavesIntermediario: { codigo: string; nombre: string }[] = [
-    { codigo: '53940', nombre: 'Agente Principal - Zona Norte' },
-    { codigo: '53941', nombre: 'Agente Secundario - Zona Centro' },
-    { codigo: '53942', nombre: 'Agente Comercial - Zona Sur' },
-    { codigo: '12345', nombre: 'Sucursal Bogotá' },
-    { codigo: '67890', nombre: 'Sucursal Medellín' },
-    { codigo: '11223', nombre: 'Sucursal Cali' },
-  ];
+  clavesIntermediario: { codigo: string; nombre: string }[] = [];
   nombreIntermediario = '';
+
+  private loadClavesIntermediarioDesdeSesion(): void {
+    this.logger.debug('Cargando claves desde session storage');
+    const multiclavesData = this.sessionMulticlavesService.getMulticlaves() as IMulticlavesResponse | null;
+    const totalClaves = multiclavesData?.claves?.length || 0;
+    this.logger.debug('Datos de multiclaves en session storage', { 
+      totalClaves 
+    });
+    
+    const claves = this.sessionMulticlavesService.getClavesActivas();
+    this.logger.debug('Claves activas encontradas', { total: claves.length });
+    
+    if (!claves.length) {
+      this.logger.warn('No se encontraron claves activas en session storage');
+      return;
+    }
+
+    this.clavesIntermediario = claves.map(clave => ({
+      codigo: clave.clave,
+      nombre: this.sessionMulticlavesService.getClaveDisplay(clave),
+    }));
+
+    this.logger.debug('Claves mapeadas para el dropdown', { claves: this.clavesIntermediario });
+
+    if (!this.claveIntermediario && this.clavesIntermediario.length > 0) {
+      const primeraClave = this.clavesIntermediario[0];
+      this.claveIntermediario = primeraClave.codigo;
+      this.nombreIntermediario = primeraClave.nombre;
+      this.logger.debug('Clave seleccionada automáticamente', { clave: this.claveIntermediario });
+    }
+
+    this.patchClaveIntermediarioFormulario();
+    this.validarClaveIntermediario(this.claveIntermediario);
+  }
+
+  onClaveIntermediarioChange(value: string): void {
+    this.claveIntermediario = value;
+    const claveEncontrada = this.clavesIntermediario.find(c => c.codigo === value);
+    this.nombreIntermediario = claveEncontrada?.nombre || '';
+    this.claveIntermediarioError = false;
+    this.claveIntermediarioValidationMessage = '';
+    this.patchClaveIntermediarioFormulario();
+    this.validarClaveIntermediario(value);
+  }
+
+  private validarClaveIntermediario(value: string): void {
+    if (!value) {
+      this.claveIntermediarioError = true;
+      this.claveIntermediarioValidationMessage = 'La clave del intermediario es obligatoria';
+      return;
+    }
+
+    this.recuperarAgenteService.recuperarAgente(value).subscribe({
+      next: response => {
+        // ✅ Si nombreRazonSocial ya incluye la clave (formato "53940 - Nombre"), usar directamente
+        // Si no, concatenar clave + nombre
+        const nombreCompleto = response.nombreRazonSocial || '';
+        if (nombreCompleto.startsWith(value + ' - ')) {
+          // Ya incluye la clave, usar directamente
+          this.nombreIntermediario = nombreCompleto;
+        } else if (nombreCompleto) {
+          // No incluye la clave, concatenar
+          this.nombreIntermediario = value + ' - ' + nombreCompleto;
+        } else {
+          this.nombreIntermediario = '';
+        }
+        this.claveIntermediarioError = false;
+        this.claveIntermediarioValidationMessage = '';
+      },
+      error: error => {
+        this.logger.error('Error validando clave de intermediario', error);
+        this.claveIntermediarioError = true;
+        this.claveIntermediarioValidationMessage = 'Clave inválida, verifica con tu portal';
+      },
+    });
+  }
+
+  private patchClaveIntermediarioFormulario(): void {
+    if (this.step1Form?.form && this.claveIntermediario) {
+      this.step1Form.form.patchValue({
+        claveIntermediario: this.claveIntermediario,
+      });
+    }
+  }
   selectedFileName: string | null = null;
   selectedFile: File | null = null;
   isUploading = false;
@@ -635,6 +1281,10 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   fechaFinContrato = '';
   fechaInicioRC = '2024-08-01';
   fechaFinRC = '2025-07-31';
+  fechaInicioPoliza = ''; // ✅ RF-013 Regla 13.1: Fecha de inicio de vigencia de la póliza
+  duracionContratoDias = 0; // ✅ RF-013 Regla 13.1: Duración contractual en días
+  limiteRetroactividadDias = 90; // ✅ RF-013 Regla 13.4: Límite máximo de retroactividad (parámetro)
+  valorMaximoAseguradoRC = 0; // ✅ RF-013 Regla 13.8: Valor máximo asegurado RC para administrativos (parametrizado)
 
   // ✅ Búsqueda de nombres Tomador/Asegurado
   nombreTomador = '';
@@ -694,6 +1344,12 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   celularAsesor = '';
   correoTomador = '';
   correoAsesor = '';
+
+  // ✅ RF-005 Regla 5.8, 5.9: Validaciones de campos SARLAFT
+  errorCelularCliente = '';
+  errorCorreoTomador = '';
+  errorCelularAsesor = '';
+  errorCorreoAsesor = '';
 
   // ✅ Modal: Solicitar Cupo (cuando el tomador no tiene cupo disponible)
   showSolicitarCupo = false;
@@ -819,6 +1475,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   coaseguroCedidoNumeroPol = '';
   coaseguroCedidoCertificado = '';
   coaseguroCedidoEditIndex: number | null = null; // Para edición
+  errorParticipacionCoaseguro = ''; // ✅ RF-007 Regla 7.5: Error de validación de participación
 
   // Alerta de confirmación para eliminar coaseguro
   showAlertaEliminarCoaseguro = false;
@@ -1276,13 +1933,21 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     private readonly clienteValidacionService: ClienteValidacionService, // ✅ RF-005
     private readonly productoValidacionService: ProductoValidacionService, // ✅ RF-005
     private readonly clienteEnfoqueService: ClienteEnfoqueService, // ✅ RF-005
+    private readonly facade: PolicyInputFacadeService, // ✅ Facade Pattern - Reemplaza múltiples servicios
+    private readonly contractAIService: ContractAIService, // ✅ RF-008, RF-009
+    private readonly financialStatementService: FinancialStatementService, // ✅ Servicio de estados financieros
+    private readonly fileStorageService: FileStorageService, // ✅ RF-008, RF-009
+    private readonly coberturaService: CoberturaService, // ✅ RF-013 Regla 13.6
+    private readonly recuperarAgenteService: RecuperarAgenteService,
+    private readonly sessionMulticlavesService: SessionMulticlavesService,
+    private readonly sessionService: SessionService,
+    private readonly logger: LoggerService,
     private readonly ngZone: NgZone,
     private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    console.log('🚀 POLICY-INPUT: ngOnInit ejecutado');
-    console.log('🔍 Estado inicial:', {
+    this.logger.debug('ngOnInit ejecutado', {
       currentStep: this.currentStep,
       isViewDetailsMode: this.isViewDetailsMode,
       selectedAction: this.selectedAction,
@@ -1304,7 +1969,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
     // ✅ Obtener parámetros desde query parameters
     this.route.queryParams.subscribe(params => {
-      console.log('🔍 POLICY-INPUT: Query params recibidos:', params);
+      this.logger.debug('Query params recibidos', params);
       this.action = (params['action'] as PolicyInputAction) || PolicyInputAction.COTIZAR;
 
       // ✅ Actualizar cache del actionLabel cuando cambia la acción
@@ -1324,14 +1989,25 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       const shouldPreload = params['preload'] === 'true';
       const isReadonly = params['readonly'] === 'true';
 
-      console.log('🔍 POLICY-INPUT: isFromModify:', isFromModify);
-      console.log('🔍 POLICY-INPUT: isFromViewDetails:', isFromViewDetails);
-      console.log('🔍 POLICY-INPUT: itemId:', itemId);
-      console.log('🔍 POLICY-INPUT: shouldPreload:', shouldPreload);
+      // ✅ RF-009: Procesar datos del contrato desde contract-reader
+      const contractAnalysis = params['contractAnalysis'];
+      const datosExtraidos = params['datosExtraidos'];
+
+      this.logger.debug('Parámetros de navegación', { isFromModify, isFromViewDetails, itemId, shouldPreload, contractAnalysis, datosExtraidos });
+
+      // ✅ RF-009: Procesar datos extraídos del contrato
+      if (datosExtraidos) {
+        try {
+          const datos = JSON.parse(datosExtraidos);
+          this.procesarDatosContratoIA(datos);
+        } catch (error) {
+          this.logger.error('Error al parsear datosExtraidos', error);
+        }
+      }
 
       if ((isFromModify || isFromViewDetails) && itemId && shouldPreload) {
         const actionLabel = isFromViewDetails ? 'vista de detalles' : 'modificación';
-        console.log(`📝 Cargando datos para ${actionLabel} desde cotización:`, itemId);
+        this.logger.debug(`Cargando datos para ${actionLabel} desde cotización`, { itemId });
 
         this.loadDataForModification(itemId, isFromViewDetails, isReadonly);
 
@@ -1340,26 +2016,22 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           const stepNumber = parseInt(targetStep);
           const stepIndex = stepNumber - 1; // Convertir a índice base 0
 
-          console.log('🔍 POLICY-INPUT: targetStep recibido:', targetStep);
-          console.log('🔍 POLICY-INPUT: stepNumber parsed:', stepNumber);
-          console.log('🔍 POLICY-INPUT: stepIndex calculado:', stepIndex);
+          this.logger.debug('Navegación a paso específico', { targetStep, stepNumber, stepIndex });
 
           this.currentStep = stepIndex;
           this.stepperConfig.activeIndex = this.currentStep;
 
-          console.log('🎯 NAVEGANDO directamente al paso:', stepNumber, '(índice:', stepIndex, ')');
-          console.log('🎯 currentStep después:', this.currentStep);
-          console.log('🎯 stepperConfig.activeIndex después:', this.stepperConfig.activeIndex);
+          this.logger.debug('Navegación directa completada', { stepNumber, stepIndex, currentStep: this.currentStep, activeIndex: this.stepperConfig.activeIndex });
         } else {
-          console.log('⚠️ POLICY-INPUT: No se proporcionó targetStep');
+          this.logger.warn('No se proporcionó targetStep');
         }
       } else {
         // ✅ IMPORTANTE: Solo resetear si NO hay datos guardados en sessionStorage
         if (!this.hayDatosGuardados()) {
-          console.log('🔄 No hay datos guardados, reseteando formulario');
+          this.logger.debug('No hay datos guardados, reseteando formulario');
           this.resetFormState();
         } else {
-          console.log('💾 Hay datos guardados, NO se resetea el formulario');
+          this.logger.debug('Hay datos guardados, NO se resetea el formulario');
         }
       }
     });
@@ -1372,20 +2044,21 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
     // ✅ Inicializar con "cotizar" seleccionado por defecto
     this.selectAction('cotizar');
+    this.loadClavesIntermediarioDesdeSesion();
 
     // ✅ Suscribirse a cambios del formulario del paso 1 para detectar cambios en el producto
     // Usar setTimeout para asegurar que el formulario esté completamente inicializado
     setTimeout(() => {
       if (this.step1Form?.form) {
         this.step1Form.form.valueChanges.subscribe(() => {
-          console.log('🔄 Formulario paso 1 cambió, verificando grandes beneficiarios...');
+          this.logger.debug('Formulario paso 1 cambió, verificando grandes beneficiarios');
           this.checkGrandesBeneficiarios();
         });
 
         // ✅ Verificar estado inicial también
         this.checkGrandesBeneficiarios();
       } else {
-        console.error('❌ step1Form.form no está disponible');
+        this.logger.error('step1Form.form no está disponible');
       }
     }, 100);
 
@@ -1500,7 +2173,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
       // ✅ En modo COTIZAR: Modal informativo, permite avanzar
       if (this.action === PolicyInputAction.COTIZAR) {
-        console.log('📋 Modo COTIZAR: Modal SARLAFT informativo, avanzando automáticamente');
+        this.logger.debug('Modo COTIZAR: Modal SARLAFT informativo, avanzando automáticamente');
         // Avanzar automáticamente después de mostrar el modal
         setTimeout(() => {
           this.nextStep();
@@ -1510,7 +2183,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
       // ✅ En modo EMITIR: Modal bloqueante, no avanza hasta actualizar
       if (this.action === PolicyInputAction.EMITIR) {
-        console.log('📋 Modo EMITIR: Modal SARLAFT bloqueante, esperando actualización');
+        this.logger.debug('Modo EMITIR: Modal SARLAFT bloqueante, esperando actualización');
         return; // No avanzar hasta que se actualice
       }
     }
@@ -1527,17 +2200,17 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     class: 'stepper-responsive', // ✅ Clase personalizada para responsive
     items: [
       {
-        label: 'producto y contrato',
+        label: 'Producto y Contrato',
         icon: 'fa-solid fa-file-contract',
         command: () => this.goToStep(0),
       },
       {
-        label: 'formulario',
+        label: 'Formulario',
         icon: 'fa-solid fa-edit',
         command: () => this.goToStep(1),
       },
       {
-        label: 'confirmación',
+        label: 'Confirmación',
         icon: 'fa-solid fa-check-circle',
         command: () => this.goToStep(2),
       },
@@ -1581,12 +2254,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   // ✅ Botones para el paso 3 - Dinámicos según la acción
   get btnConfirmAndIssue(): ILibTbButton {
-    console.log(
-      '🔍 DEBUG: btnConfirmAndIssue getter llamado, selectedAction:',
-      this.selectedAction,
-      'loading:',
-      this.loading,
-    );
+    this.logger.debug('btnConfirmAndIssue getter llamado', { selectedAction: this.selectedAction, loading: this.loading });
     return {
       label: this.selectedAction === 'cotizar' ? 'Generar Cotización' : 'Confirmar y Emitir Póliza',
       icon:
@@ -1597,12 +2265,10 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       loading: this.loading,
       disabled: this.loading,
       libTbClick: () => {
-        console.log('🔥 BOTÓN CLICK DETECTADO! selectedAction:', this.selectedAction);
+        this.logger.debug('Botón click detectado', { selectedAction: this.selectedAction });
         if (this.selectedAction === 'cotizar') {
-          console.log('🔥 LLAMANDO onGenerateQuote()');
           this.onGenerateQuote();
         } else {
-          console.log('🔥 LLAMANDO confirmAndIssuePolicy()');
           this.confirmAndIssuePolicy();
         }
       },
@@ -1686,19 +2352,17 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     dataQaId: 'contract-file-upload',
     multiple: false,
     dragDropLabel: 'Seleccionar archivo',
-    dragDropIcon: 'fa-regular fa-upload', // ✅ Icono de upload en línea (outline) según Sistema de Diseño
+    dragDropIcon: 'fa-solid fa-upload', // ✅ Icono de upload en línea (outline) según Sistema de Diseño
     caption: 'Peso máximo por cada archivo: 30 MB. Formatos permitidos: PDF, Word, Excel.',
     avaibleTypes: [
-      'application/pdf', // PDF
-      'application/msword', // DOC
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
-      'application/vnd.ms-excel', // XLS
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
+      'application/pdf', // ✅ RF-008 Regla 8.2: PDF
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // ✅ RF-008 Regla 8.2: DOCX
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // ✅ RF-008 Regla 8.2: XLSX
     ],
-    maxSize: 31457280, // 30MB en bytes
+    maxSize: 31457280, // ✅ RF-008 Regla 8.2: 30MB en bytes según políticas FileNet
     errorText: {
-      type: 'Las extensiones soportadas son: *.DOCX, XLSX y *.PDF',
-      maxSize: 'El tamaño máximo del archivo 30 MB',
+      type: 'Las extensiones soportadas son: *.DOCX, XLSX y *.PDF', // ✅ RF-008 Regla 8.2: Mensaje exacto
+      maxSize: 'El tamaño máximo del archivo 30 MB', // ✅ RF-008 Regla 8.2: Mensaje exacto
       length: 'Solo se permite un archivo a la vez.',
     },
     customAlert: {
@@ -2389,26 +3053,27 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // ✅ RF-008: VALIDAR EXTENSIÓN - Solo PDF, Word, Excel (NO imágenes)
-      const validExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
+      // ✅ RF-008 Regla 8.2: VALIDAR EXTENSIÓN - Solo PDF, DOCX, XLSX según políticas FileNet
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
 
-      if (!validExtensions.includes(extension)) {
-        // ✅ RF-008: Mostrar modal de archivo no compatible
-        this.mostrarToastArchivoNoValido(file.name);
+      if (!this.VALID_FILE_EXTENSIONS.includes(extension)) {
+        // ✅ RF-008 Regla 8.2: Mensaje exacto según especificación
+        this.showErrorNotification('Las extensiones soportadas son: *.DOCX, XLSX y *.PDF');
         input.value = ''; // Limpiar input
         return;
       }
 
-      // ✅ RF-008: VALIDAR TAMAÑO - Máximo 30 MB
-      if (file.size > 30 * 1024 * 1024) {
+      // ✅ RF-008 Regla 8.2: VALIDAR TAMAÑO - Máximo 30 MB
+      if (file.size > this.MAX_FILE_SIZE_BYTES) {
+        // ✅ RF-008 Regla 8.2: Mensaje exacto según especificación
         this.showErrorNotification('El tamaño máximo del archivo 30 MB');
         input.value = ''; // Limpiar input
         return;
       }
 
-      // ✅ RF-008: VALIDAR LONGITUD DEL NOMBRE DEL ARCHIVO
+      // ✅ RF-008 Regla 8.2: VALIDAR LONGITUD DEL NOMBRE DEL ARCHIVO
       if (file.name.length > this.MAX_FILE_NAME_LENGTH) {
+        // ✅ RF-008 Regla 8.2: Mensaje exacto según especificación (XX se reemplaza con el valor real)
         this.showErrorNotification(
           `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
         );
@@ -2417,6 +3082,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       }
 
       this.selectedFile = file;
+      this.selectedFileName = file.name; // ✅ RF-008: Establecer nombre inmediatamente
+      this.fileName = file.name; // ✅ RF-008: Establecer nombre inmediatamente
       this.contractFileError = false;
 
       // Simular upload con progreso
@@ -2434,11 +3101,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           clearInterval(this.uploadInterval);
           this.uploadInterval = null;
           this.isUploading = false;
-          if (this.selectedFile) {
-            this.selectedFileName = this.selectedFile.name;
-            this.fileName = this.selectedFile.name;
-            console.log('✅ Archivo subido:', this.selectedFileName);
-          }
+          console.log('✅ Archivo subido:', this.selectedFileName);
         }
       }, 150);
     }
@@ -2536,23 +3199,24 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
       const file = event.dataTransfer.files[0];
 
-      // ✅ RF-008: Validar extensión - Solo PDF, Word, Excel (NO imágenes)
-      const validExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
+      // ✅ RF-008 Regla 8.2: Validar extensión - Solo PDF, DOCX, XLSX según políticas FileNet
       const extension = '.' + file.name.split('.').pop()?.toLowerCase();
-      if (!validExtensions.includes(extension)) {
-        // ✅ RF-008: Mostrar modal de archivo no compatible
-        this.mostrarToastArchivoNoValido(file.name);
+      if (!this.VALID_FILE_EXTENSIONS.includes(extension)) {
+        // ✅ RF-008 Regla 8.2: Mensaje exacto según especificación
+        this.showErrorNotification('Las extensiones soportadas son: *.DOCX, XLSX y *.PDF');
         return;
       }
 
-      // ✅ RF-008: Validar tamaño (30 MB)
-      if (file.size > 30 * 1024 * 1024) {
+      // ✅ RF-008 Regla 8.2: Validar tamaño (30 MB)
+      if (file.size > this.MAX_FILE_SIZE_BYTES) {
+        // ✅ RF-008 Regla 8.2: Mensaje exacto según especificación
         this.showErrorNotification('El tamaño máximo del archivo 30 MB');
         return;
       }
 
-      // ✅ RF-008: Validar longitud del nombre del archivo
+      // ✅ RF-008 Regla 8.2: Validar longitud del nombre del archivo
       if (file.name.length > this.MAX_FILE_NAME_LENGTH) {
+        // ✅ RF-008 Regla 8.2: Mensaje exacto según especificación
         this.showErrorNotification(
           `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
         );
@@ -2585,7 +3249,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
     this.showSuccessNotification(`✅ Documento "${nuevoDoc.nombreArchivo}" agregado`);
     console.log('📁 Documentos soporte:', this.documentosSoporte);
-    
+
     // ✅ AJUSTE LÍNEA: Mock - Simular extracción de IA del valor del contrato cuando se carga archivo
     // TODO: Reemplazar con llamada real al servicio de IA cuando esté disponible
     setTimeout(() => {
@@ -2593,12 +3257,35 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     }, 1000); // Simular delay de procesamiento de IA
   }
 
-  // ✅ Método para agregar documento usando el diseño original con spinner
+  // ✅ RF-008: Método para agregar documento - Invoca servicio lector de contratos
   agregarDocumentoALista(): void {
     if (!this.tipoDocumentoSoporte || !this.selectedFileName || !this.selectedFile) {
       this.showErrorNotification('Selecciona el tipo de documento y carga un archivo');
       return;
     }
+
+    // ✅ RF-008: Validar archivo antes de agregar
+    const extension = '.' + this.selectedFile.name.split('.').pop()?.toLowerCase();
+    if (!this.VALID_FILE_EXTENSIONS.includes(extension)) {
+      this.showErrorNotification('Las extensiones soportadas son: *.DOCX, XLSX y *.PDF');
+      return;
+    }
+
+    if (this.selectedFile.size > this.MAX_FILE_SIZE_BYTES) {
+      this.showErrorNotification('El tamaño máximo del archivo 30 MB');
+      return;
+    }
+
+    if (this.selectedFile.name.length > this.MAX_FILE_NAME_LENGTH) {
+      this.showErrorNotification(
+        `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
+      );
+      return;
+    }
+
+    // ✅ RF-008: Al hacer clic en "Agregar documento", invocar servicio del lector de contratos
+    this.archivoContratoProcesando = true;
+    this.invocarLectorContratos(this.selectedFile);
 
     const nuevoDoc = {
       tipo: this.tipoDocumentoSoporte,
@@ -2617,6 +3304,132 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
     this.showSuccessNotification(`✅ Documento "${nuevoDoc.nombreArchivo}" agregado a la lista`);
     console.log('📁 Documentos soporte:', this.documentosSoporte);
+  }
+
+  /**
+   * ✅ RF-008: Invocar servicio del lector de contratos al agregar documento
+   * @param file Archivo del contrato
+   */
+  private invocarLectorContratos(file: File): void {
+    if (!file) {
+      return;
+    }
+
+    // ✅ Metadata reservada para uso futuro (no se usa en la nueva firma del servicio)
+    // const idMongo = this.generarIdMongo();
+    // const metadata: IFileStorageMetadata = { ... };
+
+    // ✅ Obtener correo del usuario desde la sesión
+    const correoUsuario = this.sessionService.getEmail();
+    if (!correoUsuario) {
+      console.error('❌ RF-008: No se encontró el correo del usuario en la sesión');
+      this.archivoContratoProcesando = false;
+      return;
+    }
+
+    // ✅ Generar ID único para el frontend
+    const idFront = `front_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+    // ✅ RF-008: Invocar servicio del lector de contratos
+    this.contractAIService.procesarContrato(file, correoUsuario, idFront).subscribe({
+      next: response => {
+        console.log('✅ RF-008: Lector de contratos procesado:', response);
+        this.archivoContratoProcesando = false;
+
+        // Si hay datos extraídos, procesarlos
+        if (response.datosExtraidos) {
+          this.procesarDatosContratoIA(response.datosExtraidos);
+        }
+
+        this.cdr.detectChanges();
+      },
+      error: error => {
+        console.error('❌ RF-008: Error al procesar contrato:', error);
+        this.archivoContratoProcesando = false;
+        // No bloquear el proceso, solo mostrar advertencia
+        this.showErrorNotification(
+          'No se pudo procesar el contrato automáticamente. Puedes continuar ingresando los datos manualmente.',
+        );
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  /**
+   * Formatear fecha YYYYMMDD (helper)
+   */
+  private formatearFechaYYYYMMDD(fecha: Date): string {
+    const año = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    return `${año}${mes}${dia}`;
+  }
+
+  /**
+   * ✅ RF-008: Almacenar archivo en S3 al hacer clic en "siguiente"
+   * El archivo se dejará inicialmente en S3 y luego se enviará a FileNet en proceso batch
+   * @param file Archivo a almacenar
+   */
+  private almacenarArchivoEnS3(file: File): void {
+    if (!file) {
+      return;
+    }
+
+    // Preparar metadata según RF-009 Regla 9.6
+    const idMongo = this.generarIdMongo();
+    const metadata: IFileStorageMetadata = {
+      idMongo,
+      seccion: this.facade.getConfig().codSecc || '4',
+      producto:
+        this.tipoProducto === 'grandes-beneficiarios'
+          ? '440'
+          : this.tipoProducto === 'particulares'
+            ? '450'
+            : '455',
+      tipoDocTomador: this.tipoDocumentoTomador || this.facade.getSessionData().tipoDocumento || 'CC',
+      nroDocTomador: this.numeroDocumentoTomador || this.facade.getSessionData().numeroDocumento || '',
+      tipoArchivo: TipoArchivo.CONTRATO,
+      fecha: this.formatearFechaYYYYMMDD(new Date()),
+      estado: EstadoArchivo.PE, // Pendiente - se moverá a FileNet en proceso batch
+      formato: this.obtenerFormatoArchivoSeguro(file),
+    };
+
+    // ✅ RF-008: Subir archivo a S3
+    this.fileStorageService.subirAS3(file, metadata).subscribe({
+      next: result => {
+        console.log('✅ RF-008: Archivo almacenado en S3:', result);
+        // El archivo quedará en S3 y se moverá a FileNet en proceso batch según RF-008
+      },
+      error: error => {
+        console.error('❌ RF-008: Error al almacenar archivo en S3:', error);
+        this.showErrorNotification('Error al almacenar el archivo. Intenta nuevamente.');
+      },
+    });
+  }
+
+  /**
+   * Generar ID MongoDB (helper duplicado para evitar errores)
+   */
+  private generarIdMongo(): string {
+    const timestamp = Date.now().toString(16);
+    const random = Array.from({ length: 16 }, () =>
+      Math.floor(Math.random() * 16).toString(16),
+    ).join('');
+    return timestamp + random;
+  }
+
+  /**
+   * ✅ RF-008: Obtener formato de archivo de forma segura (maneja errores)
+   */
+  private obtenerFormatoArchivoSeguro(file: File): string {
+    try {
+      return this.fileStorageService.obtenerFormatoArchivo(file);
+    } catch (error) {
+      console.warn('⚠️ Error al obtener formato de archivo, usando extensión:', error);
+      // Fallback: obtener extensión del nombre del archivo
+      const extension = file.name.split('.').pop()?.toUpperCase() || 'PDF';
+      return extension === 'DOCX' ? 'DOCX' : extension === 'XLSX' ? 'XLSX' : 'PDF';
+    }
   }
 
   eliminarDocumentoSoporte(index: number): void {
@@ -2731,7 +3544,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     const numero = parseInt(valorLimpio, 10) || 0;
     this.valorContrato = numero;
     console.log(`💰 Valor del Contrato actualizado: ${this.formatearNumero(this.valorContrato)}`);
-    
+
     // ✅ AJUSTE LÍNEA: Recalcular automáticamente valorAsegurado de coberturas seleccionadas
     this.recalcularValoresAseguradosDesdeContrato();
   }
@@ -2742,15 +3555,17 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     // Mock: Simular que la IA extrajo un valor del contrato
     // En producción, esto vendría del servicio de lectura de contratos
     const valorExtraidoPorIA = 150000000; // Mock: Valor extraído por IA
-    
+
     if (this.valorContrato === 0 || !this.valorContrato) {
       this.valorContrato = valorExtraidoPorIA;
       console.log(`🤖 IA extrajo valor del contrato: ${this.formatearNumero(this.valorContrato)}`);
-      
+
       // Recalcular valores asegurados automáticamente
       this.recalcularValoresAseguradosDesdeContrato();
     } else {
-      console.log(`ℹ️ Valor del contrato ya ingresado manualmente: ${this.formatearNumero(this.valorContrato)}`);
+      console.log(
+        `ℹ️ Valor del contrato ya ingresado manualmente: ${this.formatearNumero(this.valorContrato)}`,
+      );
     }
   }
 
@@ -2766,15 +3581,45 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       if (cob.seleccionada && cob.porcentaje > 0) {
         const nuevoValorAsegurado = Math.round((this.valorContrato * cob.porcentaje) / 100);
         cob.valorAsegurado = nuevoValorAsegurado;
-        
+
         // Recalcular prima también (simplificado - se calculará cuando se liquide)
         // cob.prima = this.recalcularPrimaCobertura(cob);
-        
-        console.log(`🔄 ${cob.nombre}: ${cob.porcentaje}% de ${this.formatearNumero(this.valorContrato)} = ${this.formatearNumero(nuevoValorAsegurado)}`);
+
+        console.log(
+          `🔄 ${cob.nombre}: ${cob.porcentaje}% de ${this.formatearNumero(this.valorContrato)} = ${this.formatearNumero(nuevoValorAsegurado)}`,
+        );
       }
     });
 
     // Recalcular total de prima
+    this.calcularTotalPrima();
+  }
+
+  // ✅ Método para manejar cambio de formulario del paso 1
+  onStep1FormChange(formValues: any): void {
+    this.logger.debug('Formulario paso 1 cambió', formValues);
+    // ✅ Guardar datos inmediatamente
+    this.guardarDatosFormulario();
+  }
+
+  // ✅ Método para manejar cambio de formulario del paso 2
+  onStep2FormChange(formValues: any): void {
+    this.logger.debug('Formulario paso 2 cambió', formValues);
+    // ✅ Guardar datos inmediatamente
+    this.guardarDatosFormulario();
+  }
+
+  // ✅ Método para manejar cambio de total prima cumplimiento
+  onTotalPrimaCumplimientoChange(totalPrima: number): void {
+    this.logger.debug('Total prima cumplimiento cambió', totalPrima);
+    // ✅ Recalcular totales si es necesario
+    this.calcularTotalPrima();
+  }
+
+  // ✅ Método para manejar cambio de total prima RC
+  onTotalPrimaRCChange(totalPrima: number): void {
+    this.logger.debug('Total prima RC cambió', totalPrima);
+    // ✅ Recalcular totales si es necesario
     this.calcularTotalPrima();
   }
 
@@ -2810,31 +3655,6 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     ) {
       this.validarCombinacionClientes();
     }
-  }
-
-  // ✅ Método para manejar cambio de clave del intermediario
-  onClaveIntermediarioChange(value: string): void {
-    console.log('🔑 Clave del intermediario cambiada a:', value);
-    // Buscar si la clave existe en la lista predefinida
-    const intermediarioEncontrado = this.clavesIntermediario.find(c => c.codigo === value);
-    if (intermediarioEncontrado) {
-      this.nombreIntermediario = intermediarioEncontrado.nombre;
-      console.log('✅ Intermediario encontrado:', intermediarioEncontrado.nombre);
-    } else if (value && value.length >= 3) {
-      // Si no está en la lista pero tiene al menos 3 caracteres, simular búsqueda
-      this.nombreIntermediario = `Intermediario Manual - Clave: ${value}`;
-      console.log('📝 Clave manual ingresada:', value);
-    } else {
-      this.nombreIntermediario = '';
-    }
-    
-    // ✅ RF-007 Regla 7.2: Validar Grupo Bolívar cuando cambia la clave (solo cliente ocasional)
-    if (this.tipoCliente === 'ocasional' && value && this.tipoDocumentoTomador && this.numeroDocumentoTomador) {
-      this.validarGrupoBolivar();
-    }
-    
-    // ✅ GUARDAR INMEDIATAMENTE al cambiar campo (después de asignar nombreIntermediario)
-    this.guardarDatosFormulario();
   }
 
   // ✅ Método para abrir ayuda
@@ -2921,6 +3741,18 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         return;
       }
 
+      // ✅ RF-008: Al hacer clic en "siguiente", almacenar archivo en S3
+      if (this.selectedFile) {
+        this.almacenarArchivoEnS3(this.selectedFile);
+      }
+
+      // También almacenar documentos de soporte si existen
+      this.documentosSoporte.forEach(doc => {
+        if (doc.archivo) {
+          this.almacenarArchivoEnS3(doc.archivo);
+        }
+      });
+
       // ✅ RF-007 Regla 7.4: Si es Grandes Beneficiarios, validar que programa esté seleccionado
       if (this.tipoProducto === 'grandes-beneficiarios') {
         if (
@@ -2941,7 +3773,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
             tipoDocumentoAsegurado: this.tipoDocumentoAsegurado,
             numeroDocumentoAsegurado: this.numeroDocumentoAsegurado,
           });
-          
+
           // ✅ RF-007 Regla 7.4: Si no hay programa seleccionado, mostrar modal
           if (!this.programaParametrizado || !this.programaSeleccionadoId) {
             this.mostrarModalAseguradoNoEnPrograma();
@@ -3272,21 +4104,101 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     if (files.length > 0) {
       const file = files[0];
 
-      // ✅ RF-008: Validar longitud del nombre del archivo
+      // ✅ RF-008 Regla 8.2: VALIDAR EXTENSIÓN - Solo PDF, DOCX, XLSX según políticas FileNet
+      const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+      if (!this.VALID_FILE_EXTENSIONS.includes(extension)) {
+        // ✅ RF-008 Regla 8.2: Mensaje exacto según especificación
+        this.showErrorNotification('Las extensiones soportadas son: *.DOCX, XLSX y *.PDF');
+        return;
+      }
+
+      // ✅ RF-008 Regla 8.2: VALIDAR TAMAÑO - Máximo 30 MB
+      if (file.size > this.MAX_FILE_SIZE_BYTES) {
+        // ✅ RF-008 Regla 8.2: Mensaje exacto según especificación
+        this.showErrorNotification('El tamaño máximo del archivo 30 MB');
+        return;
+      }
+
+      // ✅ RF-008 Regla 8.2: Validar longitud del nombre del archivo
       if (file.name.length > this.MAX_FILE_NAME_LENGTH) {
+        // ✅ RF-008 Regla 8.2: Mensaje exacto según especificación
         this.showErrorNotification(
           `La cantidad máxima de caracteres del nombre del archivo es de ${this.MAX_FILE_NAME_LENGTH}`,
         );
         return;
       }
 
+      this.selectedFile = file;
+      this.selectedFileName = file.name;
       this.fileName = file.name;
       this.contractFileError = false; // ✅ Limpiar error cuando se carga un archivo
       console.log('Archivo seleccionado:', file);
+
+      // ✅ Consumir automáticamente el servicio de lector de contratos
+      this.procesarContratoConIA(file);
     }
   }
 
+  /**
+   * ✅ Procesar contrato con IA automáticamente al cargar el archivo
+   */
+  private procesarContratoConIA(archivo: File): void {
+    // ✅ Obtener correo del usuario desde la sesión
+    const correoUsuario = this.sessionService.getEmail();
+    if (!correoUsuario) {
+      this.showErrorNotification('No se encontró el correo del usuario en la sesión');
+      this.logger.error('Correo de usuario no disponible para procesar contrato');
+      return;
+    }
+
+    // ✅ Generar ID único para el frontend (usando timestamp + random)
+    const idFront = `front_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+    this.logger.debug('Iniciando procesamiento de contrato con IA', {
+      nombreArchivo: archivo.name,
+      correoUsuario,
+      idFront,
+    });
+
+    // ✅ Mostrar indicador de carga
+    this.isProcessingContract = true;
+    this.contractProcessingMessage = 'Procesando contrato con IA...';
+
+    // ✅ Llamar al servicio de lector de contratos
+    this.contractAIService.procesarContrato(archivo, correoUsuario, idFront).subscribe({
+      next: (response) => {
+        this.isProcessingContract = false;
+        this.contractProcessingMessage = '';
+
+        this.logger.debug('Contrato procesado exitosamente', response);
+
+        // ✅ Mostrar notificación de éxito
+        this.showSuccessNotification('Contrato procesado exitosamente');
+
+        // ✅ Guardar respuesta para uso posterior
+        this.contractAnalysisResult = response;
+
+        // ✅ RF-009: Procesar datos del contrato desde contract-reader
+        if (response.datosExtraidos) {
+          this.procesarDatosContratoIA(response.datosExtraidos);
+        }
+      },
+      error: (error) => {
+        this.isProcessingContract = false;
+        this.contractProcessingMessage = '';
+
+        this.logger.error('Error al procesar contrato con IA', error);
+
+        // ✅ Mostrar notificación de error
+        const mensajeError =
+          error?.error || error?.message || 'Error al procesar el contrato. Intenta nuevamente.';
+        this.showErrorNotification(mensajeError);
+      },
+    });
+  }
+
   // ✅ RF-008: Mostrar confirmación antes de eliminar archivo (cuando se elimina desde la librería)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onFileDeleted(_file: File): void {
     this.showAlertaEliminarArchivo = true;
   }
@@ -4804,11 +5716,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     // ✅ Cargar datos completos desde el servicio si no están disponibles
     if (!cotizacion.datosGenerales && cotizacion.id) {
       firstValueFrom(this.quoteService.getSavedQuote(cotizacion.id))
-        .then((quoteData) => {
+        .then(quoteData => {
           console.log('✅ Datos de cotización cargados desde servicio:', quoteData);
           this.cargarDatosRetomarCotizacion(quoteData);
         })
-        .catch((error) => {
+        .catch(error => {
           console.error('❌ Error al cargar cotización:', error);
           // Si falla, usar los datos disponibles
           this.cargarDatosRetomarCotizacion(cotizacion);
@@ -4862,7 +5774,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       // También actualizar step2Form si está disponible
       if (this.step2Form?.form) {
         setTimeout(() => {
-          this.step2Form.form.patchValue({
+          this.step2Form.form!.patchValue({
             numeroContratoGeneral: cotizacion.datosGenerales.numeroContrato || '',
             numeroContrato: cotizacion.datosGenerales.numeroContrato || '',
             tipoDocumentoTomadorGeneral: cotizacion.datosGenerales.tipoDocTomador || 'NIT',
@@ -4877,7 +5789,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
             departamento: cotizacion.ubicacionRiesgo?.departamento || '',
             localidadMunicipio: cotizacion.ubicacionRiesgo?.municipio || '',
             direccionRiesgo: cotizacion.ubicacionRiesgo?.direccion || '',
-            valorContrato: cotizacion.detallesContrato?.valorContrato || cotizacion.valorAsegurado || 0,
+            valorContrato:
+              cotizacion.detallesContrato?.valorContrato || cotizacion.valorAsegurado || 0,
             fechaInicioContrato: cotizacion.detallesContrato?.fechaInicio || '',
             fechaFinContrato: cotizacion.detallesContrato?.fechaFin || '',
             duracionContrato: cotizacion.detallesContrato?.duracion || '',
@@ -4900,7 +5813,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ Regla 17.3: Imprimir cotización desde la tabla
   imprimirCotizacion(cotizacion: any): void {
     console.log('🖨️ Imprimir cotización:', cotizacion.id);
-    
+
     // Abrir ventana de impresión con los datos de la cotización
     const ventanaImpresion = window.open('', '_blank');
     if (!ventanaImpresion) {
@@ -4911,7 +5824,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     const contenido = this.generarContenidoImpresion(cotizacion);
     ventanaImpresion.document.write(contenido);
     ventanaImpresion.document.close();
-    
+
     // Esperar a que se cargue el contenido antes de imprimir
     ventanaImpresion.onload = () => {
       setTimeout(() => {
@@ -5031,7 +5944,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
             <span class="label">Valor Asegurado:</span>
             <span class="value">${this.formatCurrency(cotizacion.valorAsegurado)}</span>
           </div>
-          ${cotizacion.resumenCostos ? `
+          ${
+            cotizacion.resumenCostos
+              ? `
           <div class="row">
             <span class="label">Prima Neta:</span>
             <span class="value">${this.formatCurrency(cotizacion.resumenCostos.primaNeta)}</span>
@@ -5044,7 +5959,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
             <span class="label">Prima Total:</span>
             <span class="value"><strong>${this.formatCurrency(cotizacion.resumenCostos.primaTotal)}</strong></span>
           </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
 
         <div class="footer">
@@ -5363,109 +6280,279 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
   // ✅ MÉTODOS PARA BÚSQUEDA DE NOMBRES
   // ============================================
 
+  /**
+   * ✅ RF-005 Regla 5.2: Buscar nombre del tomador invocando servicios Terceros Naturales/Jurídicos
+   */
   buscarNombreTomador(): void {
     if (
       this.numeroDocumentoTomador &&
       this.numeroDocumentoTomador.length >= 5 &&
-      !this.errorDocumentoTomador
+      !this.errorDocumentoTomador &&
+      this.tipoDocumentoTomador
     ) {
       this.buscandoTomador = true;
       this.nombreTomador = '';
 
-      // Simular búsqueda con timeout
-      setTimeout(() => {
-        // Datos de prueba - simular respuesta del servidor
-        const mockData: { [key: string]: string } = {
-          '900123456': 'EMPRESA CONSTRUCTORA ABC S.A.S.',
-          '800987654': 'INVERSIONES DEL VALLE LTDA',
-          '11111111': '', // Trigger modal Tomador no creado
-          '22222222': '', // Trigger modal SARLAFT desactualizado
-          '33333333': '', // Trigger modal Solicitar Cupo (sin cupo disponible)
-          '12345678': 'COMERCIALIZADORA NACIONAL S.A.',
-          '890900608': 'GRUPO BOLIVAR S.A.', // ✅ RF-007: NIT Grupo Bolívar para pruebas
-        };
-
-        const docNum = this.numeroDocumentoTomador.replace(/[^0-9]/g, '');
-
-        // Escenario 1: Tomador no creado
-        if (docNum === '11111111') {
+      // ✅ Validar y sanitizar documento antes de procesar
+      try {
+        const validacionDoc = validarYSanitizarDocumento(
+          this.tipoDocumentoTomador,
+          this.numeroDocumentoTomador
+        );
+        
+        if (!validacionDoc.valido) {
           this.buscandoTomador = false;
-          this.showClienteNoCreado = true;
+          this.errorDocumentoTomador = validacionDoc.error || 'Documento inválido';
           return;
         }
+        
+        const docNum = validacionDoc.sanitizado;
 
-        // Escenario 2: SARLAFT desactualizado
-        if (docNum === '22222222') {
-          this.buscandoTomador = false;
-          this.showSarlaftDesactualizado = true;
-          return;
+      // ✅ RF-005 Regla 5.2: Determinar tipo de persona según tipo de documento
+      const tipoPersona = this.productoValidacionService.obtenerTipoPersona(
+        this.tipoDocumentoTomador,
+      );
+
+      // ✅ RF-005 Regla 5.2: Invocar servicio según tipo de persona
+      if (tipoPersona === 'juridica') {
+        // Terceros Jurídicos: NT, NE
+        this.facade.consultarTerceroJuridico(this.tipoDocumentoTomador, docNum).subscribe({
+          next: response => {
+            this.buscandoTomador = false;
+            // ✅ LIMPIAR ERROR cuando la consulta es exitosa
+            this.errorDocumentoTomador = '';
+
+            // ✅ Escenarios especiales para pruebas (mantener compatibilidad)
+            if (docNum === '11111111') {
+              this.showClienteNoCreado = true;
+              return;
+            }
+            if (docNum === '22222222') {
+              this.showSarlaftDesactualizado = true;
+              return;
+            }
+            if (docNum === '33333333') {
+              this.nombreTomador = response.razonSocial || 'EMPRESA SIN CUPO DISPONIBLE S.A.S.';
+              this.showSolicitarCupo = true;
+              return;
+            }
+
+            // ✅ RF-005 Regla 5.2: Asignar datos del tercero jurídico
+            this.nombreTomador = response.razonSocial || 'CLIENTE ENCONTRADO - ' + docNum;
+            this.procesarTomadorEncontrado(response);
+          },
+          error: error => {
+            console.error('❌ Error al consultar tercero jurídico:', error);
+            this.buscandoTomador = false;
+
+            // ✅ Si el cliente no existe (404), mostrar modal según modo
+            if (error.status === 404 || error.status === 400) {
+              // ✅ Limpiar error si es 404/400 (cliente no encontrado pero no es error de conexión)
+              this.errorDocumentoTomador = '';
+              if (this.action === 'emitir') {
+                this.showClienteNoCreado = true;
+              } else {
+                // En cotizar, permitir continuar con datos básicos
+                this.nombreTomador = 'CLIENTE NO ENCONTRADO - ' + docNum;
+                this.procesarTomadorEncontrado(null);
+              }
+            } else {
+              this.errorDocumentoTomador = 'Error al consultar el cliente. Intenta nuevamente.';
+            }
+          },
+        });
+      } else {
+        // Terceros Naturales: CC, CE, PP, PT
+        this.facade.consultarTerceroNatural(this.tipoDocumentoTomador, docNum).subscribe({
+          next: response => {
+            this.buscandoTomador = false;
+            // ✅ LIMPIAR ERROR cuando la consulta es exitosa
+            this.errorDocumentoTomador = '';
+
+            // ✅ Escenarios especiales para pruebas (mantener compatibilidad)
+            if (docNum === '11111111') {
+              this.showClienteNoCreado = true;
+              return;
+            }
+            if (docNum === '22222222') {
+              this.showSarlaftDesactualizado = true;
+              return;
+            }
+            if (docNum === '33333333') {
+              this.nombreTomador = response.nombreCompleto || 'CLIENTE SIN CUPO DISPONIBLE';
+              this.showSolicitarCupo = true;
+              return;
+            }
+
+            // ✅ RF-005 Regla 5.2: Asignar datos del tercero natural
+            this.nombreTomador = response.nombreCompleto || 'CLIENTE ENCONTRADO - ' + docNum;
+            this.procesarTomadorEncontrado(response);
+          },
+          error: error => {
+            console.error('❌ Error al consultar tercero natural:', error);
+            this.buscandoTomador = false;
+
+            // ✅ Si el cliente no existe (404), mostrar modal según modo
+            if (error.status === 404 || error.status === 400) {
+              // ✅ Limpiar error si es 404/400 (cliente no encontrado pero no es error de conexión)
+              this.errorDocumentoTomador = '';
+              if (this.action === 'emitir') {
+                this.showClienteNoCreado = true;
+              } else {
+                // En cotizar, permitir continuar con datos básicos
+                this.nombreTomador = 'CLIENTE NO ENCONTRADO - ' + docNum;
+                this.procesarTomadorEncontrado(null);
+              }
+            } else {
+              this.errorDocumentoTomador = 'Error al consultar el cliente. Intenta nuevamente.';
+            }
+          },
+        });
         }
-
-        // Escenario 3: Sin cupo disponible - Solicitar cupo
-        if (docNum === '33333333') {
-          this.buscandoTomador = false;
-          this.nombreTomador = 'EMPRESA SIN CUPO DISPONIBLE S.A.S.';
-          this.showSolicitarCupo = true;
-          return;
-        }
-
-        this.nombreTomador = mockData[docNum] || 'CLIENTE ENCONTRADO - ' + docNum;
+      } catch (error) {
         this.buscandoTomador = false;
-
-        // ✅ RF-007 Regla 7.1: Calcular cupo disponible después de encontrar tomador
-        if (this.tipoDocumentoTomador && this.numeroDocumentoTomador) {
-          this.calcularCupoDisponible();
-        }
-
-        // ✅ RF-007 Regla 7.2: Validar Grupo Bolívar (solo para cliente ocasional)
-        if (this.tipoCliente === 'ocasional' && this.claveIntermediario) {
-          this.validarGrupoBolivar();
-        }
-
-        // ✅ RF-005: Validar todas las reglas RF-005 después de encontrar tomador
-        if (this.tipoDocumentoTomador && this.numeroDocumentoTomador) {
-          this.validarReglasRF005Tomador();
-        }
-      }, 1000);
+        this.errorDocumentoTomador = error instanceof Error ? error.message : 'Error al validar documento';
+      }
     }
   }
 
+  /**
+   * ✅ RF-005 Regla 5.2: Procesar datos del tomador encontrado
+   * @param datos Datos del tercero (puede ser null si no existe)
+   */
+  private procesarTomadorEncontrado(datos: any): void {
+    // ✅ RF-007 Regla 7.1: Calcular cupo disponible después de encontrar tomador
+    if (this.tipoDocumentoTomador && this.numeroDocumentoTomador) {
+      this.calcularCupoDisponible();
+    }
+
+    // ✅ RF-007 Regla 7.2: Validar Grupo Bolívar (solo para cliente ocasional)
+    if (this.tipoCliente === 'ocasional' && this.claveIntermediario) {
+      this.validarGrupoBolivar();
+    }
+
+    // ✅ RF-005: Validar todas las reglas RF-005 después de encontrar tomador
+    if (this.tipoDocumentoTomador && this.numeroDocumentoTomador) {
+      this.validarReglasRF005Tomador();
+    }
+
+    // ✅ RF-005 Regla 5.9: Validar estado SARLAFT si el cliente existe
+    if (datos && this.tipoDocumentoTomador && this.numeroDocumentoTomador) {
+      this.validarEstadoSarlaft();
+    }
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.2: Buscar nombre del asegurado invocando servicios Terceros Naturales/Jurídicos
+   */
   buscarNombreAsegurado(): void {
     if (
       this.numeroDocumentoAsegurado &&
       this.numeroDocumentoAsegurado.length >= 5 &&
-      !this.errorDocumentoAsegurado
+      !this.errorDocumentoAsegurado &&
+      this.tipoDocumentoAsegurado
     ) {
       this.buscandoAsegurado = true;
       this.nombreAsegurado = '';
 
-      setTimeout(() => {
-        const mockData: { [key: string]: string } = {
-          '900111222': 'ASEGURADO PRINCIPAL S.A.',
-          '800333444': 'BENEFICIARIO EJEMPLO LTDA',
-          '12345678': 'ASEGURADO COMERCIAL S.A.S.',
-          '890900608': 'GRUPO BOLIVAR S.A.', // ✅ RF-007: NIT Grupo Bolívar para pruebas
-        };
+      // ✅ Validar y sanitizar documento antes de procesar
+      try {
+        const validacionDoc = validarYSanitizarDocumento(
+          this.tipoDocumentoAsegurado,
+          this.numeroDocumentoAsegurado
+        );
+        
+        if (!validacionDoc.valido) {
+          this.buscandoAsegurado = false;
+          this.errorDocumentoAsegurado = validacionDoc.error || 'Documento inválido';
+          return;
+        }
+        
+        const docNum = validacionDoc.sanitizado;
 
-        const docNum = this.numeroDocumentoAsegurado.replace(/[^0-9]/g, '');
-        this.nombreAsegurado = mockData[docNum] || 'ASEGURADO ENCONTRADO - ' + docNum;
+        // ✅ RF-005 Regla 5.2: Determinar tipo de persona según tipo de documento
+        const tipoPersona = this.productoValidacionService.obtenerTipoPersona(
+          this.tipoDocumentoAsegurado,
+        );
+
+        // ✅ RF-005 Regla 5.2: Invocar servicio según tipo de persona
+        if (tipoPersona === 'juridica') {
+          // Terceros Jurídicos: NT, NE
+          this.facade
+            .consultarTerceroJuridico(this.tipoDocumentoAsegurado, docNum)
+          .subscribe({
+            next: response => {
+              this.buscandoAsegurado = false;
+              // ✅ LIMPIAR ERROR cuando la consulta es exitosa
+              this.errorDocumentoAsegurado = '';
+              this.nombreAsegurado = response.razonSocial || 'ASEGURADO ENCONTRADO - ' + docNum;
+              this.procesarAseguradoEncontrado();
+            },
+            error: error => {
+              console.error('❌ Error al consultar tercero jurídico (asegurado):', error);
+              this.buscandoAsegurado = false;
+              if (error.status === 404 || error.status === 400) {
+                // ✅ Limpiar error si es 404/400 (persona no encontrada pero no es error de conexión)
+                this.errorDocumentoAsegurado = '';
+                this.nombreAsegurado = 'ASEGURADO NO ENCONTRADO - ' + docNum;
+                this.procesarAseguradoEncontrado();
+              } else {
+                this.errorDocumentoAsegurado =
+                  'Error al consultar el asegurado. Intenta nuevamente.';
+              }
+            },
+          });
+      } else {
+        // Terceros Naturales: CC, CE, PP, PT
+        this.facade
+          .consultarTerceroNatural(this.tipoDocumentoAsegurado, docNum)
+          .subscribe({
+            next: response => {
+              this.buscandoAsegurado = false;
+              // ✅ LIMPIAR ERROR cuando la consulta es exitosa
+              this.errorDocumentoAsegurado = '';
+              this.nombreAsegurado = response.nombreCompleto || 'ASEGURADO ENCONTRADO - ' + docNum;
+              this.procesarAseguradoEncontrado();
+            },
+            error: error => {
+              console.error('❌ Error al consultar tercero natural (asegurado):', error);
+              this.buscandoAsegurado = false;
+              if (error.status === 404 || error.status === 400) {
+                // ✅ Limpiar error si es 404/400 (persona no encontrada pero no es error de conexión)
+                this.errorDocumentoAsegurado = '';
+                this.nombreAsegurado = 'ASEGURADO NO ENCONTRADO - ' + docNum;
+                this.procesarAseguradoEncontrado();
+              } else {
+                this.errorDocumentoAsegurado =
+                  'Error al consultar el asegurado. Intenta nuevamente.';
+              }
+            },
+          });
+        }
+      } catch (error) {
         this.buscandoAsegurado = false;
+        this.errorDocumentoAsegurado = error instanceof Error ? error.message : 'Error al validar documento';
+      }
+    }
+  }
 
-        // ✅ RF-007 Regla 7.4: Cargar programas cuando se encuentra asegurado (producto 440)
-        if (this.tipoProducto === 'grandes-beneficiarios' && this.nombreAsegurado) {
-          this.cargarProgramasDisponibles();
-        }
+  /**
+   * ✅ RF-005 Regla 5.2: Procesar datos del asegurado encontrado
+   */
+  private procesarAseguradoEncontrado(): void {
+    // ✅ RF-007 Regla 7.4: Cargar programas cuando se encuentra asegurado (producto 440)
+    if (this.tipoProducto === 'grandes-beneficiarios' && this.nombreAsegurado) {
+      this.cargarProgramasDisponibles();
+    }
 
-        // ✅ RF-007 Regla 7.2: Validar Grupo Bolívar (solo para cliente ocasional)
-        if (this.tipoCliente === 'ocasional' && this.claveIntermediario) {
-          this.validarGrupoBolivar();
-        }
+    // ✅ RF-007 Regla 7.2: Validar Grupo Bolívar (solo para cliente ocasional)
+    if (this.tipoCliente === 'ocasional' && this.claveIntermediario) {
+      this.validarGrupoBolivar();
+    }
 
-        // ✅ RF-005 Regla 5.4: Validar combinación de clientes cuando se encuentra asegurado
-        if (this.tipoDocumentoTomador && this.numeroDocumentoTomador && this.nombreTomador) {
-          this.validarCombinacionClientes();
-        }
-      }, 1000);
+    // ✅ RF-005 Regla 5.4: Validar combinación de clientes cuando se encuentra asegurado
+    if (this.tipoDocumentoTomador && this.numeroDocumentoTomador && this.nombreTomador) {
+      this.validarCombinacionClientes();
     }
   }
 
@@ -5508,27 +6595,56 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.stepperConfig.activeIndex = 0;
   }
 
-  // ✅ Método para crear cliente desde el modal
+  /**
+   * ✅ RF-005 Regla 5.8: Crear cliente y enviar formulario SARLAFT 4.0
+   * Valida campos y envía información a teléfonos y correos diligenciados
+   */
   crearCliente(): void {
+    // ✅ RF-005 Regla 5.8: Validar campos antes de enviar
+    if (!this.validarCamposSarlaft()) {
+      return;
+    }
+
     console.log('👤 Creando cliente con datos:', {
       celularCliente: this.celularCliente,
       celularAsesor: this.celularAsesor,
       correoTomador: this.correoTomador,
       correoAsesor: this.correoAsesor,
+      tipoDocumento: this.tipoDocumentoTomador,
+      numeroDocumento: this.numeroDocumentoTomador,
     });
-    this.showClienteNoCreado = false;
-    // Mostrar notificación de éxito
-    this.snackbarConfig = {
-      ...this.snackbarConfig,
-      show: true,
-      message: '✅ Cliente creado exitosamente',
-      class: 'snackbar-success-theme',
-    };
-    // Limpiar campos
-    this.celularCliente = '';
-    this.celularAsesor = '';
-    this.correoTomador = '';
-    this.correoAsesor = '';
+
+    // ✅ RF-005 Regla 5.8: En modo EMITIR, los datos son obligatorios y no puede avanzar
+    if (this.action === 'emitir') {
+      // Enviar formulario SARLAFT 4.0 usando SarlaftService
+      this.enviarFormularioSarlaft4_0(
+        this.celularCliente,
+        this.correoTomador,
+        this.celularAsesor,
+        this.correoAsesor,
+      ).subscribe({
+        next: response => {
+          console.log('✅ Formulario SARLAFT 4.0 enviado:', response);
+          this.showClienteNoCreado = false;
+          this.showSuccessNotification(
+            '✅ Se ha enviado el formulario SARLAFT 4.0. El cliente debe completarlo antes de continuar.',
+          );
+          // Limpiar campos
+          this.limpiarCamposSarlaft();
+        },
+        error: error => {
+          console.error('❌ Error al enviar formulario SARLAFT 4.0:', error);
+          this.showErrorNotification('Error al enviar el formulario SARLAFT. Intenta nuevamente.');
+        },
+      });
+    } else {
+      // ✅ RF-005 Regla 5.8: En modo COTIZAR, puede continuar con información desactualizada
+      this.showClienteNoCreado = false;
+      this.showSuccessNotification('✅ Continuando con información desactualizada de SARLAFT');
+      this.limpiarCamposSarlaft();
+      // Continuar al siguiente paso
+      this.nextStep();
+    }
   }
 
   // ============================================
@@ -5572,32 +6688,55 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     };
   }
 
-  // ✅ EMITIR: Actualizar SARLAFT - NO permite avanzar al paso 2
+  /**
+   * ✅ RF-005 Regla 5.9: Actualizar SARLAFT y enviar formulario SARLAFT 4.0
+   * En modo EMITIR: NO permite avanzar hasta que se actualice
+   * En modo COTIZAR: Permite continuar con información desactualizada
+   */
   actualizarSarlaft(): void {
-    console.log('🔄 Actualizando SARLAFT (modo EMITIR) - NO permite avanzar:', {
+    // ✅ RF-005 Regla 5.9: Validar campos antes de enviar
+    if (!this.validarCamposSarlaft()) {
+      return;
+    }
+
+    console.log('🔄 Actualizando SARLAFT:', {
       celularCliente: this.celularCliente,
       correoTomador: this.correoTomador,
       celularAsesor: this.celularAsesor,
       correoAsesor: this.correoAsesor,
+      modo: this.action,
     });
 
-    // Cerrar modal
-    this.showSarlaftDesactualizado = false;
+    // ✅ RF-005 Regla 5.9: Enviar formulario SARLAFT 4.0 usando SarlaftService
+    this.enviarFormularioSarlaft4_0(
+      this.celularCliente,
+      this.correoTomador,
+      this.celularAsesor,
+      this.correoAsesor,
+    ).subscribe({
+      next: response => {
+        console.log('✅ Formulario SARLAFT 4.0 enviado:', response);
+        this.showSarlaftDesactualizado = false;
 
-    // Limpiar datos del tomador porque NO puede continuar
-    this.nombreTomador = '';
-    this.numeroDocumentoTomador = '';
-
-    // Mostrar notificación informando que debe actualizar SARLAFT
-    this.snackbarConfig = {
-      ...this.snackbarConfig,
-      show: true,
-      message:
-        '⚠️ Se ha enviado solicitud de actualización SARLAFT. No puede continuar hasta que el tomador actualice su información.',
-      class: 'snackbar-warning-theme',
-    };
-
-    // NO avanza al paso 2 - se queda en paso 1
+        if (this.action === 'emitir') {
+          // ✅ RF-005 Regla 5.9: En modo EMITIR, NO permite avanzar
+          this.nombreTomador = '';
+          this.numeroDocumentoTomador = '';
+          this.showErrorNotification(
+            '⚠️ Se ha enviado solicitud de actualización SARLAFT. No puede continuar hasta que el tomador actualice su información.',
+          );
+        } else {
+          // ✅ RF-005 Regla 5.9: En modo COTIZAR, permite continuar
+          this.showSuccessNotification('✅ Continuando con información desactualizada de SARLAFT');
+          this.limpiarCamposSarlaft();
+          this.nextStep();
+        }
+      },
+      error: error => {
+        console.error('❌ Error al enviar formulario SARLAFT 4.0:', error);
+        this.showErrorNotification('Error al enviar el formulario SARLAFT. Intenta nuevamente.');
+      },
+    });
   }
 
   // ============================================
@@ -5691,22 +6830,75 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       this.isUploadingEstadosFinancieros = true;
       this.uploadProgressEstadosFinancieros = 0;
 
-      // Simular progreso de carga
-      // Limpiar intervalo anterior si existe
-      if (this.uploadIntervalEstadosFinancieros) {
-        clearInterval(this.uploadIntervalEstadosFinancieros);
-      }
-
-      this.uploadIntervalEstadosFinancieros = setInterval(() => {
-        this.uploadProgressEstadosFinancieros += 10;
-        if (this.uploadProgressEstadosFinancieros >= 100) {
-          clearInterval(this.uploadIntervalEstadosFinancieros);
-          this.uploadIntervalEstadosFinancieros = null;
-          this.isUploadingEstadosFinancieros = false;
-          console.log('✅ Estados financieros cargados:', file.name);
-        }
-      }, 150);
+      // ✅ Consumir automáticamente el servicio de lector de estados financieros
+      this.procesarEstadosFinancierosConIA(file);
     }
+  }
+
+  /**
+   * ✅ Procesar estados financieros con IA automáticamente al cargar el archivo
+   */
+  private procesarEstadosFinancierosConIA(archivo: File): void {
+    // ✅ Obtener correo del usuario desde la sesión
+    const correoUsuario = this.sessionService.getEmail();
+    if (!correoUsuario) {
+      this.isUploadingEstadosFinancieros = false;
+      this.uploadProgressEstadosFinancieros = 0;
+      this.snackbarConfig = {
+        ...this.snackbarConfig,
+        show: true,
+        message: 'No se encontró el correo del usuario en la sesión',
+        class: 'snackbar-error-theme',
+      };
+      this.logger.error('Correo de usuario no disponible para procesar estados financieros');
+      return;
+    }
+
+    this.logger.debug('Iniciando procesamiento de estados financieros con IA', {
+      nombreArchivo: archivo.name,
+      correoUsuario,
+    });
+
+    // ✅ Llamar al servicio de lector de estados financieros
+    this.financialStatementService.procesarEstadosFinancieros(archivo, correoUsuario).subscribe({
+      next: (response) => {
+        this.isUploadingEstadosFinancieros = false;
+        this.uploadProgressEstadosFinancieros = 100;
+
+        this.logger.debug('Estados financieros procesados exitosamente', response);
+
+        // ✅ Mostrar notificación de éxito
+        this.snackbarConfig = {
+          ...this.snackbarConfig,
+          show: true,
+          message: response.mensaje || 'Estados financieros procesados exitosamente',
+          class: 'snackbar-success-theme',
+        };
+
+        // ✅ Guardar respuesta para uso posterior (puede usarse para recalcular cupo)
+        console.log('✅ Estados financieros procesados:', response);
+      },
+      error: (error) => {
+        this.isUploadingEstadosFinancieros = false;
+        this.uploadProgressEstadosFinancieros = 0;
+
+        this.logger.error('Error al procesar estados financieros con IA', error);
+
+        // ✅ Mostrar notificación de error
+        const mensajeError =
+          error?.error || error?.message || 'Error al procesar los estados financieros. Intenta nuevamente.';
+        this.snackbarConfig = {
+          ...this.snackbarConfig,
+          show: true,
+          message: mensajeError,
+          class: 'snackbar-error-theme',
+        };
+
+        // ✅ Limpiar archivo en caso de error
+        this.estadosFinancierosFile = null;
+        this.estadosFinancierosFileName = null;
+      },
+    });
   }
 
   // ✅ Eliminar archivo de estados financieros
@@ -5779,9 +6971,13 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.estaCalculandoCupo = true;
 
     this.cupoService
-      .calcularCupoDisponible(this.tipoDocumentoTomador, this.numeroDocumentoTomador, this.tipoUsuario)
+      .calcularCupoDisponible(
+        this.tipoDocumentoTomador,
+        this.numeroDocumentoTomador,
+        this.tipoUsuario,
+      )
       .subscribe({
-        next: (response) => {
+        next: response => {
           this.cupoDisponible = response.cupoDisponible;
           this.tipoCliente = response.tipoCliente;
           this.cupoDisponibleVisible = this.cupoService.obtenerCupoVisible(
@@ -5802,7 +6998,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           this.estaCalculandoCupo = false;
           this.cdr.detectChanges();
         },
-        error: (error) => {
+        error: error => {
           console.error('❌ Error al calcular cupo:', error);
           this.estaCalculandoCupo = false;
           this.cupoDisponible = 0;
@@ -5824,11 +7020,13 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.cupoService
       .validarCapacidadIngenieroDigital(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
       .subscribe({
-        next: (response) => {
+        next: response => {
           if (!response.tieneInformacion) {
             // ✅ RF-007 Regla 7.1: Habilitar servicio del lector de estados financieros
             this.showSolicitarCupo = true;
-            console.log('📊 Ingeniero digital no tiene información, habilitando lector de estados financieros');
+            console.log(
+              '📊 Ingeniero digital no tiene información, habilitando lector de estados financieros',
+            );
           } else if (response.cupoCalculado !== undefined) {
             // Si el ingeniero digital tiene información y calculó cupo
             this.cupoDisponible = response.cupoCalculado;
@@ -5844,7 +7042,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
             this.mostrarModalCupoBloqueado();
           }
         },
-        error: (error) => {
+        error: error => {
           console.error('❌ Error al validar con ingeniero digital:', error);
           // Si falla, habilitar lector de estados financieros
           this.showSolicitarCupo = true;
@@ -5857,7 +7055,11 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
    * Se invoca después de cargar estados financieros en el modal
    */
   private recalcularCupoConEstadosFinancieros(): void {
-    if (!this.estadosFinancierosFile || !this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+    if (
+      !this.estadosFinancierosFile ||
+      !this.tipoDocumentoTomador ||
+      !this.numeroDocumentoTomador
+    ) {
       return;
     }
 
@@ -5873,7 +7075,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     };
 
     this.cupoService.recalcularCupoConEstadosFinancieros(solicitudCupo).subscribe({
-      next: (response) => {
+      next: response => {
         this.cupoDisponible = response.cupoDisponible;
         this.tipoCliente = response.tipoCliente;
         this.cupoDisponibleVisible = this.cupoService.obtenerCupoVisible(
@@ -5902,7 +7104,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         this.estaCalculandoCupo = false;
         this.cdr.detectChanges();
       },
-      error: (error) => {
+      error: error => {
         console.error('❌ Error al recalcular cupo:', error);
         this.estaCalculandoCupo = false;
         this.mostrarModalCupoBloqueado();
@@ -5929,7 +7131,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         next: () => {
           console.log('✅ Cupo actualizado en Tronador');
         },
-        error: (error) => {
+        error: error => {
           console.error('❌ Error al actualizar cupo en Tronador:', error);
         },
       });
@@ -5950,7 +7152,6 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.showModalCupoBloqueado = false;
   }
 
-
   // ============================================
   // ✅ RF-007 Regla 7.2: VALIDACIÓN GRUPO BOLÍVAR
   // ============================================
@@ -5967,11 +7168,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     }
 
     // Validar que tengamos los datos necesarios
-    if (
-      !this.tipoDocumentoTomador ||
-      !this.numeroDocumentoTomador ||
-      !this.claveIntermediario
-    ) {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador || !this.claveIntermediario) {
       return;
     }
 
@@ -5984,14 +7181,14 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         this.claveIntermediario,
       )
       .subscribe({
-        next: (validacion) => {
+        next: validacion => {
           if (validacion.requiereError) {
             // ✅ RF-007 Regla 7.2: Mostrar popup de error
             this.showModalGrupoBolivar = true;
             console.log('🚨 Validación Grupo Bolívar: Error detectado', validacion);
           }
         },
-        error: (error) => {
+        error: error => {
           console.error('❌ Error al validar Grupo Bolívar:', error);
         },
       });
@@ -6035,7 +7232,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         this.tipoUsuario,
       )
       .subscribe({
-        next: (programas) => {
+        next: programas => {
           this.programasDisponibles = programas;
           this.estaCargandoProgramas = false;
 
@@ -6046,7 +7243,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
           this.cdr.detectChanges();
         },
-        error: (error) => {
+        error: error => {
           console.error('❌ Error al cargar programas:', error);
           this.estaCargandoProgramas = false;
           this.programasDisponibles = [];
@@ -6089,7 +7286,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         this.numeroDocumentoAsegurado,
       )
       .subscribe({
-        next: (estaEnPrograma) => {
+        next: estaEnPrograma => {
           if (!estaEnPrograma) {
             // ✅ RF-007 Regla 7.4: Mostrar mensaje y bloquear proceso
             this.mostrarModalAseguradoNoEnPrograma();
@@ -6097,7 +7294,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
             this.programaParametrizado = '';
           }
         },
-        error: (error) => {
+        error: error => {
           console.error('❌ Error al validar asegurado en programa:', error);
           this.mostrarModalAseguradoNoEnPrograma();
           this.programaSeleccionadoId = '';
@@ -6112,7 +7309,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
    */
   private obtenerFacilityPrograma(programaId: string): void {
     this.programaService.obtenerFacilityPrograma(programaId).subscribe({
-      next: (facility) => {
+      next: facility => {
         this.facilityPrograma = facility;
 
         // ✅ RF-007 Regla 7.4: Determinar cupo que primará (facility vs cupo cliente)
@@ -6130,14 +7327,208 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
           this.cupoPrimario = this.cupoDisponible;
         }
 
+        // ✅ RF-009 Regla 9.12: Aplicar garantías del programa cuando es producto 440
+        if (this.tipoProducto === 'grandes-beneficiarios' && programaId) {
+          this.aplicarGarantiasPrograma440(programaId);
+        }
+
         this.cdr.detectChanges();
       },
-      error: (error) => {
+      error: error => {
         console.error('❌ Error al obtener facility:', error);
         this.facilityPrograma = null;
         this.cupoPrimario = this.cupoDisponible;
       },
     });
+  }
+
+  /**
+   * ✅ RF-009 Regla 9.12: Procesar datos extraídos del contrato por IA
+   * @param datosExtraidos Datos extraídos del contrato
+   */
+  private procesarDatosContratoIA(datosExtraidos: any): void {
+    console.log('🤖 RF-009: Procesando datos extraídos del contrato:', datosExtraidos);
+
+    // ✅ RF-009 Regla 9.2: Mapear códigos Tronador a campos del formulario
+    if (datosExtraidos.moneda?.codigo) {
+      // TODO: Mapear moneda usando código Tronador
+      console.log('💰 Moneda extraída:', datosExtraidos.moneda);
+    }
+
+    if (datosExtraidos.tipoContrato?.codigo) {
+      // TODO: Mapear tipo de contrato usando código Tronador
+      console.log('📄 Tipo contrato extraído:', datosExtraidos.tipoContrato);
+    }
+
+    if (datosExtraidos.departamento?.codigo) {
+      // TODO: Mapear departamento usando código Tronador
+      console.log('📍 Departamento extraído:', datosExtraidos.departamento);
+    }
+
+    if (datosExtraidos.municipio?.codigo) {
+      // TODO: Mapear municipio usando código Tronador
+      console.log('📍 Municipio extraído:', datosExtraidos.municipio);
+    }
+
+    if (datosExtraidos.ciudad?.codigo) {
+      // TODO: Mapear ciudad usando código Tronador
+      console.log('📍 Ciudad extraída:', datosExtraidos.ciudad);
+    }
+
+    // ✅ RF-009 Regla 9.9: Validar etapa del contrato
+    if (datosExtraidos.etapaContrato) {
+      console.log('📋 Etapa del contrato:', datosExtraidos.etapaContrato);
+      // TODO: Usar etapa en "Datos del riesgo"
+    }
+
+    // ✅ RF-013 Regla 13.2: Calcular valores de coberturas desde datos de IA
+    if (datosExtraidos.coberturas_o_garantias) {
+      this.calcularCoberturasDesdeIA(datosExtraidos);
+    }
+
+    // ✅ RF-009 Regla 9.2: Mapear coberturas/garantías con códigos Tronador
+    if (datosExtraidos.coberturas_o_garantias) {
+      const garantias = datosExtraidos.coberturas_o_garantias;
+
+      // ✅ RF-009 Regla 9.12: Si es producto 440, NO tomar garantías del contrato
+      // Las garantías se tomarán del programa cuando se seleccione
+      if (this.tipoProducto === 'grandes-beneficiarios') {
+        console.log(
+          '⚠️ RF-009 Regla 9.12: Producto 440 - No se tomarán garantías del contrato, se usarán las del programa',
+        );
+        // Las garantías se aplicarán cuando se seleccione el programa
+      } else {
+        // Para otros productos, aplicar garantías del contrato
+        this.aplicarGarantiasContrato(garantias);
+      }
+    }
+
+    // ✅ RF-009 Regla 9.8: Validar fechas y números
+    if (datosExtraidos.datosInvalidos) {
+      const datosInvalidos = datosExtraidos.datosInvalidos;
+      if (datosInvalidos.fechas?.length > 0 || datosInvalidos.numeros?.length > 0) {
+        console.warn('⚠️ RF-009 Regla 9.8: Datos inválidos detectados:', datosInvalidos);
+        // Los campos estarán habilitados para corrección manual
+      }
+    }
+
+    // ✅ RF-009 Regla 9.10: Validar consistencia con catálogos
+    if (datosExtraidos.datosInconsistentes) {
+      const datosInconsistentes = datosExtraidos.datosInconsistentes;
+      if (Object.values(datosInconsistentes).some(val => val === true)) {
+        console.warn(
+          '⚠️ RF-009 Regla 9.10: Datos inconsistentes con catálogos:',
+          datosInconsistentes,
+        );
+        // Los campos estarán habilitados para corrección manual
+      }
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * ✅ RF-009 Regla 9.12: Aplicar garantías del programa para producto 440
+   * NO se toman las garantías del contrato, sino las del programa
+   * @param programaId ID del programa seleccionado
+   */
+  private aplicarGarantiasPrograma440(programaId: string): void {
+    if (this.tipoProducto !== 'grandes-beneficiarios') {
+      return;
+    }
+
+    console.log('✅ RF-009 Regla 9.12: Aplicando garantías del programa 440:', programaId);
+
+    // ✅ RF-009 Regla 9.12: Para producto 440, las garantías vienen del programa parametrizado
+    // El facility es solo un número (cupo), las garantías/tasas deben obtenerse del programa
+    // TODO: Cuando el backend esté listo, obtener garantías del programa usando programaId
+    // Por ahora, se aplicará la lógica cuando se seleccione el programa y se obtenga la información completa
+
+    console.log(
+      '✅ RF-009 Regla 9.12: Producto 440 - Las garantías se tomarán del programa parametrizado',
+    );
+    console.log('⚠️ Nota: Las garantías del contrato NO se aplicarán para producto 440');
+
+    // Obtener facility del programa (solo para determinar cupo primario)
+    this.programaService.obtenerFacilityPrograma(programaId).subscribe({
+      next: facility => {
+        if (facility !== null) {
+          // El facility se usa para determinar cupo primario (ya se hace en obtenerFacilityPrograma)
+          // Las garantías/tasas deben obtenerse del programa parametrizado cuando el backend esté listo
+          console.log('✅ RF-009 Regla 9.12: Facility obtenido:', facility);
+
+          // TODO: Obtener garantías del programa cuando el servicio esté disponible
+          // this.programaService.obtenerGarantiasPrograma(programaId).subscribe(garantias => {
+          //   // Aplicar garantías del programa a las coberturas
+          // });
+        }
+        this.cdr.detectChanges();
+      },
+      error: error => {
+        console.error('❌ Error al obtener facility del programa:', error);
+      },
+    });
+  }
+
+  /**
+   * ✅ RF-009: Aplicar garantías del contrato (para productos diferentes a 440)
+   * @param garantias Garantías extraídas del contrato
+   */
+  private aplicarGarantiasContrato(garantias: any): void {
+    console.log('📋 RF-009: Aplicando garantías del contrato:', garantias);
+
+    // Aplicar garantías de cumplimiento
+    if (garantias.cumplimiento?.requerida) {
+      const cobCumplimiento = this.coberturasCumplimiento.find(c =>
+        c.nombre.toLowerCase().includes('cumplimiento'),
+      );
+      if (cobCumplimiento) {
+        cobCumplimiento.porcentaje = garantias.cumplimiento.porcentaje;
+        cobCumplimiento.valorAsegurado = garantias.cumplimiento.valor;
+      }
+    }
+
+    // Aplicar garantías de calidad
+    if (garantias.calidadServicio?.requerida) {
+      const cobCalidad = this.coberturasCumplimiento.find(c =>
+        c.nombre.toLowerCase().includes('calidad'),
+      );
+      if (cobCalidad) {
+        cobCalidad.porcentaje = garantias.calidadServicio.porcentaje;
+        cobCalidad.valorAsegurado = garantias.calidadServicio.valor;
+      }
+    }
+
+    // Aplicar garantías de RC
+    if (garantias.responsabilidadCivil?.requerida) {
+      const cobRC = this.rcCoberturas.find(c => c.nombre.toLowerCase().includes('responsabilidad'));
+      if (cobRC) {
+        cobRC.valorAsegurado = garantias.responsabilidadCivil.valor;
+      }
+    }
+
+    this.recalcularPrimasCoberturas();
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Recalcular primas de coberturas
+   */
+  private recalcularPrimasCoberturas(): void {
+    // Recalcular primas según nuevas tasas/porcentajes
+    this.coberturasCumplimiento.forEach(cob => {
+      if (cob.seleccionada && cob.valorAsegurado > 0 && cob.tasa > 0) {
+        cob.prima = Math.round((cob.valorAsegurado * cob.tasa) / 100);
+      }
+    });
+
+    this.rcCoberturas.forEach(cob => {
+      if (cob.seleccionada && cob.valorAsegurado > 0 && cob.tasa > 0) {
+        cob.prima = Math.round((cob.valorAsegurado * cob.tasa) / 100);
+      }
+    });
+
+    this.calcularTotalPrima();
   }
 
   /**
@@ -6192,7 +7583,8 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
    */
   irAWhatsApp(): void {
     // En mobile, esto direccionará a WhatsApp para comunicarse con la línea
-    const whatsappUrl = 'https://wa.me/573001234567?text=Hola,%20necesito%20información%20sobre%20el%20cliente%20restringido';
+    const whatsappUrl =
+      'https://wa.me/573001234567?text=Hola,%20necesito%20información%20sobre%20el%20cliente%20restringido';
     window.open(whatsappUrl, '_blank');
   }
 
@@ -6268,11 +7660,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
    * ✅ RF-005 Regla 5.4: Validar combinación de clientes
    */
   private validarCombinacionClientes(): void {
-    if (
-      !this.tipoProducto ||
-      !this.tipoDocumentoTomador ||
-      !this.tipoDocumentoAsegurado
-    ) {
+    if (!this.tipoProducto || !this.tipoDocumentoTomador || !this.tipoDocumentoAsegurado) {
       return;
     }
 
@@ -6299,13 +7687,13 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.clienteValidacionService
       .validarClienteConsultable(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
       .subscribe({
-        next: (response) => {
+        next: response => {
           if (response.esConsultable) {
             this.showModalClienteConsultable = true;
             console.log('❌ RF-005 Regla 5.5: Cliente es consultable (restringido)');
           }
         },
-        error: (error) => {
+        error: error => {
           console.error('❌ Error al validar cliente consultable:', error);
         },
       });
@@ -6322,13 +7710,13 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.clienteValidacionService
       .validarReputacionNegativa(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
       .subscribe({
-        next: (response) => {
+        next: response => {
           if (response.tieneReputacionNegativa) {
             this.showModalReputacionNegativa = true;
             console.log('❌ RF-005 Regla 5.6: Cliente tiene reputación negativa');
           }
         },
-        error: (error) => {
+        error: error => {
           console.error('❌ Error al validar reputación negativa:', error);
         },
       });
@@ -6345,7 +7733,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.clienteValidacionService
       .validarConsorcioUnionTemporal(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
       .subscribe({
-        next: (response) => {
+        next: response => {
           // ✅ RF-005 Regla 5.7: Mostrar modal si pertenece a consorcio/uniones temporales
           if (response.perteneceConsorcio || response.perteneceUnionTemporal) {
             this.showModalConsorcioUnionTemporal = true;
@@ -6365,7 +7753,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
             console.log('💰 Usando cupo del grupo empresarial:', response.cupoGrupo);
           }
         },
-        error: (error) => {
+        error: error => {
           console.error('❌ Error al validar consorcio/uniones temporales:', error);
         },
       });
@@ -6397,13 +7785,13 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.clienteEnfoqueService
       .validarNITAutorizado(this.numeroDocumentoTomador, this.tipoUsuario)
       .subscribe({
-        next: (response) => {
+        next: response => {
           if (!response.nitAutorizado) {
             this.showModalClienteEnfoque = true;
             console.log('❌ RF-005 Regla 5.10: NIT no autorizado para usuario intermediario');
           }
         },
-        error: (error) => {
+        error: error => {
           console.error('❌ Error al validar NIT autorizado:', error);
         },
       });
@@ -6415,7 +7803,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
    */
   getProgramaDropdownText(): string {
     if (this.programaSeleccionadoId) {
-      const programa = this.programasDisponibles.find((p) => p.id === this.programaSeleccionadoId);
+      const programa = this.programasDisponibles.find(p => p.id === this.programaSeleccionadoId);
       return programa?.nombre || 'Programa seleccionado';
     }
 
@@ -6620,8 +8008,9 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
         valorA = a.tomador?.nombre || '';
         valorB = b.tomador?.nombre || '';
       } else {
-        valorA = a[columna];
-        valorB = b[columna];
+        // Usar aserción de tipo para acceso dinámico seguro
+        valorA = (a as any)[columna];
+        valorB = (b as any)[columna];
       }
 
       // Si es número, comparar como número
@@ -6687,6 +8076,7 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
     this.coaseguroCedidoGastosAdmin = 0;
     this.coaseguroCedidoNumeroPol = '';
     this.coaseguroCedidoCertificado = '';
+    this.errorParticipacionCoaseguro = ''; // ✅ RF-007 Regla 7.5: Limpiar error al abrir modal
     this.showModalCoaseguroCedido = true;
   }
 
@@ -6726,6 +8116,37 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
 
   guardarCoaseguroCedido(): void {
     if (!this.coaseguroCedidoCoaseguradora || !this.coaseguroCedidoParticipacion) return;
+
+    // ✅ RF-007 Regla 7.5: Validar que la participación total no supere 100%
+    const participacionActual = this.coaseguroCedidoParticipacion;
+
+    // Calcular participación de otros coaseguros (excluyendo Bolívar y el que se está editando)
+    let participacionOtros = 0;
+    let participacionAnterior = 0;
+
+    this.coasegurosCedidos.forEach((c, index) => {
+      if (!c.esDefecto) {
+        if (this.coaseguroCedidoEditIndex !== null && index === this.coaseguroCedidoEditIndex) {
+          // Si está editando, guardar la participación anterior
+          participacionAnterior = Number(c.participacion) || 0;
+        } else {
+          // Sumar participación de otros coaseguros
+          participacionOtros += Number(c.participacion) || 0;
+        }
+      }
+    });
+
+    // Calcular participación total: otros + nueva - anterior (si está editando)
+    const participacionTotal = participacionOtros - participacionAnterior + participacionActual;
+
+    if (participacionTotal > 100) {
+      const participacionDisponible = 100 - (participacionOtros - participacionAnterior);
+      this.errorParticipacionCoaseguro = `La participación total no puede superar el 100%. Participación disponible: ${participacionDisponible}%`;
+      return;
+    }
+
+    // Limpiar error si la validación pasa
+    this.errorParticipacionCoaseguro = '';
 
     const coaseguroData = {
       coaseguradora: this.coaseguroCedidoCoaseguradora,
@@ -6823,7 +8244,45 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       this.coaseguroCedidoGastosAdmin = coaseguro.gastosAdmin;
       this.coaseguroCedidoNumeroPol = coaseguro.numeroPol;
       this.coaseguroCedidoCertificado = coaseguro.certificado;
+      this.errorParticipacionCoaseguro = ''; // ✅ RF-007 Regla 7.5: Limpiar error al editar
       this.showModalCoaseguroCedido = true;
+    }
+  }
+
+  // ✅ RF-007 Regla 7.5: Validar participación en tiempo real
+  validarParticipacionCoaseguro(): void {
+    if (!this.coaseguroCedidoParticipacion || this.coaseguroCedidoParticipacion <= 0) {
+      this.errorParticipacionCoaseguro = '';
+      return;
+    }
+
+    if (this.coaseguroCedidoParticipacion > 100) {
+      this.errorParticipacionCoaseguro = 'La participación no puede superar el 100%';
+      return;
+    }
+
+    // Calcular participación disponible
+    let participacionOtros = 0;
+    let participacionAnterior = 0;
+
+    this.coasegurosCedidos.forEach((c, index) => {
+      if (!c.esDefecto) {
+        if (this.coaseguroCedidoEditIndex !== null && index === this.coaseguroCedidoEditIndex) {
+          // Si está editando, guardar la participación anterior
+          participacionAnterior = Number(c.participacion) || 0;
+        } else {
+          // Sumar participación de otros coaseguros
+          participacionOtros += Number(c.participacion) || 0;
+        }
+      }
+    });
+
+    const participacionDisponible = 100 - (participacionOtros - participacionAnterior);
+
+    if (this.coaseguroCedidoParticipacion > participacionDisponible) {
+      this.errorParticipacionCoaseguro = `La participación total no puede superar el 100%. Participación disponible: ${participacionDisponible}%`;
+    } else {
+      this.errorParticipacionCoaseguro = '';
     }
   }
 
@@ -6888,6 +8347,147 @@ export class PolicyInputComponent implements OnInit, OnDestroy {
       this.coasegurosCedidosPage++;
     }
   }
+
+  /**
+   * ✅ RF-005 Regla 5.9: Validar estado SARLAFT del cliente
+   */
+  private validarEstadoSarlaft(): void {
+    if (!this.tipoDocumentoTomador || !this.numeroDocumentoTomador) {
+      return;
+    }
+
+    this.facade
+      .consultarMarcaSarlaft(this.tipoDocumentoTomador, this.numeroDocumentoTomador)
+      .subscribe({
+        next: response => {
+          if (response.necesitaActualizacion) {
+            this.showSarlaftDesactualizado = true;
+            console.log('⚠️ RF-005 Regla 5.9: Cliente necesita actualización SARLAFT');
+          }
+        },
+        error: error => {
+          console.error('❌ Error al validar estado SARLAFT:', error);
+          // No bloquear el proceso si hay error en la validación
+        },
+      });
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.8, 5.9: Validar campos del formulario SARLAFT
+   * Valida celular (10 dígitos) y correo electrónico
+   * @returns true si todos los campos son válidos
+   */
+  validarCamposSarlaft(): boolean {
+    // Limpiar errores previos
+    this.errorCelularCliente = '';
+    this.errorCorreoTomador = '';
+    this.errorCelularAsesor = '';
+    this.errorCorreoAsesor = '';
+
+    let esValido = true;
+
+    // ✅ RF-005 Regla 5.8, 5.9: Validar celular del tomador (10 dígitos)
+    const celularClienteLimpio = this.celularCliente.replace(/[^0-9]/g, '');
+    if (!celularClienteLimpio || celularClienteLimpio.length !== 10) {
+      this.errorCelularCliente = 'El número de celular debe tener 10 dígitos';
+      esValido = false;
+    }
+
+    // ✅ RF-005 Regla 5.8, 5.9: Validar correo del tomador (formato email)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!this.correoTomador || !emailRegex.test(this.correoTomador)) {
+      this.errorCorreoTomador = 'Ingresa un correo electrónico válido';
+      esValido = false;
+    }
+
+    // ✅ RF-005 Regla 5.8, 5.9: Validar celular del asesor (10 dígitos)
+    const celularAsesorLimpio = this.celularAsesor.replace(/[^0-9]/g, '');
+    if (!celularAsesorLimpio || celularAsesorLimpio.length !== 10) {
+      this.errorCelularAsesor = 'El número de celular debe tener 10 dígitos';
+      esValido = false;
+    }
+
+    // ✅ RF-005 Regla 5.8, 5.9: Validar correo del asesor (formato email)
+    if (!this.correoAsesor || !emailRegex.test(this.correoAsesor)) {
+      this.errorCorreoAsesor = 'Ingresa un correo electrónico válido';
+      esValido = false;
+    }
+
+    return esValido;
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.8, 5.9: Enviar formulario SARLAFT 4.0
+   * Usa SarlaftService.generarUrl() para enviar formulario a teléfonos y correos
+   */
+  private enviarFormularioSarlaft4_0(
+    celularCliente: string,
+    _correoTomador: string, // Prefijo _ para indicar que se usa indirectamente
+    celularAsesor: string,
+    correoAsesor: string,
+  ): Observable<any> {
+    // ✅ RF-005 Regla 5.8, 5.9: Determinar tipo de tercero según tipo de documento
+    const tipoPersona = this.productoValidacionService.obtenerTipoPersona(
+      this.tipoDocumentoTomador,
+    );
+    const tipoTercero = tipoPersona === 'juridica' ? 'J' : 'N';
+
+    // ✅ RF-005 Regla 5.8, 5.9: Preparar request para generar URL de conocimiento de cliente
+    const request = {
+      NumeroDocumentoTercero: this.numeroDocumentoTomador.replace(/[^0-9]/g, ''),
+      TipoDocumentoTercero: this.tipoDocumentoTomador,
+      TipoTercero: tipoTercero,
+      RolTercero: '16', // 16 = Tomador según documentación
+      NumeroCelularTercero: celularCliente.replace(/[^0-9]/g, ''),
+      McaPEPSOperacionesInusuales: 'N',
+      MarcaExisteTercero: this.action === 'emitir' ? 'N' : 'S', // Si no existe en EMITIR
+      ExisteFatca: 'N',
+      NumeroCelularAsesor: celularAsesor.replace(/[^0-9]/g, ''),
+      CorreoElectronicoAsesor: correoAsesor,
+      SistemaOrigen: '1000', // Valor según documentación
+      CodigoSeccion: parseInt(this.facade.getConfig().codSecc, 10),
+      CodigoProducto:
+        this.tipoProducto === 'grandes-beneficiarios'
+          ? 440
+          : this.tipoProducto === 'particulares'
+            ? 450
+            : 455,
+      CodigoSubproducto: 1,
+      MarcaVlrAseguradoMinimo: 'N',
+      MarcaVlrPrimaMinima: 'N',
+      URLOrigen: window.location.origin + '/sarlaft',
+      FormularioSarlaft: 'Ordinario', // ✅ RF-005 Regla 5.10: Formulario Ordinario
+      FormularioFatca: 'N',
+      EnvioSMSTercero: 'S',
+      RequiereExperian: 'N',
+      AutorizacionInformacion: 'S',
+    };
+
+    // ✅ RF-005 Regla 5.8, 5.9: Generar URL y enviar SMS usando SarlaftService
+    return this.facade.generarUrlSarlaft(request).pipe(
+      map(response => {
+        // La URL se envía automáticamente por SMS según el servicio
+        // También se puede enviar por correo usando NotificadorService si es necesario
+        return response;
+      }),
+      catchError(error => {
+        console.error('❌ Error al generar URL SARLAFT:', error);
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  /**
+   * ✅ RF-005 Regla 5.8, 5.9: Limpiar campos y errores del formulario SARLAFT
+   */
+  private limpiarCamposSarlaft(): void {
+    this.celularCliente = '';
+    this.celularAsesor = '';
+    this.correoTomador = '';
+    this.correoAsesor = '';
+    this.errorCelularCliente = '';
+    this.errorCorreoTomador = '';
+    this.errorCelularAsesor = '';
+    this.errorCorreoAsesor = '';
+  }
 }
-
-

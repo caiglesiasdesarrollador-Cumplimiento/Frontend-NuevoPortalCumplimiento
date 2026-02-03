@@ -56,9 +56,9 @@ describe('SettingsComponent', () => {
     });
 
     it('should have correct button icons', () => {
-      expect(component.btnSave.icon).toBe('fal fa-save');
-      expect(component.btnReset.icon).toBe('fal fa-redo');
-      expect(component.btnLoadDefaults.icon).toBe('fal fa-cog');
+      expect(component.btnSave.icon).toBe('fa-solid fa-save');
+      expect(component.btnReset.icon).toBe('fa-solid fa-redo');
+      expect(component.btnLoadDefaults.icon).toBe('fa-solid fa-cog');
     });
 
     it('should have correct button styles', () => {

@@ -37,7 +37,7 @@ export class SettingsComponent implements OnInit {
   // ✅ OBLIGATORIO: Botones de acción usando propiedades nativas de tech-block-lib
   btnSave: ILibTbButton = {
     label: 'Guardar Configuración',
-    icon: 'fal fa-save',
+    icon: 'fa-solid fa-save',
     iconPosition: 'right',
     styleBtn: 'fill',
     typeBtn: 'primary',
@@ -46,7 +46,7 @@ export class SettingsComponent implements OnInit {
 
   btnReset: ILibTbButton = {
     label: 'Restablecer',
-    icon: 'fal fa-redo',
+    icon: 'fa-solid fa-redo',
     iconPosition: 'left',
     styleBtn: 'stroke',
     typeBtn: 'secondary',
@@ -55,7 +55,7 @@ export class SettingsComponent implements OnInit {
 
   btnLoadDefaults: ILibTbButton = {
     label: 'Valores por Defecto',
-    icon: 'fal fa-cog',
+    icon: 'fa-solid fa-cog',
     iconPosition: 'left',
     styleBtn: 'text',
     typeBtn: 'tertiary',
@@ -101,12 +101,12 @@ export class SettingsComponent implements OnInit {
     const breadcrumbItems: BreadcrumbItem[] = [
       {
         label: 'Dashboard',
-        icon: 'fal fa-home',
+        icon: 'fa-solid fa-home',
         routerLink: ['/dashboard'],
       },
       {
         label: 'Configuración',
-        icon: 'fal fa-cog',
+        icon: 'fa-solid fa-cog',
       },
     ];
 
@@ -135,7 +135,7 @@ export class SettingsComponent implements OnInit {
           type: 'success',
           title: 'Configuración Guardada',
           description: 'La configuración del sistema se ha guardado exitosamente.',
-          icon: 'fal fa-check-circle',
+          icon: 'fa-solid fa-check-circle',
         });
       }, 1500);
     } else {
@@ -143,7 +143,7 @@ export class SettingsComponent implements OnInit {
         type: 'error',
         title: 'Error de Validación',
         description: 'Por favor, corrige los errores en el formulario antes de continuar.',
-        icon: 'fal fa-exclamation-triangle',
+        icon: 'fa-solid fa-exclamation-triangle',
       });
     }
   }
@@ -155,7 +155,7 @@ export class SettingsComponent implements OnInit {
       type: 'info',
       title: 'Formulario Restablecido',
       description: 'Se han limpiado todos los campos del formulario.',
-      icon: 'fal fa-info-circle',
+      icon: 'fa-solid fa-info-circle',
     });
   }
 
@@ -174,7 +174,7 @@ export class SettingsComponent implements OnInit {
       type: 'info',
       title: 'Valores por Defecto Cargados',
       description: 'Se han cargado los valores de configuración recomendados.',
-      icon: 'fal fa-magic',
+      icon: 'fa-solid fa-magic',
     });
   }
 
@@ -238,5 +238,3 @@ export class SettingsComponent implements OnInit {
     return this.loadingSubject.value;
   }
 }
-
-

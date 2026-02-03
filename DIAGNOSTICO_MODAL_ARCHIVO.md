@@ -140,3 +140,4 @@ Después de aplicar el fix, verificar:
 3. ✅ Seleccionar archivo `.docx` → Debe funcionar normalmente
 4. ✅ Seleccionar archivo `.xlsx` → Debe funcionar normalmente
 
+

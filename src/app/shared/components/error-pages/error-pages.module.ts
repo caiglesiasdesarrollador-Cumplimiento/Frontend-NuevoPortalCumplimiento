@@ -15,13 +15,8 @@ const routes: Routes = [
     ErrorConnectionComponent,
     Error404Component,
     CommonModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  exports: [
-    ErrorConnectionComponent,
-    Error404Component
-  ]
+  exports: [ErrorConnectionComponent, Error404Component],
 })
-export class ErrorPagesModule { }
-
-
+export class ErrorPagesModule {}
